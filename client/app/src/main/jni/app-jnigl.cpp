@@ -13,6 +13,7 @@ float mPreviousX=0;
 float mPreviousY=0;
 float mAngleX=0;
 float mAngleY=0;
+GLuint  g_textureName;
 
 void nativeOnTouchEvent(int e, float x, float y)
 {
@@ -60,15 +61,15 @@ void nativeDrawIteration(float mx, float my)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glTranslatef(0.0f, 0, -3.0f);
+    glTranslatef(0.0f, 0, -2.0f);
 
-    glRotatef(mAngleY, 1, 0, 0);
-    glRotatef(mAngleX, 0, 1, 0);
+   // glRotatef(mAngleY, 1, 0, 0);
+    //glRotatef(mAngleX, 0, 1, 0);
 
 
-    glTranslatef(-1.0f, 0, 0.0f);
+    glTranslatef(0.0f, 0, 0.0f);
 
-    glScalef(0.5f, 0.5f, 0.5f);
+    //glScalef(0.5f, 0.5f, 0.5f);
 
     drawCube();
 
@@ -173,6 +174,18 @@ void nativeInitGL(int w, int h)
 }
 
 
+void setTextureData(int *data, int width, int height)
+{
+	glGenTextures(1, &g_textureName);
+
+	glBindTexture(GL_TEXTURE_2D, g_textureName);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)data);
+}
+
 void nativeOnResize(int w, int h)
 {
     glViewport(0, 0, w, h);
@@ -192,38 +205,36 @@ void nativeOnResize(int w, int h)
 void drawCube()
 {
     //int one = 0x10000;
+
+
+
+
 	int one = 1;
     static short vertices[] = {
-            -one, -one, -one,
-            one, -one, -one,
-            one,  one, -one,
-            -one,  one, -one,
-            -one, -one,  one,
-            one, -one,  one,
-            one,  one,  one,
-            -one,  one,  one,
+                -1.0f	, 1.0f	, 0.0f, // 0, Left Top
+                 1.0f	, 1.0f	, 0.0f,	// 1, Right Top
+                 1.0f	, -1.0f	, 0.0f,	// 2, Right Bottom
+                -1.0f	, -1.0f	, 0.0f	// 3, Left Bottom
     };
 
     static float colors[] = {
-            0,    0,    0,  one,
-            one,    0,    0,  one,
-            one,  one,    0,  one,
-            0,  one,    0,  one,
-            0,    0,  one,  one,
-            one,    0,  one,  one,
-            one,  one,  one,  one,
-            0,  one,  one,  one,
-    };
+                  1,    1,    1,  1,
+                  1,    1,    1,  1,
+                  1,    1,    1,  1,
+                  1,    1,    1,  1
+          };
 
     static unsigned short indices[] = {
-            0, 4, 5,    0, 5, 1,
-            1, 5, 6,    1, 6, 2,
-            2, 6, 7,    2, 7, 3,
-            3, 7, 4,    3, 4, 0,
-            4, 7, 6,    4, 6, 5,
-            3, 0, 1,    3, 1, 2
+                  0, 1, 2,
+                  0, 2, 3
     };
-
+    static float texture[] = {
+    	    		//Mapping coordinates for the vertices
+    	    		0.0f, 0.0f,
+    	    		1.0f, 0.0f,
+    	    		1.0f, 1.0f,
+    	    		0.0f, 1.0f,
+    	    };
     // Buffers to be passed to gl*Pointer() functions
     // must be direct, i.e., they must be placed on the
     // native heap where the garbage collector cannot
@@ -259,9 +270,18 @@ void drawCube()
     */
 
     glFrontFace(GL_CW);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, g_textureName);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
     glVertexPointer(3, GL_SHORT, 0, vertices);
     glColorPointer(4, GL_FLOAT, 0, colors);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, indices);
+    glTexCoordPointer(2, GL_FLOAT, 0, texture);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, indices);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 }
 

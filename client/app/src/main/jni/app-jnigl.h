@@ -10,9 +10,13 @@ void nativeOnCreate();
 void nativeOnDestroy();
 void nativeOnPause();
 void nativeOnResume();
+void GLinit();
 //void nativeOnAccelerometer(float x,float y,float z);
 //void nativeSendEvent(int action, float x, float y);
 void nativeInitGL(int w, int h);
 void nativeOnResize(int w, int h);
+
+//void nativeOnResize(int w, int h);
+void setTextureData(int *data, int width, int height);
 
 #endif

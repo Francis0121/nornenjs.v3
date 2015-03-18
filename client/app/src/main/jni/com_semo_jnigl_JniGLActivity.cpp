@@ -100,7 +100,15 @@ JNIEXPORT void JNICALL Java_com_semo_jnigl_JniGLActivity_nativeOnTouchEvent
 	nativeOnTouchEvent(e,x,y);
 }
 
+JNIEXPORT void JNICALL Java_com_semo_jnigl_JniGLActivity_nativeSetTextureData
+(JNIEnv *env, jobject thiz, jintArray arr, jint width, jint height)
+{
+	int *data = env->GetIntArrayElements(arr, 0);
 
+	setTextureData(data, width, height);
+
+	//env->ReleaseByteArrayElements(env, (jbyteArray)arr, data, JNI_ABORT);
+}
 
 
 #ifdef __cplusplus

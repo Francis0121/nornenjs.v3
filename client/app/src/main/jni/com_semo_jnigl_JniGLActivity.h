@@ -105,6 +105,9 @@ JNIEXPORT void JNICALL Java_com_semo_jnigl_JniGLActivity_nativeOnTrackballEvent
 JNIEXPORT void JNICALL Java_com_semo_jnigl_JniGLActivity_nativeOnTouchEvent
   (JNIEnv *, jclass, jint,jfloat, jfloat);
 
+ JNIEXPORT void JNICALL Java_com_semo_jnigl_JniGLActivity_nativeSetTextureData
+  (JNIEnv *, jobject, jintArray, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif
