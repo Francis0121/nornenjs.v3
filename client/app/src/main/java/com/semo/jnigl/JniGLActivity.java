@@ -14,6 +14,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.widget.ImageView;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -24,13 +28,13 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class JniGLActivity extends Activity {
 
+    private Socket socket;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_jni_gl);
 
-        // Create our Preview view and set it as the content of our
-        // Activity
+        setContentView(R.layout.activity_jni_gl);
         mGLSurfaceView = new TouchSurfaceView(this);
         setContentView(mGLSurfaceView);
         mGLSurfaceView.requestFocus();
@@ -50,13 +54,15 @@ public class JniGLActivity extends Activity {
         // Ideally a game should implement onResume() and onPause()
         // to take appropriate action when the activity looses focus
         super.onResume();
-        mGLSurfaceView.onResume();
+        //mGLSurfaceView.onResume();
+        Log.d("bmp", "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mGLSurfaceView.onPause();
+        //mGLSurfaceView.onPause();
+        Log.d("bmp", "onPause");
     }
 
     private GLSurfaceView mGLSurfaceView;
@@ -95,7 +101,7 @@ class TouchSurfaceView extends GLSurfaceView {
         setRenderer(mRenderer);
     }
 
-    @Override 
+    @Override
     public boolean onTrackballEvent(MotionEvent e) {
         mActivity.nativeOnTrackballEvent(e.getAction(), e.getX(), e.getY());
         requestRender();
@@ -115,13 +121,52 @@ class TouchSurfaceView extends GLSurfaceView {
     private class CubeRenderer implements GLSurfaceView.Renderer {
 
         private JniGLActivity mActivity;
-        
+        private byte[] byteArray;
+        private Socket socket;
+
         public CubeRenderer(JniGLActivity activity) {
             mActivity = activity;
+            Log.d("socket", "connectin");
+            try {
+
+                socket = IO.socket("http://112.108.40.166:5000");
+            } catch (URISyntaxException e) {
+                Log.d("socket", e.getMessage());
+                e.printStackTrace();
+                Log.d("socket", "connectin2");
+            }
+            Log.d("socket", "connectin2");
+
+            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("socket", "connect");
+                    socket.emit("stream"); // 112.108.40.166
+                }
+            });
+
+
+            socket.on("jpeg", new Emitter.Listener() { //112.108.40.166
+                @Override
+                public void call(Object... args) {
+                    byteArray = (byte[]) args[0];
+                    Log.d("socket", "jpeg");
+                }
+            });
+
+            socket.connect();
         }
 
         public void onDrawFrame(GL10 gl) {
-            Log.d("bmp", "onDrawFrame");
+            
+            if(byteArray!=null) {
+                Log.d("bmp", "onDrawFrame");
+                Bitmap imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+                int[] pixels = new int[imgPanda.getWidth()*imgPanda.getHeight()];
+                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
+                mActivity.nativeSetTextureData(pixels, imgPanda.getWidth(), imgPanda.getHeight());
+            }
             mActivity.nativeDrawIteration(0, 0);
         }
 
@@ -131,11 +176,6 @@ class TouchSurfaceView extends GLSurfaceView {
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             Log.d("bmp", "onSurfaceCreated");
-
-            Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher);
-            int[] pixels = new int[bmp.getWidth()*bmp.getHeight()];
-            bmp.getPixels(pixels, 0, bmp.getWidth(), 0, 0, bmp.getWidth(), bmp.getHeight());
-            mActivity.nativeSetTextureData(pixels, bmp.getWidth(), bmp.getHeight());
             mActivity.nativeInitGL();
         }
 
