@@ -43,31 +43,20 @@ public class JniGLActivity extends Activity {
         Log.d("bmp", "onCreate");
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.activity_jni_gl, menu);
-//        return true;
-//    }
-
     @Override
     protected void onResume() {
-        // Ideally a game should implement onResume() and onPause()
-        // to take appropriate action when the activity looses focus
         super.onResume();
-        //mGLSurfaceView.onResume();
         Log.d("bmp", "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //mGLSurfaceView.onPause();
         Log.d("bmp", "onPause");
     }
 
     private GLSurfaceView mGLSurfaceView;
 
-    /** load irrlicht.so */
     static {
         Log.i("jnigl", "try to load libjnigl.so");
         System.loadLibrary("jnigl");
@@ -115,9 +104,6 @@ class TouchSurfaceView extends GLSurfaceView {
         return true;
     }
 
-    /**
-     * Render a cube.
-     */
     private class CubeRenderer implements GLSurfaceView.Renderer {
 
         private JniGLActivity mActivity;
