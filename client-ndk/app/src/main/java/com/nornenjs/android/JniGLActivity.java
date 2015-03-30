@@ -1,13 +1,11 @@
-package com.semo.jnigl;
+package com.nornenjs.android;
 
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MotionEvent;
 
-import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import android.graphics.Bitmap;
@@ -15,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.SurfaceHolder;
-import android.widget.ImageView;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -23,11 +20,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
-
-import javax.microedition.khronos.opengles.GL10;
 
 public class JniGLActivity extends Activity {
 
@@ -83,6 +75,7 @@ public class JniGLActivity extends Activity {
             case MotionEvent.ACTION_DOWN :
                 Log.d("opengl", "onTouchEvent : ACTION_DOWN");
                 isOn = true;
+
                 beforeX = event.getX();
                 beforeY = event.getY();
 
@@ -112,8 +105,8 @@ public class JniGLActivity extends Activity {
 
     /** load irrlicht.so */
     static {
-        Log.i("jnigl", "try to load libjnigl.so");
-        System.loadLibrary("jnigl");
+        Log.i("opengles", "try to load opengles.so");
+        System.loadLibrary("opengles");
     }
 
     public native void nativeOnCreate();
@@ -165,7 +158,6 @@ class TouchSurfaceView extends GLSurfaceView {
 
         private JniGLActivity mActivity;
         private byte[] byteArray;
-        //private int[] intArray;
         private Socket socket;
 
         public CubeRenderer(JniGLActivity activity) {
@@ -245,7 +237,6 @@ class TouchSurfaceView extends GLSurfaceView {
             }
             return intArr;
         }
-
 
         @Override
         public void onMyevent(float rotationX, float rotationY) {

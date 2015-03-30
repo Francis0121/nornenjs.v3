@@ -1,4 +1,4 @@
-package com.semo.jnigl;
+package com.nornenjs.android;
 
 /**
  * Created by pi on 15. 3. 20.

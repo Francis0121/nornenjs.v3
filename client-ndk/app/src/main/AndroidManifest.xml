@@ -1,20 +1,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.semo.jnigl"
+    package="com.nornenjs.android"
     android:versionCode="1"
     android:versionName="1.0" >
     
     <uses-permission android:name="android.permission.INTERNET" />
     
     <uses-sdk
-        android:minSdkVersion="9"
-        android:targetSdkVersion="9" />
+        android:minSdkVersion="19"
+        android:targetSdkVersion="19" />
 
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
-            android:name=".JniGLActivity"
+            android:name="com.nornenjs.android.JniGLActivity"
             android:label="@string/title_activity_jni_gl" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
