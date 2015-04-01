@@ -26,6 +26,8 @@
 
 // OpenGL Graphics includes
 #include <GL/glew.h>
+
+#include <windows.h>
 #if defined (__APPLE__) || defined(MACOSX)
   #include <GLUT/glut.h>
   #ifndef glutCloseFunc
@@ -58,6 +60,11 @@ typedef unsigned char uchar;
 #define MAX_EPSILON_ERROR 5.00f
 #define THRESHOLD         0.30f
 
+
+LARGE_INTEGER rendertime_start;
+LARGE_INTEGER rendertime_stop;
+LARGE_INTEGER proc_freq;
+
 // Define the files that are to be save and the reference images for validation
 const char *sOriginal[] =
 {
@@ -73,16 +80,16 @@ const char *sReference[] =
 
 const char *sSDKsample = "CUDA 3D Volume Render";
 
-const char *volumeFilename = "abdomen1.den";
-cudaExtent volumeSize = make_cudaExtent(512, 512, 300);
-cudaExtent volumeSize_block = make_cudaExtent(512/4, 512/4, 300/4);
+const char *volumeFilename = "Bighead.den";
+cudaExtent volumeSize = make_cudaExtent(256, 256, 225);
+cudaExtent volumeSize_block = make_cudaExtent(256/4, 256/4, 225/4);
 typedef unsigned char VolumeType;
 
 //char *volumeFilename = "mrt16_angio.raw";
 //cudaExtent volumeSize = make_cudaExtent(416, 512, 112);
 //typedef unsigned short VolumeType;
 
-uint width = 768, height = 768;
+uint width = 512, height = 512;
 dim3 blockSize(16, 16);
 dim3 gridSize;
 
@@ -266,12 +273,23 @@ void display()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glRotatef(viewRotation.x+270 , 1.0, 0.0, 0.0);
-    glRotatef(viewRotation.y+180+ i, 0.0, -1.0, 0.0);
+	
+    glRotatef(viewRotation.x+270, 1.0, 0.0, 0.0);
+    
+    glRotatef(viewRotation.y+180, 0.0, -1.0, 0.0);
     glTranslatef(-viewTranslation.x,-viewTranslation.y, -viewTranslation.z);
     glGetFloatv(GL_MODELVIEW_MATRIX, modelView);
     glPopMatrix();
-
+	
+	//	int count=0;
+	//for(int i=0; i<16; i++){
+	//	
+	//	if(count%4 ==0){
+	//		printf("\n");
+	//	}
+	//	count++;
+	//	printf("%lf ",(float)modelView[i]);
+	//}
     invViewMatrix[0] = modelView[0];
     invViewMatrix[1] = modelView[4];
     invViewMatrix[2] = modelView[8];
@@ -285,6 +303,36 @@ void display()
     invViewMatrix[10] = modelView[10];
     invViewMatrix[11] = modelView[14];
 
+	static int drawcount = 0;
+	static double fps_sum = 0.0;
+
+	double frequency;
+	double elapsed, renderfps = 0.0;
+
+	if(!QueryPerformanceFrequency(&proc_freq) ){
+		printf("QueryPerformanceFrequency Error!\n");
+	}
+
+	frequency = 1.0 / proc_freq.QuadPart;
+
+	QueryPerformanceCounter(&rendertime_stop);
+
+	elapsed = (rendertime_stop.QuadPart - rendertime_start.QuadPart) * frequency;
+
+	
+	if(fps_sum < 1.0f){
+		fps_sum += elapsed;
+		drawcount++;
+	}else{
+		printf("fps : %d \n", drawcount);
+
+		fps_sum = 0.0f;
+		drawcount = 0;
+	}
+
+
+
+	QueryPerformanceCounter(&rendertime_start);
     render();
 	
     // display results
@@ -304,7 +352,7 @@ void display()
     // draw using texture
 
     // copy from pbo to texture
-   glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pbo);
+    glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, pbo);
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glBindBufferARB(GL_PIXEL_UNPACK_BUFFER_ARB, 0);
@@ -421,7 +469,7 @@ void motion(int x, int y)
     if (buttonState == 4)
     {
         // right = zoom
-		printf("%d %d\n",x,y);
+		//printf("%d %d\n",x,y);
         viewTranslation.z += dy / 100.0f;
     }
     else if (buttonState == 2)
@@ -435,6 +483,7 @@ void motion(int x, int y)
         // left = rotate
         viewRotation.x += dy / 5.0f;
         viewRotation.y += dx / 5.0f;
+		printf("%f %f\n",viewRotation.x,viewRotation.y);
     }
 
     ox = x;
@@ -444,6 +493,7 @@ void motion(int x, int y)
 
 int iDivUp(int a, int b)
 {
+	printf("%d,%d\n",a,b);//debug
     return (a % b != 0) ? (a / b + 1) : (a / b);
 }
 

@@ -195,18 +195,26 @@ d_render(uint *d_output, uint imageW, uint imageH,
         // read from 3D texture
         // remap position to [0, 1] coordinates
 
-	   // float block_den = tex3D(tex_block, (pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f));
+	   // float block_den = tex3D(tex_block, (pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f))*65535;
+		//float3 advanced = {0.0f,0.0f.0.0f};
 		//uint density = __float2uint_rn(block_den*256);
 		/*temp.w = block_den;
 		temp.x = block_den;
 		temp.y = block_den;
 		temp.z = block_den;
 		uint density =  ((unsigned int)(temp.w*255)<<24) | ((unsigned int)(temp.z*255)<<16) | ((unsigned int)(temp.y*255)<<8) | (unsigned int)(temp.x*255);*/
-	//	if(block_den >= max) 
-//				max = block_den;*/
-		//if(((density >> 16) &255) < 4) { //빈공간 도약 - PALLET_START~PALLET_END까지만 그리기 때문에
-		//	
-		//}
+	   //	if(block_den >= max) 
+       //				max = block_den;*/
+	   //if((int)block_den < 80) { //빈공간 도약 - PALLET_START~PALLET_END까지만 그리기 때문에
+		  // int3 nowPos= {(pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f)};
+		  // int3 advpos;
+		  // do{
+				//pos += (step*0.5);
+			
+		  // }
+		
+	    //
+	    //}
 		//else{
 			float sample = tex3D(tex, pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
 	       
@@ -241,7 +249,7 @@ d_render(uint *d_output, uint imageW, uint imageH,
 			if(NL < 0.0f) NL = 0.0f;
 			float localShading = 0.2 + 0.8*NL;
 			
-			//col*=localShading;
+			col*=localShading;
 			// pre-multiply alpha
 			col.x *= col.w;
 			col.y *= col.w;
