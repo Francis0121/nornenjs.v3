@@ -1,19 +1,18 @@
+/**
+ * Copyright Francis kim.
+ */
 var ENUMS = require('./enums');
 var logger = require('./logger');
 var sqlite = require('./sql/default');
 
 var path = require('path');
 var HashMap = require('hashmap').HashMap;
-
-var Jpeg = require('jpeg').Jpeg;
-var Png = require('png').Png;
-
 var socketIo = require('socket.io');
 
-var CudaRender = require('./render').CudaRender;
-var cu = require('./load');
+var CudaRender = require('./cuda/render').CudaRender;
+var cu = require('./cuda/load');
 var cuCtx = new cu.Ctx(0, cu.Device(0));
-
+var Encoding = require('./cuda/encoding').Encoding;
 
 /**
  * Nornejs server create 
@@ -23,7 +22,7 @@ var cuCtx = new cu.Ctx(0, cu.Device(0));
  *  SET max conection client, cuda ptx path, cuda data path;
  */
 var NornenjsServer = function(server){
-
+    this.encoding = new Encoding();
     this.MAX_CONNECTION_CLIENT = 10;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
@@ -128,7 +127,7 @@ NornenjsServer.prototype.socketIoConnect = function(){
                     cudaRender.init();
 
                     $this.CUDA_RENDER_MAP.set(clientId, cudaRender);
-                    makeImage(cudaRender, socket);
+                    $this.encoding.jpeg(cudaRender, socket);
                 }
             });
         });
@@ -142,8 +141,8 @@ NornenjsServer.prototype.socketIoConnect = function(){
             var cudaRender = $this.CUDA_RENDER_MAP.get(clientId);
             cudaRender.rotationX = option.rotationX;
             cudaRender.rotationY = option.rotationY;
-            
-            makeImage(cudaRender, socket);
+
+            $this.encoding.jpeg(cudaRender, socket);
         });
 
     });
@@ -151,24 +150,3 @@ NornenjsServer.prototype.socketIoConnect = function(){
 };
 
 module.exports.NornenjsServer = NornenjsServer;
-
-/**
- * Make interval from cuda and stream to client
- *
- * @param cudaRender
- *  CudaRender Object
- */
-function makeImage(cudaRender, socket){
-    var hrStart = process.hrtime();
-
-    cudaRender.start();
-    var hrCuda = process.hrtime(hrStart);
-    logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrCuda[1]/1000000);
-
-    var jpeg = new Jpeg(cudaRender.d_outputBuffer, 512, 512, 'rgba');
-    socket.emit('stream', jpeg.encodeSync());
-    cudaRender.end();
-
-    var hrEnd = process.hrtime(hrStart);
-    logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrEnd[1]/1000000);
-};

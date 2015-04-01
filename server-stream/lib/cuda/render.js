@@ -1,5 +1,5 @@
-var logger = require('./logger');
-var ENUMS = require('./enums');
+var logger = require('./../logger');
+var ENUMS = require('./../enums');
 var Buffer = require('buffer').Buffer;
 var cu = require('./load');
 var mat4 = require('./mat/mat4');
