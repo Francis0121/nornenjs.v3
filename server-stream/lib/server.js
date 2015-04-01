@@ -1,11 +1,10 @@
-//#######################################
-
 var ENUMS = require('./enums');
 var logger = require('./logger');
 var sqlite = require('./sql/default');
 
 var path = require('path');
 var HashMap = require('hashmap').HashMap;
+
 var Jpeg = require('jpeg').Jpeg;
 var Png = require('png').Png;
 
@@ -15,27 +14,37 @@ var CudaRender = require('./render').CudaRender;
 var cu = require('./load');
 var cuCtx = new cu.Ctx(0, cu.Device(0));
 
-//#######################################
 
-var CUDA_RENDER_MAP = new HashMap();
-
+/**
+ * Nornejs server create 
+ * @param server
+ *  HttpCreateServer 
+ * @constructor
+ *  SET max conection client, cuda ptx path, cuda data path;
+ */
 var NornenjsServer = function(server){
 
     this.MAX_CONNECTION_CLIENT = 10;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
+    this.CUDA_RENDER_MAP = new HashMap();
 
     this.server = server;
-    this.io = null;
-};
-
-NornenjsServer.prototype.connect = function(){
     this.io = socketIo.listen(this.server);
-    this.socketIoEvent();
 };
 
-NornenjsServer.prototype.socketIoEvent = function(){
+/**
+ * Nornensjs server create
+ */
+NornenjsServer.prototype.connect = function(){
+    this.socketIoConnect();
+};
+
+/**
+ * Socket Io First Connect
+ */
+NornenjsServer.prototype.socketIoConnect = function(){
 
     var $this = this;
     var clientQueue = [];
@@ -118,7 +127,7 @@ NornenjsServer.prototype.socketIoEvent = function(){
                                             cuCtx, cu.moduleLoad($this.CUDA_PTX_PATH));
                     cudaRender.init();
 
-                    CUDA_RENDER_MAP.set(clientId, cudaRender);
+                    $this.CUDA_RENDER_MAP.set(clientId, cudaRender);
                     makeImage(cudaRender, socket);
                 }
             });
@@ -130,7 +139,7 @@ NornenjsServer.prototype.socketIoEvent = function(){
         socket.on('event', function(option){
             var clientId = socket.id;
             
-            var cudaRender = CUDA_RENDER_MAP.get(clientId);
+            var cudaRender = $this.CUDA_RENDER_MAP.get(clientId);
             cudaRender.rotationX = option.rotationX;
             cudaRender.rotationY = option.rotationY;
             
