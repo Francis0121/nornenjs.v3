@@ -15,11 +15,12 @@ var Encoding = require('../cuda/encoding').Encoding;
  */
 var Web = function(cudaRenderMap){
     if(typeof cudaRenderMap !== 'object'){
-        throw new Error('Android Event Handler require client HashMap Object');
+        throw new Error('Web event handler require client HashMap Object');
     }
 
     this.encoding = new Encoding();
     this.cudaRenderMap = cudaRenderMap;
+    this.socket = null;
 };
 
 /**
@@ -28,16 +29,23 @@ var Web = function(cudaRenderMap){
  *  socket object
  */
 Web.prototype.addSocketEventListener = function(socket){
-    this.pngEventListener(socket);
-    this.leftMouseEventListener(socket);
+    if(typeof socket !== 'object'){
+        throw new Error('Web event handler need socket client object');
+    }
+    
+    this.socket = socket;
+    this.pngEventListener();
+    this.leftMouseEventListener();
 };
 
 /**
  * Last encoding image is type png
  * @param socket
  */
-Web.prototype.pngEventListener = function(socket){
-    var $this = this;
+Web.prototype.pngEventListener = function(){
+    var $this = this, 
+        socket = this.socket;
+
     socket.on('webPng', function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         $this.encoding.png(cudaRender, socket);
@@ -48,9 +56,10 @@ Web.prototype.pngEventListener = function(socket){
  * LeftMouse Event Handler
  * @param socket
  */
-Web.prototype.leftMouseEventListener = function(socket){
+Web.prototype.leftMouseEventListener = function(){
+    var $this = this,
+        socket = this.socket;
 
-    var $this = this;
     socket.on('leftMouse', function(option){
 
         var cudaRender = $this.cudaRenderMap.get(socket.id);

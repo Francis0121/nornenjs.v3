@@ -32,6 +32,8 @@ var NornenjsServer = function(server){
     this.server = server;
     this.io = socketIo.listen(this.server);
     this.cudaRenderMap = new HashMap();
+    
+    //TODO 해당되는 클라이언트가 무엇인지에 따라서 사용되는 socket event Handler를 다르게 한다.
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
 };
@@ -59,6 +61,7 @@ NornenjsServer.prototype.socketIoConnect = function(){
         
         /**
          * Connection User
+         * TODO 사용자 관리는 프록시 서버가 되는 부분으로 이전될 예정
          */
         socket.on('connectMessage', function(){
 

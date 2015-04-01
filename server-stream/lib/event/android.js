@@ -15,11 +15,12 @@ var Encoding = require('../cuda/encoding').Encoding;
  */
 var Android = function(cudaRenderMap){
     if(typeof cudaRenderMap !== 'object'){
-        throw new Error('Android Event Handler require client HashMap Object');
+        throw new Error('Android event handler require client HashMap Object');
     }
 
     this.encoding = new Encoding();
     this.cudaRenderMap = cudaRenderMap;
+    this.socket = null;
 };
 
 /**
@@ -28,16 +29,23 @@ var Android = function(cudaRenderMap){
  *  socket object
  */
 Android.prototype.addSocketEventListener = function(socket){
-    this.touchEventListener(socket);
-    this.pngEventListener(socket);
+    if(typeof socket !== 'object'){
+        throw new Error('Android event handler need socket client object');
+    }
+
+    this.socket = socket;
+    this.touchEventListener();
+    this.pngEventListener();
 };
 
 /**
  * Last encoding image is type png
  * @param socket
  */
-Android.prototype.pngEventListener = function(socket){
-    var $this = this;
+Android.prototype.pngEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
     socket.on('androidPng', function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         $this.encoding.png(cudaRender, socket);
@@ -48,9 +56,10 @@ Android.prototype.pngEventListener = function(socket){
  * Touch Event Handler
  * @param socket
  */
-Android.prototype.touchEventListener = function(socket){
+Android.prototype.touchEventListener = function(){
+    var $this = this,
+        socket = this.socket;
 
-    var $this = this;
     socket.on('touch', function(option){
 
         var cudaRender = $this.cudaRenderMap.get(socket.id);
