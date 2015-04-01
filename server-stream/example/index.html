@@ -112,7 +112,7 @@
             touch.beforeX = touches[0].pageX;
             touch.beforeY = touches[0].pageY;
 
-            socket.emit('event', option);
+            socket.emit('touch', option);
         }
     });
 
@@ -151,7 +151,7 @@
             mouse.beforeX = event.pageX;
             mouse.beforeY = event.pageY;
 
-            socket.emit('event', option);
+            socket.emit('leftMouse', option);
         }
     });
 

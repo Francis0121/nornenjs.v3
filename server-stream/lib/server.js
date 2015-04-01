@@ -12,7 +12,10 @@ var socketIo = require('socket.io');
 var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
 var cuCtx = new cu.Ctx(0, cu.Device(0));
+
 var Encoding = require('./cuda/encoding').Encoding;
+var Android = require('./event/android').Android;
+var Web = require('./event/web').Web;
 
 /**
  * Nornejs server create 
@@ -27,10 +30,12 @@ var NornenjsServer = function(server){
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
-    this.CUDA_RENDER_MAP = new HashMap();
 
     this.server = server;
     this.io = socketIo.listen(this.server);
+    this.cudaRenderMap = new HashMap();
+    this.android = new Android(this.cudaRenderMap);
+    this.web = new Web(this.cudaRenderMap);
 };
 
 /**
@@ -50,7 +55,10 @@ NornenjsServer.prototype.socketIoConnect = function(){
     var streamClientCount = 0;
 
     this.io.sockets.on('connection', function(socket){
-
+        
+        $this.android.addSocketEventListener(socket);
+        $this.web.addSocketEventListener(socket);
+        
         /**
          * Connection User
          */
@@ -126,23 +134,10 @@ NornenjsServer.prototype.socketIoConnect = function(){
                                             cuCtx, cu.moduleLoad($this.CUDA_PTX_PATH));
                     cudaRender.init();
 
-                    $this.CUDA_RENDER_MAP.set(clientId, cudaRender);
+                    $this.cudaRenderMap.set(clientId, cudaRender);
                     $this.encoding.jpeg(cudaRender, socket);
                 }
             });
-        });
-
-        /**
-         * Event
-         */
-        socket.on('event', function(option){
-            var clientId = socket.id;
-            
-            var cudaRender = $this.CUDA_RENDER_MAP.get(clientId);
-            cudaRender.rotationX = option.rotationX;
-            cudaRender.rotationY = option.rotationY;
-
-            $this.encoding.jpeg(cudaRender, socket);
         });
 
     });
