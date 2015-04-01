@@ -13,7 +13,6 @@ var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
 var cuCtx = new cu.Ctx(0, cu.Device(0));
 
-var Encoding = require('./cuda/encoding').Encoding;
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
 
@@ -25,7 +24,6 @@ var Web = require('./event/web').Web;
  *  SET max conection client, cuda ptx path, cuda data path;
  */
 var NornenjsServer = function(server){
-    this.encoding = new Encoding();
     this.MAX_CONNECTION_CLIENT = 10;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
@@ -133,9 +131,9 @@ NornenjsServer.prototype.socketIoConnect = function(){
                                             volume.width, volume.height, volume.depth,
                                             cuCtx, cu.moduleLoad($this.CUDA_PTX_PATH));
                     cudaRender.init();
-
+                    
                     $this.cudaRenderMap.set(clientId, cudaRender);
-                    $this.encoding.jpeg(cudaRender, socket);
+                    socket.emit('loadCudaMemory');
                 }
             });
         });

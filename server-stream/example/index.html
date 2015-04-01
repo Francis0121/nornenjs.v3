@@ -29,6 +29,10 @@
             
             socket.emit('init');
         });
+        
+        socket.on('loadCudaMemory', function(){
+            socket.emit('webPng');
+        });
 
         /**
          * Socket stream data

@@ -9,7 +9,8 @@ var Encoding = require('../cuda/encoding').Encoding;
  * Web Event Handler
  *
  * @param cudaRenderMap
- * 적제된 쿠다 모듈이 있는 Hash map Object
+ *  적제된 쿠다 모듈이 있는 Hash map Object
+ *  TODO 적제되어 있는 모듈에 대한것을 파라미터로 넘겨주는 상황이 별로 좋지 않아 보임*
  * @constructor
  */
 var Web = function(cudaRenderMap){
@@ -27,7 +28,20 @@ var Web = function(cudaRenderMap){
  *  socket object
  */
 Web.prototype.addSocketEventListener = function(socket){
+    this.pngEventListener(socket);
     this.leftMouseEventListener(socket);
+};
+
+/**
+ * Last encoding image is type png
+ * @param socket
+ */
+Web.prototype.pngEventListener = function(socket){
+    var $this = this;
+    socket.on('webPng', function(option){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+        $this.encoding.png(cudaRender, socket);
+    });
 };
 
 /**
