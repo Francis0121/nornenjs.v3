@@ -11,15 +11,28 @@ var socketIo = require('socket.io');
 
 var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
-var cuCtx = new cu.Ctx(0, cu.Device(0));
-
-logger.debug(cu.deviceCount);
-
-var cuDevice = new cu.Device(0);
-logger.debug(cuDevice);
+var cuDevice = cu.Device(0);
+var cuCtx = new cu.Ctx(0, cuDevice);
 
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
+
+var sys = require('sys')
+var exec = require('child_process').exec;
+
+var redis = require('redis');
+
+var os = require('os');
+var interfaces = os.networkInterfaces();
+var myIpAddress = null;
+for (var k in interfaces) {
+    for (var k2 in interfaces[k]) {
+        var address = interfaces[k][k2];
+        if (address.family === 'IPv4' && !address.internal && myIpAddress == null) {
+            myIpAddress = address.address;
+        }
+    }
+}
 
 /**
  * Nornejs server create 
@@ -28,7 +41,7 @@ var Web = require('./event/web').Web;
  * @constructor
  *  SET max conection client, cuda ptx path, cuda data path;
  */
-var NornenjsServer = function(server){
+var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.MAX_CONNECTION_CLIENT = 10;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
@@ -42,7 +55,57 @@ var NornenjsServer = function(server){
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
 
-    //TODO Redis Server Exec And set hash key
+    // Exec Redis Server create
+    if(typeof isMaster !== 'boolean'){
+        throw new Error('IsRoot type is "Boolean" type');
+    }
+
+    this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
+    this.REDIS_PORT = 6379;
+    this.ipAddress = null;
+
+    if(isMaster){
+        // ~ Master proxy server. Exec redis server and connect redis.
+        //exec(this.REDIS_PATH, function (error) {
+        //    if (error !== null) {
+        //        logger.error('Redis server exec : ', error);
+        //    }
+        //});
+
+
+        this.ipAddress = myIpAddress;
+        var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
+
+        client.on('error', function (err) {
+            logger.error('Error', err);
+        });
+
+        for(var i=0; i<cu.deviceCount; i++){
+            client.hset('hostLost', myIpAddress, i, client.print);
+        }
+        client.hset('hostList', '112.108.40.163', 2, client.print);
+
+        client.quit();
+
+    }else{
+        // ~ Slave server. Connect master server redis.
+        if(typeof ipAddres !== 'string'){
+            throw new Error('IpAddress type is "String" type')
+        }
+
+        this.ipAddress = masterIpAddres;
+        client = redis.createClient(this.REDIS_PORT, masterIpAddres, { } );
+
+        client.on('error', function (err) {
+            logger.error('Error', err);
+        });
+
+        for(var i=0; i<cu.deviceCount; i++){
+            client.hset('proxy', 'hostList', myIpAddress, client.print);
+        }
+
+        client.quit();
+    }
 
 
 
@@ -73,24 +136,12 @@ var NornenjsServer = function(server){
 NornenjsServer.prototype.connect = function(){
     this.socketIoConnect();
 
-    var redis = require("redis"),
-        client = redis.createClient(6379, '112.108.40.166', {});
-
-    client.on('error', function (err) {
-        logger.error('Error', err);
+    var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
+    client.hvals('hostList', function (err, obj) {
+        console.dir(obj);
     });
 
-    client.set("string key", "string val", redis.print);
-    client.hset("hash key", "hashtest 1", "some value", redis.print);
-    client.hset(["hash key", "hashtest 2", "some other value"], redis.print);
-    client.hkeys("hash key", function (err, replies) {
-        console.log(replies.length + " replies:");
-        replies.forEach(function (reply, i) {
-            console.log("    " + i + ": " + reply);
-        });
-    });
     client.quit();
-
 };
 
 /**
