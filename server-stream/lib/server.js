@@ -13,6 +13,11 @@ var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
 var cuCtx = new cu.Ctx(0, cu.Device(0));
 
+logger.debug(cu.deviceCount);
+
+var cuDevice = new cu.Device(0);
+logger.debug(cuDevice);
+
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
 
@@ -36,7 +41,31 @@ var NornenjsServer = function(server){
     //TODO 해당되는 클라이언트가 무엇인지에 따라서 사용되는 socket event Handler를 다르게 한다.
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
+
+    //TODO Redis Server Exec And set hash key
+
+
+
+    //var httpProxy = require('http-proxy');
+    //httpProxy.createProxyServer({target:'http://112.108.40.166:5000'}).listen(8000);
 };
+
+// ~ PROXY SERVER
+// TODO STEP 01. NornenjsServer 가 작동하게 되면 내가 ROOT 라면 Proxy 서버와 Redis를 실행한다.
+// TODO STEP 02. CUDA Graphic Card Device를 조회하여
+// TODO          " GRAPHIC_HOST(key) " : IP_DEVICE_NUMBER "
+// TODO          " IP_DEVICE_NUMBER(key) : 0(value) " 로 하여 Redis에 저장한다.
+
+// ~ OTHER SERVER
+// TODO STEP 01. NornenjsServer 연결시 Proxy 사용 여부를 선택하고 해당되는 Proxy를 선택한다면 Root 인지 선택하고 ROOT가 아니라면 Proxy 서버 IP를 작성한다.
+// TODO STEP 02. Proxy 사용하면서 서버가 아니라면 Redis 클라이언트를 연결한다.
+// TODO STEP 03. CUDA Graphic Card Device를 조회하여
+// TODO          " GRAPHIC_HOST(key) " : IP_DEVICE_NUMBER "
+// TODO          " IP_DEVICE(key) : 0(value) " 로 하여 Redis에 저장한다.
+
+// 사용자 접속
+// TODO STEP 01. 해당 접속은 무조건 ROOT PROXY 에서만 접근이 가능하도록 해야한다.
+// TODO STEP 02. GRAPHIC_HOST(key) 를 통하여 IP DEVICE 를 가져온뒤 해당 키값에 대한 Min 값을 찾고 Min 값에 따라서 Device를 연결해주도록 한다.
 
 /**
  * Nornensjs server create
@@ -45,7 +74,7 @@ NornenjsServer.prototype.connect = function(){
     this.socketIoConnect();
 
     var redis = require("redis"),
-        client = redis.createClient();
+        client = redis.createClient(6379, '112.108.40.166', {});
 
     client.on('error', function (err) {
         logger.error('Error', err);
