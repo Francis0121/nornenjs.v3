@@ -66,45 +66,38 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 
     if(isMaster){
         // ~ Master proxy server. Exec redis server and connect redis.
-        //exec(this.REDIS_PATH, function (error) {
-        //    if (error !== null) {
-        //        logger.error('Redis server exec : ', error);
-        //    }
-        //});
-
+        exec(this.REDIS_PATH, function (error) {
+            if (error !== null) {
+                logger.error('Redis server exec : ', error);
+            }
+        });
 
         this.ipAddress = myIpAddress;
         var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
-
-        client.on('error', function (err) {
-            logger.error('Error', err);
-        });
-
         for(var i=0; i<cu.deviceCount; i++){
-            client.hset('hostLost', myIpAddress, i, client.print);
+            var key = myIpAddress+'_'+i;
+            client.hset('hostList', key, '0', function(){
+                logger.info('hostList add device ' + key);
+                client.quit();
+            });
         }
-        client.hset('hostList', '112.108.40.163', 2, client.print);
 
-        client.quit();
 
     }else{
         // ~ Slave server. Connect master server redis.
-        if(typeof ipAddres !== 'string'){
+        if(typeof masterIpAddres !== 'string'){
             throw new Error('IpAddress type is "String" type')
         }
 
         this.ipAddress = masterIpAddres;
         client = redis.createClient(this.REDIS_PORT, masterIpAddres, { } );
-
-        client.on('error', function (err) {
-            logger.error('Error', err);
-        });
-
         for(var i=0; i<cu.deviceCount; i++){
-            client.hset('proxy', 'hostList', myIpAddress, client.print);
+            var key = myIpAddress+'_'+i;
+            client.hset('hostList',  key, '0', function(){
+                logger.info('hostList add device ' + key);
+                client.quit();
+            });
         }
-
-        client.quit();
     }
 
 
@@ -130,6 +123,8 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 // TODO STEP 01. 해당 접속은 무조건 ROOT PROXY 에서만 접근이 가능하도록 해야한다.
 // TODO STEP 02. GRAPHIC_HOST(key) 를 통하여 IP DEVICE 를 가져온뒤 해당 키값에 대한 Min 값을 찾고 Min 값에 따라서 Device를 연결해주도록 한다.
 
+// ~ SERVER 종료시
+// TODO REDIS DEVICE 정보 삭제 필요
 /**
  * Nornensjs server create
  */
@@ -137,11 +132,16 @@ NornenjsServer.prototype.connect = function(){
     this.socketIoConnect();
 
     var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
-    client.hvals('hostList', function (err, obj) {
-        console.dir(obj);
+
+    client.hgetall('hostList', function (err, list) {
+
+        for (key in list) {
+            logger.info('key - ', key, ': value -', list[key]);
+        }
+
+        client.quit();
     });
 
-    client.quit();
 };
 
 /**
