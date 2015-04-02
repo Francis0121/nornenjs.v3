@@ -165,7 +165,7 @@ class TouchSurfaceView extends GLSurfaceView {
             Log.d("socket", "connectin");
             // ~ socket connection
             try {
-                socket = IO.socket("http://112.108.40.166:5000");
+                socket = IO.socket("http://112.108.40.19:5000");
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -180,7 +180,7 @@ class TouchSurfaceView extends GLSurfaceView {
                     JSONObject message = (JSONObject) args[0];
 
                     try {
-                        if( ! ((Boolean) message.get("success")) ){
+                        if (!((Boolean) message.get("success"))) {
                             return;
                         }
                         socket.emit("init");
@@ -190,6 +190,13 @@ class TouchSurfaceView extends GLSurfaceView {
 
                 }
 
+            });
+
+            socket.on("loadCudaMemory", new Emitter.Listener() { //112.108.40.166
+                @Override
+                public void call(Object... args) {
+                    socket.emit("androidPng");
+                }
             });
 
             socket.on("stream", new Emitter.Listener() { //112.108.40.166
@@ -251,7 +258,7 @@ class TouchSurfaceView extends GLSurfaceView {
                 e.printStackTrace();
                 Log.e("error", "Make json object");
             }
-            socket.emit("event", jsonObject);
+            socket.emit("touch", jsonObject);
         }
     }
     
