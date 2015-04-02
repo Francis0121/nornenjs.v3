@@ -96,52 +96,61 @@ transformKernel(uint *d_output,
 				float transferOffset,
 				float transferScale)
 {
-
-
-	const int maxSteps = 500;
-    const float tstep = 0.01f;
-    const float opacityThreshold = 0.95f;
-    const float3 boxMin = make_float3(-1.0f, -1.0f, -1.0f);
-    const float3 boxMax = make_float3(1.0f, 1.0f, 1.0f);
-
-    uint x = blockIdx.x*blockDim.x + threadIdx.x;
-    uint y = blockIdx.y*blockDim.y + threadIdx.y;
-
-    if ((x >= imageW) || (y >= imageH)) return;
-
-    float u = (x / (float) imageW)*2.0f-1.0f;
-    float v = (y / (float) imageH)*2.0f-1.0f;
-
-    // calculate eye ray in world space
-    Ray eyeRay;
-    eyeRay.o = make_float3(mul(d_invViewMatrix, make_float4(0.0f, 0.0f, 0.0f, 1.0f)));
-    eyeRay.d = normalize(make_float3(u, v, -2.0f));
-    eyeRay.d = mul(d_invViewMatrix, eyeRay.d);
-
-    // find intersection with box
-    float tnear, tfar;
-    int hit = intersectBox(eyeRay, boxMin, boxMax, &tnear, &tfar);
-
-    if (!hit) return;
-
-    if (tnear < 0.0f) tnear = 0.0f;     // clamp to near plane
-
-    // march along ray from front to back, accumulating color
-    float4 sum = make_float4(0.0f);
-    float t = tnear;
-    float3 pos = eyeRay.o + eyeRay.d * tnear;
-    float3 step = eyeRay.d*tstep;
+		const int maxSteps = 500;
+		const float tstep = 0.01f;
+		const float opacityThreshold = 0.95f;
+		const float3 boxMin = make_float3(-1.0f, -1.0f, -1.0f);
+		const float3 boxMax = make_float3(1.0f, 1.0f, 1.0f);
+	 
+		unsigned int x = blockIdx.x*blockDim.x + threadIdx.x;
+		unsigned int y = blockIdx.y*blockDim.y + threadIdx.y;
+	    unsigned int z;
+		if ((x >= imageW) || (y >= imageH)) return;
+	 
+		float u = (x / (float) imageW)*2.0f-1.0f;
+		float v = (y / (float) imageH)*2.0f-1.0f;
+	 
+		Ray eyeRay;
+		eyeRay.o = make_float3(mul(d_invViewMatrix, make_float4(0.0f, 0.0f, 0.0f, 1.0f)));
+		eyeRay.d = normalize(make_float3(u, v, -2.0f));
+		eyeRay.d = mul(d_invViewMatrix, eyeRay.d);
+	 
+		float tnear, tfar;
+		int hit = intersectBox(eyeRay, boxMin, boxMax, &tnear, &tfar);
+	 
+		if (!hit) return;
+	 
+		if (tnear < 0.0f) tnear = 0.0f; 
+	 
+		float4 sum = make_float4(0.0f);
+		float t = tnear;
+		float3 pos = eyeRay.o + eyeRay.d * tnear;
+		float3 step = eyeRay.d*tstep;
+		float adjust=0.0f;
 	
-	float max = 0.0f; 
-    
-			
-	float sample = tex3D(tex, pos.x+0.5f, pos.y+0.5f+transferOffset, pos.z+0.5f);
-	        
-    sum.x = sample;
-	sum.y = sample;
-	sum.z = sample;
-	sum.w = sample;
-    d_output[y*imageW + x] = rgbaFloatToInt(sum);
+	    for (float i=0; i<maxSteps; i++)
+        {
+				float sample = tex3D(tex,pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+				
+				float4 col = tex1D(texture_float_1D, (sample-transferOffset)*transferScale);
+				
+				col.x *= col.w;
+				col.y *= col.w;
+				col.z *= col.w;
+				
+				sum = sum + col*(1.0f - sum.w);
+     
+				if (sum.w > opacityThreshold)
+					break;
+					
+				t += (tstep*0.5);
+
+				if (t > tfar) break;
+
+				pos += (step*0.5);
+  
+		}
+		d_output[y*imageW + x] = rgbaFloatToInt(sum);
 }
 
 #endif // #ifndef _SIMPLETEXTURE_KERNEL_H_

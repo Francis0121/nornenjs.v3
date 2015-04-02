@@ -165,8 +165,8 @@ d_render(uint *d_output, uint imageW, uint imageH,
 
     if ((x >= imageW) || (y >= imageH)) return;
 
-    float u = (x / (float) imageW)*2.0f-1.0f;
-    float v = (y / (float) imageH)*2.0f-1.0f;
+    float u = (x / (float) imageW)*2.0f*0.5-1.0f;
+    float v = (y / (float) imageH)*2.0f*0.5-1.0f;
 
     // calculate eye ray in world space
     Ray eyeRay;

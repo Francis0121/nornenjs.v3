@@ -40,12 +40,9 @@
 
 using namespace std;
 typedef unsigned char uchar;
-const char *volumeFilename = "abdomen1.den";
+const char *volumeFilename = "Bighead.den";
 
-cudaExtent volumeSize = make_cudaExtent(512, 512, 300);
-int volumeWidth = 512;
-int volumeHeight = 512;
-int volumeDepth = 300;
+cudaExtent volumeSize = make_cudaExtent(256, 256, 225);
 typedef unsigned char VolumeType;
 
 float c_invViewMatrix[12];
@@ -68,6 +65,9 @@ const char *sSDKsample = "simpleTextureDrv (Driver API)";
 #define PTX_FILE "simpleTexture_kernel32.ptx"
 #define CUBIN_FILE "simpleTexture_kernel32.cubin"
 #endif
+
+
+LARGE_INTEGER start, end, liFrequency; //시간 측정 변수
 
 ////////////////////////////////////////////////////////////////////////////////
 // These are CUDA Helper functions
@@ -295,8 +295,6 @@ inline CUdevice findCudaDevice(int argc, char **argv, int *p_devID)
 CUdevice cuDevice;
 CUcontext cuContext;
 CUmodule cuModule;
-CUmodule cuModule2;
-
 
 void
 showHelp()
@@ -316,9 +314,8 @@ main(int argc, char **argv)
         showHelp();
         return 0;
     }
-	
+
     runTest(argc, argv);
-	
 }
 uchar *loadRawFile2(char *filename, size_t size)
 {
@@ -358,7 +355,7 @@ void *loadRawFile(char *filename, size_t size)
 }
 void ScreenCapture( const char *strFilePath ,uint *d_output)
 {
-     //비트맵 파일 처리를 위한 헤더 구조체
+    //비트맵 파일 처리를 위한 헤더 구조체
     BITMAPFILEHEADER    BMFH;
     BITMAPINFOHEADER    BMIH;
  
@@ -366,10 +363,10 @@ void ScreenCapture( const char *strFilePath ,uint *d_output)
     int nHeight = 0;
     unsigned long dwQuadrupleWidth = 0;     //LJH 추가, 가로 사이즈가 4의 배수가 아니라면 4의 배수로 만들어서 저장
  
-    //GLbyte *pPixelData = NULL;              //front buffer의 픽셀 값들을 얻어 오기 위한 버퍼의 포인터
+   // GLbyte *pPixelData = NULL;              //front buffer의 픽셀 값들을 얻어 오기 위한 버퍼의 포인터
  
-    nWidth  = 512;     //(나의 경우)리눅스에서의 경우 해상도 고정이므로 그 값을 입력
-    nHeight = 512;
+    nWidth  = 256;     //(나의 경우)리눅스에서의 경우 해상도 고정이므로 그 값을 입력
+    nHeight = 256;
  
     //4의 배수인지 아닌지 확인해서 4의 배수가 아니라면 4의 배수로 맞춰준다.
     dwQuadrupleWidth = ( nWidth % 4 ) ? ( ( nWidth ) + ( 4 - ( nWidth % 4 ) ) ) : ( nWidth );
@@ -388,7 +385,7 @@ void ScreenCapture( const char *strFilePath ,uint *d_output)
     BMIH.biPlanes           = 1;                                //비트 플레인 수(항상 1)
     BMIH.biBitCount         = 24;                               //픽셀당 비트수(컬러, 흑백 구별)
     BMIH.biCompression      = BI_RGB;                           //압축 유무
-    BMIH.biSizeImage        = 512 * 3 * 512;					//영상의 크기
+    BMIH.biSizeImage        = 256 * 3 * 256;					//영상의 크기
     BMIH.biXPelsPerMeter    = 0;                                //가로 해상도
     BMIH.biYPelsPerMeter    = 0;                                //세로 해상도
     BMIH.biClrUsed          = 0;                                //실제 사용 색상수
@@ -413,13 +410,13 @@ void ScreenCapture( const char *strFilePath ,uint *d_output)
             //printf( "에러" );
             //fclose( outFile );
         }
-        fwrite( &BMFH, sizeof( uchar ), sizeof(BITMAPFILEHEADER), outFile );         //파일 헤더 쓰기
-        fwrite( &BMIH, sizeof( uchar ), sizeof(BITMAPINFOHEADER), outFile );         //인포 헤더 쓰기
-		for(int i=0; i<512; i++){
-			for(int j=0; j<512; j++){
-				fwrite((d_output+(i*512 +j+0)), sizeof( uchar ), 1, outFile );
-				fwrite((d_output+(i*512 +j+0)), sizeof( uchar ), 1, outFile );
-				fwrite((d_output+(i*512 +j+0)), sizeof( uchar ), 1, outFile );
+        fwrite( &BMFH, sizeof( unsigned char ), sizeof(BITMAPFILEHEADER), outFile );         //파일 헤더 쓰기
+        fwrite( &BMIH, sizeof( unsigned char ), sizeof(BITMAPINFOHEADER), outFile );         //인포 헤더 쓰기
+		for(int i=0; i<256; i++){
+			for(int j=0; j<256; j++){
+				fwrite((d_output+(i*256 +j+0)), sizeof( unsigned char ), 1, outFile );
+				fwrite((d_output+(i*256 +j+1)), sizeof( unsigned char ), 1, outFile );
+				fwrite((d_output+(i*256 +j+2)), sizeof( unsigned char ), 1, outFile );
 			}
 		}
         //fwrite( d_output, sizeof( uchar ), BMIH.biSizeImage, outFile );   //c_output파일로 읽은 데이터 쓰기
@@ -427,10 +424,10 @@ void ScreenCapture( const char *strFilePath ,uint *d_output)
         fclose( outFile );  //파일 닫기
     }
  
-  /*  if ( d_output != NULL )
+    if ( d_output != NULL )
     {
         delete d_output;
-    }*/
+    }
 }
 ////////////////////////////////////////////////////////////////////////////////
 //! Run a simple test for CUDA
@@ -447,13 +444,12 @@ runTest(int argc, char **argv)
     {
         exit(EXIT_FAILURE);
     }
-	while(1){
 	unsigned int maxtrixBufferSize = 12;
-	unsigned int imageWidth=512;
-	unsigned int imageHeight=512;
+	unsigned int imageWidth=256;
+	unsigned int imageHeight=256;
 	float density = 0.05;
 	float brightness = 1.0;
-	float transferOffset = 1.10;
+	float transferOffset = 0.0;
 	float transferScale = 1.0;
 	
     // load image from disk
@@ -470,8 +466,8 @@ runTest(int argc, char **argv)
     
     // allocate device memory for result
     CUdeviceptr d_data = (CUdeviceptr)NULL;
-    checkCudaErrors(cuMemAlloc(&d_data, 512*512*4));
-	cuMemsetD8(d_data,0,512*512*4);
+    checkCudaErrors(cuMemAlloc(&d_data, 256*256*4));
+	
 	c_invViewMatrix[0] = -1.0f;
 	c_invViewMatrix[1] = 0.0f;
 	c_invViewMatrix[2] = 0.0f;
@@ -479,7 +475,7 @@ runTest(int argc, char **argv)
 	c_invViewMatrix[4] = 0.0f;
 	c_invViewMatrix[5] = 0.0f;
 	c_invViewMatrix[6] = -1.0;
-	c_invViewMatrix[7] = -2.0;
+	c_invViewMatrix[7] = -3.0;
 	c_invViewMatrix[8] = 0.0f;
 	c_invViewMatrix[9] = -1.0;
     c_invViewMatrix[10] = 0.0f;
@@ -489,36 +485,35 @@ runTest(int argc, char **argv)
     checkCudaErrors(cuMemAlloc(&d_invViewMatrix, 12*4));
     
 	checkCudaErrors(cuMemcpyHtoD(d_invViewMatrix, c_invViewMatrix ,12*sizeof(float)));
-
+	
     // allocate array and copy image data
     CUarray cu_array;
     CUDA_ARRAY3D_DESCRIPTOR desc;
     desc.Format = CU_AD_FORMAT_UNSIGNED_INT8;
     desc.NumChannels = 1;
-    desc.Width = volumeWidth;
-    desc.Height = volumeHeight;
-    desc.Depth = volumeDepth;
+    desc.Width = 256;
+    desc.Height = 256;
+    desc.Depth = 225;
     desc.Flags=0;
     checkCudaErrors(cuArray3DCreate(&cu_array, &desc));
-		
+
     CUDA_MEMCPY3D copyParam;
     memset(&copyParam, 0, sizeof(copyParam));
     copyParam.srcMemoryType = CU_MEMORYTYPE_HOST;
     copyParam.srcHost = h_volume;
-    copyParam.srcPitch = volumeWidth * sizeof(unsigned char);
-    copyParam.srcHeight = volumeHeight;
+    copyParam.srcPitch = 256 * sizeof(unsigned char);
+    copyParam.srcHeight = 256;
     copyParam.dstMemoryType = CU_MEMORYTYPE_ARRAY;
     copyParam.dstArray = cu_array;
-    copyParam.dstHeight=volumeHeight;
-    copyParam.WidthInBytes = volumeWidth * sizeof(unsigned char);
-    copyParam.Height = volumeHeight;
-    copyParam.Depth = volumeDepth;
+    copyParam.dstHeight=256;
+    copyParam.WidthInBytes = 256 * sizeof(unsigned char);
+    copyParam.Height = 256;
+    copyParam.Depth = 225;
     cuMemcpy3D(&copyParam);
 
     // set texture parameters
     CUtexref cu_texref;
     checkCudaErrors(cuModuleGetTexRef(&cu_texref, cuModule, "tex"));
-	printf("%d",&cu_texref);
     checkCudaErrors(cuTexRefSetArray(cu_texref, cu_array, CU_TRSA_OVERRIDE_FORMAT));
     checkCudaErrors(cuTexRefSetAddressMode(cu_texref, 0, CU_TR_ADDRESS_MODE_BORDER));
     checkCudaErrors(cuTexRefSetAddressMode(cu_texref, 1, CU_TR_ADDRESS_MODE_BORDER));
@@ -526,7 +521,6 @@ runTest(int argc, char **argv)
     checkCudaErrors(cuTexRefSetFlags(cu_texref, CU_TRSF_NORMALIZED_COORDINATES));
     checkCudaErrors(cuTexRefSetFormat(cu_texref, CU_AD_FORMAT_UNSIGNED_INT8, 1));
 	
-	free(h_volume);
 	float4 *input_float_1D = (float4 *)malloc(sizeof(float4)*256);
     for(int i=0; i<=80; i++){    //alpha
 		 input_float_1D[i].x = 0.0f;
@@ -551,7 +545,7 @@ runTest(int argc, char **argv)
 	CUarray otf_array;
     CUDA_ARRAY_DESCRIPTOR ad;
     ad.Format = CU_AD_FORMAT_FLOAT;
-    ad.Width = volumeWidth;
+    ad.Width = 256;
     ad.Height = 1;
     ad.NumChannels = 4;
 	checkCudaErrors(cuArrayCreate(&otf_array, &ad));
@@ -566,7 +560,7 @@ runTest(int argc, char **argv)
 	checkCudaErrors(cuTexRefSetFlags(otf_texref, CU_TRSF_NORMALIZED_COORDINATES));
 	checkCudaErrors(cuTexRefSetFormat(otf_texref, CU_AD_FORMAT_FLOAT, 4));
 	checkCudaErrors(cuTexRefSetArray(otf_texref, otf_array, CU_TRSA_OVERRIDE_FORMAT));
-	free(input_float_1D);
+
    // checkCudaErrors(cuParamSetTexRef(transform, CU_PARAM_TR_DEFAULT, cu_texref));
 
     // There are two ways to launch CUDA kernels via the Driver API.
@@ -589,7 +583,9 @@ runTest(int argc, char **argv)
     }
     else
     {
-        // This is the new CUDA 4.0 API for Kernel Parameter passing and Kernel Launching (advanced method)
+        QueryPerformanceFrequency(&liFrequency);  // 시간 측정 초기화
+		QueryPerformanceCounter(&start); 
+		// This is the new CUDA 4.0 API for Kernel Parameter passing and Kernel Launching (advanced method)
         int offset = 0;
         char argBuffer[256];
 
@@ -624,27 +620,36 @@ runTest(int argc, char **argv)
                                        16   , 16     , 1,
                                        0,
                                        NULL, NULL, (void **)&kernel_launch_config));
-        checkCudaErrors(cuCtxSynchronize());
+
+		
+	   QueryPerformanceCounter(&end);
+	   printf("%f\n",(double)(end.QuadPart - start.QuadPart) / (double)liFrequency.QuadPart);
+		
         
 	}
+	
     checkCudaErrors(cuCtxSynchronize());
     HANDLE source_fh,dest_fh;
 	int readn, writen;
-    // allocate mem for the result on host side
-    uint *h_odata = (uint *) malloc(512*512*4);
-    // copy result from device to host
-    cuMemcpyDtoH(h_odata, d_data, 512*512*4);
+
 	
-    const char* szStr = "dldndrb1";
+
+    // allocate mem for the result on host side
+    uint *h_odata = (uint *) malloc(256*256*4);
+    // copy result from device to host
+    cuMemcpyDtoH(h_odata, d_data, 256*256*4);
+	
+    checkCudaErrors(cuCtxSynchronize());
+    
+	const char* szStr = "dldndrb1";
 	ScreenCapture(szStr,h_odata);
 	
     // cleanup memory
     checkCudaErrors(cuMemFree(d_data));
     checkCudaErrors(cuArrayDestroy(cu_array));
-	free(h_odata);
-	}
+
     checkCudaErrors(cuCtxDestroy(cuContext));
-	
+
     exit(bTestResults ? EXIT_SUCCESS : EXIT_FAILURE);
 	
 }
@@ -759,17 +764,12 @@ initCUDA(int argc, char **argv, CUfunction *transform)
         jitOptVals[2] = (void *)(size_t)jitRegCount;
 
         status = cuModuleLoadDataEx(&cuModule, ptx_source.c_str(), jitNumOptions, jitOptions, (void **)jitOptVals);
-		status = cuModuleLoadDataEx(&cuModule2, ptx_source.c_str(), jitNumOptions, jitOptions, (void **)jitOptVals);
-		printf("%d\n",cuModule);
-		printf("%d\n",cuModule2);
-		printf("> PTX JIT log:\n%s\n", jitLogBuffer);
+
+        printf("> PTX JIT log:\n%s\n", jitLogBuffer);
     }
     else
     {
         status = cuModuleLoad(&cuModule, module_path.c_str());
-		status = cuModuleLoad(&cuModule2, module_path.c_str());
-		printf("%d\n",cuModule);
-		printf("%d\n",cuModule2);
     }
 
     if (CUDA_SUCCESS != status)
