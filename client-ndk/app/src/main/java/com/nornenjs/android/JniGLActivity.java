@@ -3,6 +3,7 @@ package com.nornenjs.android;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -23,10 +24,18 @@ import java.net.URISyntaxException;
 
 public class JniGLActivity extends Activity {
 
-    public boolean isOn = false;
+    static final int NONE = 0;
+    static final int DRAG = 1;
+    static final int ZOOM = 2;
+    int mode = NONE;
+
+    // 핀치시 두좌표간의 거리 저장
+    float oldDist = 1f;
+    float newDist = 1f;
+
     public float beforeX = 0.0f, beforeY = 0.0f;
     public float rotationX = 0.0f, rotationY = 0.0f;
-
+    public float div=3.0f;
     private MyEventListener myEventListener;
 
     public void setMyEventListener(MyEventListener myEventListener) {
@@ -68,39 +77,93 @@ public class JniGLActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        Log.v("opengl", "onTouchEvent");
-
-        switch(event.getAction()) {
+       // Log.v("opengl", "onTouchEvent");
+        int act = event.getAction();
+        switch(act & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN :
-                Log.d("opengl", "onTouchEvent : ACTION_DOWN");
-                isOn = true;
 
-                beforeX = event.getX();
-                beforeY = event.getY();
+                beforeX = event.getX();  //posX1
+                beforeY = event.getY();  //posY1
 
+
+                mode = DRAG;
                 break;
+
             case MotionEvent.ACTION_MOVE :
-                Log.d("opengl", "onTouchEvent : ACTION_MOVE");
-                if(isOn) {
-                    //calc
+
+                if(mode == DRAG) {
+
                     rotationX += (event.getX() - beforeX) / 10.0;
                     rotationY += (event.getY() - beforeY) / 10.0;
 
                     beforeX = event.getX();
                     beforeY = event.getY();
-                    
+
                     myEventListener.onMyevent(rotationX, rotationY);
                 }
+                else if (mode == ZOOM) {
+
+                    newDist = spacing(event);
+
+                    if (newDist - oldDist > 50) { // zoom in
+
+                        oldDist = newDist;
+                        div += (((newDist / oldDist) / 50) * 10);
+
+                        if(div >=10.0f) {
+                            div=10.0f;
+                        }
+
+                        Log.d("opengl zoom in", "" + div);
+
+
+                    }
+                    else if(oldDist - newDist > 50) { // zoom out
+
+                        oldDist = newDist;
+                        div -= (((newDist / oldDist) / 50) * 10);
+
+                        if(div <0.0f){
+                            div=0.0f;
+                        }
+
+                        Log.d("opengl zoom out",""+div);
+                    }
+                    else if(oldDist - newDist <50) {
+                        Log.d("two finger move","");
+                    }
+
+                }
                 break;
+
             case MotionEvent.ACTION_UP :
-                Log.d("opengl", "onTouchEvent : ACTION_UP");
-                isOn = false;
+                mode = NONE;
                 break;
+            case MotionEvent.ACTION_POINTER_UP:
+                mode = NONE;
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:	// 하나 클릭한 상태에서 추가 클릭.
+                mode = ZOOM;
+
+                newDist = spacing(event);
+                oldDist = spacing(event);
+
+                break;
+            case MotionEvent.ACTION_CANCEL:
+
+            default:
+                    break;
         }
         return super.onTouchEvent(event);
     }
-    
+    private float spacing(MotionEvent event) {
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+
+        return FloatMath.sqrt(x * x + y * y);
+    }
+
     private GLSurfaceView mGLSurfaceView;
 
     /** load irrlicht.so */
@@ -248,7 +311,7 @@ class TouchSurfaceView extends GLSurfaceView {
         @Override
         public void onMyevent(float rotationX, float rotationY) {
             //받아서 서버에 보내기
-            Log.d("opengl", "!!!!!!!!!!!");
+            //Log.d("opengl", "!!!!!!!!!!!");
             
             JSONObject jsonObject = new JSONObject();
             try {
@@ -258,6 +321,7 @@ class TouchSurfaceView extends GLSurfaceView {
                 e.printStackTrace();
                 Log.e("error", "Make json object");
             }
+
             socket.emit("touch", jsonObject);
         }
     }
