@@ -1,6 +1,6 @@
 src/socket.d: ../src/socket.cpp \
  /home/hyok/git/nornenjs.v3/hyok/inc/socket.hpp \
- /home/hyok/git/nornenjs.v3/hyok/inc/socket_io_client.hpp \
+ /home/hyok/Downloads/socket.io-clientpp-master/src/socket_io_client.hpp \
  /usr/local/src/boost_1_57_0/boost/shared_ptr.hpp \
  /usr/local/src/boost_1_57_0/boost/smart_ptr/shared_ptr.hpp \
  /usr/local/src/boost_1_57_0/boost/config.hpp \
@@ -159,7 +159,6 @@ src/socket.d: ../src/socket.cpp \
  /usr/local/src/boost_1_57_0/boost/smart_ptr/scoped_ptr.hpp \
  /usr/local/src/boost_1_57_0/boost/scoped_array.hpp \
  /usr/local/src/boost_1_57_0/boost/smart_ptr/scoped_array.hpp \
- /usr/local/src/boost_1_57_0/boost/shared_ptr.hpp \
  /usr/local/src/boost_1_57_0/boost/mpl/bool_fwd.hpp \
  /usr/local/src/boost_1_57_0/boost/mpl/aux_/adl_barrier.hpp \
  /usr/local/src/boost_1_57_0/boost/mpl/aux_/config/adl.hpp \
@@ -1145,8 +1144,6 @@ src/socket.d: ../src/socket.cpp \
  /home/hyok/Downloads/socket.io-clientpp-master/lib/rapidjson/include/rapidjson/filestream.h \
  /home/hyok/Downloads/socket.io-clientpp-master/lib/rapidjson/include/rapidjson/stringwriter.h \
  /home/hyok/Downloads/websocketpp/src/roles/client.hpp \
- /usr/local/src/boost_1_57_0/boost/asio.hpp \
- /usr/local/src/boost_1_57_0/boost/bind.hpp \
  /usr/local/src/boost_1_57_0/boost/random.hpp \
  /usr/local/src/boost_1_57_0/boost/random/additive_combine.hpp \
  /usr/local/src/boost_1_57_0/boost/random/detail/config.hpp \
@@ -1218,7 +1215,6 @@ src/socket.d: ../src/socket.cpp \
  /home/hyok/Downloads/websocketpp/src/roles/../http/parser.hpp \
  /home/hyok/Downloads/websocketpp/src/roles/../http/constants.hpp \
  /home/hyok/Downloads/websocketpp/src/roles/../logger/logger.hpp \
- /usr/local/src/boost_1_57_0/boost/date_time/posix_time/posix_time.hpp \
  /home/hyok/Downloads/websocketpp/src/roles/../roles/server.hpp \
  /home/hyok/Downloads/websocketpp/src/roles/../roles/../processors/hybi.hpp \
  /home/hyok/Downloads/websocketpp/src/roles/../roles/../processors/processor.hpp \
@@ -1496,27 +1492,11 @@ src/socket.d: ../src/socket.cpp \
  /home/hyok/Downloads/websocketpp/src/roles/../shared_const_buffer.hpp \
  /home/hyok/Downloads/websocketpp/src/websocketpp.hpp \
  /home/hyok/Downloads/websocketpp/src/common.hpp \
- /home/hyok/Downloads/websocketpp/src/endpoint.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/include.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/chrono.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/chrono_io.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/io_v1/chrono_io.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/process_cpu_clocks.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/thread_clock.hpp \
- /usr/local/src/boost_1_57_0/boost/ratio/ratio_io.hpp \
- /usr/local/src/boost_1_57_0/boost/ratio/detail/ratio_io.hpp \
- /usr/local/src/boost_1_57_0/boost/math/common_factor_rt.hpp \
- /usr/local/src/boost_1_57_0/boost/math_fwd.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/detail/scan_keyword.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/detail/no_warning/signed_unsigned_cmp.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/io/utility/to_string.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/floor.hpp \
- /usr/local/src/boost_1_57_0/boost/chrono/round.hpp
+ /home/hyok/Downloads/websocketpp/src/endpoint.hpp
 
 /home/hyok/git/nornenjs.v3/hyok/inc/socket.hpp:
 
-/home/hyok/git/nornenjs.v3/hyok/inc/socket_io_client.hpp:
+/home/hyok/Downloads/socket.io-clientpp-master/src/socket_io_client.hpp:
 
 /usr/local/src/boost_1_57_0/boost/shared_ptr.hpp:
 
@@ -1833,8 +1813,6 @@ src/socket.d: ../src/socket.cpp \
 /usr/local/src/boost_1_57_0/boost/scoped_array.hpp:
 
 /usr/local/src/boost_1_57_0/boost/smart_ptr/scoped_array.hpp:
-
-/usr/local/src/boost_1_57_0/boost/shared_ptr.hpp:
 
 /usr/local/src/boost_1_57_0/boost/mpl/bool_fwd.hpp:
 
@@ -3806,10 +3784,6 @@ src/socket.d: ../src/socket.cpp \
 
 /home/hyok/Downloads/websocketpp/src/roles/client.hpp:
 
-/usr/local/src/boost_1_57_0/boost/asio.hpp:
-
-/usr/local/src/boost_1_57_0/boost/bind.hpp:
-
 /usr/local/src/boost_1_57_0/boost/random.hpp:
 
 /usr/local/src/boost_1_57_0/boost/random/additive_combine.hpp:
@@ -3951,8 +3925,6 @@ src/socket.d: ../src/socket.cpp \
 /home/hyok/Downloads/websocketpp/src/roles/../http/constants.hpp:
 
 /home/hyok/Downloads/websocketpp/src/roles/../logger/logger.hpp:
-
-/usr/local/src/boost_1_57_0/boost/date_time/posix_time/posix_time.hpp:
 
 /home/hyok/Downloads/websocketpp/src/roles/../roles/server.hpp:
 
@@ -4509,35 +4481,3 @@ src/socket.d: ../src/socket.cpp \
 /home/hyok/Downloads/websocketpp/src/common.hpp:
 
 /home/hyok/Downloads/websocketpp/src/endpoint.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/include.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/chrono.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/chrono_io.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/io_v1/chrono_io.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/process_cpu_clocks.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/thread_clock.hpp:
-
-/usr/local/src/boost_1_57_0/boost/ratio/ratio_io.hpp:
-
-/usr/local/src/boost_1_57_0/boost/ratio/detail/ratio_io.hpp:
-
-/usr/local/src/boost_1_57_0/boost/math/common_factor_rt.hpp:
-
-/usr/local/src/boost_1_57_0/boost/math_fwd.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/detail/scan_keyword.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/detail/no_warning/signed_unsigned_cmp.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/io/utility/to_string.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/floor.hpp:
-
-/usr/local/src/boost_1_57_0/boost/chrono/round.hpp:
