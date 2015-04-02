@@ -1,5 +1,7 @@
 #include <tizen.h>
 #include "hyok.h"
+#include "socket.hpp"
+
 
 typedef struct appdata {
 	Evas_Object *win;
@@ -147,6 +149,7 @@ main(int argc, char *argv[])
 	//socketio_client_handler_ptr handler(new socketio_client_handler());
 	//client endpoint(handler);
 	//client::connection_ptr con = endpoint.get_connection(handler->perform_handshake("ws://localhost:8080"));
+
 
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);
