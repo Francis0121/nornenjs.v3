@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3" package="org.tizen.hyok" version="1.0.0">
+	<profile name="mobile" />
+	<ui-application appid="org.tizen.hyok" exec="hyok" type="capp" multiple="false" taskmanage="true" nodisplay="false">
+		<icon>hyok.png</icon>
+		<label>hyok</label>
+	</ui-application>
+	<privileges>
+		<privilege>http://tizen.org/privilege/systemsettings</privilege>
+	</privileges>
+</manifest>
