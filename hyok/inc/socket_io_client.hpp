@@ -11,7 +11,7 @@
 #define SOCKET_IO_CLIENT_HPP
 
 #pragma warning(disable:4355) // C4355: this used in base member initializer list
-#include </usr/local/src/boost_1_57_0/boost/shared_ptr.hpp>
+#include </usr/local/src/boost_1_57_0/boost/shared_ptr.hpp>//add /user/local/src
 #include </usr/local/src/boost_1_57_0/boost/regex.hpp>
 #include </usr/local/src/boost_1_57_0/boost/asio.hpp>
 #include </usr/local/src/boost_1_57_0/boost/bind.hpp>
