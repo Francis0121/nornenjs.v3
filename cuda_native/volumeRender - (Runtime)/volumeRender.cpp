@@ -89,7 +89,7 @@ typedef unsigned char VolumeType;
 //cudaExtent volumeSize = make_cudaExtent(416, 512, 112);
 //typedef unsigned short VolumeType;
 
-uint width = 512, height = 512;
+uint width = 768, height = 768;
 dim3 blockSize(32, 32);
 dim3 gridSize;
 
@@ -247,7 +247,8 @@ void render()
 
     // clear image
     checkCudaErrors(cudaMemset(d_output, 0, width*height*4));
-
+	printf("grid %d %d %d\n",gridSize.x,gridSize.y,gridSize.z);
+	printf("block %d %d %d\n",blockSize.x,blockSize.y,blockSize.z);
     // call CUDA kernel, writing results to PBO
     render_kernel(gridSize, blockSize, d_output, width, height, density, brightness, transferOffset, transferScale);
 	
@@ -482,7 +483,7 @@ void motion(int x, int y)
         // left = rotate
         viewRotation.x += dy / 5.0f;
         viewRotation.y += dx / 5.0f;
-		printf("%f %f\n",viewRotation.x,viewRotation.y);
+		//printf("%f %f\n",viewRotation.x,viewRotation.y);
     }
 
     ox = x;
@@ -504,7 +505,7 @@ void reshape(int w, int h)
 
     // calculate new grid size
     gridSize = dim3(iDivUp(width, blockSize.x), iDivUp(height, blockSize.y));
-
+	
     glViewport(0, 0, w, h);
 
     glMatrixMode(GL_MODELVIEW);

@@ -622,9 +622,7 @@ runTest(int argc, char **argv)
                                        NULL, NULL, (void **)&kernel_launch_config));
 
 		
-	   QueryPerformanceCounter(&end);
-	   printf("%f\n",(double)(end.QuadPart - start.QuadPart) / (double)liFrequency.QuadPart);
-		
+	   
         
 	}
 	
@@ -638,7 +636,9 @@ runTest(int argc, char **argv)
     uint *h_odata = (uint *) malloc(256*256*4);
     // copy result from device to host
     cuMemcpyDtoH(h_odata, d_data, 256*256*4);
-	
+	QueryPerformanceCounter(&end);
+	   printf("%f\n",(double)(end.QuadPart - start.QuadPart) / (double)liFrequency.QuadPart);
+		
     checkCudaErrors(cuCtxSynchronize());
     
 	const char* szStr = "dldndrb1";
