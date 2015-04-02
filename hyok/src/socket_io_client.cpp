@@ -8,8 +8,8 @@
  */
 
 #include "socket_io_client.hpp"
-#include <messages/data.cpp>
-#include <uri.cpp>
+#include <messages/data.cpp>//hyok insert
+#include <uri.cpp>//hyok insert
 // Comment this out to disable handshake logging to stdout
 #define LOG(x) std::cout << x
 //#define LOG(x)

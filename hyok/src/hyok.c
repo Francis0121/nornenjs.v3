@@ -1,8 +1,6 @@
 #include <tizen.h>
 #include "hyok.h"
 
-//#include "socket_io_client.hpp"
-
 typedef struct appdata {
 	Evas_Object *win;
 	Evas_Object *conform;
