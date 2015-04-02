@@ -18,6 +18,7 @@
 #include <system_settings.h>
 #include <Evas_GL_GLES2_Helpers.h>
 #include <efl_extension.h>
+
 #include "nornenjs.h"
 #include "nornenjs_utils.h"
 
