@@ -1,6 +1,7 @@
 /**
  * Copyright Francis kim.
  */
+var EVENT_MESSAGE = require('./message');
 var ENUMS = require('../enums');
 var logger = require('../logger');
 var Encoding = require('../cuda/encoding').Encoding;
@@ -46,7 +47,7 @@ Android.prototype.pngEventListener = function(){
     var $this = this,
         socket = this.socket;
 
-    socket.on('androidPng', function(option){
+    socket.on(EVENT_MESSAGE.ANDROID.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         $this.encoding.png(cudaRender, socket);
     });
@@ -60,8 +61,7 @@ Android.prototype.touchEventListener = function(){
     var $this = this,
         socket = this.socket;
 
-    socket.on('touch', function(option){
-
+    socket.on(EVENT_MESSAGE.ANDROID.TOUCH, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
         cudaRender.rotationX = option.rotationX;

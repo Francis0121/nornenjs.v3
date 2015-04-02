@@ -1,6 +1,7 @@
 /**
  * Copyright Francis kim.
  */
+var EVENT_MESSAGE = require('./message');
 var ENUMS = require('../enums');
 var logger = require('../logger');
 var Encoding = require('../cuda/encoding').Encoding;
@@ -46,7 +47,7 @@ Web.prototype.pngEventListener = function(){
     var $this = this, 
         socket = this.socket;
 
-    socket.on('webPng', function(option){
+    socket.on(EVENT_MESSAGE.WEB.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         $this.encoding.png(cudaRender, socket);
     });
@@ -60,8 +61,7 @@ Web.prototype.leftMouseEventListener = function(){
     var $this = this,
         socket = this.socket;
 
-    socket.on('leftMouse', function(option){
-
+    socket.on(EVENT_MESSAGE.WEB.LEFT_CLICK, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
         cudaRender.rotationX = option.rotationX;
