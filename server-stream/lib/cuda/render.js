@@ -40,6 +40,8 @@ var vec3 = require('./mat/vec3');
         transferScaleX : 0.0,
         transferScaleY : 0.0,
         transferScaleZ : 0.0,
+        positionX: 0.0,
+        positionY: 0.0,
         positionZ: 3.0,
         rotationX: 0,
         rotationY: 0,
@@ -82,8 +84,8 @@ var vec3 = require('./mat/vec3');
 
                     vec = vec3.fromValues(0.0, 1.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (- 90) * 3.14159265 / 180.0), vec);
-
-                    vec = vec3.fromValues(0.0, 0.0, this.positionZ);
+                    //logger.debug('[INFO_CUDA] _cuModule.memTextureAlloc~~~~~~~~~~~~~~~~~~', this.positionX);
+                    vec = vec3.fromValues(-this.positionX, this.positionY, this.positionZ);
                     mat4.translate(model_matrix, model_matrix, vec)
                 }else if(this.mprType == ENUMS.MPR_TYPE.Y){
                     vec = vec3.fromValues(-1.0, 0.0, 0.0);
@@ -92,7 +94,7 @@ var vec3 = require('./mat/vec3');
                     vec = vec3.fromValues(0.0, 1.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (0.0 ) * 3.14159265 / 180.0), vec);
 
-                    vec = vec3.fromValues(0.0, 0.0, this.positionZ);
+                    vec = vec3.fromValues(-this.positionX, this.positionY, this.positionZ);
                     mat4.translate(model_matrix, model_matrix, vec)
                 }else if(this.mprType == ENUMS.MPR_TYPE.Z) {
                     vec = vec3.fromValues(-1.0, 0.0, 0.0);
@@ -101,7 +103,7 @@ var vec3 = require('./mat/vec3');
                     vec = vec3.fromValues(0.0, 1.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (0.0 ) * 3.14159265 / 180.0), vec);
 
-                    vec = vec3.fromValues(0.0, 0.0, this.positionZ);
+                    vec = vec3.fromValues(-this.positionX, this.positionY, this.positionZ);
                     mat4.translate(model_matrix, model_matrix, vec)
                 }
             }else{
@@ -112,7 +114,7 @@ var vec3 = require('./mat/vec3');
                 vec = vec3.fromValues(0.0, 1.0, 0.0);
                 mat4.rotate(model_matrix, model_matrix,( (0.0 + (this.rotationX*-1)) * 3.14159265 / 180.0), vec);
 
-                vec = vec3.fromValues(0.0, 0.0, this.positionZ);
+                vec = vec3.fromValues(-this.positionX, this.positionY, this.positionZ);
                 mat4.translate(model_matrix, model_matrix,vec)
             }
             /*view vector*/

@@ -114,7 +114,7 @@ public class JniGLActivity extends Activity {
                     beforeX = event.getX();
                     beforeY = event.getY();
 
-                    myEventListener.onMyevent(rotationX, rotationY);
+                    myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
                 }
                 else if(event.getPointerCount() == 2) { //multi touch
 
@@ -124,21 +124,22 @@ public class JniGLActivity extends Activity {
                     if((VecotrDirection(oldVectorX1,newVectorX1) == (VecotrDirection(oldVectorX2,newVectorX2)) &&  //multi touch translation
                             (VecotrDirection(oldVectorY1,newVectorY1) == (VecotrDirection(oldVectorY2,newVectorY2))))){
 
-                        newDist = spacing(event);
-                        if(Math.abs(newDist - oldDist) < 10 && newDist < 150) { // 이동
+                       newDist = spacing(event);
+                       // if(Math.abs(newDist - oldDist) < 10 && newDist < 150) { // 이동
 
                             newMidVectorX= midPoint(newVectorX1,newVectorX2);
                             newMidVectorY= midPoint(newVectorY1,newVectorY2);
 
-                            translationX += (newMidVectorX - oldMidVectorX) / 100.0;
-                            translationY -= (newMidVectorY - oldMidVectorY) / 100.0;
+                            translationX += (newMidVectorX - oldMidVectorX) / 250.0;
+                            translationY -= (newMidVectorY - oldMidVectorY) / 250.0;
 
                             oldMidVectorX = newMidVectorX;
                             oldMidVectorY = newMidVectorY;
 
-                            Log.d("opengl two finger translateion", "" + translationX + "  " + translationY);
+                            myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                          //  Log.d("opengl two finger translateion", "" + translationX + "  " + translationY);
 
-                        }
+                      //  }
 
                     }
                     else{ // multi touch pinch zoom
@@ -147,24 +148,25 @@ public class JniGLActivity extends Activity {
                         if (newDist - oldDist > 50) { // zoom in
 
                             oldDist = newDist;
+                            div -= (((newDist / oldDist) / 50) * 10);
+
+                            if (div <= 0.2f) {
+                                div = 0.2f;
+                            }
+                            myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                            //Log.d("opengl zoom out", "" + div);
+
+                        } else if (oldDist - newDist > 50) { // zoom out
+
+                            oldDist = newDist;
                             div += (((newDist / oldDist) / 50) * 10);
 
                             if (div >= 10.0f) {
                                 div = 10.0f;
                             }
+                            myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                           // Log.d("opengl zoom in", "" + div);
 
-                            Log.d("opengl zoom in", "" + div);
-
-                        } else if (oldDist - newDist > 50) { // zoom out
-
-                            oldDist = newDist;
-                            div -= (((newDist / oldDist) / 50) * 10);
-
-                            if (div < 0.0f) {
-                                div = 0.0f;
-                            }
-
-                            Log.d("opengl zoom out", "" + div);
                         }
                     }
                 }
@@ -363,7 +365,7 @@ class TouchSurfaceView extends GLSurfaceView {
         }
 
         @Override
-        public void onMyevent(float rotationX, float rotationY) {
+        public void onMyevent(float rotationX, float rotationY,float translationX, float translationY ,float div) {
             //받아서 서버에 보내기
             //Log.d("opengl", "!!!!!!!!!!!");
             
@@ -371,6 +373,9 @@ class TouchSurfaceView extends GLSurfaceView {
             try {
                 jsonObject.put("rotationX", rotationX);
                 jsonObject.put("rotationY", rotationY);
+                jsonObject.put("positionX", translationX);
+                jsonObject.put("positionY", translationY);
+                jsonObject.put("positionZ", div);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e("error", "Make json object");
