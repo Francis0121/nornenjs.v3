@@ -217,15 +217,15 @@ d_render(uint *d_output, uint imageW, uint imageH,
 	    //}
 		//else{
 			float sample = tex3D(tex, pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-	        float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f+(step.z*0.5));
+	       // float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f+(step.z*0.5));
 			
 			// lookup in transfer function texture
-			//float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
+			float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
 			//float4 col={0.0};
-			float diff;
+			//float diff;
 			//if(sample<=sample_next){
-				 diff=sample_next-sample;
-				 float4 col= (tex1D(transferTex1, (sample_next-transferOffset)*transferScale) - tex1D(transferTex1, (sample-transferOffset)*transferScale)) / diff;
+				// diff=sample_next-sample;
+				// float4 col= (tex1D(transferTex1, (sample_next-transferOffset)*transferScale) - tex1D(transferTex1, (sample-transferOffset)*transferScale)) / diff;
 				
 			//}
 			//else if(sample>sample_next){

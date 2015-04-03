@@ -89,7 +89,7 @@ typedef unsigned char VolumeType;
 //cudaExtent volumeSize = make_cudaExtent(416, 512, 112);
 //typedef unsigned short VolumeType;
 
-uint width = 768, height = 768;
+uint width = 512, height = 512;
 dim3 blockSize(32, 32);
 dim3 gridSize;
 
@@ -247,8 +247,8 @@ void render()
 
     // clear image
     checkCudaErrors(cudaMemset(d_output, 0, width*height*4));
-	printf("grid %d %d %d\n",gridSize.x,gridSize.y,gridSize.z);
-	printf("block %d %d %d\n",blockSize.x,blockSize.y,blockSize.z);
+	//printf("grid %d %d %d\n",gridSize.x,gridSize.y,gridSize.z);
+	//printf("block %d %d %d\n",blockSize.x,blockSize.y,blockSize.z);
     // call CUDA kernel, writing results to PBO
     render_kernel(gridSize, blockSize, d_output, width, height, density, brightness, transferOffset, transferScale);
 	
@@ -324,7 +324,7 @@ void display()
 		fps_sum += elapsed;
 		drawcount++;
 	}else{
-		printf("fps : %d \n", drawcount);
+		//printf("fps : %d \n", drawcount);
 
 		fps_sum = 0.0f;
 		drawcount = 0;
@@ -469,14 +469,17 @@ void motion(int x, int y)
     if (buttonState == 4)
     {
         // right = zoom
-		//printf("%d %d\n",x,y);
+		
         viewTranslation.z += dy / 100.0f;
+		printf("%f\n",viewTranslation.z);
     }
     else if (buttonState == 2)
     {
         // middle = translate
+		printf("dx dy %f %f\n",dx,dy);
         viewTranslation.x += dx / 100.0f;
         viewTranslation.y -= dy / 100.0f;
+		printf("%f %f\n",viewTranslation.x,viewTranslation.y);
     }
     else if (buttonState == 1)
     {
