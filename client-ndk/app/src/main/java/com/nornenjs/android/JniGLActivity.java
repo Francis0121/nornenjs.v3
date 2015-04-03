@@ -27,6 +27,7 @@ public class JniGLActivity extends Activity {
     static final int NONE = 0;
     static final int DRAG = 1;
     static final int ZOOM = 2;
+    static final int MULTI_TOUCH = 3;
     int mode = NONE;
 
     // 핀치시 두좌표간의 거리 저장
@@ -82,17 +83,18 @@ public class JniGLActivity extends Activity {
         switch(act & MotionEvent.ACTION_MASK) {
 
             case MotionEvent.ACTION_DOWN :
+                if(event.getPointerCount()==1){
+                    beforeX = event.getX();  //posX1
+                    beforeY = event.getY();  //posY1
 
-                beforeX = event.getX();  //posX1
-                beforeY = event.getY();  //posY1
 
-
-                mode = DRAG;
+                    mode = DRAG;
+                }
                 break;
 
             case MotionEvent.ACTION_MOVE :
 
-                if(mode == DRAG) {
+                if(mode == DRAG && event.getPointerCount() == 1 ) {
 
                     rotationX += (event.getX() - beforeX) / 10.0;
                     rotationY += (event.getY() - beforeY) / 10.0;
@@ -102,38 +104,41 @@ public class JniGLActivity extends Activity {
 
                     myEventListener.onMyevent(rotationX, rotationY);
                 }
-                else if (mode == ZOOM) {
+                else if(event.getPointerCount() == 2) {
 
                     newDist = spacing(event);
 
-                    if (newDist - oldDist > 50) { // zoom in
+                    if(Math.abs(newDist - oldDist) < 10 && newDist < 200) { // 이동
 
-                        oldDist = newDist;
-                        div += (((newDist / oldDist) / 50) * 10);
+                        Log.d("opengl two finger translateion","이동");
 
-                        if(div >=10.0f) {
-                            div=10.0f;
+                    }
+                    else { //pinch
+
+                        if (newDist - oldDist > 50) { // zoom in
+
+                            oldDist = newDist;
+                            div += (((newDist / oldDist) / 50) * 10);
+
+                            if (div >= 10.0f) {
+                                div = 10.0f;
+                            }
+
+                            Log.d("opengl zoom in", "" + div);
+
+                        } else if (oldDist - newDist > 50) { // zoom out
+
+                            oldDist = newDist;
+                            div -= (((newDist / oldDist) / 50) * 10);
+
+                            if (div < 0.0f) {
+                                div = 0.0f;
+                            }
+
+                            Log.d("opengl zoom out", "" + div);
                         }
 
-                        Log.d("opengl zoom in", "" + div);
-
-
                     }
-                    else if(oldDist - newDist > 50) { // zoom out
-
-                        oldDist = newDist;
-                        div -= (((newDist / oldDist) / 50) * 10);
-
-                        if(div <0.0f){
-                            div=0.0f;
-                        }
-
-                        Log.d("opengl zoom out",""+div);
-                    }
-                    else if(oldDist - newDist <50) {
-                        Log.d("two finger move","");
-                    }
-
                 }
                 break;
 
@@ -144,10 +149,18 @@ public class JniGLActivity extends Activity {
                 mode = NONE;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:	// 하나 클릭한 상태에서 추가 클릭.
-                mode = ZOOM;
 
-                newDist = spacing(event);
-                oldDist = spacing(event);
+                //mode = MULTI_TOUCH;
+               // float dist = spacing(event);
+              //  if(dist > 150.0f) {
+                    // Log.d("opengl zoom" ,"" + dist);
+              //      mode = ZOOM;
+                   newDist = spacing(event);
+                   oldDist = spacing(event);
+
+             //   }else {
+             //       Log.d("opengl two finger translateion" ,""+dist);
+             //   }
 
                 break;
             case MotionEvent.ACTION_CANCEL:
