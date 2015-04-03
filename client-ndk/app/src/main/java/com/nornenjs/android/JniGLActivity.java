@@ -37,6 +37,13 @@ public class JniGLActivity extends Activity {
     public float beforeX = 0.0f, beforeY = 0.0f;
     public float rotationX = 0.0f, rotationY = 0.0f;
     public float div=3.0f;
+
+    public float oldVectorX1 =0.0f, oldVectorY1 =0.0f;
+    public float oldVectorX2 =0.0f, oldVectorY2 =0.0f;
+
+    public float newVectorX1 =0.0f, newVectorY1 =0.0f;
+    public float newVectorX2 =0.0f, newVectorY2 =0.0f;
+
     private MyEventListener myEventListener;
 
     public void setMyEventListener(MyEventListener myEventListener) {
@@ -106,14 +113,31 @@ public class JniGLActivity extends Activity {
                 }
                 else if(event.getPointerCount() == 2) {
 
-                    newDist = spacing(event);
+                    newVectorX1 = event.getX(0);
+                    newVectorX2 = event.getX(1);
+                    newVectorY1 = event.getY(0);
+                    newVectorY2 = event.getY(1);
 
-                    if(Math.abs(newDist - oldDist) < 10 && newDist < 200) { // 이동
+                   // Log.d("opengl newx1, newy1", "" + newVectorX1 + "  "+ newVectorY1 + "  " + (VecotrDirection(oldVectorX1,newVectorX1)));
+                   // Log.d("opengl newx2, newy2", "" + newVectorX2 + "  "+ newVectorY2 + "  " + (VecotrDirection(oldVectorX2,newVectorX2)));
+                  //  Log.d("opengl oldx1, oldy1", "" + oldVectorX1 + "  "+ oldVectorY1 + "  " + (VecotrDirection(oldVectorY1,newVectorY2)));
+                  //  Log.d("opengl oldx2, oldy2", "" + oldVectorX2 + "  "+ oldVectorY2 + "  " + (VecotrDirection(oldVectorY2,newVectorY2)));
+                    if((VecotrDirection(oldVectorX1,newVectorX1) == (VecotrDirection(oldVectorX2,newVectorX2)) &&
+                            (VecotrDirection(oldVectorY1,newVectorY1) == (VecotrDirection(oldVectorY2,newVectorY2))))){
 
-                        Log.d("opengl two finger translateion","이동");
+                         newDist = spacing(event);
+                        if(Math.abs(newDist - oldDist) < 10 && newDist < 150) { // 이동
+
+                            Log.d("opengl two finger translateion","dddddddddd");
+
+                        }
+
+
+
 
                     }
-                    else { //pinch
+                    else{
+                        newDist = spacing(event);
 
                         if (newDist - oldDist > 50) { // zoom in
 
@@ -149,20 +173,16 @@ public class JniGLActivity extends Activity {
                 mode = NONE;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:	// 하나 클릭한 상태에서 추가 클릭.
+                // newDist = spacing(event);
+                oldDist = spacing(event);
 
-                //mode = MULTI_TOUCH;
-               // float dist = spacing(event);
-              //  if(dist > 150.0f) {
-                    // Log.d("opengl zoom" ,"" + dist);
-              //      mode = ZOOM;
-                   newDist = spacing(event);
-                   oldDist = spacing(event);
+                oldVectorX1 = event.getX(0);
+                oldVectorX2 = event.getX(1);
 
-             //   }else {
-             //       Log.d("opengl two finger translateion" ,""+dist);
-             //   }
-
+                oldVectorY1 = event.getY(0);
+                oldVectorY2 = event.getY(1);
                 break;
+
             case MotionEvent.ACTION_CANCEL:
 
             default:
@@ -175,6 +195,17 @@ public class JniGLActivity extends Activity {
         float y = event.getY(0) - event.getY(1);
 
         return FloatMath.sqrt(x * x + y * y);
+    }
+    private boolean VecotrDirection(float vector1, float vector2) { //음수면 0 양수면 1
+
+        if(vector2 - vector1<0) {
+
+            return false;
+        }else {
+
+            return true;
+        }
+
     }
 
     private GLSurfaceView mGLSurfaceView;
