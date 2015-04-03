@@ -1,6 +1,7 @@
 package com.nornenjs.android;
 
 
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.FloatMath;
@@ -30,12 +31,13 @@ public class JniGLActivity extends Activity {
     static final int MULTI_TOUCH = 3;
     int mode = NONE;
 
-    // 핀치시 두좌표간의 거리 저장
-    float oldDist = 1f;
-    float newDist = 1f;
+    float oldDist = 1.0f;
+    float newDist = 1.0f;
 
     public float beforeX = 0.0f, beforeY = 0.0f;
     public float rotationX = 0.0f, rotationY = 0.0f;
+    public float translationX =0.0f, translationY =0.0f;
+
     public float div=3.0f;
 
     public float oldVectorX1 =0.0f, oldVectorY1 =0.0f;
@@ -43,6 +45,9 @@ public class JniGLActivity extends Activity {
 
     public float newVectorX1 =0.0f, newVectorY1 =0.0f;
     public float newVectorX2 =0.0f, newVectorY2 =0.0f;
+
+    public float oldMidVectorX=0.0f, oldMidVectorY=0.0f;
+    public float newMidVectorX=0.0f, newMidVectorY=0.0f;
 
     private MyEventListener myEventListener;
 
@@ -91,9 +96,9 @@ public class JniGLActivity extends Activity {
 
             case MotionEvent.ACTION_DOWN :
                 if(event.getPointerCount()==1){
+
                     beforeX = event.getX();  //posX1
                     beforeY = event.getY();  //posY1
-
 
                     mode = DRAG;
                 }
@@ -101,7 +106,7 @@ public class JniGLActivity extends Activity {
 
             case MotionEvent.ACTION_MOVE :
 
-                if(mode == DRAG && event.getPointerCount() == 1 ) {
+                if(mode == DRAG && event.getPointerCount() == 1 ) {  //one finger DRAG
 
                     rotationX += (event.getX() - beforeX) / 10.0;
                     rotationY += (event.getY() - beforeY) / 10.0;
@@ -111,32 +116,32 @@ public class JniGLActivity extends Activity {
 
                     myEventListener.onMyevent(rotationX, rotationY);
                 }
-                else if(event.getPointerCount() == 2) {
+                else if(event.getPointerCount() == 2) { //multi touch
 
-                    newVectorX1 = event.getX(0);
-                    newVectorX2 = event.getX(1);
-                    newVectorY1 = event.getY(0);
-                    newVectorY2 = event.getY(1);
+                    newVectorX1 = event.getX(0); newVectorX2 = event.getX(1);
+                    newVectorY1 = event.getY(0); newVectorY2 = event.getY(1);
 
-                   // Log.d("opengl newx1, newy1", "" + newVectorX1 + "  "+ newVectorY1 + "  " + (VecotrDirection(oldVectorX1,newVectorX1)));
-                   // Log.d("opengl newx2, newy2", "" + newVectorX2 + "  "+ newVectorY2 + "  " + (VecotrDirection(oldVectorX2,newVectorX2)));
-                  //  Log.d("opengl oldx1, oldy1", "" + oldVectorX1 + "  "+ oldVectorY1 + "  " + (VecotrDirection(oldVectorY1,newVectorY2)));
-                  //  Log.d("opengl oldx2, oldy2", "" + oldVectorX2 + "  "+ oldVectorY2 + "  " + (VecotrDirection(oldVectorY2,newVectorY2)));
-                    if((VecotrDirection(oldVectorX1,newVectorX1) == (VecotrDirection(oldVectorX2,newVectorX2)) &&
+                    if((VecotrDirection(oldVectorX1,newVectorX1) == (VecotrDirection(oldVectorX2,newVectorX2)) &&  //multi touch translation
                             (VecotrDirection(oldVectorY1,newVectorY1) == (VecotrDirection(oldVectorY2,newVectorY2))))){
 
-                         newDist = spacing(event);
+                        newDist = spacing(event);
                         if(Math.abs(newDist - oldDist) < 10 && newDist < 150) { // 이동
 
-                            Log.d("opengl two finger translateion","dddddddddd");
+                            newMidVectorX= midPoint(newVectorX1,newVectorX2);
+                            newMidVectorY= midPoint(newVectorY1,newVectorY2);
+
+                            translationX += (newMidVectorX - oldMidVectorX) / 100.0;
+                            translationY -= (newMidVectorY - oldMidVectorY) / 100.0;
+
+                            oldMidVectorX = newMidVectorX;
+                            oldMidVectorY = newMidVectorY;
+
+                            Log.d("opengl two finger translateion", "" + translationX + "  " + translationY);
 
                         }
 
-
-
-
                     }
-                    else{
+                    else{ // multi touch pinch zoom
                         newDist = spacing(event);
 
                         if (newDist - oldDist > 50) { // zoom in
@@ -161,7 +166,6 @@ public class JniGLActivity extends Activity {
 
                             Log.d("opengl zoom out", "" + div);
                         }
-
                     }
                 }
                 break;
@@ -172,15 +176,16 @@ public class JniGLActivity extends Activity {
             case MotionEvent.ACTION_POINTER_UP:
                 mode = NONE;
                 break;
-            case MotionEvent.ACTION_POINTER_DOWN:	// 하나 클릭한 상태에서 추가 클릭.
+            case MotionEvent.ACTION_POINTER_DOWN:
                 // newDist = spacing(event);
                 oldDist = spacing(event);
 
-                oldVectorX1 = event.getX(0);
-                oldVectorX2 = event.getX(1);
+                oldVectorX1 = event.getX(0);oldVectorX2 = event.getX(1);
+                oldVectorY1 = event.getY(0);oldVectorY2 = event.getY(1);
 
-                oldVectorY1 = event.getY(0);
-                oldVectorY2 = event.getY(1);
+                oldMidVectorX= midPoint(oldVectorX1,oldVectorX2);
+                oldMidVectorY= midPoint(oldVectorY1,oldVectorY2);
+
                 break;
 
             case MotionEvent.ACTION_CANCEL:
@@ -191,18 +196,23 @@ public class JniGLActivity extends Activity {
         return super.onTouchEvent(event);
     }
     private float spacing(MotionEvent event) {
+
         float x = event.getX(0) - event.getX(1);
         float y = event.getY(0) - event.getY(1);
 
         return FloatMath.sqrt(x * x + y * y);
+
+    }
+    private float midPoint(float vector1, float vector2) {
+
+        float midVector = vector1 + vector2;
+        return midVector/2;
+
     }
     private boolean VecotrDirection(float vector1, float vector2) { //음수면 0 양수면 1
-
-        if(vector2 - vector1<0) {
-
+        if(vector2 - vector1<0){
             return false;
-        }else {
-
+        }else{
             return true;
         }
 
