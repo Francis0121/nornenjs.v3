@@ -143,10 +143,10 @@ void drawCube()
 
 	int one = 1;
     static short vertices[] = {
-                -1.0f	, 1.0f	, 0.0f, // 0, Left Top
-                 1.0f	, 1.0f	, 0.0f,	// 1, Right Top
-                 1.0f	, -1.0f	, 0.0f,	// 2, Right Bottom
-                -1.0f	, -1.0f	, 0.0f	// 3, Left Bottom
+                -2.0f	, 2.0f	, 0.0f, // 0, Left Top
+                 2.0f	, 2.0f	, 0.0f,	// 1, Right Top
+                 2.0f	, -2.0f	, 0.0f,	// 2, Right Bottom
+                -2.0f	, -2.0f	, 0.0f	// 3, Left Bottom
     };
 
     static float colors[] = {

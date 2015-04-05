@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.SurfaceHolder;
+import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -22,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class JniGLActivity extends Activity {
 
@@ -55,6 +58,15 @@ public class JniGLActivity extends Activity {
         this.myEventListener = myEventListener;
     }
 
+
+    private TimerTask mTask;
+    private Timer mTimer;
+    public Integer count = 0;
+    public Integer draw = 0;
+    public Integer pinch = 0;
+    public Integer rotation = 0;
+    public Integer move = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +79,27 @@ public class JniGLActivity extends Activity {
 
         
         Log.d("bmp", "onCreate");
+
+        mTask = new TimerTask() {
+            @Override
+            public void run() {
+
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                        Toast.makeText(JniGLActivity.this, "FPS " + count, Toast.LENGTH_SHORT).show();
+                        Log.d("opengles", "FPS " + count + ", Draw " + draw + ", Pinch " + pinch + ", Rotation " + rotation + ", Move " + move);
+                        count = 0;
+                        draw = 0;
+                        pinch = 0;
+                        rotation = 0;
+                        move = 0;
+                    }
+                });
+            }
+        };
+
+        mTimer = new Timer();
+        mTimer.schedule(mTask, 1000, 1000);
     }
 
 
@@ -115,6 +148,8 @@ public class JniGLActivity extends Activity {
                     beforeY = event.getY();
 
                     myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                    rotation++;
+
                 }
                 else if(event.getPointerCount() == 2) { //multi touch
 
@@ -137,6 +172,7 @@ public class JniGLActivity extends Activity {
                             oldMidVectorY = newMidVectorY;
 
                             myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                            move++;
                           //  Log.d("opengl two finger translateion", "" + translationX + "  " + translationY);
 
                       //  }
@@ -145,7 +181,7 @@ public class JniGLActivity extends Activity {
                     else{ // multi touch pinch zoom
                         newDist = spacing(event);
 
-                        if (newDist - oldDist > 50) { // zoom in
+                        if (newDist - oldDist > 15) { // zoom in
 
                             oldDist = newDist;
                             div -= (((newDist / oldDist) / 50) * 10);
@@ -154,9 +190,10 @@ public class JniGLActivity extends Activity {
                                 div = 0.2f;
                             }
                             myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                            pinch++;
                             //Log.d("opengl zoom out", "" + div);
 
-                        } else if (oldDist - newDist > 50) { // zoom out
+                        } else if (oldDist - newDist > 15) { // zoom out
 
                             oldDist = newDist;
                             div += (((newDist / oldDist) / 50) * 10);
@@ -165,8 +202,9 @@ public class JniGLActivity extends Activity {
                                 div = 10.0f;
                             }
                             myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
-                           // Log.d("opengl zoom in", "" + div);
+                            pinch++;
 
+                            // Log.d("opengl zoom in", "" + div);
                         }
                     }
                 }
@@ -284,7 +322,7 @@ class TouchSurfaceView extends GLSurfaceView {
             Log.d("socket", "connectin");
             // ~ socket connection
             try {
-                socket = IO.socket("http://112.108.40.19:5000");
+                socket = IO.socket("http://112.108.40.19:4389");
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
@@ -322,12 +360,14 @@ class TouchSurfaceView extends GLSurfaceView {
                 @Override
                 public void call(Object... args) {
                     byteArray = (byte[]) args[0];
+                    mActivity.count++;
                 }
             });
 
             socket.connect();
             
             mActivity.setMyEventListener(this);
+
         }
         
         Bitmap imgPanda;
@@ -339,6 +379,7 @@ class TouchSurfaceView extends GLSurfaceView {
                 imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
                 mActivity.nativeSetTextureData(pixels, 512, 512);
+                mActivity.draw++;
             }
             mActivity.nativeDrawIteration(0, 0);
         }
