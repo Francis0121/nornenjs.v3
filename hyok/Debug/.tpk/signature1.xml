@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>Zat03kC/c4bDTk4oy1xu7EMlyP01NKq/Kr/lB7bm6bM=</DigestValue>
+<DigestValue>UVQRB4bcbjrUbrSkuqRE/yLGJ1iR9H33Qcj6eaRLY9U=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fhyok">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>47TZlfX0B9GdYLwb6hDcm3DUMpxdP08BKwhrng+SjvI=</DigestValue>
+<DigestValue>7NGNlVdIHlIgYKAxJdH3byK/C+8AAVa+Cox1pnCkeCA=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fhyok.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -27,9 +27,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-WqE98MdS8BhoROgb+AHbOAa5X3gRosUZLTsGViKGn8zWrlBSY92ce0rK3ciYOQFSqbDfzHEiHPdG
-MfV49smnzCo/vmOoz9rdhmf60uOY81UmNvkpwRrrTxiOnZ1wbFQfu0O9yd0J5eQZi4lDinYnss9m
-h9B2qVsUW92Nn36/tFQ=
+ezzvdNyaG165DgtDRbHKIoMVwn/2KK2HcYB7VV2jV4N1Y/cYgkdQ8KpqrSq6Y5ndSWkxeFeXmVLx
+Bv2CiXgNrHxVtwBGi1zW3ojNA+DjZMaoZ8NZFaxPInIIfff2NUcS8DgB5T9/c2NGkPbrd5z8uUf3
+eIzqK1dLiiCfPBLfAO0=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

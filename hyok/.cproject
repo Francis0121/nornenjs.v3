@@ -100,8 +100,8 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.492330286" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="/home/hyok/Downloads/boost_1_57_0"/>
-									<listOptionValue builtIn="false" value="/home/hyok/Downloads/socket.io-clientpp-master/lib/rapidjson/include"/>
 									<listOptionValue builtIn="false" value="/home/hyok/Downloads/websocketpp06/src"/>
+									<listOptionValue builtIn="false" value="/home/hyok/Downloads/socket.io-clientpp-master/lib/rapidjson/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc}&quot;"/>
 								</option>
 								<option id="sbi.gnu.cpp.compiler.option.frameworks.core.677548604" name="Tizen-Frameworks" superClass="sbi.gnu.cpp.compiler.option.frameworks.core" valueType="userObjs">
@@ -213,15 +213,14 @@
 									<listOptionValue builtIn="false" value="$(RS_LIBRARIES)"/>
 								</option>
 								<option id="gnu.cpp.link.option.paths.1283543644" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
-									<listOptionValue builtIn="false" value="/home/hyok/Downloads/boost_1_57_0/stage/lib"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lib}&quot;"/>
 									<listOptionValue builtIn="false" value="/home/hyok/Downloads/websocketpp06"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/lib}&quot;"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.156257298" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
-									<listOptionValue builtIn="false" value="websocketpp"/>
 									<listOptionValue builtIn="false" value="boost_random"/>
 									<listOptionValue builtIn="false" value="boost_program_options"/>
 									<listOptionValue builtIn="false" value="boost_thread"/>
+									<listOptionValue builtIn="false" value="websocketpp"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_chrono"/>
 									<listOptionValue builtIn="false" value="boost_filesystem"/>

@@ -2,9 +2,20 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include "socket_io_client.hpp" //in makes Error 중복
+#include <boost/math/common_factor.hpp>
+#include <socket_io_client.hpp>
+
 
 using namespace socketio;
+
+extern "C" {
+
+	char* temp (int v1, int v2) {
+		boost::math::gcd(v1, v2);
+		return "abc";
+	}
+
+}
 
 
 int Test()

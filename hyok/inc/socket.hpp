@@ -1,5 +1,8 @@
-//#include "socket_io_client.hpp"
-//#include "socket_io_client.hpp" //in makes Error 중복
-
-int Test();
-
+//#ifdef __cplusplus
+//extern "C"
+//#endif
+//
+//char* temp (int v1, int v2);
+//
+//int Test();
+//

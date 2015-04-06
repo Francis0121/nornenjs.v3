@@ -1,7 +1,5 @@
 #include <tizen.h>
 #include "hyok.h"
-#include "socket.hpp"
-
 
 typedef struct appdata {
 	Evas_Object *win;
@@ -38,8 +36,6 @@ create_base_gui(appdata_s *ad)
 	evas_object_smart_callback_add(ad->win, "delete,request", win_delete_request_cb, NULL);
 	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb, ad);
 
-	//Test();
-
 	/* Conformant */
 	ad->conform = elm_conformant_add(ad->win);
 	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_SHOW);
@@ -50,7 +46,7 @@ create_base_gui(appdata_s *ad)
 
 	/* Label*/
 	ad->label = elm_label_add(ad->conform);
-	elm_object_text_set(ad->label, "Hello Tizens");
+	elm_object_text_set(ad->label, "Hyok");
 	evas_object_size_hint_weight_set(ad->label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_object_content_set(ad->conform, ad->label);
 	evas_object_show(ad->label);
@@ -147,11 +143,6 @@ main(int argc, char *argv[])
 	event_callback.pause = app_pause;
 	event_callback.resume = app_resume;
 	event_callback.app_control = app_control;
-
-	//socketio_client_handler_ptr handler(new socketio_client_handler());
-	//client endpoint(handler);
-	//client::connection_ptr con = endpoint.get_connection(handler->perform_handshake("ws://localhost:8080"));
-
 
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);

@@ -4,7 +4,87 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fhyok">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>FHIIZlxL4nH9ZCpJ8Z9wlPh/WAi8Bj8NEH1OaO5s+pI=</DigestValue>
+<DigestValue>YP77cthjC7Ot80lOP7gIifBzweJ7MBuRlqhTnr0+uvU=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_atomic.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>yFfw1zz6PbpVyZZd5bRsV/j2750IoysoYrs/1ozSe6Y=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_atomic.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>yFfw1zz6PbpVyZZd5bRsV/j2750IoysoYrs/1ozSe6Y=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_chrono.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>lMf9GhSDx385VZhuOvwN1dqqh6CnowtugMQBEjbhCsc=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_chrono.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>lMf9GhSDx385VZhuOvwN1dqqh6CnowtugMQBEjbhCsc=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_date_time.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>8LPLdnERU8yPNsskijDFMzUl8c39T1oYidtk+sWlDnM=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_date_time.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>8LPLdnERU8yPNsskijDFMzUl8c39T1oYidtk+sWlDnM=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_filesystem.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>bZ1aX1JzqSpcGYEpaU1vcIeEVlRYgaPTjQz84zUJKj8=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_filesystem.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>bZ1aX1JzqSpcGYEpaU1vcIeEVlRYgaPTjQz84zUJKj8=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_program_options.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>Z4VOrORx1ZfiEIHj8mNbky7wqN9WIq2URpEJzBXUVZY=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_program_options.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>Z4VOrORx1ZfiEIHj8mNbky7wqN9WIq2URpEJzBXUVZY=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_random.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>WdmVekLjXDZGEfs7jfcunwrx2x74uovVFyOrrNoHp/Q=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_random.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>WdmVekLjXDZGEfs7jfcunwrx2x74uovVFyOrrNoHp/Q=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_regex.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>DX5cpY4st5JwEtFzTy0CXMw95yBld0xMH3Q6+8suoAo=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_regex.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>DX5cpY4st5JwEtFzTy0CXMw95yBld0xMH3Q6+8suoAo=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_system.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>YhiM3PDXjzxSQy2ctNCKWoIR8krzRgjWX/sva8jJ384=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_system.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>YhiM3PDXjzxSQy2ctNCKWoIR8krzRgjWX/sva8jJ384=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_thread.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>MfxA2lCUdlASlrqHW3m823DcFfub09FfMQ2ZLSFk2RE=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_thread.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>MfxA2lCUdlASlrqHW3m823DcFfub09FfMQ2ZLSFk2RE=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibwebsocketpp.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>1MzJzp0g1Z9xP4ctGJtDnWQR4f1slg/e03k1khBFSvo=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibwebsocketpp.so.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>1MzJzp0g1Z9xP4ctGJtDnWQR4f1slg/e03k1khBFSvo=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fhyok.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -23,25 +103,25 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-Bsn896/n08t9T89klM3NlqurnitOn54GYC3K1OSDqXH9FfQyIaySIGOWdEOmNOXSgig95+fE47J8
-p5ReaQuxHdeN11SZwEy7Ui93fuN/l09+gVklm8b6la9rqyQzxJlKz6QNIycGva4+rgViIYVo5qkW
-JH5ys/w1mThFcSut6Ao=
+SKIwatfPHVhQROadBhokhxrtvmkdpouYMK8zQoFNUCghpTOZ/l0D7D8zPWPaLuuaKWe9Om/4UJvp
+PHZvzDTTaLhR9mGn5qTVQjrCo9xZmXF+LJjba3pfw3Mk0tSAlVC8BbmnVMQALErWhOozaB+uW59s
+bmazEoeQT93nLUwebCE=
 </SignatureValue>
 <KeyInfo>
 <X509Data>
 <X509Certificate>
-MIIClTCCAX2gAwIBAgIGAUyNboH4MA0GCSqGSIb3DQEBBQUAMFYxGjAYBgNVBAoMEVRpemVuIEFz
+MIIClTCCAX2gAwIBAgIGAUyOBvJ8MA0GCSqGSIb3DQEBBQUAMFYxGjAYBgNVBAoMEVRpemVuIEFz
 c29jaWF0aW9uMRowGAYDVQQLDBFUaXplbiBBc3NvY2lhdGlvbjEcMBoGA1UEAwwTVGl6ZW4gRGV2
 ZWxvcGVycyBDQTAeFw0xMjExMDEwMDAwMDBaFw0xOTAxMDEwMDAwMDBaMBExDzANBgNVBAMMBmF1
-dGhvcjCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAisMd0XsSch3m8qSobpd3MCUkgL1NQKpx
-T3BnMT1YizdEr9C/3LDR2n5hKw0gB+qoM1VdtUEj/m3P0R3cxki7oYyzPDxbomhu7RcaRG2GxrjD
-3avF/TG4S4KNFqUtNoYEXqaR+KaVslKaKsxgEV1rdq7ASQJRA7h3zwIf/7bR3pkCAwEAAaMyMDAw
+dGhvcjCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAjXalnPlTadAR27ypEKMZmgA29uDxA0VO
+zAsxOgDZEtcJ0q45CchktZcxyFPe+/s5GT37wn3ZfkgOav48+Ur/+y31vOPQz53sSRshA2Zy/Z03
+96NFh6aVJ0yioJl0a85dlL/HZqd4js797qtMMfOJyEYXxPCMIhy7c0C5Tsi2fOkCAwEAAaMyMDAw
 DAYDVR0TAQH/BAIwADALBgNVHQ8EBAMCB4AwEwYDVR0lBAwwCgYIKwYBBQUHAwMwDQYJKoZIhvcN
-AQEFBQADggEBAEUKT9pwJzeHkR0dTRJ/cXeQVUZy+HM5db34RQWe/kxQpxyl+BgAW0k/wBmZUGWp
-Q7f/RfZbaYf2oC7KvXDPKm5WZeDvgJ4MF50vCZ1jmuTz72HUzq7qWH9k/aNdBX8YbKpFno0LIHfw
-9qWSfaJ/fpzVxAUo60mvMnKsZYKcynaVLovlqpwTyrj/SH418j6qgwa6uxRH5WkNDnWlyrvHGoAr
-/U5SMrkjcdG31iSmnNl4LIkdYgtG0+aHNSXRNgxS+lh5o2UzY48oazA1aCoQFD2AWSWeZnSj5EOg
-vpdyfwoqxRJPj2KthOWkEwVkCoT7ZrmiXloxS5vbHjEFoWQdYPo=
+AQEFBQADggEBAH5h+Ut5jcbrBT+CQripOQ0CnXXY4WN58vbVEz6c8vOA7TR37WIXBFJKwP/wA9go
+vdk0Q3ZYqburk6RWU4NlZRmXm2KgkkXRXPKgDEl5psxKId1fdot9Qow5HUPnTQBhyxAG73Sy9wDu
+D5rktWq/6z7Pht2gma+Xy/w4j+LeTqubwwxVrtapssfMdPLJFjPzz/DtBmEh8+oMh5JUDQxc1jsB
+lYorN9eODglenvXh1DAHr8vRblJUVg7in7kywNJHDjc8aAHbRUPGDHCDuUOHp55XhTSrlwOnc4pv
+RNsyzntUA4cvMyRc/Tr0FWqVOWx77xwH38X3k8DIcvOgm5XVO+A=
 </X509Certificate>
 <X509Certificate>
 MIIDOTCCAiGgAwIBAgIBATANBgkqhkiG9w0BAQUFADBYMRowGAYDVQQKDBFUaXplbiBBc3NvY2lh
