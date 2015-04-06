@@ -1,5 +1,6 @@
 src/socket.d: ../src/socket.cpp \
  /home/hyok/tizen-workspace-2/nornenjs_v3/hyok/inc/socket.hpp \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
  /home/hyok/Downloads/boost_1_57_0/boost/math/common_factor.hpp \
  /home/hyok/Downloads/boost_1_57_0/boost/math/common_factor_ct.hpp \
  /home/hyok/Downloads/boost_1_57_0/boost/math_fwd.hpp \
@@ -1500,6 +1501,8 @@ src/socket.d: ../src/socket.cpp \
  /home/hyok/Downloads/websocketpp06/src/endpoint.hpp
 
 /home/hyok/tizen-workspace-2/nornenjs_v3/hyok/inc/socket.hpp:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
 /home/hyok/Downloads/boost_1_57_0/boost/math/common_factor.hpp:
 

@@ -4,7 +4,87 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="bin%2Fhyok">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>7NGNlVdIHlIgYKAxJdH3byK/C+8AAVa+Cox1pnCkeCA=</DigestValue>
+<DigestValue>pmrNGFtGYBpP2LcTd/GINShkIAM635aAUt42B2n7ADY=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_atomic.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>yFfw1zz6PbpVyZZd5bRsV/j2750IoysoYrs/1ozSe6Y=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_atomic.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>yFfw1zz6PbpVyZZd5bRsV/j2750IoysoYrs/1ozSe6Y=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_chrono.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>lMf9GhSDx385VZhuOvwN1dqqh6CnowtugMQBEjbhCsc=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_chrono.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>lMf9GhSDx385VZhuOvwN1dqqh6CnowtugMQBEjbhCsc=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_date_time.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>8LPLdnERU8yPNsskijDFMzUl8c39T1oYidtk+sWlDnM=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_date_time.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>8LPLdnERU8yPNsskijDFMzUl8c39T1oYidtk+sWlDnM=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_filesystem.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>bZ1aX1JzqSpcGYEpaU1vcIeEVlRYgaPTjQz84zUJKj8=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_filesystem.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>bZ1aX1JzqSpcGYEpaU1vcIeEVlRYgaPTjQz84zUJKj8=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_program_options.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>Z4VOrORx1ZfiEIHj8mNbky7wqN9WIq2URpEJzBXUVZY=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_program_options.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>Z4VOrORx1ZfiEIHj8mNbky7wqN9WIq2URpEJzBXUVZY=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_random.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>WdmVekLjXDZGEfs7jfcunwrx2x74uovVFyOrrNoHp/Q=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_random.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>WdmVekLjXDZGEfs7jfcunwrx2x74uovVFyOrrNoHp/Q=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_regex.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>DX5cpY4st5JwEtFzTy0CXMw95yBld0xMH3Q6+8suoAo=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_regex.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>DX5cpY4st5JwEtFzTy0CXMw95yBld0xMH3Q6+8suoAo=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_system.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>YhiM3PDXjzxSQy2ctNCKWoIR8krzRgjWX/sva8jJ384=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_system.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>YhiM3PDXjzxSQy2ctNCKWoIR8krzRgjWX/sva8jJ384=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_thread.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>MfxA2lCUdlASlrqHW3m823DcFfub09FfMQ2ZLSFk2RE=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibboost_thread.so.1.57.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>MfxA2lCUdlASlrqHW3m823DcFfub09FfMQ2ZLSFk2RE=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibwebsocketpp.so">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>1MzJzp0g1Z9xP4ctGJtDnWQR4f1slg/e03k1khBFSvo=</DigestValue>
+</Reference>
+<Reference URI="lib%2Flibwebsocketpp.so.0">
+<DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
+<DigestValue>1MzJzp0g1Z9xP4ctGJtDnWQR4f1slg/e03k1khBFSvo=</DigestValue>
 </Reference>
 <Reference URI="shared%2Fres%2Fhyok.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -12,7 +92,7 @@
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>y2v5JBCoV48jhbr4Grt6WTHco9Cbv+5cKHcY5qMVcBQ=</DigestValue>
+<DigestValue>fw21ALGienOubWzGOjwBQgrv8BKSq75GJ74T3VaMibs=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -23,9 +103,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-hx2AAELoeE4RLvigBBg7PdQtdbBx5I7i7/B66z+/SNj+pPbZt/Kg0lN2zrNbo0layh+qSxnVugJT
-HIlRzFGkA4ZbAyCq4UVDvyjtKO7IHyTFBEGr6L7uNI1dKDZDwRDFJX7+aGz9G61zpFSCSP61K+Sy
-4tdiARGM6I9Qb4cCeGY=
+FDtJCtX4lIjQ3l015GL68NEf44MPl5QP0ZvBCRHUWSHPFx1ieV77SXC0F9es1ZK4ouMwft5AkA10
+MuvtuyeOo9TMkOYyP7U2SFeg0PLWrPkq76sbxQs1DxkqhNiOqN9/AiZQP1YGfgLhib27MtZbAwGl
+xzWiN7+6NijyioI4yFw=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

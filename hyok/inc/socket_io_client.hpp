@@ -30,6 +30,8 @@
 #include <string>
 #include <queue>
 
+#include <dlog.h>
+
 #define JSON_BUFFER_SIZE 20000
 
 using websocketpp::client;

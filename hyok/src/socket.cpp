@@ -12,27 +12,32 @@ extern "C" {
 
 	char* Test()
 	{
-		std::string uri = "ws://localhost:8080/";
+		std::string uri = "ws://112.108.40.164:8080/";
 		socketio_client_handler_ptr handler(new socketio_client_handler());
 
 		try {
+			dlog_print(DLOG_FATAL, "socket.c", "Test::start Test function");
 			// Create and link handler to websocket++ callbacks.
 			socketio_client_handler_ptr handler(new socketio_client_handler());
 			client::connection_ptr con;
 			client endpoint(handler);
-
+			dlog_print(DLOG_FATAL, "socket.c", "Test::block1");
 			// Set log level. Leave these unset for no logging, or only set a few for selective logging.
 			endpoint.elog().set_level(websocketpp::log::elevel::RERROR);
 			endpoint.elog().set_level(websocketpp::log::elevel::FATAL);
 			endpoint.elog().set_level(websocketpp::log::elevel::WARN);
 			endpoint.alog().set_level(websocketpp::log::alevel::DEVEL);
 
+			dlog_print(DLOG_FATAL, "socket.c", "Test::block2");
 			std::string socket_io_uri = handler->perform_handshake(uri);
+			const char * a = socket_io_uri.c_str();
+			dlog_print(DLOG_FATAL, "socket.c", "Test::tag1 %s", a);
 			con = endpoint.get_connection(socket_io_uri);
 
+			dlog_print(DLOG_FATAL, "socket.c", "Test::block3");
 			// The previous two lines can be combined:
 			// con = endpoint.get_connection(handler->perform_handshake(uri));
-
+			dlog_print(DLOG_FATAL, "socket.c", "Test::connect");
 			endpoint.connect(con);
 
 			boost::thread t(boost::bind(&client::run, &endpoint, false));
@@ -41,7 +46,7 @@ extern "C" {
 			while (!handler->connected()) {
 				sleep(1);
 			}
-
+			dlog_print(DLOG_FATAL, "socket.c", "Test::after sleep, bind event");
 			handler->bind_event("example", &socketio_events::example);
 
 			// After connecting, send a connect message if using an endpoint
@@ -61,9 +66,11 @@ extern "C" {
 			endpoint.stop(false);
 		}catch (std::exception& e) {
 			std::cerr << "Exception: " << e.what() << std::endl;
+			//char * a = e.what();
+			dlog_print(DLOG_FATAL, "socket.c", "Test::exception Error %s", e.what());
 			std::getchar();
 		}
-
+		dlog_print(DLOG_FATAL, "socket.c", "Test::end test function");
 		return "success";
 	}
 
