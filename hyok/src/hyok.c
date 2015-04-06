@@ -1,5 +1,6 @@
 #include <tizen.h>
 #include "hyok.h"
+#include "socket.hpp"
 
 typedef struct appdata {
 	Evas_Object *win;
@@ -46,7 +47,7 @@ create_base_gui(appdata_s *ad)
 
 	/* Label*/
 	ad->label = elm_label_add(ad->conform);
-	elm_object_text_set(ad->label, "Hyok");
+	elm_object_text_set(ad->label, Test());
 	evas_object_size_hint_weight_set(ad->label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	elm_object_content_set(ad->conform, ad->label);
 	evas_object_show(ad->label);

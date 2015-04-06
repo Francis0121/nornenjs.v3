@@ -10,67 +10,61 @@ using namespace socketio;
 
 extern "C" {
 
-	char* temp (int v1, int v2) {
-		boost::math::gcd(v1, v2);
-		return "abc";
-	}
-
-}
-
-
-int Test()
-{
-	std::string uri = "ws://localhost:8080/";
-	socketio_client_handler_ptr handler(new socketio_client_handler());
-
-	try {
-		// Create and link handler to websocket++ callbacks.
+	char* Test()
+	{
+		std::string uri = "ws://localhost:8080/";
 		socketio_client_handler_ptr handler(new socketio_client_handler());
-		client::connection_ptr con;
-		client endpoint(handler);
 
-		// Set log level. Leave these unset for no logging, or only set a few for selective logging.
-		endpoint.elog().set_level(websocketpp::log::elevel::RERROR);
-		endpoint.elog().set_level(websocketpp::log::elevel::FATAL);
-		endpoint.elog().set_level(websocketpp::log::elevel::WARN);
-		endpoint.alog().set_level(websocketpp::log::alevel::DEVEL);
+		try {
+			// Create and link handler to websocket++ callbacks.
+			socketio_client_handler_ptr handler(new socketio_client_handler());
+			client::connection_ptr con;
+			client endpoint(handler);
 
-		std::string socket_io_uri = handler->perform_handshake(uri);
-		con = endpoint.get_connection(socket_io_uri);
+			// Set log level. Leave these unset for no logging, or only set a few for selective logging.
+			endpoint.elog().set_level(websocketpp::log::elevel::RERROR);
+			endpoint.elog().set_level(websocketpp::log::elevel::FATAL);
+			endpoint.elog().set_level(websocketpp::log::elevel::WARN);
+			endpoint.alog().set_level(websocketpp::log::alevel::DEVEL);
 
-		// The previous two lines can be combined:
-		// con = endpoint.get_connection(handler->perform_handshake(uri));
+			std::string socket_io_uri = handler->perform_handshake(uri);
+			con = endpoint.get_connection(socket_io_uri);
 
-		endpoint.connect(con);
+			// The previous two lines can be combined:
+			// con = endpoint.get_connection(handler->perform_handshake(uri));
 
-		boost::thread t(boost::bind(&client::run, &endpoint, false));
+			endpoint.connect(con);
 
-		// Wait for a sec before sending stuff
-		while (!handler->connected()) {
-			sleep(1);
+			boost::thread t(boost::bind(&client::run, &endpoint, false));
+
+			// Wait for a sec before sending stuff
+			while (!handler->connected()) {
+				sleep(1);
+			}
+
+			handler->bind_event("example", &socketio_events::example);
+
+			// After connecting, send a connect message if using an endpoint
+			handler->connect_endpoint("/chat");
+
+			std::getchar();
+
+			// Then to connect to another endpoint with the same socket, we call connect again.
+			handler->connect_endpoint("/news");
+
+			std::getchar();
+
+			handler->emit("test", "hello!");
+
+			std::getchar();
+
+			endpoint.stop(false);
+		}catch (std::exception& e) {
+			std::cerr << "Exception: " << e.what() << std::endl;
+			std::getchar();
 		}
 
-		handler->bind_event("example", &socketio_events::example);
-
-		// After connecting, send a connect message if using an endpoint
-		handler->connect_endpoint("/chat");
-
-		std::getchar();
-
-		// Then to connect to another endpoint with the same socket, we call connect again.
-		handler->connect_endpoint("/news");
-
-		std::getchar();
-
-		handler->emit("test", "hello!");
-
-		std::getchar();
-
-		endpoint.stop(false);
-	}catch (std::exception& e) {
-		std::cerr << "Exception: " << e.what() << std::endl;
-		std::getchar();
+		return "success";
 	}
 
-	return 99;
 }
