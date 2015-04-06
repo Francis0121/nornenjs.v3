@@ -43,7 +43,7 @@ all: hyok secondary-outputs
 hyok: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: C++ Linker'
-	$(CXX) -o"hyok" $(OBJS) $(USER_OBJS) $(LIBS) -L"$(PROJ_PATH)/lib" -L/usr/local/src/boost_1_57_0/stage/lib $(TC_LINKER_MISC) $(RS_LINKER_MISC) -pie -lpthread -Xlinker -rpath="/home/developer/sdk_tools/lib" --sysroot="$(SBI_SYSROOT)" -Xlinker --version-script=$(PROJ_PATH)/.exportMap -L"$(SBI_SYSROOT)/usr/lib" $(RS_LIBRARIES) -Xlinker -rpath="/opt/usr/apps/$(APPID)/lib" -Werror-implicit-function-declaration
+	$(CXX) -o"hyok" $(OBJS) $(USER_OBJS) $(LIBS) -L/home/hyok/Downloads/boost_1_57_0/stage/lib -L/home/hyok/Downloads/websocketpp06 $(TC_LINKER_MISC) $(RS_LINKER_MISC) -pie -lpthread -Xlinker -rpath="/home/developer/sdk_tools/lib" --sysroot="$(SBI_SYSROOT)" -Xlinker --version-script=$(PROJ_PATH)/.exportMap -L"$(SBI_SYSROOT)/usr/lib" $(RS_LIBRARIES) -Xlinker -rpath="/opt/usr/apps/$(APPID)/lib" -Werror-implicit-function-declaration
 	@echo 'Finished building target: $@'
 	@echo ' '
 

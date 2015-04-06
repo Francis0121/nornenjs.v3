@@ -1,4 +1,5 @@
-src/hyok.d: ../src/hyok.c /home/hyok/git/nornenjs.v3/hyok/inc/hyok.h \
+src/hyok.d: ../src/hyok.c \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/hyok/inc/hyok.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_control.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_common.h \
@@ -225,9 +226,9 @@ src/hyok.d: ../src/hyok.c /home/hyok/git/nornenjs.v3/hyok/inc/hyok.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension_events.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
- /home/hyok/git/nornenjs.v3/hyok/inc/socket.hpp
+ /home/hyok/tizen-workspace-2/nornenjs_v3/hyok/inc/socket.hpp
 
-/home/hyok/git/nornenjs.v3/hyok/inc/hyok.h:
+/home/hyok/tizen-workspace-2/nornenjs_v3/hyok/inc/hyok.h:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h:
 
@@ -681,4 +682,4 @@ src/hyok.d: ../src/hyok.c /home/hyok/git/nornenjs.v3/hyok/inc/hyok.h \
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
-/home/hyok/git/nornenjs.v3/hyok/inc/socket.hpp:
+/home/hyok/tizen-workspace-2/nornenjs_v3/hyok/inc/socket.hpp:
