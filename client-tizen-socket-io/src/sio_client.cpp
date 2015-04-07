@@ -479,14 +479,14 @@ void set_##__FIELD__(__TYPE__ const& l) \
         m_connected = false;
         
         LOG("Connection failed." << std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "Connection failed");
+        dlog_print(DLOG_ERROR, LOG_TAG, "482: Connection failed");
         if(m_fail_listener)m_fail_listener();
     }
     
     void client::impl::on_connected()
     {
         LOG("On Connected." << std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "On Connected");
+        dlog_print(DLOG_ERROR, LOG_TAG, "489: On Connected");
         m_connected = true;
         if(m_connection_timer)
         {
@@ -546,12 +546,12 @@ void set_##__FIELD__(__TYPE__ const& l) \
             m_ping_timer->expires_from_now(milliseconds(m_ping_interval), ec);
             if(ec){
             	LOG("ec:"<<ec.message()<<std::endl);
-            	dlog_print(DLOG_ERROR, LOG_TAG, "ec:");
+            	dlog_print(DLOG_ERROR, LOG_TAG, "549: ec: %s", ec.message().c_str());
 			}
             m_ping_timer->async_wait(lib::bind(&client::impl::__ping,this,lib::placeholders::_1));
 
             LOG("On handshake,sid:"<<m_sid<<",ping interval:"<<m_ping_interval<<",ping timeout"<<"m_ping_timeout"<<m_ping_timeout<<std::endl);
-            dlog_print(DLOG_ERROR, LOG_TAG, "On handshake, sid");
+            dlog_print(DLOG_ERROR, LOG_TAG, "554: On handshake, sid");
 
             return;
         }
@@ -563,7 +563,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
     void client::impl::on_open(connection_hdl con)
     {
         LOG("Connected." << std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "Connected.");
+        dlog_print(DLOG_ERROR, LOG_TAG, "566: Connected.");
         m_con = con;
         m_connection_timer.reset(new boost::asio::deadline_timer(m_client.get_io_service()));
         boost::system::error_code ec;
@@ -585,21 +585,21 @@ void set_##__FIELD__(__TYPE__ const& l) \
     void client::impl::on_close(connection_hdl con)
     {
         LOG("Client Disconnected." << std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "Client Disconnected.");
+        dlog_print(DLOG_ERROR, LOG_TAG, "588: Client Disconnected.");
         m_connected = false;
         lib::error_code ec;
         close::status::value code = close::status::normal;
         client_type::connection_ptr conn_ptr  = m_client.get_con_from_hdl(con, ec);
         if (ec) {
             LOG("OnClose get conn failed"<<ec<<std::endl);
-            dlog_print(DLOG_ERROR, LOG_TAG, "OnClose get conn failed");
+            dlog_print(DLOG_ERROR, LOG_TAG, "595: OnClose get conn failed");
         }
         else
         {
             code = conn_ptr->get_local_close_code();
         }
 
-        dlog_print(DLOG_ERROR, LOG_TAG, "Close code %d", code);
+        dlog_print(DLOG_ERROR, LOG_TAG, "602: Close code %d", code);
 
         m_con.reset();
         this->clear_timers();
@@ -632,7 +632,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
     void client::impl::on_pong_timeout()
     {
         LOG("Pong timeout"<<std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "Pong timeout");
+        dlog_print(DLOG_ERROR, LOG_TAG, "635: Pong timeout");
         m_client.get_io_service().dispatch(lib::bind(&client::impl::__close, this,close::status::policy_violation,"Pong timeout"));
     }
     
@@ -648,7 +648,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
                     case packet::type_connect:
                     {
                         LOG("Received Message type (Connect)"<<std::endl);
-                        dlog_print(DLOG_ERROR, LOG_TAG, "Received Message type(connect)");
+                        dlog_print(DLOG_ERROR, LOG_TAG, "651: Received Message type(connect)");
                         if(p.get_nsp() == m_nsp)
                         {
                             this->on_connected();
@@ -658,7 +658,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
                     case packet::type_disconnect:
                     {
                         LOG("Received Message type (Disconnect)"<<std::endl);
-                        dlog_print(DLOG_ERROR, LOG_TAG, "Received Message type (Disconnect)");
+                        dlog_print(DLOG_ERROR, LOG_TAG, "661: Received Message type (Disconnect)");
                         close();
                         break;
                     }
@@ -666,7 +666,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
                     case packet::type_binary_event:
                     {
                         LOG("Received Message type (Event)"<<std::endl);
-                        dlog_print(DLOG_ERROR, LOG_TAG, "Recerived Message type(Event)");
+                        dlog_print(DLOG_ERROR, LOG_TAG, "669: Received Message type(Event)");
                         const message::ptr ptr = p.get_message();
                         if(ptr->get_flag() == message::flag_array)
                         {
@@ -690,7 +690,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
                     case packet::type_binary_ack:
                     {
                         LOG("Received Message type (ACK)"<<std::endl);
-                        dlog_print(DLOG_ERROR, LOG_TAG, "Received Message type(ACK)");
+                        dlog_print(DLOG_ERROR, LOG_TAG, "693: Received Message type(ACK)");
                         const message::ptr ptr = p.get_message();
                         if(ptr->get_flag() == message::flag_array)
                         {
@@ -713,7 +713,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
                     case packet::type_error:
                     {
                         LOG("Received Message type (ERROR)"<<std::endl);
-                        dlog_print(DLOG_ERROR, LOG_TAG, "Received Message type(ERROR)");
+                        dlog_print(DLOG_ERROR, LOG_TAG, "716: Received Message type(ERROR)");
                         this->on_socketio_error(p.get_message());
                         break;
                     }
@@ -740,7 +740,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
     void client::impl::on_encode(bool isBinary,shared_ptr<const string> const& payload)
     {
         LOG("encoded payload length:"<<payload->length()<<std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "encoded paylod length: %d", payload->length());
+        dlog_print(DLOG_ERROR, LOG_TAG, "743: encoded paylod length: %d", payload->length());
         m_client.get_io_service().dispatch(lib::bind(&client::impl::__send,this,payload,isBinary?frame::opcode::binary:frame::opcode::text));
     }
     
@@ -797,7 +797,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
         if(ec || m_con.expired())
         {
             LOG("ping exit,con is expired?"<<m_con.expired()<<",ec:"<<ec.message()<<std::endl);
-            dlog_print(DLOG_ERROR, LOG_TAG, "ping exit, con is expired? , ec: %s", ec.message().c_str());
+            dlog_print(DLOG_ERROR, LOG_TAG, "800: ping exit, con is expired? %d, ec: %s",  m_con.expired(), ec.message().c_str());
             return;
         }
         packet p(packet::frame_ping);
@@ -839,18 +839,18 @@ void set_##__FIELD__(__TYPE__ const& l) \
         }
         m_connection_timer.reset();
         LOG("Connection timeout"<<std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "Connection timeout");
+        dlog_print(DLOG_ERROR, LOG_TAG, "842: Connection timeout");
         this->__close(close::status::policy_violation,"Connection timeout");
     }
     
     void client::impl::__close(close::status::value const& code,std::string const& reason)
     {
         LOG("Close by reason:"<<reason << std::endl);
-        dlog_print(DLOG_ERROR, LOG_TAG, "Close by reason: %s", reason.c_str());
+        dlog_print(DLOG_ERROR, LOG_TAG, "849: Close by reason: %s", reason.c_str());
         if (m_con.expired())
         {
             std::cerr << "Error: No active session" << std::endl;
-            dlog_print(DLOG_ERROR, LOG_TAG, "Error: No active session");
+            dlog_print(DLOG_ERROR, LOG_TAG, "853: Error: No active session");
         }
         else
         {
@@ -864,7 +864,7 @@ void set_##__FIELD__(__TYPE__ const& l) \
                                 });
             lib::error_code ec;
 
-            dlog_print(DLOG_ERROR, LOG_TAG, "__close paylod %s %d", payload.c_str(), code);
+            dlog_print(DLOG_ERROR, LOG_TAG, "867: __close paylod %s %d", payload.c_str(), code);
             m_client.close(m_con, code, reason, ec);
         }
     }

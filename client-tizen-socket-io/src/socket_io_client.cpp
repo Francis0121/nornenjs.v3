@@ -94,12 +94,19 @@ extern "C" {
 			_lock.lock();
 
 			unsigned int pid = (unsigned) getpid();
-			dlog_print(DLOG_FATAL, LOG_TAG, "bind connectMessage lamda function %u", pid);
+			dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [connectMessage] %u", pid);
 
-//			string user = data->get_map()["error"]->get_string();
-//			string message = data->get_map()["success"]->get_string();
-//
-//			dlog_print(DLOG_FATAL, LOG_TAG, "connectMessage %s:%s", user.c_str(), message.c_str());
+			_lock.unlock();
+	    });
+
+		h.bind_event("test1", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
+			_lock.lock();
+
+			unsigned int pid = (unsigned) getpid();
+			dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
+
+			string user = data->get_map()["message"]->get_string();
+			dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
 
 			_lock.unlock();
 	    });
