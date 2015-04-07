@@ -465,7 +465,7 @@ void motion(int x, int y)
     float dx, dy;
     dx = (float)(x - ox);
     dy = (float)(y - oy);
-
+	//printf("%
     if (buttonState == 4)
     {
         // right = zoom
@@ -476,7 +476,7 @@ void motion(int x, int y)
     else if (buttonState == 2)
     {
         // middle = translate
-		printf("dx dy %f %f\n",dx,dy);
+		//printf("dx dy %f %f\n",dx,dy);
         viewTranslation.x += dx / 100.0f;
         viewTranslation.y -= dy / 100.0f;
 		printf("%f %f\n",viewTranslation.x,viewTranslation.y);
