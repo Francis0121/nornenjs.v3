@@ -12,6 +12,8 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#define LOG_TAG "socket.io"
+
 using namespace sio;
 using namespace std;
 
@@ -95,6 +97,9 @@ extern "C" {
 
 			unsigned int pid = (unsigned) getpid();
 			dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [connectMessage] %u", pid);
+
+			string error = data->get_map()["error"]->get_string();
+			dlog_print(DLOG_FATAL, LOG_TAG, "connectMessage :: %s", error.c_str());
 
 			_lock.unlock();
 	    });
