@@ -110,6 +110,21 @@ app_create(void *data)
 static void
 app_control(app_control_h app_control, void *data)
 {
+
+	int status = 0;
+
+	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
+
+	int threadError = 0;
+
+	if ((threadError = pthread_create(&thread_id, NULL, socket_io_client, NULL))){
+			perror("pthread_create!\n");
+			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
+	}
+
+	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
+	/* Show window after base gui is set up */
+
 	/* Handle the launch request. */
 
 }

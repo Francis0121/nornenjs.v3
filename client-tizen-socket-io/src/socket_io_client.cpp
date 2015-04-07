@@ -104,6 +104,12 @@ extern "C" {
 			_lock.unlock();
 	    });
 
+		dlog_print(DLOG_FATAL, LOG_TAG, "1");
+
+		dlog_print(DLOG_FATAL, LOG_TAG, "2");
+
+		dlog_print(DLOG_FATAL, LOG_TAG, "3");
+
 		h.bind_event("test1", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
 			_lock.lock();
 
@@ -116,12 +122,19 @@ extern "C" {
 			_lock.unlock();
 	    });
 
+		dlog_print(DLOG_FATAL, LOG_TAG, "4");
+
+		dlog_print(DLOG_FATAL, LOG_TAG, "5");
+
+		dlog_print(DLOG_FATAL, LOG_TAG, "6");
+
 		unsigned int pidThread = (unsigned) getpid();
 		dlog_print(DLOG_FATAL, LOG_TAG, "close %u", pidThread);
 
-		while(1){
-
-		}
+		//while(1){
+			dlog_print(DLOG_FATAL, "WHILE", "while log");
+			sleep(5);
+		//}
 
 		dlog_print(DLOG_FATAL, LOG_TAG, "close");
 
