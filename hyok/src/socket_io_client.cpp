@@ -75,14 +75,19 @@ void socketio_client_handler::on_message(connection_ptr con, message_ptr msg)
 
 std::string socketio_client_handler::perform_handshake(std::string url, std::string socketIoResource)
 {
+	dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::start perform_handshake function");
    // Log currently not accessible from this function, outputting to std::cout
    LOG("Parsing websocket uri..." << std::endl);
    websocketpp::uri uo(url);
-   m_resource = uo.get_resource();
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_^^^^^^^handshake::tag1 %s", socketIoResource.c_str());
 
+   m_resource = uo.get_resource();
+   //uo.uri(uri);
+
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_~~~~~handshake::tag1 %s", m_resource.c_str());
    // Declare boost io_service
    boost::asio::io_service io_service;
-
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag2");
    LOG("Connecting to Server..." << std::endl);
 
    // Resolve query
@@ -91,35 +96,59 @@ std::string socketio_client_handler::perform_handshake(std::string url, std::str
    tcp::socket socket(io_service);
    boost::asio::connect(socket, r.resolve(q));
 
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag3");
+
    // Form initial post request.
    boost::asio::streambuf request;
    std::ostream reqstream(&request);
 
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag4");
+
+
+//	reqstream << "GET " << socketIoResource << " HTTP/1.1\r\n";
+//	reqstream << "Host: " << uo.get_host() << "\r\n";
+//	reqstream << "Upgrade: websocket\r\n";
+//	reqstream << "Connection: Upgrade\r\n\r\n";
    reqstream << "POST " << socketIoResource << "/1/ HTTP/1.0\r\n";
    reqstream << "Host: " << uo.get_host() << "\r\n";
    reqstream << "Accept: */*\r\n";
    reqstream << "Connection: close\r\n\r\n";
+
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag5");
+
+   std::ostringstream os;
+   os << reqstream;
+   std::string s = os.str();
+   const char* chr = s.c_str();
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag6 %s", chr);
 
    LOG("Sending Handshake Post Request..." << std::endl);
 
    // Write request.
    boost::asio::write(socket, request);
 
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag7");
+
    // Receive response
    boost::asio::streambuf response;
    boost::asio::read_until(socket, response, "\r\n");
 
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag8");
    // Parse response
    std::istream resp_stream(&response);
 
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag9");
    // Extract HTTP version, status, and message.
    std::string httpver;
    unsigned int status;
    std::string status_msg;
 
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag10");
    resp_stream >> httpver >> status;
    std::getline(resp_stream, status_msg);
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag11 : %s", status_msg.c_str());
 
+   dlog_print(DLOG_FATAL, "socket_io_client.cpp", "perform_handshake::tag12");
    // Log response
    LOG("Received Response:" << std::endl);
    LOG(httpver << " " << status << std::endl);

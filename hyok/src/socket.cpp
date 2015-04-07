@@ -30,8 +30,7 @@ extern "C" {
 
 			dlog_print(DLOG_FATAL, "socket.c", "Test::block2");
 			std::string socket_io_uri = handler->perform_handshake(uri);
-			const char * a = socket_io_uri.c_str();
-			dlog_print(DLOG_FATAL, "socket.c", "Test::tag1 %s", a);
+			dlog_print(DLOG_FATAL, "socket.c", "Test::tag1 %s", socket_io_uri.c_str());
 			con = endpoint.get_connection(socket_io_uri);
 
 			dlog_print(DLOG_FATAL, "socket.c", "Test::block3");

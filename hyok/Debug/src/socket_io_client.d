@@ -1491,7 +1491,8 @@ src/socket_io_client.d: ../src/socket_io_client.cpp \
  /home/hyok/Downloads/websocketpp06/src/roles/../shared_const_buffer.hpp \
  /home/hyok/Downloads/websocketpp06/src/websocketpp.hpp \
  /home/hyok/Downloads/websocketpp06/src/common.hpp \
- /home/hyok/Downloads/websocketpp06/src/endpoint.hpp
+ /home/hyok/Downloads/websocketpp06/src/endpoint.hpp \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h
 
 /home/hyok/tizen-workspace-2/nornenjs_v3/hyok/inc/socket_io_client.hpp:
 
@@ -4478,3 +4479,5 @@ src/socket_io_client.d: ../src/socket_io_client.cpp \
 /home/hyok/Downloads/websocketpp06/src/common.hpp:
 
 /home/hyok/Downloads/websocketpp06/src/endpoint.hpp:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
