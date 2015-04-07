@@ -1,8 +1,8 @@
 src/other.d: ../src/other.c \
- /home/hyok/tizen-workspace-2/other/inc/socket.hpp \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket.hpp \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
- /home/hyok/tizen-workspace-2/other/inc/socket_io_client.hpp \
- /home/hyok/tizen-workspace-2/other/inc/other.h \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket_io_client.hpp \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/other.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_control.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_common.h \
@@ -229,13 +229,13 @@ src/other.d: ../src/other.c \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension_events.h
 
-/home/hyok/tizen-workspace-2/other/inc/socket.hpp:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket.hpp:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
-/home/hyok/tizen-workspace-2/other/inc/socket_io_client.hpp:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket_io_client.hpp:
 
-/home/hyok/tizen-workspace-2/other/inc/other.h:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/other.h:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h:
 

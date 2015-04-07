@@ -8,9 +8,9 @@
 #include <mutex>
 #include <condition_variable>
 #include <string>
-#include <pthread.h>
 
-#define LOG_TAG "socket.io"
+#include <pthread.h>
+#include <unistd.h>
 
 using namespace sio;
 using namespace std;
@@ -93,7 +93,8 @@ extern "C" {
 		h.bind_event("connectMessage", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
 			_lock.lock();
 
-			dlog_print(DLOG_FATAL, LOG_TAG, "bind connectMessage lamda function");
+			unsigned int pid = (unsigned) getpid();
+			dlog_print(DLOG_FATAL, LOG_TAG, "bind connectMessage lamda function %u", pid);
 
 //			string user = data->get_map()["error"]->get_string();
 //			string message = data->get_map()["success"]->get_string();
@@ -102,6 +103,9 @@ extern "C" {
 
 			_lock.unlock();
 	    });
+
+		unsigned int pidThread = (unsigned) getpid();
+		dlog_print(DLOG_FATAL, LOG_TAG, "close %u", pidThread);
 
 		while(1){
 
