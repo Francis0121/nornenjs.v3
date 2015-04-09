@@ -64,6 +64,11 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         this.ipAddress = util.getIpAddress();
 
         var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+
+        client.flushall(function (error, reply){
+            logger.debug('Flushall', reply);
+        });
+
         // ~ Add ip device
         for(var i=0; i<cu.deviceCount; i++){
             var key = this.ipAddress+'_'+i;
