@@ -22,6 +22,11 @@ var socketIo = require('socket.io');
 var exec = require('child_process').exec;
 var redis = require('redis');
 
+// ~ Redis key
+var keys = {
+  HOSTLIST : 'HostList'
+};
+
 /**
  * Nornejs server create 
  * @param server
@@ -72,8 +77,8 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         // ~ Add ip device
         for(var i=0; i<cu.deviceCount; i++){
             var key = this.ipAddress+'_'+i;
-            client.hset('hostList', key, '0', function(){
-                logger.debug('hostList add device ' + key);
+            client.hset(keys.HOSTLIST, key, '0', function(){
+                logger.debug(keys.HOSTLIST+' add device ' + key);
                 client.quit();
             });
         }
@@ -88,8 +93,8 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
         for(var i=0; i<cu.deviceCount; i++){
             var key = util.getIpAddress()+'_'+i;
-            client.hset('hostList', key, '0', function(){
-                logger.info('hostList add device ' + key);
+            client.hset(keys.HOSTLIST, key, '0', function(){
+                logger.info(keys.HOSTLIST+' add device ' + key);
                 client.quit();
             });
         }
@@ -126,7 +131,7 @@ NornenjsServer.prototype.connect = function(){
 
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
-    client.hgetall('hostList', function (err, list) {
+    client.hgetall(keys.HOSTLIS, function (err, list) {
 
         for (key in list) {
             logger.debug('key - ', key, ': value -', list[key]);
@@ -252,12 +257,12 @@ NornenjsServer.prototype.close = function(callback){
     // ~ Remove all redis key
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
-    client.hgetall('hostList', function (err, list) {
+    client.hgetall(keys.HOSTLIST, function (err, list) {
 
         var i= 0, size = Object.keys(list).length;
         for (key in list) {
             logger.debug('Delete redis key - ', key, ': value -', list[key]);
-            client.hdel('hostList', key, function(err, reply){
+            client.hdel(keys.HOSTLIST, key, function(err, reply){
                 i++;
                 if(i == size){
                     client.quit();
