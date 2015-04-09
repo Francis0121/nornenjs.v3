@@ -246,6 +246,10 @@ NornenjsServer.prototype.socketIoConnect = function(){
 
 };
 
+/**
+ * NornenjsServer close event. (Important Need server is closed)
+ * @param callback
+ */
 NornenjsServer.prototype.close = function(callback){
     var $this = this;
 
@@ -256,20 +260,26 @@ NornenjsServer.prototype.close = function(callback){
 
     // ~ Remove all redis key
     var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
-    client.keys('*', function(error, rows) {
-        for(var i = 0, j = rows.length; i < j; ++i) {
-            client.del(rows[i]);
-            logger.debug('Redis delete all key : [', rows[i],'].');
+
+    client.hgetall('hostList', function (err, list) {
+
+        var i= 0, size = Object.keys(list).length;
+        for (key in list) {
+            logger.debug('delete - ', key, ': value -', list[key]);
+            client.hdel('hostList', key, function(err, reply){
+                i++;
+                if(i == size){
+                    client.quit();
+
+                    logger.debug('Redis server kill.');
+                    logger.debug('Nornenjs server closed.');
+
+                    $this.redisProcess.kill();
+                    callback();
+                }
+            });
         }
-        client.end();
-
-        logger.debug('Redis server kill.');
-        logger.debug('Nornenjs server closed.');
-
-        $this.redisProcess.kill();
-        callback();
     });
-
 };
 
 module.exports.NornenjsServer = NornenjsServer;
