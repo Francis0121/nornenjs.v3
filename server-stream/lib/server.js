@@ -66,11 +66,11 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 
     if(isMaster){
         // ~ Master proxy server. Exec redis server and connect redis.
-        exec(this.REDIS_PATH, function (error) {
-            if (error !== null) {
-                logger.error('Redis server exec : ', error);
-            }
-        });
+        //exec(this.REDIS_PATH, function (error) {
+        //    if (error !== null) {
+        //        logger.error('Redis server exec : ', error);
+        //    }
+        //});
 
         this.ipAddress = myIpAddress;
         var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
