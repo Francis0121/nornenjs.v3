@@ -195,7 +195,7 @@ proxy.push(
     })
 );
 
-
+//~TODO 사용자 정보에 따라서 아이디를 지정해줘야하나.
 var count =0;
 var proxyServer = http.createServer(function (req, res) {
 
@@ -204,6 +204,7 @@ var proxyServer = http.createServer(function (req, res) {
     }else {
         proxy[1].web(req, res);
     }
+    logger.debug(count);
 
 });
 proxyServer.listen(8000);
