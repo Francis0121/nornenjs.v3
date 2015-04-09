@@ -9,7 +9,6 @@
 static pthread_t thread_id;
 static pthread_mutex_t lock;
 static Eina_Bool thread_finish = EINA_FALSE;
-
 typedef struct appdata {
 	Evas_Object *win;
 	Evas_Object *conform;
@@ -65,14 +64,14 @@ create_base_gui(appdata_s *ad)
 
 	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
 
-	int threadError = 0;
-
-	if ((threadError = pthread_create(&thread_id, NULL, socket_io_client, NULL))){
-			perror("pthread_create!\n");
-			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
-	}
-
-	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
+//	int threadError = 0;
+//
+//	if ((threadError = pthread_create(&thread_id, NULL, socket_io_client, NULL))){
+//			perror("pthread_create!\n");
+//			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
+//	}
+//
+//	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
 	/* Show window after base gui is set up */
 
 	evas_object_show(ad->win);
@@ -122,6 +121,13 @@ app_control(app_control_h app_control, void *data)
 			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
 	}
 
+	/*
+	if ((threadError = pthread_join(thread_id,&thread_return))){
+				perror("pthread_join!\n");
+				dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
+	}
+	*/
+
 	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
 	/* Show window after base gui is set up */
 
@@ -145,6 +151,7 @@ static void
 app_terminate(void *data)
 {
 	/* Release all resources. */
+	turn_off_flag();
 }
 
 static void
@@ -206,6 +213,10 @@ main(int argc, char *argv[])
 	ui_app_remove_event_handler(handlers[APP_EVENT_LOW_MEMORY]);
 
 	ret = ui_app_main(argc, argv, &event_callback, &ad);
+
+	int thread_return;
+
+	pthread_join(thread_id,&thread_return);
 
 	if (ret != APP_ERROR_NONE) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "app_main() is failed. err = %d", ret);

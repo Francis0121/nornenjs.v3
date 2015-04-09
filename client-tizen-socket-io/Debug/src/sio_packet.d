@@ -1,6 +1,6 @@
 src/sio_packet.d: ../src/sio_packet.cpp \
- /home/hyok/tizen-workspace-2/other/inc/sio_packet.h \
- /home/hyok/tizen-workspace-2/other/inc/sio_message.h \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_packet.h \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_message.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/document.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/reader.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/rapidjson.h \
@@ -23,9 +23,9 @@ src/sio_packet.d: ../src/sio_packet.cpp \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/internal/itoa.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/stringbuffer.h
 
-/home/hyok/tizen-workspace-2/other/inc/sio_packet.h:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_packet.h:
 
-/home/hyok/tizen-workspace-2/other/inc/sio_message.h:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_message.h:
 
 /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/document.h:
 

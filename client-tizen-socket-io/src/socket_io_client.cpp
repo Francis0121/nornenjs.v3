@@ -56,9 +56,14 @@ public:
         //exit(0);
     }
 };
-
-
 extern "C" {
+	void turn_off_flag()
+	{
+		LOOP_FLAG = 0;
+	}
+}
+extern "C" {
+
 	void socket_io_client()
 	{
 
@@ -75,7 +80,7 @@ extern "C" {
 		h.set_fail_listener(std::bind(&connection_listener::on_fail, &l));
 		dlog_print(DLOG_FATAL, LOG_TAG, "Set FaileListener");
 
-		h.connect("http://112.108.40.166:5000");
+		h.connect("http://112.108.40.164:5000");
 		dlog_print(DLOG_FATAL, LOG_TAG, "Connect");
 
 		_lock.lock();
@@ -131,10 +136,8 @@ extern "C" {
 		unsigned int pidThread = (unsigned) getpid();
 		dlog_print(DLOG_FATAL, LOG_TAG, "close %u", pidThread);
 
-		//while(1){
-			dlog_print(DLOG_FATAL, "WHILE", "while log");
-			sleep(5);
-		//}
+		while(LOOP_FLAG){
+		}
 
 		dlog_print(DLOG_FATAL, LOG_TAG, "close");
 

@@ -6,6 +6,12 @@
  */
 
 #include <dlog.h>
+static int LOOP_FLAG = 1;
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void turn_off_flag();
 
 #ifdef __cplusplus
 extern "C"

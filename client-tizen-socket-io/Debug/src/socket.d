@@ -1,8 +1,8 @@
 src/socket.d: ../src/socket.cpp \
- /home/hyok/tizen-workspace-2/other/inc/socket.hpp \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket.hpp \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
- /home/hyok/tizen-workspace-2/other/inc/sio_client.h \
- /home/hyok/tizen-workspace-2/other/inc/sio_message.h \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_client.h \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_message.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/document.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/reader.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/rapidjson.h \
@@ -25,13 +25,13 @@ src/socket.d: ../src/socket.cpp \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/stringbuffer.h \
  /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/stringbuffer.h
 
-/home/hyok/tizen-workspace-2/other/inc/socket.hpp:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket.hpp:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
-/home/hyok/tizen-workspace-2/other/inc/sio_client.h:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_client.h:
 
-/home/hyok/tizen-workspace-2/other/inc/sio_message.h:
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_message.h:
 
 /home/hyok/git/socket.io-client-cpp/lib/rapidjson/include/rapidjson/document.h:
 
