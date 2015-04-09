@@ -83,6 +83,13 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
             });
         }
 
+        // ~ Test server IP add
+        client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+        client.hset(keys.HOSTLIST, '112.108.40.14_0', '0', function(){
+            logger.debug(keys.HOSTLIST+' add device 112.108.40.14_0');
+            client.quit();
+        });
+
     }else{
         // ~ Slave server. Connect master server redis.
         if(typeof masterIpAddres !== 'string'){
@@ -100,8 +107,6 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         }
     }
 
-    //var httpProxy = require('http-proxy');
-    //httpProxy.createProxyServer({target:'http://112.108.40.166:5000'}).listen(8000);
 };
 
 // ~ PROXY SERVER
@@ -128,21 +133,82 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
  */
 NornenjsServer.prototype.connect = function(){
     this.socketIoConnect();
+    this.distributed();
+};
+
+/**
+ * Distributed User
+ */
+NornenjsServer.prototype.distributed = function() {
 
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
-    client.hgetall(keys.HOSTLIS, function (err, list) {
+    client.hgetall(keys.HOSTLIST, function (error, list) {
+        if(error != null){
+            throw new Error('Hash get all function error', error);
+        }
+        var ipHost,
+            minClient = 10;
 
         for (key in list) {
             logger.debug('key - ', key, ': value -', list[key]);
+            if(list[key] == 0){
+                minClient = 0;
+                ipHost = key.split('_');
+                break;
+            }
+
+            if(minClient > list[key]){
+                minClient = list[key];
+                ipHost = key.split('_');
+            }
         }
-
         client.quit();
-    });
 
+        logger.debug(ipHost, minClient);
+    });
 };
 
-/**9
+var http = require('http');
+var httpProxy = require('http-proxy');
+//httpProxy.createProxyServer(
+//    {   target : 'http://112.108.40.14:5000' }
+//).listen(8000);
+
+var proxy = [];
+
+proxy.push(
+    new httpProxy.createProxyServer({
+        target: {
+            host: '112.108.40.14',
+            port: 5000
+        }
+    })
+);
+
+proxy.push(
+    new httpProxy.createProxy({
+        target : {
+            host: '112.108.40.166',
+            port : 5000
+        }
+    })
+);
+
+
+var count =0;
+var proxyServer = http.createServer(function (req, res) {
+
+    if(count++%4 ==0 ) {
+        proxy[0].web(req, res);
+    }else {
+        proxy[1].web(req, res);
+    }
+
+});
+proxyServer.listen(8000);
+
+/**
  * Socket Io First Connect
  */
 NornenjsServer.prototype.socketIoConnect = function(){
