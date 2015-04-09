@@ -63,14 +63,16 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
+    this.redisExec = null;
 
     if(isMaster){
         // ~ Master proxy server. Exec redis server and connect redis.
-        //exec(this.REDIS_PATH, function (error) {
-        //    if (error !== null) {
-        //        logger.error('Redis server exec : ', error);
-        //    }
-        //});
+        this.redisExec = exec(this.REDIS_PATH, function (error) {
+            if (error !== null) {
+                logger.error('Redis server exec : ', error);
+            }
+        });
+
 
         this.ipAddress = myIpAddress;
         var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
@@ -144,7 +146,7 @@ NornenjsServer.prototype.connect = function(){
 
 };
 
-/**
+/**9
  * Socket Io First Connect
  */
 NornenjsServer.prototype.socketIoConnect = function(){
@@ -242,6 +244,15 @@ NornenjsServer.prototype.socketIoConnect = function(){
 
     });
 
+};
+
+NornenjsServer.prototype.close = function(callback){
+    logger.debug('Nornenjs server closed.');
+    if(typeof this.redisExec === 'object') {
+        logger.debug('Admin proxy server redis kill');
+        this.redisExec.kill();
+    }
+    callback();
 };
 
 module.exports.NornenjsServer = NornenjsServer;
