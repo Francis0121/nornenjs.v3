@@ -63,11 +63,11 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
-    this.redisExec = null;
+    this.redisProcess = null;
 
     if(isMaster){
         // ~ Master proxy server. Exec redis server and connect redis.
-        this.redisExec = exec(this.REDIS_PATH, function (error) {
+        this.redisProcess = exec(this.REDIS_PATH, function (error) {
             if (error !== null) {
                 logger.error('Redis server exec : ', error);
             }
@@ -247,12 +247,29 @@ NornenjsServer.prototype.socketIoConnect = function(){
 };
 
 NornenjsServer.prototype.close = function(callback){
-    logger.debug('Nornenjs server closed.');
-    if(typeof this.redisExec === 'object') {
-        logger.debug('Admin proxy server redis kill');
-        this.redisExec.kill();
+    var $this = this;
+
+    if(typeof $this.redisProcess !== 'object') {
+        callback();
+        logger.debug('Nornenjs server closed.');
     }
-    callback();
+
+    // ~ Remove all redis key
+    var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
+    client.keys('*', function(error, rows) {
+        for(var i = 0, j = rows.length; i < j; ++i) {
+            client.del(rows[i]);
+            logger.debug('Redis delete all key : [', rows[i],'].');
+        }
+        client.end();
+
+        logger.debug('Redis server kill.');
+        logger.debug('Nornenjs server closed.');
+
+        $this.redisProcess.kill();
+        callback();
+    });
+
 };
 
 module.exports.NornenjsServer = NornenjsServer;

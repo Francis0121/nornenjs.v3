@@ -52,18 +52,13 @@ var NornenjsServer = require('../lib/server').NornenjsServer;
 var nornenjsServer = new NornenjsServer(server, true );
 nornenjsServer.connect();
 
-
 /**
- * Override nodejs process deletet function
+ * Override nodejs process delete function
  */
 process.on('SIGINT', function() {
-
     nornenjsServer.close(function(){
-
         server.close(function() {
             process.exit(0);
         });
-
     });
-
 });
