@@ -131,6 +131,7 @@ extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uin
 extern "C" void copyInvViewMatrix(float *invViewMatrix, size_t sizeofMatrix);
 extern "C" void* make_blockVolume(void* image, cudaExtent volumeSize_block, cudaExtent volumeSize);
 extern "C" void initBlockTexture(const void *h_volume_block, int x, int y, int z);
+extern "C" void getOTFtable();
 
 void initPixelBuffer();
 
@@ -233,7 +234,7 @@ void ScreenCapture( const char *strFilePath ,uchar *d_output)
 void render()
 {
     copyInvViewMatrix(invViewMatrix, sizeof(float4)*3);
-	
+	getOTFtable();
     // map PBO to get CUDA device pointer
 	uint  *d_output;
 	uint  *c_output; 
@@ -324,7 +325,7 @@ void display()
 		fps_sum += elapsed;
 		drawcount++;
 	}else{
-		//printf("fps : %d \n", drawcount);
+		printf("fps : %d \n", drawcount);
 
 		fps_sum = 0.0f;
 		drawcount = 0;
