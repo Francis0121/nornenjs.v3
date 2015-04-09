@@ -1,13 +1,11 @@
 /**
  * Copyright Francis kim.
  */
+// ~ Import module (Me)
 var ENUMS = require('./enums');
 var logger = require('./logger');
 var sqlite = require('./sql/default');
-
-var path = require('path');
-var HashMap = require('hashmap').HashMap;
-var socketIo = require('socket.io');
+var util = require('./util');
 
 var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
@@ -17,22 +15,12 @@ var cuCtx = new cu.Ctx(0, cuDevice);
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
 
-var sys = require('sys')
+// ~ Import module (Nodejs)
+var path = require('path');
+var HashMap = require('hashmap').HashMap;
+var socketIo = require('socket.io');
 var exec = require('child_process').exec;
-
 var redis = require('redis');
-
-var os = require('os');
-var interfaces = os.networkInterfaces();
-var myIpAddress = null;
-for (var k in interfaces) {
-    for (var k2 in interfaces[k]) {
-        var address = interfaces[k][k2];
-        if (address.family === 'IPv4' && !address.internal && myIpAddress == null) {
-            myIpAddress = address.address;
-        }
-    }
-}
 
 /**
  * Nornejs server create 
@@ -69,40 +57,38 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         // ~ Master proxy server. Exec redis server and connect redis.
         this.redisProcess = exec(this.REDIS_PATH, function (error) {
             if (error !== null) {
-                logger.error('Redis server exec : ', error);
+                throw new Error(error);
             }
         });
 
+        this.ipAddress = util.getIpAddress();
 
-        this.ipAddress = myIpAddress;
-        var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
+        var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+        // ~ Add ip device
         for(var i=0; i<cu.deviceCount; i++){
-            var key = myIpAddress+'_'+i;
+            var key = this.ipAddress+'_'+i;
+            client.hset('hostList', key, '0', function(){
+                logger.debug('hostList add device ' + key);
+                client.quit();
+            });
+        }
+
+    }else{
+        // ~ Slave server. Connect master server redis.
+        if(typeof masterIpAddres !== 'string'){
+            throw new Error('IpAddre`ss type is "String" type')
+        }
+
+        this.ipAddress = masterIpAddres;
+        client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+        for(var i=0; i<cu.deviceCount; i++){
+            var key = util.getIpAddress()+'_'+i;
             client.hset('hostList', key, '0', function(){
                 logger.info('hostList add device ' + key);
                 client.quit();
             });
         }
-
-
-    }else{
-        // ~ Slave server. Connect master server redis.
-        if(typeof masterIpAddres !== 'string'){
-            throw new Error('IpAddress type is "String" type')
-        }
-
-        this.ipAddress = masterIpAddres;
-        client = redis.createClient(this.REDIS_PORT, masterIpAddres, { } );
-        for(var i=0; i<cu.deviceCount; i++){
-            var key = myIpAddress+'_'+i;
-            client.hset('hostList',  key, '0', function(){
-                logger.info('hostList add device ' + key);
-                client.quit();
-            });
-        }
     }
-
-
 
     //var httpProxy = require('http-proxy');
     //httpProxy.createProxyServer({target:'http://112.108.40.166:5000'}).listen(8000);
@@ -133,12 +119,12 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 NornenjsServer.prototype.connect = function(){
     this.socketIoConnect();
 
-    var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
     client.hgetall('hostList', function (err, list) {
 
         for (key in list) {
-            logger.info('key - ', key, ': value -', list[key]);
+            logger.debug('key - ', key, ': value -', list[key]);
         }
 
         client.quit();
@@ -259,13 +245,13 @@ NornenjsServer.prototype.close = function(callback){
     }
 
     // ~ Remove all redis key
-    var client = redis.createClient(this.REDIS_PORT, myIpAddress, { } );
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
     client.hgetall('hostList', function (err, list) {
 
         var i= 0, size = Object.keys(list).length;
         for (key in list) {
-            logger.debug('delete - ', key, ': value -', list[key]);
+            logger.debug('Delete redis key - ', key, ': value -', list[key]);
             client.hdel('hostList', key, function(err, reply){
                 i++;
                 if(i == size){
