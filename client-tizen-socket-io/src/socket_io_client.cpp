@@ -139,21 +139,25 @@ extern "C" {
 					unsigned int pid = (unsigned) getpid();
 					dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
 
+					int a1 = data->get_map()["message"]->get_int();
+					//int a2 = data->get_map()["int2"]->get_int();
 
-					vector<message::ptr> arr;
-					arr = data->get_map()["stream"]->get_vector();//data->function()은 불리지 않는 듯함.어플리케이션 죽음.
+					dlog_print(DLOG_FATAL, LOG_TAG, "int1 %d", a1);
 
-					int count = 0;
-
-					for(const auto&  p : arr)
-					{
-						if(count == 0)
-							dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", p->get_int());
-
-						if(count == 4)
-							dlog_print(DLOG_FATAL, LOG_TAG, "test_2~~ %d", p->get_int());
-						count++;
-					}
+//					vector<message::ptr> arr;
+//					arr = data->get_map()["stream"]->get_vector();//data->function()은 불리지 않는 듯함.어플리케이션 죽음.
+//
+//					int count = 0;
+//
+//					for(const auto&  p : arr)
+//					{
+//						if(count == 0)
+//							dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", p->get_int());
+//
+//						if(count == 4)
+//							dlog_print(DLOG_FATAL, LOG_TAG, "test_2~~ %d", p->get_int());
+//						count++;
+//					}
 					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", a);
 					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %lf", a);
 					//data->get_flag();
