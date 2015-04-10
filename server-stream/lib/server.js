@@ -19,6 +19,7 @@ var Web = require('./event/web').Web;
 var path = require('path');
 var HashMap = require('hashmap').HashMap;
 var socketIo = require('socket.io');
+var socketIoClient = require('socket.io-client');
 var exec = require('child_process').exec;
 var redis = require('redis');
 
@@ -169,11 +170,54 @@ NornenjsServer.prototype.distributed = function() {
     });
 };
 
+//var http = require('http');
+//var httpProxy = require('http-proxy');
+////httpProxy.createProxyServer(
+////    {   target : 'http://112.108.40.14:5000' }
+////).listen(8000);
+//
+//var proxy = [];
+//
+//proxy.push(
+//    new httpProxy.createProxyServer({
+//        target: {
+//            host: '112.108.40.14',
+//            port: 5000
+//        }
+//    })
+//);
+//
+//proxy.push(
+//    new httpProxy.createProxy({
+//        target : {
+//            host: '112.108.40.166',
+//            port : 5000
+//        }
+//    })
+//);
+//
+////~TODO 사용자 정보에 따라서 아이디를 지정해줘야하나.
+//var count =0;
+//var proxyServer = http.createServer(function (request, response) {
+//
+//    logger.debug('Request', request.url);
+//
+//    if(count++%4 ==0 ) {
+//        proxy[0].ws(request, response);
+//    }else {
+//        proxy[1].ws(request, response);
+//    }
+//    logger.debug(count);
+//
+//});
+//proxyServer.listen(8000);
+
 var http = require('http');
 var httpProxy = require('http-proxy');
-//httpProxy.createProxyServer(
-//    {   target : 'http://112.108.40.14:5000' }
-//).listen(8000);
+//
+// Create a proxy server with node-http-proxy
+//
+//httpProxy.createServer({ target: 'ws://112.108.40.14:5000', ws: true }).listen(8000);
 
 var proxy = [];
 
@@ -187,27 +231,57 @@ proxy.push(
 );
 
 proxy.push(
-    new httpProxy.createProxy({
-        target : {
+    new httpProxy.createProxyServer({
+        target: {
             host: '112.108.40.166',
-            port : 5000
+            port: 5000
         }
     })
 );
 
-//~TODO 사용자 정보에 따라서 아이디를 지정해줘야하나.
-var count =0;
-var proxyServer = http.createServer(function (req, res) {
 
-    if(count++%4 ==0 ) {
-        proxy[0].web(req, res);
-    }else {
-        proxy[1].web(req, res);
-    }
-    logger.debug(count);
+var proxyServer = http.createServer(function (req, res) {
+    logger.debug(req.url);
+
+    proxy[0].web(req, res);
+
+    //proxy[1].web(req, res);
+});
+
+var count = 0;
+proxyServer.on('upgrade', function (req, socket, head) {
+
+    setTimeout(function () {
+        count++;
+        logger.debug('increase server', count);
+
+        proxy[0].ws(req, socket, head);
+
+        if(count%2 == 1){
+            proxy[0].ws(req, socket, head);
+            logger.debug(count, ' 0 server');
+        }else{
+            logger.debug(count, ' 1 server');
+            proxy[1].ws(req, socket, head);
+        }
+    }, 1000);
 
 });
+
 proxyServer.listen(8000);
+
+
+//proxyServer.listen(8000);
+
+//
+// Setup the socket.io client against our proxy
+//
+var ws = socketIoClient.connect('ws://112.108.40.14:8000');
+
+ws.on('connectMessage', function (msg) {
+    logger.debug('Got message: ' + msg);
+    ws.send('I am the client');
+});
 
 /**
  * Socket Io First Connect
