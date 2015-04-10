@@ -53,7 +53,6 @@ namespace sio
 			s_empty_string.clear();
             return s_empty_string;
         }
-        
         virtual shared_ptr<const string> const& get_binary() const
         {
             assert(false);

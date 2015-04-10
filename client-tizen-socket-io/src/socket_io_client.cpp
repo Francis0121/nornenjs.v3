@@ -114,18 +114,81 @@ extern "C" {
 		dlog_print(DLOG_FATAL, LOG_TAG, "2");
 
 		dlog_print(DLOG_FATAL, LOG_TAG, "3");
-
+		/*
 		h.bind_event("test1", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
 			_lock.lock();
 
 			unsigned int pid = (unsigned) getpid();
 			dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
 
+			//double user = data->get_map()["message"]->get_double();
+			//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %f", user);
+
 			string user = data->get_map()["message"]->get_string();
 			dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
 
 			_lock.unlock();
-	    });
+	    });*/
+
+		dlog_print(DLOG_FATAL, LOG_TAG, "emit connectMessage");
+		h.emit("init", "");
+
+		h.bind_event("stream", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
+					_lock.lock();
+
+					unsigned int pid = (unsigned) getpid();
+					dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
+					message::flag f = data->get_flag();
+					dlog_print(DLOG_FATAL, LOG_TAG, "before switch");
+
+					switch(f)
+					    {
+					    case message::flag_integer:
+					    	 dlog_print(DLOG_FATAL, LOG_TAG, "flag_integer");
+					        break;
+					    case message::flag_double:
+					    	 dlog_print(DLOG_FATAL, LOG_TAG, "flag_double");
+					        break;
+					    case message::flag_string:
+					    	 dlog_print(DLOG_FATAL, LOG_TAG, "flag_string");
+					        break;
+					    case message::flag_binary:
+					    	 dlog_print(DLOG_FATAL, LOG_TAG, "flag_binary");
+					    	 break;
+					    case message::flag_array:
+							 dlog_print(DLOG_FATAL, LOG_TAG, "flag_array");
+							 break;
+					    case message::flag_object:
+							 dlog_print(DLOG_FATAL, LOG_TAG, "flag_object");
+							 break;
+					    default:
+					        printf("??\n");
+					    }
+					dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", "test~~");
+
+					/*
+					vector<shared_ptr<const string>> s_binary;
+					s_binary.push_back(data->get_binary());
+
+					for(const auto&  p : s_binary)
+					{
+						string user;
+
+					}*/
+
+					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
+
+					//string user = data->get_map()["message"]->get_string();
+					//shared_ptr<const string> s_binary = data->get_map()["message"]->get_binary();
+					//소멸주의
+
+					//string user = data->get_map()["message"]->get_string();
+					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
+					//int user = data->get_map()["message"]->get_int();
+					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %d", user);
+
+					_lock.unlock();
+			    });
 
 		dlog_print(DLOG_FATAL, LOG_TAG, "4");
 
