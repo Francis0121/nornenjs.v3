@@ -10,6 +10,8 @@
 #include <vector>
 #include <map>
 #include <cassert>
+#include <dlog.h>
+
 namespace sio
 {
     using namespace std;
@@ -29,6 +31,27 @@ namespace sio
         
         flag get_flag() const
         {
+        	switch(_flag)
+        	{
+        	case flag_integer:
+        		dlog_print(DLOG_FATAL, LOG_TAG, "in flag_integer()");
+        		break;
+        	case flag_double:
+					dlog_print(DLOG_FATAL, LOG_TAG, "in flag_double()");
+					break;
+        	case flag_string:
+					dlog_print(DLOG_FATAL, LOG_TAG, "in flag_string()");
+					break;
+        	case flag_binary:
+					dlog_print(DLOG_FATAL, LOG_TAG, "in get_binary()");
+					break;
+			case flag_array:
+					dlog_print(DLOG_FATAL, LOG_TAG, "in flag_binary()");
+					break;
+			case flag_object:
+					dlog_print(DLOG_FATAL, LOG_TAG, "in flag_object()");
+					break;
+        	}
             return _flag;
         }
         
@@ -55,6 +78,7 @@ namespace sio
         }
         virtual shared_ptr<const string> const& get_binary() const
         {
+        	 //dlog_print(DLOG_FATAL, LOG_TAG, "in get_binary()");여기로 아예 안들어옴
             assert(false);
             static shared_ptr<const string> s_empty_binary;
 			s_empty_binary = nullptr;
@@ -116,6 +140,7 @@ namespace sio
         
         int64_t get_int() const
         {
+        	dlog_print(DLOG_FATAL, LOG_TAG, "in get_int()");
             return _v;
         }
     };
@@ -136,6 +161,7 @@ namespace sio
         
         double get_double() const
         {
+        	dlog_print(DLOG_FATAL, LOG_TAG, "in get_double()");
             return _v;
         }
     };
@@ -155,6 +181,7 @@ namespace sio
         
         string const& get_string() const
         {
+        	dlog_print(DLOG_FATAL, LOG_TAG, "in get_string()");
             return _v;
         }
     };
@@ -165,6 +192,7 @@ namespace sio
         binary_message(shared_ptr<const string> const& v)
         :message(flag_binary),_v(v)
         {
+        	dlog_print(DLOG_FATAL, LOG_TAG, "create binary_message");
         }
     public:
         static message::ptr create(shared_ptr<const string> const& v)
@@ -174,6 +202,7 @@ namespace sio
         
         shared_ptr<const string> const& get_binary() const
         {
+        	dlog_print(DLOG_FATAL, "mess", "in get binary_message()");
             return _v;
         }
     };

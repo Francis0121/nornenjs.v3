@@ -9,6 +9,7 @@
 #include <sstream>
 #include "sio_message.h"
 #include <functional>
+#include <dlog.h>
 
 namespace sio
 {

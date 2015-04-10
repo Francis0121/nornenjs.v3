@@ -10,6 +10,8 @@
 #include <rapidjson/writer.h>
 #include <cassert>
 
+
+
 #define kBIN_PLACE_HOLDER "_placeholder"
 
 namespace sio
@@ -36,24 +38,39 @@ namespace sio
     
     void accept_binary_message(binary_message const& msg,Value& val,Document& doc,vector<shared_ptr<const string> >& buffers)
     {
+    	 dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message1");
         val.SetObject();
         Value boolVal;
         boolVal.SetBool(true);
         val.AddMember(kBIN_PLACE_HOLDER, boolVal, doc.GetAllocator());
         Value numVal;
         numVal.SetInt((int)buffers.size());
+
+        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message2");
+
         val.AddMember("num", numVal, doc.GetAllocator());
         //FIXME can not avoid binary copy here.
+        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message2-1");
         shared_ptr<string> write_buffer = make_shared<string>();
-        write_buffer->reserve(msg.get_binary()->size()+1);
+        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message2-2");
+        write_buffer->reserve(msg.get_binary()->size()+1);//msg.get_binary()->size()+1
+
+        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message3");
+
         char frame_char = packet::frame_message;
         write_buffer->append(&frame_char,1);
+        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message4");
+        msg.get_binary();
+        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message4-1");
         write_buffer->append(*(msg.get_binary()));
+        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message5");
+
         buffers.push_back(write_buffer);
     }
     
     void accept_array_message(array_message const& msg,Value& val,Document& doc,vector<shared_ptr<const string> >& buffers)
     {
+    	dlog_print(DLOG_FATAL, "sio_packet", "start accept_array_message()");
         val.SetArray();
         for (vector<message::ptr>::const_iterator it = msg.get_vector().begin(); it!=msg.get_vector().end(); ++it) {
             Value child;
@@ -76,6 +93,7 @@ namespace sio
     
     void accept_message(message const& msg,Value& val, Document& doc,vector<shared_ptr<const string> >& buffers)
     {
+    	dlog_print(DLOG_FATAL, "sio_packet", "start accept_message");
         const message* msg_ptr = &msg;
         switch(msg.get_flag())
         {
@@ -96,11 +114,14 @@ namespace sio
             }
             case message::flag_binary:
             {
+            	dlog_print(DLOG_FATAL, "sio_packet", "bin!!!!!@@@@@!!!!!!!!!!!!!!");
                 accept_binary_message(*(static_cast<const binary_message*>(msg_ptr)), val,doc,buffers);
+
                 break;
             }
             case message::flag_array:
             {
+            	dlog_print(DLOG_FATAL, "sio_packet", "arr, but we will use it like binary");
                 accept_array_message(*(static_cast<const array_message*>(msg_ptr)), val,doc,buffers);
                 break;
             }
@@ -116,6 +137,7 @@ namespace sio
     
     message::ptr from_json(Value const& value, vector<shared_ptr<const string> > const& buffers)
     {
+    	dlog_print(DLOG_FATAL, "sio_packet", "from json");
         if(value.IsInt64())
         {
             return int_message::create(value.GetInt64());
@@ -131,6 +153,7 @@ namespace sio
         }
         else if(value.IsArray())
         {
+        	dlog_print(DLOG_FATAL, "sio_packet", "if arr from json");
             message::ptr ptr = array_message::create();
             for (SizeType i = 0; i< value.Size(); ++i) {
                 static_cast<array_message*>(ptr.get())->get_vector().push_back(from_json(value[i],buffers));
@@ -310,6 +333,7 @@ namespace sio
     
     bool packet::accept(string& payload_ptr, vector<shared_ptr<const string> >&buffers)
     {
+    	dlog_print(DLOG_FATAL, "sio_packet", "accept()");
         char frame_char = _frame+'0';
         payload_ptr.append(&frame_char,1);
         if (_frame!=frame_message) {
@@ -318,7 +342,7 @@ namespace sio
         bool hasMessage = false;
         Document doc;
         if (_message) {
-            accept_message(*_message, doc, doc, buffers);
+        	accept_message(*_message, doc, doc, buffers);
             hasMessage = true;
         }
         bool hasBinary = buffers.size()>0;
