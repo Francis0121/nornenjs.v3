@@ -58,7 +58,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
-    this.redisProcess = null;
+    this.redisProcess = undefined;
 
     if(isMaster){
         // ~ Master Relay server. Exec redis server and connect redis.
@@ -103,34 +103,48 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
  */
 NornenjsServer.prototype.addDevice = function(callback){
 
+    var ipAddress = util.getIpAddress();
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
-    for(var i=0; i<cu.deviceCount; i++){
-        var key = this.ipAddress+'_'+i;
-        client.hset(keys.HOSTLIST, key, '0', function(err, reply){
-            // ~ TODO error callback
-            logger.debug(keys.HOSTLIST+' add device ' + key + ' Reply ' + reply);
-            client.quit();
+    var launch = function(client, key, isLast, callback){
+	client.hset(keys.HOSTLIST, key, '0', function(err, reply){
+	   logger.debug(keys.HOSTLIST+' add device ' + key + ' Reply ' + reply);
+ 	   if(isLast){
+		client.quit();
+		if(typeof callback === 'function') callback();
+	   }
+	});
+    };
 
-            if(callback === 'function') callback();
-        });
+    for(var i=0; i<cu.deviceCount; i++){
+        var key = ipAddress+'_'+i;
+	
+	launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
     }
 
 };
 
 NornenjsServer.prototype.removeDevice = function(callback){
 
+    var ipAddress = util.getIpAddress();
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
-    for(var i=0; i<cu.deviceCount; i++){
-        var key = this.ipAddress+'_'+i;
-        client.hdel(keys.HOSTLIST, key, function(err, reply){
-            // ~ TODO error callback
-            logger.debug(keyS.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
-            client.quit();
+    var launch = function(client, key, isLast, callback){
+	client.hdel(keys.HOSTLIST, key, function(err, reply){
+	   logger.debug(keys.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
+	   if(isLast){
+		client.quit();
+		if(typeof callback === 'function'){
+		   callback();
+		}
+	   }
+	});
+    };
 
-            if(callback === 'function') callback();
-        });
+    for(var i=0; i<cu.deviceCount; i++){
+	var key = ipAddress+'_'+i;
+
+	launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
     }
 
 };
@@ -283,6 +297,8 @@ NornenjsServer.prototype.socketIoConnect = function(){
  */
 NornenjsServer.prototype.close = function(callback){
     var $this = this;
+
+    console.log(typeof $this.redisProcess);
 
     if(typeof $this.redisProcess !== 'object') {
 
