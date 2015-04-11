@@ -25,7 +25,7 @@ var redis = require('redis');
 
 // ~ Redis key
 var keys = {
-  HOSTLIST : 'HostList'
+    HOSTLIST : 'HostList'
 };
 
 /**
@@ -60,7 +60,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.redisProcess = null;
 
     if(isMaster){
-        // ~ Master proxy server. Exec redis server and connect redis.
+        // ~ Master Relay server. Exec redis server and connect redis.
         this.redisProcess = exec(this.REDIS_PATH, function (error) {
             if (error !== null) {
                 throw new Error(error);
@@ -110,25 +110,6 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 
 };
 
-// ~ PROXY SERVER
-// TODO STEP 01. NornenjsServer 가 작동하게 되면 내가 ROOT 라면 Proxy 서버와 Redis를 실행한다.
-// TODO STEP 02. CUDA Graphic Card Device를 조회하여
-// TODO          " GRAPHIC_HOST(key) " : IP_DEVICE_NUMBER "
-// TODO          " IP_DEVICE_NUMBER(key) : 0(value) " 로 하여 Redis에 저장한다.
-
-// ~ OTHER SERVER
-// TODO STEP 01. NornenjsServer 연결시 Proxy 사용 여부를 선택하고 해당되는 Proxy를 선택한다면 Root 인지 선택하고 ROOT가 아니라면 Proxy 서버 IP를 작성한다.
-// TODO STEP 02. Proxy 사용하면서 서버가 아니라면 Redis 클라이언트를 연결한다.
-// TODO STEP 03. CUDA Graphic Card Device를 조회하여
-// TODO          " GRAPHIC_HOST(key) " : IP_DEVICE_NUMBER "
-// TODO          " IP_DEVICE(key) : 0(value) " 로 하여 Redis에 저장한다.
-
-// 사용자 접속
-// TODO STEP 01. 해당 접속은 무조건 ROOT PROXY 에서만 접근이 가능하도록 해야한다.
-// TODO STEP 02. GRAPHIC_HOST(key) 를 통하여 IP DEVICE 를 가져온뒤 해당 키값에 대한 Min 값을 찾고 Min 값에 따라서 Device를 연결해주도록 한다.
-
-// ~ SERVER 종료시
-// TODO REDIS DEVICE 정보 삭제 필요
 /**
  * Nornensjs server create
  */
@@ -169,119 +150,6 @@ NornenjsServer.prototype.distributed = function() {
         logger.debug(ipHost, minClient);
     });
 };
-
-//var http = require('http');
-//var httpProxy = require('http-proxy');
-////httpProxy.createProxyServer(
-////    {   target : 'http://112.108.40.14:5000' }
-////).listen(8000);
-//
-//var proxy = [];
-//
-//proxy.push(
-//    new httpProxy.createProxyServer({
-//        target: {
-//            host: '112.108.40.14',
-//            port: 5000
-//        }
-//    })
-//);
-//
-//proxy.push(
-//    new httpProxy.createProxy({
-//        target : {
-//            host: '112.108.40.166',
-//            port : 5000
-//        }
-//    })
-//);
-//
-////~TODO 사용자 정보에 따라서 아이디를 지정해줘야하나.
-//var count =0;
-//var proxyServer = http.createServer(function (request, response) {
-//
-//    logger.debug('Request', request.url);
-//
-//    if(count++%4 ==0 ) {
-//        proxy[0].ws(request, response);
-//    }else {
-//        proxy[1].ws(request, response);
-//    }
-//    logger.debug(count);
-//
-//});
-//proxyServer.listen(8000);
-
-var http = require('http');
-var httpProxy = require('http-proxy');
-//
-// Create a proxy server with node-http-proxy
-//
-//httpProxy.createServer({ target: 'ws://112.108.40.14:5000', ws: true }).listen(8000);
-
-var proxy = [];
-
-proxy.push(
-    new httpProxy.createProxyServer({
-        target: {
-            host: '112.108.40.14',
-            port: 5000
-        }
-    })
-);
-
-proxy.push(
-    new httpProxy.createProxyServer({
-        target: {
-            host: '112.108.40.166',
-            port: 5000
-        }
-    })
-);
-
-
-var proxyServer = http.createServer(function (req, res) {
-    logger.debug(req.url);
-
-    proxy[0].web(req, res);
-
-    //proxy[1].web(req, res);
-});
-
-var count = 0;
-proxyServer.on('upgrade', function (req, socket, head) {
-
-    setTimeout(function () {
-        count++;
-        logger.debug('increase server', count);
-
-        proxy[0].ws(req, socket, head);
-
-        if(count%2 == 1){
-            proxy[0].ws(req, socket, head);
-            logger.debug(count, ' 0 server');
-        }else{
-            logger.debug(count, ' 1 server');
-            proxy[1].ws(req, socket, head);
-        }
-    }, 1000);
-
-});
-
-proxyServer.listen(8000);
-
-
-//proxyServer.listen(8000);
-
-//
-// Setup the socket.io client against our proxy
-//
-var ws = socketIoClient.connect('ws://112.108.40.14:8000');
-
-ws.on('connectMessage', function (msg) {
-    logger.debug('Got message: ' + msg);
-    ws.send('I am the client');
-});
 
 /**
  * Socket Io First Connect
