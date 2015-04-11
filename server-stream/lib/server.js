@@ -37,7 +37,7 @@ var keys = {
  *  SET max conection client, cuda ptx path, cuda data path;
  */
 var NornenjsServer = function(server, isMaster, masterIpAddres){
-    this.MAX_CONNECTION_CLIENT = 10;
+    this.MAX_CONNECTION_CLIENT = 5;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
@@ -139,7 +139,6 @@ NornenjsServer.prototype.removeDevice = function(callback){
         var key = ipAddress+'_'+i;
         launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
     }
-
 };
 
 /**
@@ -158,11 +157,39 @@ NornenjsServer.prototype.updateDevice = function(key, type, callback){
 };
 
 /**
+ * Minimum device key Or No device count
+ */
+NornenjsServer.prototype.getDeviceKey = function(callback){
+
+    var $this = this;
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+    var min = 10,
+        select = undefined;
+
+    client.hgetall(keys.HOSTLIST, function (err, list) {
+
+        for (key in list) {
+            var val = list[key];
+            logger.info(key, val);
+            if(min > val && val < $this.MAX_CONNECTION_CLIENT){
+                select = key, min = val;
+                if(min === 0) break;
+            }
+        }
+
+        logger.info('selected',select, min);
+
+        client.quit();
+
+        if(typeof callback === 'function') callback(select);
+    });
+};
+
+/**
  * Nornensjs server create
  */
 NornenjsServer.prototype.connect = function(){
     this.socketIoConnect();
-    this.distributed();
 };
 
 /**
@@ -170,7 +197,20 @@ NornenjsServer.prototype.connect = function(){
  */
 NornenjsServer.prototype.distributed = function() {
 
-    this.updateDevice('112.108.40.166_0', ENUMS.REDIS_UPDATE_TYPE.INCREASE);
+    var $this = this;
+
+    this.getDeviceKey(function(select){
+        if(typeof select !== 'string'){
+            // ~ TODO 클라이언트는 로딩
+            logger.info('Connection Full');
+            return;
+        }
+
+        // ~ TODO 클라이언트에게 해당 정보 전달
+        $this.updateDevice(select, ENUMS.REDIS_UPDATE_TYPE.INCREASE);
+    });
+
+
 
 };
 
@@ -187,11 +227,11 @@ NornenjsServer.prototype.socketIoConnect = function(){
         
         $this.android.addSocketEventListener(socket);
         $this.web.addSocketEventListener(socket);
-        
         /**
          * Connection User
          */
         socket.on('connectMessage', function(){
+            $this.distributed();
 
             var clientId = socket.id;
 
