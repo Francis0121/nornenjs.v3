@@ -170,17 +170,14 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
 
         for (key in list) {
             var val = list[key];
-            logger.info(key, val);
             if(min > val && val < $this.MAX_CONNECTION_CLIENT){
                 select = key, min = val;
                 if(min === 0) break;
             }
         }
 
-        logger.info('selected',select, min);
-
+        logger.info('Selected', select, min);
         client.quit();
-
         if(typeof callback === 'function') callback(select);
     });
 };
@@ -202,15 +199,13 @@ NornenjsServer.prototype.distributed = function() {
     this.getDeviceKey(function(select){
         if(typeof select !== 'string'){
             // ~ TODO 클라이언트는 로딩
-            logger.info('Connection Full');
+            logger.debug('Connection Full');
             return;
         }
 
         // ~ TODO 클라이언트에게 해당 정보 전달
         $this.updateDevice(select, ENUMS.REDIS_UPDATE_TYPE.INCREASE);
     });
-
-
 
 };
 
