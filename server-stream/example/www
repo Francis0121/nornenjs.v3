@@ -46,7 +46,8 @@ var server = http.createServer(function (request, response) {
 
 // ~ Create nornenjs server
 var NornenjsServer = require('../lib/server').NornenjsServer;
-var nornenjsServer = new NornenjsServer(server, false, '112.108.40.166');
+var nornenjsServer = new NornenjsServer(server, true);
+// ~ Child Server var nornenjsServer = new NornenjsServer(server, false, '112.108.40.166');
 nornenjsServer.connect();
 
 /**

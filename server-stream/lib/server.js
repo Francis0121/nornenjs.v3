@@ -45,7 +45,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.server = server;
     this.io = socketIo.listen(this.server);
     this.cudaRenderMap = new HashMap();
-    
+
     //TODO 해당되는 클라이언트가 무엇인지에 따라서 사용되는 socket event Handler를 다르게 한다.
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
@@ -71,19 +71,11 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         this.ipAddress = util.getIpAddress();
 
         var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-
         client.flushall(function (error, reply){
             logger.debug('Flushall', reply);
         });
 
         this.addDevice();
-
-        // ~ Test server IP add
-        //client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-        //client.hset(keys.HOSTLIST, '112.108.40.14_0', '0', function(){
-        //    logger.debug(keys.HOSTLIST+' add device 112.108.40.14_0');
-        //    client.quit();
-        //});
 
     }else{
         // ~ Slave server. Connect master server redis.
@@ -96,10 +88,10 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     }
 };
 
-// ~ Device information
-
 /**
+ * Add graphic device
  *
+ * @param callback
  */
 NornenjsServer.prototype.addDevice = function(callback){
 
@@ -107,44 +99,45 @@ NornenjsServer.prototype.addDevice = function(callback){
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
     var launch = function(client, key, isLast, callback){
-	client.hset(keys.HOSTLIST, key, '0', function(err, reply){
-	   logger.debug(keys.HOSTLIST+' add device ' + key + ' Reply ' + reply);
- 	   if(isLast){
-		client.quit();
-		if(typeof callback === 'function') callback();
-	   }
-	});
+        client.hset(keys.HOSTLIST, key, '0', function(err, reply){
+            logger.debug(keys.HOSTLIST+' add device ' + key + ' Reply ' + reply);
+            if(isLast){
+                client.quit();
+                if(typeof callback === 'function') callback();
+            }
+        });
     };
 
     for(var i=0; i<cu.deviceCount; i++){
         var key = ipAddress+'_'+i;
-	
-	launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
+        launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
     }
 
 };
 
+/**
+ * Remove graphic device
+ *
+ * @param callback
+ */
 NornenjsServer.prototype.removeDevice = function(callback){
 
     var ipAddress = util.getIpAddress();
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
 
     var launch = function(client, key, isLast, callback){
-	client.hdel(keys.HOSTLIST, key, function(err, reply){
-	   logger.debug(keys.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
-	   if(isLast){
-		client.quit();
-		if(typeof callback === 'function'){
-		   callback();
-		}
-	   }
-	});
+        client.hdel(keys.HOSTLIST, key, function(err, reply){
+            logger.debug(keys.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
+            if(isLast){
+                client.quit();
+                if(typeof callback === 'function') callback();
+            }
+        });
     };
 
     for(var i=0; i<cu.deviceCount; i++){
-	var key = ipAddress+'_'+i;
-
-	launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
+        var key = ipAddress+'_'+i;
+        launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
     }
 
 };
@@ -207,7 +200,6 @@ NornenjsServer.prototype.socketIoConnect = function(){
         
         /**
          * Connection User
-         * TODO 사용자 관리는 프록시 서버가 되는 부분으로 이전될 예정
          */
         socket.on('connectMessage', function(){
 
