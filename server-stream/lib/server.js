@@ -142,6 +142,20 @@ NornenjsServer.prototype.removeDevice = function(callback){
 
 };
 
+/**
+ * Increase or decrease Device count
+ */
+NornenjsServer.prototype.updateDevice = function(key, type, callback){
+
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+
+    client.hincrby(keys.HOSTLIST, key, type, function(err, reply){
+        logger.debug(keys.HOSTLIST+ ' hash key update ' + type + ' Reply ' + reply);
+        client.quit();
+
+        if(typeof callback === 'function') callback();
+    });
+};
 
 /**
  * Nornensjs server create
@@ -156,32 +170,8 @@ NornenjsServer.prototype.connect = function(){
  */
 NornenjsServer.prototype.distributed = function() {
 
-    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+    this.updateDevice('112.108.40.166_0', ENUMS.REDIS_UPDATE_TYPE.INCREASE);
 
-    client.hgetall(keys.HOSTLIST, function (error, list) {
-        if(error != null){
-            throw new Error('Hash get all function error', error);
-        }
-        var ipHost,
-            minClient = 10;
-
-        for (key in list) {
-            logger.debug('key - ', key, ': value -', list[key]);
-            if(list[key] == 0){
-                minClient = 0;
-                ipHost = key.split('_');
-                break;
-            }
-
-            if(minClient > list[key]){
-                minClient = list[key];
-                ipHost = key.split('_');
-            }
-        }
-        client.quit();
-
-        logger.debug(ipHost, minClient);
-    });
 };
 
 /**
@@ -289,8 +279,6 @@ NornenjsServer.prototype.socketIoConnect = function(){
  */
 NornenjsServer.prototype.close = function(callback){
     var $this = this;
-
-    console.log(typeof $this.redisProcess);
 
     if(typeof $this.redisProcess !== 'object') {
 
