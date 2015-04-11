@@ -1,6 +1,7 @@
 /**
  * Copyright Francis kim.
  */
+
 // ~ Import module (Me)
 var ENUMS = require('./enums');
 var logger = require('./logger');
@@ -75,40 +76,65 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
             logger.debug('Flushall', reply);
         });
 
-        // ~ Add ip device
-        for(var i=0; i<cu.deviceCount; i++){
-            var key = this.ipAddress+'_'+i;
-            client.hset(keys.HOSTLIST, key, '0', function(){
-                logger.debug(keys.HOSTLIST+' add device ' + key);
-                client.quit();
-            });
-        }
+        this.addDevice();
 
         // ~ Test server IP add
-        client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-        client.hset(keys.HOSTLIST, '112.108.40.14_0', '0', function(){
-            logger.debug(keys.HOSTLIST+' add device 112.108.40.14_0');
-            client.quit();
-        });
+        //client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+        //client.hset(keys.HOSTLIST, '112.108.40.14_0', '0', function(){
+        //    logger.debug(keys.HOSTLIST+' add device 112.108.40.14_0');
+        //    client.quit();
+        //});
 
     }else{
         // ~ Slave server. Connect master server redis.
         if(typeof masterIpAddres !== 'string'){
-            throw new Error('IpAddre`ss type is "String" type')
+            throw new Error('IpAddress type is "String" type')
         }
 
         this.ipAddress = masterIpAddres;
-        client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-        for(var i=0; i<cu.deviceCount; i++){
-            var key = util.getIpAddress()+'_'+i;
-            client.hset(keys.HOSTLIST, key, '0', function(){
-                logger.info(keys.HOSTLIST+' add device ' + key);
-                client.quit();
-            });
-        }
+        this.addDevice();
+    }
+};
+
+// ~ Device information
+
+/**
+ *
+ */
+NornenjsServer.prototype.addDevice = function(callback){
+
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+
+    for(var i=0; i<cu.deviceCount; i++){
+        var key = this.ipAddress+'_'+i;
+        client.hset(keys.HOSTLIST, key, '0', function(err, reply){
+            // ~ TODO error callback
+            logger.debug(keys.HOSTLIST+' add device ' + key + ' Reply ' + reply);
+            client.quit();
+
+            if(callback === 'function') callback();
+        });
     }
 
 };
+
+NornenjsServer.prototype.removeDevice = function(callback){
+
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+
+    for(var i=0; i<cu.deviceCount; i++){
+        var key = this.ipAddress+'_'+i;
+        client.hdel(keys.HOSTLIST, key, function(err, reply){
+            // ~ TODO error callback
+            logger.debug(keyS.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
+            client.quit();
+
+            if(callback === 'function') callback();
+        });
+    }
+
+};
+
 
 /**
  * Nornensjs server create
@@ -259,32 +285,34 @@ NornenjsServer.prototype.close = function(callback){
     var $this = this;
 
     if(typeof $this.redisProcess !== 'object') {
-        callback();
+
+        // ~ Slave Server
         logger.debug('Nornenjs server closed.');
+        $this.removeDevice(callback);
+
+    }else {
+        // ~ Relay Server Remove all redis key
+        var client = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
+
+        client.hgetall(keys.HOSTLIST, function (err, list) {
+            var i = 0, size = Object.keys(list).length;
+            for (key in list) {
+                logger.debug('Delete redis key - ', key, ': value -', list[key]);
+                client.hdel(keys.HOSTLIST, key, function (err, reply) {
+                    i++;
+                    if (i == size) {
+                        client.quit();
+
+                        logger.debug('Redis server kill.');
+                        logger.debug('Nornenjs server closed.');
+
+                        $this.redisProcess.kill();
+                        callback();
+                    }
+                });
+            }
+        });
     }
-
-    // ~ Remove all redis key
-    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-
-    client.hgetall(keys.HOSTLIST, function (err, list) {
-
-        var i= 0, size = Object.keys(list).length;
-        for (key in list) {
-            logger.debug('Delete redis key - ', key, ': value -', list[key]);
-            client.hdel(keys.HOSTLIST, key, function(err, reply){
-                i++;
-                if(i == size){
-                    client.quit();
-
-                    logger.debug('Redis server kill.');
-                    logger.debug('Nornenjs server closed.');
-
-                    $this.redisProcess.kill();
-                    callback();
-                }
-            });
-        }
-    });
 };
 
 module.exports.NornenjsServer = NornenjsServer;
