@@ -42,8 +42,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
 
-    this.server = server;
-    this.io = socketIo.listen(this.server);
+    this.io = socketIo.listen(server);
     this.cudaRenderMap = new HashMap();
 
     //TODO 해당되는 클라이언트가 무엇인지에 따라서 사용되는 socket event Handler를 다르게 한다.
@@ -59,6 +58,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
     this.redisProcess = undefined;
+    this.isMaster = isMaster;
 
     if(isMaster){
         // ~ Master Relay server. Exec redis server and connect redis.
@@ -163,7 +163,7 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
 
     var $this = this;
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-    var min = 10,
+    var min = $this.MAX_CONNECTION_CLIENT+1,
         select = undefined;
 
     client.hgetall(keys.HOSTLIST, function (err, list) {
@@ -176,7 +176,6 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
             }
         }
 
-        logger.info('Selected', select, min);
         client.quit();
         if(typeof callback === 'function') callback(select);
     });
@@ -186,25 +185,43 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
  * Nornensjs server create
  */
 NornenjsServer.prototype.connect = function(){
-    this.socketIoConnect();
+    if(this.isMaster) {
+        this.socketIoRelayServer();
+    }else{
+        this.socketIoSlaveServer();
+    }
+    this.socketIoCuda();
 };
 
+var clientQueue = [];
 /**
  * Distributed User
  */
-NornenjsServer.prototype.distributed = function() {
+NornenjsServer.prototype.distributed = function(socket) {
 
     var $this = this;
 
     this.getDeviceKey(function(select){
+
+        var socketId = socket.id;
+        var info = {
+                ipAddress : null,
+                deviceNumber : null,
+                port : 5000
+            };
+
         if(typeof select !== 'string'){
-            // ~ TODO 클라이언트는 로딩
-            logger.debug('Connection Full');
-            return;
+            clientQueue.push(socketId);
+            logger.debug('Connection Device Full');
+        }else{
+            $this.updateDevice(select, ENUMS.REDIS_UPDATE_TYPE.INCREASE);
+            var split = select.split('_');
+            info.ipAddress = split[0];
+            info.deviceNumber = split[1];
+            logger.debug('Selected', split);
         }
 
-        // ~ TODO 클라이언트에게 해당 정보 전달
-        $this.updateDevice(select, ENUMS.REDIS_UPDATE_TYPE.INCREASE);
+        socket.emit('getInfo', info);
     });
 
 };
@@ -212,67 +229,98 @@ NornenjsServer.prototype.distributed = function() {
 /**
  * Socket Io First Connect
  */
-NornenjsServer.prototype.socketIoConnect = function(){
+NornenjsServer.prototype.socketIoRelayServer = function(){
 
     var $this = this;
-    var clientQueue = [];
-    var streamClientCount = 0;
+    var relayClient = [];
 
     this.io.sockets.on('connection', function(socket){
-        
-        $this.android.addSocketEventListener(socket);
-        $this.web.addSocketEventListener(socket);
+
         /**
-         * Connection User
+         * Connection Relay Server
          */
-        socket.on('connectMessage', function(){
-            $this.distributed();
+        socket.on('getInfo', function(){
+            logger.debug('Connect relay server');
+            $this.distributed(socket);
+            relayClient.push(socket.id);
+        });
 
-            var clientId = socket.id;
+        /**
+         * Connection Stream Server
+         */
+        socket.on('join', function(){
+            logger.debug('Connect stream server');
 
-            var message = {
-                error : '',
-                success : false,
-                clientId : clientId
-            };
-
-            if(streamClientCount < $this.MAX_CONNECTION_CLIENT){
-                streamClientCount++;
-                message.success = true;
-            }else{
-                clientQueue.push(clientId);
-                message.error = 'Visitor limit';
-            }
-
-            logger.debug('[Connect] Stream user count [' + streamClientCount + ']');
-            logger.debug('Send message client id [' + clientId + ']');
-
-            socket.emit('connectMessage', message);
         });
 
         /**
          * Disconnection User - Wait queue client connect request
          */
         socket.on('disconnect', function () {
-            
-            var clientId = socket.id;
-            
-            if(clientQueue.indexOf(clientId) == -1){
-                streamClientCount--;
-                logger.debug('[Disconnect] Stream user count [' + streamClientCount + ']');
-                logger.debug('Disconnect socket client id ['+ clientId +']');
-            }
 
-            var connectClientId = clientQueue.shift();
-
-            if(connectClientId != undefined){
-                logger.debug('Connect socket client id [' + connectClientId + ']');
-                socket.broadcast.to(connectClientId).emit('otherClientDisconnect');
+            var index;
+            if( (index = relayClient.indexOf(socket.id)) !== -1){
+                logger.debug('Disconnect relay server');
+                relayClient.splice(index, 1);
+            }else{
+                logger.debug('Disconnect stream server');
             }
+            
+            //var clientId = socket.id;
+            //
+            //if(clientQueue.indexOf(clientId) == -1){
+            //    streamClientCount--;
+            //    logger.debug('[Disconnect] Stream user count [' + streamClientCount + ']');
+            //    logger.debug('Disconnect socket client id ['+ clientId +']');
+            //}
+            //
+            //var connectClientId = clientQueue.shift();
+            //
+            //if(connectClientId != undefined){
+            //    logger.debug('Connect socket client id [' + connectClientId + ']');
+            //    socket.broadcast.to(connectClientId).emit('otherClientDisconnect');
+            //}
+        });
+    });
+};
+
+NornenjsServer.prototype.socketIoSlaveServer = function(){
+
+    var $this = this;
+
+    $this.conn.sockets.on('connection', function(socket){
+
+        /**
+         * Connection Stream Server
+         */
+        socket.on('join', function(){
+           logger.debug('Connect stream server');
 
         });
 
+        socket.on('disconnect', function () {
+            logger.debug('Disconnect stream server');
 
+            // TODO - Update Redis Info
+
+            // TODO - And Publish Redis Server
+
+        });
+    });
+};
+
+/**
+ * Cuda Init
+ */
+NornenjsServer.prototype.socketIoCuda = function(){
+
+    var $this = this;
+
+    $this.io.sockets.on('connection', function(socket){
+
+        $this.android.addSocketEventListener(socket);
+
+        $this.web.addSocketEventListener(socket);
         /**
          * Init cudaRenderObject
          */
@@ -293,20 +341,21 @@ NornenjsServer.prototype.socketIoConnect = function(){
                     logger.debug('[Stream] Register CUDA module ');
 
                     var cudaRender = new CudaRender(
-                                            ENUMS.RENDERING_TYPE.VOLUME, $this.CUDA_DATA_PATH + volume.save_name,
-                                            volume.width, volume.height, volume.depth,
-                                            cuCtx, cu.moduleLoad($this.CUDA_PTX_PATH));
+                        ENUMS.RENDERING_TYPE.VOLUME, $this.CUDA_DATA_PATH + volume.save_name,
+                        volume.width, volume.height, volume.depth,
+                        cuCtx, cu.moduleLoad($this.CUDA_PTX_PATH));
                     cudaRender.init();
-                    
+
                     $this.cudaRenderMap.set(clientId, cudaRender);
+
                     socket.emit('loadCudaMemory');
                 }
             });
         });
 
     });
-
 };
+
 
 /**
  * NornenjsServer close event. (Important Need server is closed)

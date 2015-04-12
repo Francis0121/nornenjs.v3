@@ -10,56 +10,64 @@
     
     <script>
 
-        var socket = io.connect('http://${ipAddress}:5000', { reconnection : false } );
-        var fps = 0;
+        var relay = io.connect('http://${ipAddress}:5000',{'forceNew':true });
+
+
+        var socket = null;
 
         /**
          * send connect message to server
          */
-        socket.emit('connectMessage');
+        relay.emit('getInfo');
 
         /**
          * emit connect - response message
          */
-        socket.on('connectMessage', function(message){
-            if(!message.success){
-                alert(message.error);
+        relay.on('getInfo', function(info){
+            if(typeof info.ipAddress !== 'string'){
+                alert('Connection User is full');
                 return;
             }
-            
+
+            relay.disconnect('relays');
+            bindSocket(info);
+        });
+
+        var bindSocket = function(info){
+
+            socket = io.connect('http://'+info.ipAddress+':'+info.port, { reconnection : false });
+            socket.emit('join');
             socket.emit('init');
-        });
-        
-        socket.on('loadCudaMemory', function(){
-            socket.emit('webPng');
-        });
 
-        /**
-         * Socket stream data
-         */
-        socket.on('stream', function(imageBlob){
-            
-            var blob = new Blob( [ imageBlob ], { type: 'image/jpeg' } );
-            var url = (window.URL || window.webkitURL).createObjectURL(blob);
-            var canvas = document.getElementById('view_canvas');
-            var ctx = canvas.getContext('2d');
+            socket.on('loadCudaMemory', function(){
+                socket.emit('webPng');
+            });
 
-            var img = new Image(512, 512);
-            img.onload = function(){
-                ctx.drawImage(img, 0, 0, 512, 512, 0, 0, canvas.clientWidth, canvas.clientWidth);
-                fps++;
-            };
-            img.src = url;
-        });
+            /**
+             * Socket stream data
+             */
+            socket.on('stream', function(imageBlob){
 
-        /**
-         * Other client disconnect
-         */
-        socket.on('otherClientDisconnect', function(){
-            socket.emit('connectMessage');
-        });
-        
-        setInterval(function(){ console.log(fps); fps = 0; }, 1000);
+                var blob = new Blob( [ imageBlob ], { type: 'image/jpeg' } );
+                var url = (window.URL || window.webkitURL).createObjectURL(blob);
+                var canvas = document.getElementById('view_canvas');
+                var ctx = canvas.getContext('2d');
+
+                var img = new Image(512, 512);
+                img.onload = function(){
+                    ctx.drawImage(img, 0, 0, 512, 512, 0, 0, canvas.clientWidth, canvas.clientWidth);
+                };
+                img.src = url;
+            });
+
+            /**
+             * Other client disconnect
+             */
+            socket.on('otherClientDisconnect', function(){
+                socket.emit('connectMessage');
+            });
+
+        };
 
     </script>
     
