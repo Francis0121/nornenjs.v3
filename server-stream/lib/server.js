@@ -261,18 +261,17 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
             oneTime = false;
             subscribe.on('message', function (channel, message) {
 
-                var connSocketId = clientQueue.shift();
-                //while(typeof connSocketId !== 'undefined'){
-                //    connSocketId = clientQueue.shift();
-                //    if(connSocketId == )
-                //}
+                var connSocketId = undefined;
+                while(typeof connSocketId === 'undefined'){
+                    connSocketId = clientQueue.shift();
+                    if(typeof socket.server.eio.clients[connSocketId] === 'undefined'){
+                        connSocketId = undefined;
+                    }
+                }
 
                 logger.debug(connSocketId, typeof connSocketId);
-                if (typeof connSocketId === 'string') {
-                    console.log(socket);
+                socket.broadcast.to(connSocketId).emit('connSocket');
 
-                    socket.broadcast.to(connSocketId).emit('connSocket');
-                }
             });
         }
 
