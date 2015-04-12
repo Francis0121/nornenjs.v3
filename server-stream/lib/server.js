@@ -20,7 +20,6 @@ var Web = require('./event/web').Web;
 var path = require('path');
 var HashMap = require('hashmap').HashMap;
 var socketIo = require('socket.io');
-var socketIoClient = require('socket.io-client');
 var exec = require('child_process').exec;
 var redis = require('redis');
 
@@ -37,7 +36,7 @@ var keys = {
  *  SET max conection client, cuda ptx path, cuda data path;
  */
 var NornenjsServer = function(server, isMaster, masterIpAddres){
-    this.MAX_CONNECTION_CLIENT = 5;
+    this.MAX_CONNECTION_CLIENT = 1;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
@@ -73,6 +72,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
         client.flushall(function (error, reply){
             logger.debug('Flushall', reply);
+            client.quit();
         });
 
         this.addDevice();
@@ -182,6 +182,17 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
 };
 
 /**
+ * User remove publish client to server
+ */
+NornenjsServer.prototype.publish = function(){
+
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
+    client.publish('streamOut', util.getIpAddress());
+    client.quit();
+
+};
+
+/**
  * Nornensjs server create
  */
 NornenjsServer.prototype.connect = function(){
@@ -193,10 +204,11 @@ NornenjsServer.prototype.connect = function(){
     this.socketIoCuda();
 };
 
-var clientQueue = [];
+
 /**
  * Distributed User
  */
+var clientQueue = [];
 NornenjsServer.prototype.distributed = function(socket) {
 
     var $this = this;
@@ -207,40 +219,68 @@ NornenjsServer.prototype.distributed = function(socket) {
         var info = {
                 ipAddress : null,
                 deviceNumber : null,
-                port : 5000
+                port : 5000,
+                conn : true
             };
 
         if(typeof select !== 'string'){
             clientQueue.push(socketId);
             logger.debug('Connection Device Full');
+            logger.debug('Relay server list', clientQueue);
+            info.conn = false;
         }else{
             $this.updateDevice(select, ENUMS.REDIS_UPDATE_TYPE.INCREASE);
             var split = select.split('_');
             info.ipAddress = split[0];
             info.deviceNumber = split[1];
+            info.conn = true;
             logger.debug('Selected', split);
         }
 
-        socket.emit('getInfo', info);
+        socket.emit('getInfoClient', info);
     });
 
 };
 
+
 /**
  * Socket Io First Connect
  */
+var oneTime = true;
 NornenjsServer.prototype.socketIoRelayServer = function(){
 
     var $this = this;
     var relayClient = [];
+    var deviceMap = new HashMap();
 
-    this.io.sockets.on('connection', function(socket){
+    var subscribe = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
+    subscribe.subscribe('streamOut');
+
+    $this.io.sockets.on('connection', function(socket){
+        if(oneTime) {
+            oneTime = false;
+            subscribe.on('message', function (channel, message) {
+
+                var connSocketId = clientQueue.shift();
+                //while(typeof connSocketId !== 'undefined'){
+                //    connSocketId = clientQueue.shift();
+                //    if(connSocketId == )
+                //}
+
+                logger.debug(connSocketId, typeof connSocketId);
+                if (typeof connSocketId === 'string') {
+                    console.log(socket);
+
+                    socket.broadcast.to(connSocketId).emit('connSocket');
+                }
+            });
+        }
 
         /**
          * Connection Relay Server
          */
-        socket.on('getInfo', function(){
-            logger.debug('Connect relay server');
+        socket.on('getInfo', function(object){
+            logger.debug('Connect relay server', socket.id, object);
             $this.distributed(socket);
             relayClient.push(socket.id);
         });
@@ -248,9 +288,9 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
         /**
          * Connection Stream Server
          */
-        socket.on('join', function(){
+        socket.on('join', function(deviceNumber){
             logger.debug('Connect stream server');
-
+            deviceMap.set(socket.id, deviceNumber);
         });
 
         /**
@@ -258,28 +298,23 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
          */
         socket.on('disconnect', function () {
 
-            var index;
-            if( (index = relayClient.indexOf(socket.id)) !== -1){
+            var index = relayClient.indexOf(socket.id);
+            if( index !== -1){
+                relayClient = relayClient.splice(index, 1);
                 logger.debug('Disconnect relay server');
-                relayClient.splice(index, 1);
+                logger.debug('RelayClient List', relayClient);
             }else{
-                logger.debug('Disconnect stream server');
+                var deviceNumber = deviceMap.get(socket.id);
+                deviceMap.remove(socket.id);
+                logger.debug('Disconnect stream server', deviceNumber);
+
+                if(typeof deviceNumber !== 'undefined') {
+                    // Update Redis Info
+                    $this.updateDevice(util.getIpAddress() + '_' + deviceNumber, ENUMS.REDIS_UPDATE_TYPE.DECREASE);
+                    // Publish client to server
+                    $this.publish();
+                }
             }
-            
-            //var clientId = socket.id;
-            //
-            //if(clientQueue.indexOf(clientId) == -1){
-            //    streamClientCount--;
-            //    logger.debug('[Disconnect] Stream user count [' + streamClientCount + ']');
-            //    logger.debug('Disconnect socket client id ['+ clientId +']');
-            //}
-            //
-            //var connectClientId = clientQueue.shift();
-            //
-            //if(connectClientId != undefined){
-            //    logger.debug('Connect socket client id [' + connectClientId + ']');
-            //    socket.broadcast.to(connectClientId).emit('otherClientDisconnect');
-            //}
         });
     });
 };
@@ -287,24 +322,29 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
 NornenjsServer.prototype.socketIoSlaveServer = function(){
 
     var $this = this;
+    var deviceMap = new HashMap();
 
     $this.io.sockets.on('connection', function(socket){
 
         /**
          * Connection Stream Server
          */
-        socket.on('join', function(){
-           logger.debug('Connect stream server');
-
+        socket.on('join', function(deviceNumber){
+            logger.debug('Connect stream server');
+            deviceMap.set(socket.id, deviceNumber);
         });
 
         socket.on('disconnect', function () {
-            logger.debug('Disconnect stream server');
+            var deviceNumber = deviceMap.get(socket.id);
+            deviceMap.remove(socket.id);
+            logger.debug('Disconnect stream server', deviceNumber);
 
-            // TODO - Update Redis Info
-
-            // TODO - And Publish Redis Server
-
+            if(typeof deviceNumber !== 'undefined') {
+                // Update Redis Info
+                $this.updateDevice(util.getIpAddress() + '_' + deviceNumber, ENUMS.REDIS_UPDATE_TYPE.DECREASE);
+                // Publish client to server
+                $this.publish();
+            }
         });
     });
 };

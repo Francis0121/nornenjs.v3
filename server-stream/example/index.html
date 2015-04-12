@@ -10,7 +10,7 @@
     
     <script>
 
-        var relay = io.connect('http://${ipAddress}:5000',{'forceNew':true });
+        var relay = io.connect('http://${ipAddress}:5000',{ forceNew : true });
 
 
         var socket = null;
@@ -23,20 +23,29 @@
         /**
          * emit connect - response message
          */
-        relay.on('getInfo', function(info){
-            if(typeof info.ipAddress !== 'string'){
+        relay.on('getInfoClient', function(info){
+            //console.log(info, typeof info);
+            if(!info.conn){
                 alert('Connection User is full');
                 return;
             }
 
-            relay.disconnect('relays');
+            relay.disconnect();
             bindSocket(info);
+        });
+
+        /**
+         * Other client disconnect
+         */
+        relay.on('connSocket', function(){
+            console.log('Connection Socket');
+            relay.emit('getInfo');
         });
 
         var bindSocket = function(info){
 
             socket = io.connect('http://'+info.ipAddress+':'+info.port, { reconnection : false });
-            socket.emit('join');
+            socket.emit('join', info.deviceNumber);
             socket.emit('init');
 
             socket.on('loadCudaMemory', function(){
@@ -59,14 +68,6 @@
                 };
                 img.src = url;
             });
-
-            /**
-             * Other client disconnect
-             */
-            socket.on('otherClientDisconnect', function(){
-                socket.emit('connectMessage');
-            });
-
         };
 
     </script>
