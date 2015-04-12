@@ -133,7 +133,7 @@ NornenjsServer.prototype.removeDevice = function(callback){
     var launch = function(key, ipAddress, port, isLast, callback){
         var client = redis.createClient(port, ipAddress, { } );
         client.hdel(keys.HOSTLIST, key, function(err, reply){
-            logger.info('[Redis] ADD DEVICE '+keys.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
+            logger.info('[Redis] REMOVE DEVICE '+keys.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
             client.quit();
             if(isLast){
                 if(typeof callback === 'function') callback();
@@ -315,13 +315,6 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
             if( index !== -1){
                 relayServer.splice(index, 1);
                 logger.info('[Socket] DISCONNECT RELAY Server KEY ['+socket.id+']', index);
-
-                //var cIndex = clientQueue.indexOf(socket.id);
-                //if(cIndex !== -1){
-                //    clientQueue.splice(cIndex, 1);
-                //    logger.info('[Socket] REMOVE CLIENT QUEUE Server KEY ['+socket.id+']', index);
-                //}
-
                 logger.info('[Socket]        RELAY SERVER CONNECT List    -', relayServer.length == 0 ? 'NONE' : relayServer);
             }else{
                 var deviceNumber = deviceMap.get(socket.id);
