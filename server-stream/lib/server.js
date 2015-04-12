@@ -36,7 +36,7 @@ var keys = {
  *  SET max conection client, cuda ptx path, cuda data path;
  */
 var NornenjsServer = function(server, isMaster, masterIpAddres){
-    this.MAX_CONNECTION_CLIENT = 1;
+    this.MAX_CONNECTION_CLIENT = 5;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
