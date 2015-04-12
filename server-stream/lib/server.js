@@ -37,7 +37,7 @@ var redis = require('redis');
  *  it`s only need slave server
  * @constructor
  */
-var NornenjsServer = function(server, httpPort, isMaster, masterIpAddres){
+var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.MAX_CONNECTION_CLIENT = 2;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
@@ -48,10 +48,6 @@ var NornenjsServer = function(server, httpPort, isMaster, masterIpAddres){
 
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
-
-    if(typeof httpPort !== 'number'){
-        throw new Error('Http port type is "number" type');
-    }
 
     // Exec Redis Server create
     if(typeof isMaster !== 'boolean'){
