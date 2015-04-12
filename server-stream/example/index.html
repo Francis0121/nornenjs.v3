@@ -10,7 +10,7 @@
     
     <script>
 
-        var relay = io.connect('http://${ipAddress}:5000',{ forceNew : true });
+        var relay = io.connect('http://${ipAddress}:5000',{ forceNew : true, reconnection : false });
 
 
         var socket = null;

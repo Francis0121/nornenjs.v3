@@ -180,7 +180,7 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
         }
 
         client.quit();
-        if(typeof callback === 'function') callback(select);
+        if(typeof callback === 'function') callback(select, min);
     });
 };
 
@@ -216,12 +216,13 @@ NornenjsServer.prototype.distributed = function(socket) {
 
     var $this = this;
 
-    this.getDeviceKey(function(select){
+    this.getDeviceKey(function(select, deviceCount){
 
         var socketId = socket.id;
         var info = {
                 ipAddress : null,
                 deviceNumber : null,
+                deviceCount : deviceCount,
                 port : 5000,
                 conn : true
             };
