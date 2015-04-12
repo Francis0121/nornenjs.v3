@@ -23,19 +23,21 @@ var socketIo = require('socket.io');
 var exec = require('child_process').exec;
 var redis = require('redis');
 
-// ~ Redis key
-var keys = {
-    HOSTLIST : 'HostList'
-};
 
 /**
- * Nornejs server create 
+ * Create constructor
+ *
  * @param server
- *  HttpCreateServer 
+ *  Http server
+ * @param httpPort
+ *  Socket.io port
+ * @param isMaster
+ *  true : relay server master, false : slave server
+ * @param masterIpAddres
+ *  it`s only need slave server
  * @constructor
- *  SET max conection client, cuda ptx path, cuda data path;
  */
-var NornenjsServer = function(server, isMaster, masterIpAddres){
+var NornenjsServer = function(server, httpPort, isMaster, masterIpAddres){
     this.MAX_CONNECTION_CLIENT = 5;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
@@ -44,9 +46,12 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.io = socketIo.listen(server);
     this.cudaRenderMap = new HashMap();
 
-    //TODO 해당되는 클라이언트가 무엇인지에 따라서 사용되는 socket event Handler를 다르게 한다.
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
+
+    if(typeof httpPort !== 'number'){
+        throw new Error('Http port type is "number" type');
+    }
 
     // Exec Redis Server create
     if(typeof isMaster !== 'boolean'){
@@ -71,7 +76,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 
         var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
         client.flushall(function (error, reply){
-            logger.debug('Flushall', reply);
+            logger.debug('Redis "Flushall command"', reply);
             client.quit();
         });
 
@@ -91,6 +96,11 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     }
 };
 
+// ~ Redis key
+var keys = {
+    HOSTLIST : 'HostList'
+};
+
 /**
  * Add graphic device
  *
@@ -98,22 +108,21 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
  */
 NornenjsServer.prototype.addDevice = function(callback){
 
-    var ipAddress = util.getIpAddress();
-    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-
-    var launch = function(client, key, isLast, callback){
+    var launch = function(key, ipAddress, port, isLast, callback){
+        var client = redis.createClient(port, ipAddress, { } );
         client.hset(keys.HOSTLIST, key, '0', function(err, reply){
             logger.debug(keys.HOSTLIST+' add device ' + key + ' Reply ' + reply);
+            client.quit();
             if(isLast){
-                client.quit();
                 if(typeof callback === 'function') callback();
             }
         });
     };
 
+    var ipAddress = util.getIpAddress();
     for(var i=0; i<cu.deviceCount; i++){
         var key = ipAddress+'_'+i;
-        launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
+        launch(key, this.ipAddress, this.REDIS_PORT, i+1 === cu.deviceCount ? true : false, callback);
     }
 
 };
@@ -125,22 +134,21 @@ NornenjsServer.prototype.addDevice = function(callback){
  */
 NornenjsServer.prototype.removeDevice = function(callback){
 
-    var ipAddress = util.getIpAddress();
-    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
-
-    var launch = function(client, key, isLast, callback){
+    var launch = function(key, ipAddress, port, isLast, callback){
+        var client = redis.createClient(port, ipAddress, { } );
         client.hdel(keys.HOSTLIST, key, function(err, reply){
             logger.debug(keys.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
+            client.quit();
             if(isLast){
-                client.quit();
                 if(typeof callback === 'function') callback();
             }
         });
     };
 
+    var ipAddress = util.getIpAddress();
     for(var i=0; i<cu.deviceCount; i++){
         var key = ipAddress+'_'+i;
-        launch(client, key, i+1 === cu.deviceCount ? true : false, callback);
+        launch(key, this.ipAddress, this.REDIS_PORT, i+1 === cu.deviceCount ? true : false, callback);
     }
 };
 
@@ -170,7 +178,7 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
         select = undefined;
 
     client.hgetall(keys.HOSTLIST, function (err, list) {
-
+        client.quit();
         for (key in list) {
             var val = list[key];
             if(min > val && val < $this.MAX_CONNECTION_CLIENT){
@@ -178,8 +186,6 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
                 if(min === 0) break;
             }
         }
-
-        client.quit();
         if(typeof callback === 'function') callback(select, min);
     });
 };
@@ -191,7 +197,7 @@ NornenjsServer.prototype.publish = function(){
 
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
     client.publish('streamOut', util.getIpAddress());
-    client.quit();
+    client.end();
 
 };
 
