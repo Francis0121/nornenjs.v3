@@ -141,66 +141,66 @@ resize_gl(Evas_Object *obj)
    set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 
-//static void
-//draw_cube1(Evas_Object *obj)
-//{
-//   static int angle = 0;
-//
-//   ELEMENTARY_GLVIEW_USE(obj);
-//
-//   static const float VERTICES[] =
-//   {
-//      ONEN, ONEP, ONEN, // 0
-//      ONEP, ONEP, ONEN, // 1
-//      ONEN, ONEN, ONEN, // 2
-//      ONEP, ONEN, ONEN, // 3
-//      ONEN, ONEP, ONEP, // 4
-//      ONEP, ONEP, ONEP, // 5
-//      ONEN, ONEN, ONEP, // 6
-//      ONEP, ONEN, ONEP  // 7
-//   };
-//
-//   static const float VERTEX_COLOR[] =
-//   {
-//      ONEP, ZERO, ONEP, ONEP,
-//      ONEP, ONEP, ZERO, ONEP,
-//      ZERO, ONEP, ONEP, ONEP,
-//      ONEP, ZERO, ZERO, ONEP,
-//      ZERO, ZERO, ONEP, ONEP,
-//      ZERO, ONEP, ZERO, ONEP,
-//      ONEP, ONEP, ONEP, ONEP,
-//      ZERO, ZERO, ZERO, ONEP
-//   };
-//
-//   static const unsigned short INDEX_BUFFER[] =
-//   {
-//      0, 1, 2, 2, 1, 3,
-//      1, 5, 3, 3, 5, 7,
-//      5, 4, 7, 7, 4, 6,
-//      4, 0, 6, 6, 0, 2,
-//      4, 5, 0, 0, 5, 1,
-//      2, 3, 6, 6, 3, 7
-//   };
-//
-//   glEnableClientState(GL_VERTEX_ARRAY);
-//   glVertexPointer(3, GL_FLOAT, 0, VERTICES);
-//
-//   glEnableClientState(GL_COLOR_ARRAY);
-//   glColorPointer(4, GL_FLOAT, 0, VERTEX_COLOR);
-//
-//   glMatrixMode(GL_MODELVIEW);
-//   glLoadIdentity();
-//   glTranslatef(0, -0.7f, -5.0f);
-//
-//   angle = (angle + 1) % (360 * 3);
-//   glRotatef((float)angle / 3, 1.0f, 0, 0);
-//   glRotatef((float)angle, 0, 0, 1.0f);
-//
-//   glDrawElements(GL_TRIANGLES, 6 * (3 * 2), GL_UNSIGNED_SHORT, &INDEX_BUFFER[0]);
-//
-//   glDisableClientState(GL_VERTEX_ARRAY);
-//   glDisableClientState(GL_COLOR_ARRAY);
-//}
+static void
+draw_cube1(Evas_Object *obj)
+{
+   static int angle = 0;
+
+   ELEMENTARY_GLVIEW_USE(obj);
+
+   static const float VERTICES[] =
+   {
+      ONEN, ONEP, ONEN, // 0
+      ONEP, ONEP, ONEN, // 1
+      ONEN, ONEN, ONEN, // 2
+      ONEP, ONEN, ONEN, // 3
+      ONEN, ONEP, ONEP, // 4
+      ONEP, ONEP, ONEP, // 5
+      ONEN, ONEN, ONEP, // 6
+      ONEP, ONEN, ONEP  // 7
+   };
+
+   static const float VERTEX_COLOR[] =
+   {
+      ONEP, ZERO, ONEP, ONEP,
+      ONEP, ONEP, ZERO, ONEP,
+      ZERO, ONEP, ONEP, ONEP,
+      ONEP, ZERO, ZERO, ONEP,
+      ZERO, ZERO, ONEP, ONEP,
+      ZERO, ONEP, ZERO, ONEP,
+      ONEP, ONEP, ONEP, ONEP,
+      ZERO, ZERO, ZERO, ONEP
+   };
+
+   static const unsigned short INDEX_BUFFER[] =
+   {
+      0, 1, 2, 2, 1, 3,
+      1, 5, 3, 3, 5, 7,
+      5, 4, 7, 7, 4, 6,
+      4, 0, 6, 6, 0, 2,
+      4, 5, 0, 0, 5, 1,
+      2, 3, 6, 6, 3, 7
+   };
+
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glVertexPointer(3, GL_FLOAT, 0, VERTICES);
+
+   glEnableClientState(GL_COLOR_ARRAY);
+   glColorPointer(4, GL_FLOAT, 0, VERTEX_COLOR);
+
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glTranslatef(0, -0.7f, -5.0f);
+
+   angle = (angle + 1) % (360 * 3);
+   glRotatef((float)angle / 3, 1.0f, 0, 0);
+   glRotatef((float)angle, 0, 0, 1.0f);
+
+   glDrawElements(GL_TRIANGLES, 6 * (3 * 2), GL_UNSIGNED_SHORT, &INDEX_BUFFER[0]);
+
+   glDisableClientState(GL_VERTEX_ARRAY);
+   glDisableClientState(GL_COLOR_ARRAY);
+}
 
 static void
 draw_cube2(Evas_Object *obj)
@@ -216,94 +216,60 @@ draw_cube2(Evas_Object *obj)
 
    static const float VERTICES[] =
    {
-		   -1.0f	, 1.0f	, 0.0f, // 0, Left Top
-		    1.0f	, 1.0f	, 0.0f,	// 1, Right Top
-		    1.0f	, -1.0f	, 0.0f,	// 2, Right Bottom
-		   -1.0f	, -1.0f	, 0.0f	// 3, Left Bottom
+      ONEN, ONEN, ONEP, ONEP, ONEN, ONEP, ONEN, ONEP, ONEP, ONEP, ONEP, ONEP,
+      ONEN, ONEN, ONEN, ONEN, ONEP, ONEN, ONEP, ONEN, ONEN, ONEP, ONEP, ONEN,
+      ONEN, ONEN, ONEP, ONEN, ONEP, ONEP, ONEN, ONEN, ONEN, ONEN, ONEP, ONEN,
+      ONEP, ONEN, ONEN, ONEP, ONEP, ONEN, ONEP, ONEN, ONEP, ONEP, ONEP, ONEP,
+      ONEN, ONEP, ONEP, ONEP, ONEP, ONEP, ONEN, ONEP, ONEN, ONEP, ONEP, ONEN,
+      ONEN, ONEN, ONEP, ONEN, ONEN, ONEN, ONEP, ONEN, ONEP, ONEP, ONEN, ONEN
    };
 
-  static const float VERTEX_COLOR[] =
-   {
-           1,    1,    1,  1,
-           1,    1,    1,  1,
-           1,    1,    1,  1,
-           1,    1,    1,  1
-   };
-
-   static const unsigned short INDEX_BUFFER[] =
-   {
-    		  0, 1, 2,
-    		                   0, 2, 3
-   };
    static const float TEXTURE_COORD[] =
    {
-   		//Mapping coordinates for the vertices
-   		0.0f, 0.0f,
-   		1.0f, 0.0f,
-   		1.0f, 1.0f,
-   		0.0f, 1.0f,
+      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
+      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
+      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
+      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
+      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
+      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP
    };
-   //   glEnableClientState(GL_VERTEX_ARRAY);
-   //   glVertexPointer(3, GL_FLOAT, 0, VERTICES);
-   //
-   //   glEnableClientState(GL_COLOR_ARRAY);
-   //   glColorPointer(4, GL_FLOAT, 0, VERTEX_COLOR);
-   //
-   //   glMatrixMode(GL_MODELVIEW);
-   //   glLoadIdentity();
-   //   glTranslatef(0, -0.7f, -5.0f);
-   //
-   //   angle = (angle + 1) % (360 * 3);
-   //   glRotatef((float)angle / 3, 1.0f, 0, 0);
-   //   glRotatef((float)angle, 0, 0, 1.0f);
-   //
-   //   glDrawElements(GL_TRIANGLES, 6 * (3 * 2), GL_UNSIGNED_SHORT, &INDEX_BUFFER[0]);
-   //
-   //   glDisableClientState(GL_VERTEX_ARRAY);
-   //   glDisableClientState(GL_COLOR_ARRAY);
+
    glEnableClientState(GL_VERTEX_ARRAY);
    glVertexPointer(3, GL_FLOAT, 0, VERTICES);
-
-   glEnableClientState(GL_COLOR_ARRAY);
-   glColorPointer(4, GL_FLOAT, 0, VERTEX_COLOR);
 
    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
    glTexCoordPointer(2, GL_FLOAT, 0, TEXTURE_COORD);
 
-   //glEnable(GL_TEXTURE_2D);
-   //glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);
+   glEnable(GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);
 
    glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   glTranslatef(0, -0.7f, -5.0f);
+
    zPos += zPosInc;
 
    /* Keep switching textures in cube 2 */
-//   if (zPos < -8.0f)
-//   {
-//      zPosInc = Z_POS_INC;
-//      ad->current_tex_index = 1 - (ad->current_tex_index);
-//   }
-//
-//   if (zPos > -5.0f)
-//      zPosInc = -Z_POS_INC;
-//
-//   glLoadIdentity();
-//   glTranslatef(0, 1.2f, zPos);
+   if (zPos < -8.0f)
+   {
+      zPosInc = Z_POS_INC;
+      ad->current_tex_index = 1 - (ad->current_tex_index);
+   }
 
-   //angle = (angle + 1) % (360 * 3);
+   if (zPos > -5.0f)
+      zPosInc = -Z_POS_INC;
+
+   glLoadIdentity();
+   glTranslatef(0, 1.2f, zPos);
+
+   angle = (angle + 1) % (360 * 3);
    //glRotatef((float)angle / 3, 0, 0, 1.0f);
    //glRotatef((float)angle, 0, 1.0f, 0);
 
-   glDrawElements(GL_TRIANGLES, 6 * (3 * 2), GL_UNSIGNED_SHORT, &INDEX_BUFFER[0]);
-//   for(i = 0; i < 6; i++)
-//      glDrawArrays(GL_TRIANGLE_STRIP, (4 * i), 4);
+   for(i = 0; i < 6; i++)
+      glDrawArrays(GL_TRIANGLE_STRIP, (4 * i), 4);
 
    glDisable(GL_TEXTURE_2D);
    glDisableClientState(GL_VERTEX_ARRAY);
-   glDisableClientState(GL_COLOR_ARRAY);
    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
 }
 
 
@@ -315,6 +281,6 @@ draw_gl(Evas_Object *obj)
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-   //draw_cube1(obj);
-   draw_cube2(obj);
+   draw_cube1(obj);
+   //draw_cube2(obj);
 }

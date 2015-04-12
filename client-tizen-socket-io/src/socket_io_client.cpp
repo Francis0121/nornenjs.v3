@@ -110,11 +110,6 @@ extern "C" {
 			_lock.unlock();
 	    });
 
-		dlog_print(DLOG_FATAL, LOG_TAG, "1");
-
-		dlog_print(DLOG_FATAL, LOG_TAG, "2");
-
-		dlog_print(DLOG_FATAL, LOG_TAG, "3");
 
 		dlog_print(DLOG_FATAL, LOG_TAG, "emit connectMessage");
 		h.emit("init", "");
@@ -125,9 +120,6 @@ extern "C" {
 					unsigned int pid = (unsigned) getpid();
 					dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
 
-					//값을 하나씩 전송 한 경우 값이 같은지 확인
-					//int a1 = data->get_map()["message"]->get_int();
-					//dlog_print(DLOG_FATAL, LOG_TAG, "int1 %d", a1);
 
 					vector<message::ptr> arr;
 					arr = data->get_map()["stream"]->get_vector();
@@ -139,36 +131,32 @@ extern "C" {
 
 					for(const auto&  p : arr)
 					{
-						texture[count] = p->get_int();
-						//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", texture[count++]);
+						texture[count++] = p->get_int();
 					}
-
-
-					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", a);
-					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %lf", a);
-					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
-
-					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
-
-					//string user = data->get_map()["message"]->get_string();
-					//shared_ptr<const string> s_binary = data->get_map()["message"]->get_binary();
-					//소멸주의
-
-					//string user = data->get_map()["message"]->get_string();
-					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
-					//int user = data->get_map()["message"]->get_int();
-					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %d", user);
 
 					delete[] texture;
 					_lock.unlock();
 			    });
+		h.bind_event("test2", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+							_lock.lock();
 
+							unsigned int pid = (unsigned) getpid();
+							dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test2] %u", pid);
 
-		dlog_print(DLOG_FATAL, LOG_TAG, "4");
+							//int num1 = data->get_map()["stream"]->get_map()["num"]->get_int(); get size
+							int d = data->get_map()["stream"]->get_map()["size"]->get_int();
+							dlog_print(DLOG_FATAL, LOG_TAG, "key size : %d", d);
 
-		dlog_print(DLOG_FATAL, LOG_TAG, "5");
+							shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buf"]->get_binary();
+							string user = *s_binary;
 
-		dlog_print(DLOG_FATAL, LOG_TAG, "6");
+							//user.c_str() == char * 로 byte가 들어잇음. opengl에서 참조하면 됨.
+
+							//dlog_print(DLOG_FATAL, LOG_TAG, "success %d %d %d %d %d %d %d %d", user.c_str()[0], user.c_str()[1], user.c_str()[2], user.c_str()[3], user.c_str()[4], user.c_str()[100],user.c_str()[200],user.c_str()[9300]);
+
+							_lock.unlock();
+					    });
+
 
 		unsigned int pidThread = (unsigned) getpid();
 		dlog_print(DLOG_FATAL, LOG_TAG, "close %u", pidThread);
@@ -178,12 +166,6 @@ extern "C" {
 
 		dlog_print(DLOG_FATAL, LOG_TAG, "close");
 
-//		1. --
-//		pthread_exit(0);
-
-// 		2. --
-//		h.sync_close();
-//		h.clear_con_listeners();
 
 	}
 }

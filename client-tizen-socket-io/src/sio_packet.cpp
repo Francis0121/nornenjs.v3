@@ -127,6 +127,7 @@ namespace sio
             }
             case message::flag_object:
             {
+            	dlog_print(DLOG_FATAL, "sio_packet", "it's object");
                 accept_object_message(*(static_cast<const object_message*>(msg_ptr)), val,doc,buffers);
                 break;
             }
@@ -140,6 +141,7 @@ namespace sio
     	dlog_print(DLOG_WARN, "sio_packet", "from json");
         if(value.IsInt64())
         {
+        	dlog_print(DLOG_WARN, "sio_packet", "IsInt64");
             return int_message::create(value.GetInt64());
         }
         else if(value.IsDouble())
@@ -153,8 +155,10 @@ namespace sio
         }
         else if(value.IsArray())
         {
-        	//dlog_print(DLOG_WARN, "sio_packet", "if arr from json");//자주 보여서 WARNING으로 바꿈
+        	dlog_print(DLOG_WARN, "value.IsArray()", "if arr from json");//자주 보여서 WARNING으로 바꿈
+
             message::ptr ptr = array_message::create();
+
             for (SizeType i = 0; i< value.Size(); ++i) {
                 static_cast<array_message*>(ptr.get())->get_vector().push_back(from_json(value[i],buffers));
             }
@@ -162,13 +166,16 @@ namespace sio
         }
         else if(value.IsObject())
         {
+        	dlog_print(DLOG_WARN, "value.IsObject()", "if binary from json");
              //binary placeholder
             auto mem_it = value.FindMember(kBIN_PLACE_HOLDER);
             if (mem_it!=value.MemberEnd() && mem_it->value.GetBool()) {
                
                 int num = value["num"].GetInt();
-                if(num > 0 && num < buffers.size())
+                if(num >= 0 && num < buffers.size())//if(num > 0 && num < buffers.size())
                 {
+                	dlog_print(DLOG_FATAL, "value.IsObject()", "num!!!!!%d",num);
+                	dlog_print(DLOG_FATAL, "value.IsObject()", "buf size!!!!!%d",buffers.size());
                     return binary_message::create(buffers[num]);
                 }
                 return message::ptr();
