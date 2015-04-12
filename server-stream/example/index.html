@@ -10,15 +10,13 @@
     
     <script>
 
-        var relay = io.connect('http://${ipAddress}:5000',{ forceNew : true });
+        var relay = io.connect('http://${ipAddress}:5000',{ forceNew : true, reconnection : false });
 
-
-        var socket = null;
-
+        var count = 0;
         /**
          * send connect message to server
          */
-        relay.emit('getInfo');
+        relay.emit('getInfo', count++);
 
         /**
          * emit connect - response message
@@ -26,12 +24,12 @@
         relay.on('getInfoClient', function(info){
             //console.log(info, typeof info);
             if(!info.conn){
-                alert('Connection User is full');
+                console.log('Connection User is full');
                 return;
+            }else{
+                relay.disconnect();
+                bindSocket(info);
             }
-
-            relay.disconnect();
-            bindSocket(info);
         });
 
         /**
@@ -44,7 +42,10 @@
 
         var bindSocket = function(info){
 
-            socket = io.connect('http://'+info.ipAddress+':'+info.port, { reconnection : false });
+            var socket = io.connect('http://'+info.ipAddress+':'+info.port);
+
+            console.log(info);
+
             socket.emit('join', info.deviceNumber);
             socket.emit('init');
 
