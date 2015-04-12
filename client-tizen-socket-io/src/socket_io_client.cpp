@@ -11,6 +11,7 @@
 
 #include <pthread.h>
 #include <unistd.h>
+#include <bitset>
 
 #define LOG_TAG "socket.io"
 
@@ -115,21 +116,6 @@ extern "C" {
 
 		dlog_print(DLOG_FATAL, LOG_TAG, "3");
 
-//		h.bind_event("test1", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
-//			_lock.lock();
-//
-//			unsigned int pid = (unsigned) getpid();
-//			dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
-//
-//			//double user = data->get_map()["message"]->get_double();
-//			//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %f", user);
-//
-//			string user = data->get_map()["message"]->get_string();
-//			dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
-//
-//			_lock.unlock();
-//	    });
-
 		dlog_print(DLOG_FATAL, LOG_TAG, "emit connectMessage");
 		h.emit("init", "");
 
@@ -139,38 +125,28 @@ extern "C" {
 					unsigned int pid = (unsigned) getpid();
 					dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
 
-//					값을 하나씩 전송 한 경우 값이 같은지 확인
-//					int a1 = data->get_map()["message"]->get_int();
-//					dlog_print(DLOG_FATAL, LOG_TAG, "int1 %d", a1);
+					//값을 하나씩 전송 한 경우 값이 같은지 확인
+					//int a1 = data->get_map()["message"]->get_int();
+					//dlog_print(DLOG_FATAL, LOG_TAG, "int1 %d", a1);
 
 					vector<message::ptr> arr;
-					arr = data->get_map()["stream"]->get_vector();//data->function()은 불리지 않는 듯함.어플리케이션 죽음.
+					arr = data->get_map()["stream"]->get_vector();
+					dlog_print(DLOG_FATAL, LOG_TAG, "arr.size :  %d", arr.size());
 
 					int count = 0;
 
+					int * texture = new int[arr.size()];
+
 					for(const auto&  p : arr)
 					{
-						if(count == 0)
-							dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", p->get_int());
-
-						if(count == 4)
-							dlog_print(DLOG_FATAL, LOG_TAG, "test_2~~ %d", p->get_int());
-						count++;
+						texture[count] = p->get_int();
+						//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", texture[count++]);
 					}
+
+
 					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %d", a);
 					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1~~ %lf", a);
-					//data->get_flag();
 					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
-
-
-//					vector<shared_ptr<const string>> s_binary;
-//					s_binary.push_back(data->get_binary());
-//
-//					for(const auto&  p : s_binary)
-//					{
-//						string user;
-//
-//					}
 
 					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %s", user.c_str());
 
@@ -183,6 +159,7 @@ extern "C" {
 					//int user = data->get_map()["message"]->get_int();
 					//dlog_print(DLOG_FATAL, LOG_TAG, "test_1 :: %d", user);
 
+					delete[] texture;
 					_lock.unlock();
 			    });
 

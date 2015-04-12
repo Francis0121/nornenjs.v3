@@ -10,9 +10,15 @@ CPP_SRCS += \
 ../src/socket_io_client.cpp 
 
 C_SRCS += \
+../src/copy_GLES.c \
+../src/image_data_1.c \
+../src/image_data_2.c \
 ../src/other.c 
 
 OBJS += \
+./src/copy_GLES.o \
+./src/image_data_1.o \
+./src/image_data_2.o \
 ./src/other.o \
 ./src/sio_client.o \
 ./src/sio_packet.o \
@@ -20,6 +26,9 @@ OBJS += \
 ./src/socket_io_client.o 
 
 C_DEPS += \
+./src/copy_GLES.d \
+./src/image_data_1.d \
+./src/image_data_2.d \
 ./src/other.d 
 
 CPP_DEPS += \

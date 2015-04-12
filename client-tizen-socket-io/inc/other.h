@@ -12,8 +12,26 @@
 #endif
 #define LOG_TAG "other"
 
+#define APPDATA_KEY "AppData"//add
+
 #if !defined(PACKAGE)
 #define PACKAGE "org.tizen.other"
 #endif
 
+typedef struct appdata
+{
+   Evas_Object *table, *bg;
+   Evas_Object *win;
+   Evas_Object *glview;
+   Ecore_Animator *anim;
+   Evas_Object *conform;
+
+   Evas_Object *label;//add
+   GLuint tex_ids[2];
+   int current_tex_index;
+} appdata_s;
+//add
+
 #endif /* __other_H__ */
+
+

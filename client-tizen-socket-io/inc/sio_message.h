@@ -202,7 +202,7 @@ namespace sio
         
         shared_ptr<const string> const& get_binary() const
         {
-        	dlog_print(DLOG_FATAL, "mess", "in get binary_message()");
+        	dlog_print(DLOG_FATAL, "get_binary", "in get binary_message()...");
             return _v;
         }
     };

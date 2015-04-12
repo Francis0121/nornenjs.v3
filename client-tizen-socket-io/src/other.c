@@ -4,16 +4,80 @@
 #include "other.h"
 #include <pthread.h>
 
+//add
+#include <app.h>
+#include <efl_extension.h>
+#include "copy_GLES.h"
+
 #define LOG_TAG_SOCKET_IO "socket.io"
 
 static pthread_t thread_id;
 static pthread_mutex_t lock;
 static Eina_Bool thread_finish = EINA_FALSE;
-typedef struct appdata {
-	Evas_Object *win;
-	Evas_Object *conform;
-	Evas_Object *label;
-} appdata_s;
+
+//typedef struct appdata {
+//	Evas_Object *win;
+//	Evas_Object *conform;
+//	Evas_Object *label;
+//} appdata_s;
+
+static Evas_Object*
+_glview_create(appdata_s *ad)
+{
+   Evas_Object *obj;
+
+   /* Create a GLView with an OpenGL-ES 1.1 context */
+   obj = elm_glview_version_add(ad->win, EVAS_GL_GLES_1_X);
+   elm_table_pack(ad->table, obj, 1, 1, 3, 1);
+   evas_object_data_set(obj, APPDATA_KEY, ad);
+
+   elm_glview_mode_set(obj, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
+   elm_glview_resize_policy_set(obj, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
+   elm_glview_render_policy_set(obj, ELM_GLVIEW_RENDER_POLICY_ON_DEMAND);
+
+   elm_glview_init_func_set(obj, init_gles);
+   elm_glview_del_func_set(obj, destroy_gles);
+   elm_glview_resize_func_set(obj, resize_gl);
+   elm_glview_render_func_set(obj, draw_gl);
+
+   return obj;
+}//add
+
+static Eina_Bool
+_anim_cb(void *data)
+{
+   appdata_s *ad = data;
+
+   elm_glview_changed_set(ad->glview);
+   return ECORE_CALLBACK_RENEW;
+}//add
+
+static void
+_destroy_anim(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+{
+   Ecore_Animator *ani = data;
+   ecore_animator_del(ani);
+}//add
+
+static void
+_close_cb(void *data EINA_UNUSED,
+          Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   ui_app_exit();
+}//add
+
+
+static void
+_win_resize_cb(void *data, Evas *e EINA_UNUSED,
+               Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int w, h;
+   appdata_s *ad = data;
+
+   evas_object_geometry_get(ad->win, NULL, NULL, &w, &h);
+   evas_object_resize(ad->table, w, h);
+   evas_object_resize(ad->bg, w, h);
+}//add
 
 static void
 win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
@@ -92,19 +156,83 @@ create_base_gui(appdata_s *ad)
 	/////////////////////////////////
 }
 
+
+static Evas_Object* add_win(const char *name) {
+	Evas_Object *win;
+
+	elm_config_accel_preference_set("opengl");
+	win = elm_win_util_standard_add(name, "OpenGL example: Cube");
+
+	if (!win)
+		return NULL;
+
+	if (elm_win_wm_rotation_supported_get(win)) {
+		int rots[4] = { 0, 90, 180, 270 };
+		elm_win_wm_rotation_available_rotations_set(win, rots, 4);
+	}
+
+	evas_object_show(win);
+
+	return win;
+}
+
 static bool
 app_create(void *data)
 {
-	/* Hook to take necessary actions before main event loop starts
-		Initialize UI resources and application's data
-		If this function returns true, the main loop of application starts
-		If this function returns false, the application is terminated */
-	appdata_s *ad = data;
+	Evas_Object *o, *t;
+	   appdata_s *ad = (appdata_s*)data;
 
-	create_base_gui(ad);
+	   /* Force OpenGL engine */
+	   elm_config_accel_preference_set("opengl");
 
-	return true;
-}
+	   /* Add a window */
+	   ad->win = o = elm_win_add(NULL,"glview", ELM_WIN_BASIC);
+	   evas_object_smart_callback_add(o, "delete,request", _close_cb, ad);
+	   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _win_resize_cb, ad);
+	   eext_object_event_callback_add(o, EEXT_CALLBACK_BACK, _close_cb, ad);
+	   evas_object_show(o);
+
+	   /* Add a background */
+	   ad->bg = o = elm_bg_add(ad->win);
+	   elm_win_resize_object_add(ad->win, ad->bg);
+	   elm_bg_color_set(o, 68, 68, 68);
+	   evas_object_show(o);
+
+	   /* Add a resize conformant */
+	   ad->conform = o = elm_conformant_add(ad->win);
+	   elm_win_resize_object_add(ad->win, ad->conform);
+	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	   evas_object_show(o);
+
+	   ad->table = t = elm_table_add(ad->win);
+	   evas_object_show(t);
+
+	   o = elm_label_add(ad->win);
+	   elm_object_text_set(o, "Gles 1.1 Cube");
+	   elm_table_pack(t, o, 1, 0, 3, 1);
+	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	   evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
+	   evas_object_show(o);
+
+	   o = elm_button_add(ad->win);
+	   elm_object_text_set(o, "Quit");
+	   evas_object_smart_callback_add(o, "clicked", _close_cb, ad);
+	   elm_table_pack(t, o, 1, 9, 3, 1);
+	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	   evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
+	   evas_object_show(o);
+
+	   ad->glview = o = _glview_create(ad);
+	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	   evas_object_show(o);
+
+	   ad->anim = ecore_animator_add(_anim_cb, ad);
+	   evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
+
+	   return true;
+}//add
 
 static void
 app_control(app_control_h app_control, void *data)
@@ -198,6 +326,7 @@ main(int argc, char *argv[])
 
 	ui_app_lifecycle_callback_s event_callback = {0,};
 	app_event_handler_h handlers[5] = {NULL, };
+
 
 	event_callback.create = app_create;
 	event_callback.terminate = app_terminate;

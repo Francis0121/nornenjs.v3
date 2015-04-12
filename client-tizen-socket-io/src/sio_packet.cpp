@@ -137,7 +137,7 @@ namespace sio
     
     message::ptr from_json(Value const& value, vector<shared_ptr<const string> > const& buffers)
     {
-    	dlog_print(DLOG_FATAL, "sio_packet", "from json");
+    	dlog_print(DLOG_WARN, "sio_packet", "from json");
         if(value.IsInt64())
         {
             return int_message::create(value.GetInt64());
@@ -153,7 +153,7 @@ namespace sio
         }
         else if(value.IsArray())
         {
-        	dlog_print(DLOG_FATAL, "sio_packet", "if arr from json");
+        	//dlog_print(DLOG_WARN, "sio_packet", "if arr from json");//자주 보여서 WARNING으로 바꿈
             message::ptr ptr = array_message::create();
             for (SizeType i = 0; i< value.Size(); ++i) {
                 static_cast<array_message*>(ptr.get())->get_vector().push_back(from_json(value[i],buffers));
