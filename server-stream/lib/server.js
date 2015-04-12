@@ -77,6 +77,9 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 
         this.addDevice();
 
+        this.subscribe = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
+        this.subscribe.subscribe('streamOut');
+
     }else{
         // ~ Slave server. Connect master server redis.
         if(typeof masterIpAddres !== 'string'){
@@ -246,20 +249,17 @@ NornenjsServer.prototype.distributed = function(socket) {
 /**
  * Socket Io First Connect
  */
-var oneTime = true;
 NornenjsServer.prototype.socketIoRelayServer = function(){
 
+    var isRegisterSubscribe = true;
     var $this = this;
     var relayClient = [];
     var deviceMap = new HashMap();
 
-    var subscribe = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
-    subscribe.subscribe('streamOut');
-
     $this.io.sockets.on('connection', function(socket){
-        if(oneTime) {
-            oneTime = false;
-            subscribe.on('message', function (channel, message) {
+        if(isRegisterSubscribe) {
+            isRegisterSubscribe = false;
+            $this.subscribe.on('message', function (channel, message) {
 
                 var connSocketId = undefined;
                 while(typeof connSocketId === 'undefined'){
@@ -411,6 +411,9 @@ NornenjsServer.prototype.close = function(callback){
 
     }else {
         // ~ Relay Server Remove all redis key
+        this.subscribe.quit();
+        logger.debug('Redis subscribe client quit');
+
         var client = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
 
         client.hgetall(keys.HOSTLIST, function (err, list) {
