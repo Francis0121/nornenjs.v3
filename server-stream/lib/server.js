@@ -288,7 +288,7 @@ NornenjsServer.prototype.socketIoSlaveServer = function(){
 
     var $this = this;
 
-    $this.conn.sockets.on('connection', function(socket){
+    $this.io.sockets.on('connection', function(socket){
 
         /**
          * Connection Stream Server
