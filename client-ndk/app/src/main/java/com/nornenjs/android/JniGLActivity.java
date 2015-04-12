@@ -80,26 +80,26 @@ public class JniGLActivity extends Activity {
         
         Log.d("bmp", "onCreate");
 
-        mTask = new TimerTask() {
-            @Override
-            public void run() {
-
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                        Toast.makeText(JniGLActivity.this, "FPS " + count, Toast.LENGTH_SHORT).show();
-                        Log.d("opengles", "FPS " + count + ", Draw " + draw + ", Pinch " + pinch + ", Rotation " + rotation + ", Move " + move);
-                        count = 0;
-                        draw = 0;
-                        pinch = 0;
-                        rotation = 0;
-                        move = 0;
-                    }
-                });
-            }
-        };
-
-        mTimer = new Timer();
-        mTimer.schedule(mTask, 1000, 1000);
+//        mTask = new TimerTask() {
+//            @Override
+//            public void run() {
+//
+//                runOnUiThread(new Runnable() {
+//                    public void run() {
+//                        Toast.makeText(JniGLActivity.this, "FPS " + count, Toast.LENGTH_SHORT).show();
+//                        Log.d("opengles", "FPS " + count + ", Draw " + draw + ", Pinch " + pinch + ", Rotation " + rotation + ", Move " + move);
+//                        count = 0;
+//                        draw = 0;
+//                        pinch = 0;
+//                        rotation = 0;
+//                        move = 0;
+//                    }
+//                });
+//            }
+//        };
+//
+//        mTimer = new Timer();
+//        mTimer.schedule(mTask, 1000, 1000);
     }
 
 
