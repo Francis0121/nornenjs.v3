@@ -34,7 +34,6 @@ extern const unsigned short IMAGE_4444_128_128_1[];
 
 char* textBuf = NULL;
 int sizeBuf;
-unsigned char *image = NULL;
 
 static void set_perspective(Evas_Object *obj, float fovDegree, int w, int h, float zNear,  float zFar)
 {
@@ -221,22 +220,23 @@ void draw_gl(Evas_Object *obj)
 
 		int bufWidth = 0, bufHeight = 0;
 		unsigned int decodeBufSize = 0;
-		int error;
+
+		unsigned char *image = NULL;
+
+		int error = 0;
 		error = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "address : %d", image); // TODO Error invalid argument
 
-		//dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d], DECODE_SIZE[%d]", image, error, bufWidth, bufHeight, decodeBufSize); // TODO Error invalid argument
+		if(error != -2)
+		{
+			glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);//ad->current_tex_index
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
-		char [];
-		//delete
-		재할당
-		glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);//ad->current_tex_index
+			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
 
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-
-		glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		free(image);
 	}
 
 }
