@@ -23,6 +23,7 @@
 #include "other.h"
 
 #define LOG_TAG "socket.io.opengl"
+#define SAMPLE_FILENAME "/tmp/dog.jpg"
 
 #define ONEP  +1.0
 #define ONEN  -1.0
@@ -30,6 +31,10 @@
 #define Z_POS_INC 0.01f
 
 extern const unsigned short IMAGE_4444_128_128_1[];
+
+char* textBuf = NULL;
+int sizeBuf;
+unsigned char *image = NULL;
 
 static void set_perspective(Evas_Object *obj, float fovDegree, int w, int h, float zNear,  float zFar)
 {
@@ -46,7 +51,7 @@ static void set_perspective(Evas_Object *obj, float fovDegree, int w, int h, flo
 void
 init_gles(Evas_Object *obj)
 {
-
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "init_gles");
    int w, h;
    appdata_s *ad;
    //const unsigned char *texture_ids;
@@ -55,6 +60,7 @@ init_gles(Evas_Object *obj)
    ad = evas_object_data_get(obj, APPDATA_KEY);
 
    //dlog_print(DLOG_VERBOSE, LOG_TAG, "Const unsigned chart address : %d", texture_ids);
+   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
    glGenTextures(1, ad->tex_ids);
 
@@ -62,8 +68,8 @@ init_gles(Evas_Object *obj)
    glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, IMAGE_4444_128_128_1);
 
-	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -78,14 +84,11 @@ init_gles(Evas_Object *obj)
    set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 
-#define SAMPLE_FILENAME "/tmp/dog.jpg"
-#define OUTPUT_ROTATED_JPEG "/tmp/rotated.jpg"
-
 // ~ Image SET
 
 void setTextureData(char* tex, int size, Evas_Object *obj)
 {
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "BUF_SIZE[%d] Memory set confirm [ %d, %d, %d, %d, %d, %d, %d, %d ]", tex[0], tex[1], tex[2], tex[3], tex[4], tex[100],tex[200],tex[9300]);
+	/*dlog_print(DLOG_VERBOSE, LOG_TAG, "BUF_SIZE[%d] Memory set confirm [ %d, %d, %d, %d, %d, %d, %d, %d ]", tex[0], tex[1], tex[2], tex[3], tex[4], tex[100],tex[200],tex[9300]);
 
 	unsigned char *img_source = NULL;
 	int width = 0, height = 0;
@@ -120,7 +123,7 @@ void setTextureData(char* tex, int size, Evas_Object *obj)
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
 
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
 
 
 
@@ -128,6 +131,7 @@ void setTextureData(char* tex, int size, Evas_Object *obj)
 
 void destroy_gles(Evas_Object *obj)
 {
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "destroy_gles");
    appdata_s *ad;
 
    ELEMENTARY_GLVIEW_USE(obj);
@@ -148,6 +152,7 @@ void destroy_gles(Evas_Object *obj)
 
 void resize_gl(Evas_Object *obj)
 {
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "resize_gl");
    int w, h;
 
    elm_glview_size_get(obj, &w, &h);
@@ -178,6 +183,7 @@ static void draw_cube(Evas_Object *obj)
 		   1.0f, 0.0f,
    };
 
+
    glEnableClientState(GL_VERTEX_ARRAY);
    glVertexPointer(3, GL_FLOAT, 0, VERTICES);
 
@@ -201,10 +207,36 @@ static void draw_cube(Evas_Object *obj)
 
 void draw_gl(Evas_Object *obj)
 {
+	//dlog_print(DLOG_VERBOSE, "draw_pl function", "draw_gl");
+	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
+	ad = evas_object_data_get(obj, APPDATA_KEY);
 
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
    draw_cube(obj);
+	if(textBuf != NULL){
+
+		//dlog_print(DLOG_VERBOSE, LOG_TAG, "BUF_SIZE[%d] Memory set confirm [ %d, %d, %d, %d, %d, %d, %d, %d ]", sizeBuf, textBuf[0], textBuf[1], textBuf[2], textBuf[3], textBuf[4], textBuf[100],textBuf[200],textBuf[9300]);
+
+		int bufWidth = 0, bufHeight = 0;
+		unsigned int decodeBufSize = 0;
+		int error;
+		error = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "address : %d", image); // TODO Error invalid argument
+
+		//dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d], DECODE_SIZE[%d]", image, error, bufWidth, bufHeight, decodeBufSize); // TODO Error invalid argument
+
+		char [];
+		//delete
+		재할당
+		glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);//ad->current_tex_index
+
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+		glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+
 }
