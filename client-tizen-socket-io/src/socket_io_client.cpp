@@ -14,7 +14,7 @@
 using namespace sio;
 using namespace std;
 
-extern "C" void setTextureData(char * tex, int size, Evas_Object *obj);
+
 extern "C" char * textBuf;
 extern "C" int sizeBuf;
 
@@ -98,13 +98,9 @@ extern "C" {
 			int size = data->get_map()["stream"]->get_map()["size"]->get_int();
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
 			string buffer = *s_binary;
-			//chTexture = ;
 			textBuf = (char *)buffer.c_str();
 			sizeBuf = size;
-			//setTextureData(chTexture, size, evas_object);
 
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "Buffer size : %d", size);
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "Texture address : %d", &chTexture);
 
 			_lock.unlock();
 		});

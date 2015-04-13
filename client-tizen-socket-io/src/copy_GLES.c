@@ -30,8 +30,6 @@
 #define ZERO   0.0
 #define Z_POS_INC 0.01f
 
-extern const unsigned short IMAGE_4444_128_128_1[];
-
 char* textBuf = NULL;
 int sizeBuf;
 
@@ -53,22 +51,17 @@ init_gles(Evas_Object *obj)
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "init_gles");
    int w, h;
    appdata_s *ad;
-   //const unsigned char *texture_ids;
 
    ELEMENTARY_GLVIEW_USE(obj);
    ad = evas_object_data_get(obj, APPDATA_KEY);
 
-   //dlog_print(DLOG_VERBOSE, LOG_TAG, "Const unsigned chart address : %d", texture_ids);
    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
    glGenTextures(1, ad->tex_ids);
 
    /* Create and map texture 1 */
    glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, IMAGE_4444_128_128_1);
 
-//	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -83,50 +76,7 @@ init_gles(Evas_Object *obj)
    set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 
-// ~ Image SET
 
-void setTextureData(char* tex, int size, Evas_Object *obj)
-{
-	/*dlog_print(DLOG_VERBOSE, LOG_TAG, "BUF_SIZE[%d] Memory set confirm [ %d, %d, %d, %d, %d, %d, %d, %d ]", tex[0], tex[1], tex[2], tex[3], tex[4], tex[100],tex[200],tex[9300]);
-
-	unsigned char *img_source = NULL;
-	int width = 0, height = 0;
-	unsigned int size_decode = 0;
-	int ret = image_util_decode_jpeg(SAMPLE_FILENAME, IMAGE_UTIL_COLORSPACE_RGBA8888, &img_source, &width, &height, &size_decode);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "TEST FILE decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d]", img_source, ret, width, height);
-
-	// Tizen image util library
-	// https://developer.tizen.org/dev-guide/2.3.0/org.tizen.native.mobile.apireference/group__CAPI__MEDIA__IMAGE__UTIL__MODULE.html#ga555342f09c6d99fccfca4a8ff16c7e6a
-	// ~ Function use "image_util_decode_jpeg_from_memory"
-	// ~ Confirm This Part START
-
-	unsigned int bufferSize = 0;
-	int error = image_util_calculate_buffer_size(width, height, IMAGE_UTIL_COLORSPACE_RGBA8888, &bufferSize);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Calculate buffer size [%d] ERROR CODE[%d]", bufferSize, error);
-
-	//int image_util_decode_jpeg_from_memory( const unsigned char * jpeg_buffer , int jpeg_size , image_util_colorspace_e colorspace, unsigned char ** image_buffer , int *width , int *height , unsigned int *size);
-	unsigned char **image;
-	int bufWidth = 0, bufHeight = 0;
-	unsigned int decodeBufSize = 0;
-	error = image_util_decode_jpeg_from_memory((unsigned char *)tex, size, IMAGE_UTIL_COLORSPACE_RGBA8888, image, &bufWidth, &bufHeight, &decodeBufSize);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d], DECODE_SIZE[%d]", image, error, bufWidth, bufHeight, decodeBufSize); // TODO Error invalid argument
-
-	appdata_s *ad;
-	ELEMENTARY_GLVIEW_USE(obj);
-	ad = evas_object_data_get(obj, APPDATA_KEY);
-	glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
-
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Two dimension to One dimension array Working well?");
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, *image);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
-
-	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
-
-
-
-}
 
 void destroy_gles(Evas_Object *obj)
 {
@@ -206,7 +156,6 @@ static void draw_cube(Evas_Object *obj)
 
 void draw_gl(Evas_Object *obj)
 {
-	//dlog_print(DLOG_VERBOSE, "draw_pl function", "draw_gl");
 	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
@@ -216,8 +165,6 @@ void draw_gl(Evas_Object *obj)
    draw_cube(obj);
 	if(textBuf != NULL){
 
-		//dlog_print(DLOG_VERBOSE, LOG_TAG, "BUF_SIZE[%d] Memory set confirm [ %d, %d, %d, %d, %d, %d, %d, %d ]", sizeBuf, textBuf[0], textBuf[1], textBuf[2], textBuf[3], textBuf[4], textBuf[100],textBuf[200],textBuf[9300]);
-
 		int bufWidth = 0, bufHeight = 0;
 		unsigned int decodeBufSize = 0;
 
@@ -225,7 +172,6 @@ void draw_gl(Evas_Object *obj)
 
 		int error = 0;
 		error = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "address : %d", image); // TODO Error invalid argument
 
 		if(error != -2)
 		{

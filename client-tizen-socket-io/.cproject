@@ -27,7 +27,7 @@
 								<option id="gnu.cpp.compiler.option.optimization.level.335860631" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
 								<option id="sbi.gnu.cpp.compiler.option.debugging.level.core.2024395157" name="Debug level" superClass="sbi.gnu.cpp.compiler.option.debugging.level.core" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="sbi.gnu.cpp.compiler.option.361977481" name="Tizen-Target" superClass="sbi.gnu.cpp.compiler.option" valueType="userObjs">
-									<listOptionValue builtIn="false" value="mobile-2.3-device.core_gcc48.armel.core.app"/>
+									<listOptionValue builtIn="false" value="mobile-2.3-device.core_gcc46.armel.core.app"/>
 								</option>
 								<option id="sbi.gnu.cpp.compiler.option.frameworks_inc.core.1091133325" name="Tizen-Frameworks-Include-Path" superClass="sbi.gnu.cpp.compiler.option.frameworks_inc.core" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${SBI_SYSROOT}/usr/include/libxml2&quot;"/>
@@ -117,7 +117,7 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1984902728" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="sbi.gnu.c.compiler.option.debugging.level.core.1661181104" name="Debug level" superClass="sbi.gnu.c.compiler.option.debugging.level.core" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="sbi.gnu.c.compiler.option.904864121" name="Tizen-Target" superClass="sbi.gnu.c.compiler.option" valueType="userObjs">
-									<listOptionValue builtIn="false" value="mobile-2.3-device.core_gcc48.armel.core.app"/>
+									<listOptionValue builtIn="false" value="mobile-2.3-device.core_gcc46.armel.core.app"/>
 								</option>
 								<option id="sbi.gnu.c.compiler.option.frameworks_inc.core.1513342544" name="Tizen-Frameworks-Include-Path" superClass="sbi.gnu.c.compiler.option.frameworks_inc.core" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${SBI_SYSROOT}/usr/include/libxml2&quot;"/>
