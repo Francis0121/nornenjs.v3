@@ -12,20 +12,11 @@
 #define LOG_TAG_SOCKET_IO "socket.io"
 
 static pthread_t thread_id;
-static pthread_mutex_t lock;
-static Eina_Bool thread_finish = EINA_FALSE;
-
-//typedef struct appdata {
-//	Evas_Object *win;
-//	Evas_Object *conform;
-//	Evas_Object *label;
-//} appdata_s;
 
 static Evas_Object*
 _glview_create(appdata_s *ad)
 {
    Evas_Object *obj;
-
 
    /* Create a GLView with an OpenGL-ES 1.1 context */
    obj = elm_glview_version_add(ad->win, EVAS_GL_GLES_1_X);
@@ -70,9 +61,7 @@ _close_cb(void *data EINA_UNUSED,
 static void _btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
 
-	//genTex(obj);
-	//elm_glview_resize_func_set(obj, resize_gl);
-	//ui_app_exit();
+
 }//add
 
 
@@ -87,102 +76,6 @@ _win_resize_cb(void *data, Evas *e EINA_UNUSED,
    evas_object_resize(ad->table, w, h);
    evas_object_resize(ad->bg, w, h);
 }//add
-
-static void
-win_delete_request_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	ui_app_exit();
-}
-
-static void
-win_back_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	appdata_s *ad = data;
-	/* Let window go to hide state. */
-	elm_win_lower(ad->win);
-}
-
-static void
-create_base_gui(appdata_s *ad)
-{
-	/* Window */
-	ad->win = elm_win_util_standard_add(PACKAGE, PACKAGE);
-	elm_win_autodel_set(ad->win, EINA_TRUE);
-
-	if (elm_win_wm_rotation_supported_get(ad->win)) {
-		int rots[4] = { 0, 90, 180, 270 };
-		elm_win_wm_rotation_available_rotations_set(ad->win, (const int *)(&rots), 4);
-	}
-
-	evas_object_smart_callback_add(ad->win, "delete,request", win_delete_request_cb, NULL);
-	eext_object_event_callback_add(ad->win, EEXT_CALLBACK_BACK, win_back_cb, ad);
-
-	/* Conformant */
-	ad->conform = elm_conformant_add(ad->win);
-	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_SHOW);
-	elm_win_indicator_opacity_set(ad->win, ELM_WIN_INDICATOR_OPAQUE);
-	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_win_resize_object_add(ad->win, ad->conform);
-	evas_object_show(ad->conform);
-
-	/* Label*/
-	ad->label = elm_label_add(ad->conform);
-	elm_object_text_set(ad->label, rapidjson_test());
-	evas_object_size_hint_weight_set(ad->label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	elm_object_content_set(ad->conform, ad->label);
-	evas_object_show(ad->label);
-
-
-	int status = 0;
-
-	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
-
-//	int threadError = 0;
-//
-//	if ((threadError = pthread_create(&thread_id, NULL, socket_io_client, NULL))){
-//			perror("pthread_create!\n");
-//			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
-//	}
-//
-//	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
-	/* Show window after base gui is set up */
-
-	evas_object_show(ad->win);
-
-	/////////////////////////////////
-
-
-
-
-
-	// Thread가 종료되기를 기다린후 Thread의 리턴값을 출력한다.
-	//pthread_join(thread_t, (void **)&status);
-
-//	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
-//	socket_io_client();
-
-	/////////////////////////////////
-}
-
-
-static Evas_Object* add_win(const char *name) {
-	Evas_Object *win;
-
-	elm_config_accel_preference_set("opengl");
-	win = elm_win_util_standard_add(name, "OpenGL example: Cube");
-
-	if (!win)
-		return NULL;
-
-	if (elm_win_wm_rotation_supported_get(win)) {
-		int rots[4] = { 0, 90, 180, 270 };
-		elm_win_wm_rotation_available_rotations_set(win, rots, 4);
-	}
-
-	evas_object_show(win);
-
-	return win;
-}
 
 static bool
 app_create(void *data)
@@ -251,17 +144,10 @@ app_create(void *data)
 	   			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
 	   	}
 
-	   	/*
-	   	if ((threadError = pthread_join(thread_id,&thread_return))){
-	   				perror("pthread_join!\n");
-	   				dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
-	   	}
-	   	*/
-
 	   	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
 
 	   return true;
-}//add
+}
 
 static void
 app_control(app_control_h app_control, void *data)

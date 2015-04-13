@@ -14,8 +14,7 @@
 using namespace sio;
 using namespace std;
 
-extern "C" void setTextureData(char * tex,  Evas_Object *obj);
-extern "C" void draw_interface(char * temp);
+extern "C" void setTextureData(char * tex, int size, Evas_Object *obj);
 
 std::mutex _lock;
 std::condition_variable_any _cond;
@@ -98,7 +97,7 @@ extern "C" {
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
 			string buffer = *s_binary;
 			chTexture = (char *)buffer.c_str();
-			setTextureData(chTexture, evas_object);
+			setTextureData(chTexture, size, evas_object);
 
 			dlog_print(DLOG_VERBOSE, LOG_TAG, "Buffer size : %d", size);
 			dlog_print(DLOG_VERBOSE, LOG_TAG, "Texture address : %d", &chTexture);
