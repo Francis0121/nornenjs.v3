@@ -76,12 +76,16 @@ init_gles(Evas_Object *obj)
 
    elm_glview_size_get(obj, &w, &h);
    set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
+
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 #define SAMPLE_FILENAME "/tmp/dog.jpg"
 #define OUTPUT_ROTATED_JPEG "/tmp/rotated.jpg"
 
 // ~ Image SET
+
 
 void setTextureData(char* tex, int size, Evas_Object *obj)
 {
@@ -103,20 +107,23 @@ void setTextureData(char* tex, int size, Evas_Object *obj)
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Calculate buffer size [%d] ERROR CODE[%d]", bufferSize, error);
 
 	//int image_util_decode_jpeg_from_memory( const unsigned char * jpeg_buffer , int jpeg_size , image_util_colorspace_e colorspace, unsigned char ** image_buffer , int *width , int *height , unsigned int *size);
-	unsigned char **image;
+	unsigned char *image= NULL;
 	int bufWidth = 0, bufHeight = 0;
 	unsigned int decodeBufSize = 0;
-	error = image_util_decode_jpeg_from_memory((unsigned char *)tex, size, IMAGE_UTIL_COLORSPACE_RGBA8888, image, &bufWidth, &bufHeight, &decodeBufSize);
+	error = image_util_decode_jpeg_from_memory((unsigned char *)tex, size, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d], DECODE_SIZE[%d]", image, error, bufWidth, bufHeight, decodeBufSize); // TODO Error invalid argument
 
 	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
-	glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
+
+	//glEnable(GL_TEXTURE_2D);//hyok add
+	glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);//0
 
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Two dimension to One dimension array Working well?");
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, *image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);//const void* pixels
+
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
 
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -201,10 +208,10 @@ static void draw_cube(Evas_Object *obj)
 
 void draw_gl(Evas_Object *obj)
 {
-	ELEMENTARY_GLVIEW_USE(obj);
+	//ELEMENTARY_GLVIEW_USE(obj);
 
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+   //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   //glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-   draw_cube(obj);
+   //draw_cube(obj);
 }
