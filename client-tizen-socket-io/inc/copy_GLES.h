@@ -21,5 +21,13 @@ void init_gles(Evas_Object *obj);
 void draw_gl(Evas_Object *obj);
 void resize_gl(Evas_Object *obj);
 void destroy_gles(Evas_Object *obj);
-
+void genTex(Evas_Object *obj);
 #endif // __copy_GLES_H__
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+void setTextureData(char* tex ,Evas_Object *obj );
+#ifdef __cplusplus
+}
+#endif

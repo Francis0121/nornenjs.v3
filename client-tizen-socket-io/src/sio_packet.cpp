@@ -138,10 +138,11 @@ namespace sio
     
     message::ptr from_json(Value const& value, vector<shared_ptr<const string> > const& buffers)
     {
-    	dlog_print(DLOG_WARN, "sio_packet", "from json");
+
+    	dlog_print(DLOG_DEBUG, "sio_packet", "from json");
         if(value.IsInt64())
         {
-        	dlog_print(DLOG_WARN, "sio_packet", "IsInt64");
+        	dlog_print(DLOG_DEBUG, "sio_packet", "IsInt64");
             return int_message::create(value.GetInt64());
         }
         else if(value.IsDouble())
@@ -155,7 +156,7 @@ namespace sio
         }
         else if(value.IsArray())
         {
-        	dlog_print(DLOG_WARN, "value.IsArray()", "if arr from json");//자주 보여서 WARNING으로 바꿈
+        	dlog_print(DLOG_DEBUG, "value.IsArray()", "if arr from json");//자주 보여서 WARNING으로 바꿈
 
             message::ptr ptr = array_message::create();
 
@@ -166,7 +167,7 @@ namespace sio
         }
         else if(value.IsObject())
         {
-        	dlog_print(DLOG_WARN, "value.IsObject()", "if binary from json");
+        	dlog_print(DLOG_DEBUG, "value.IsObject()", "if binary from json");
              //binary placeholder
             auto mem_it = value.FindMember(kBIN_PLACE_HOLDER);
             if (mem_it!=value.MemberEnd() && mem_it->value.GetBool()) {

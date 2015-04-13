@@ -26,6 +26,7 @@ _glview_create(appdata_s *ad)
 {
    Evas_Object *obj;
 
+
    /* Create a GLView with an OpenGL-ES 1.1 context */
    obj = elm_glview_version_add(ad->win, EVAS_GL_GLES_1_X);
    elm_table_pack(ad->table, obj, 1, 1, 3, 1);
@@ -64,6 +65,16 @@ _close_cb(void *data EINA_UNUSED,
           Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    ui_app_exit();
+}//add
+
+static void
+_btn_clicked_cb(void *data EINA_UNUSED,
+          Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+
+	genTex(obj);
+	//elm_glview_resize_func_set(obj, resize_gl);
+	//ui_app_exit();
 }//add
 
 
@@ -146,7 +157,6 @@ create_base_gui(appdata_s *ad)
 
 
 
-
 	// Thread가 종료되기를 기다린후 Thread의 리턴값을 출력한다.
 	//pthread_join(thread_t, (void **)&status);
 
@@ -217,7 +227,8 @@ app_create(void *data)
 
 	   o = elm_button_add(ad->win);
 	   elm_object_text_set(o, "Quit");
-	   evas_object_smart_callback_add(o, "clicked", _close_cb, ad);
+	   //evas_object_smart_callback_add(o, "clicked", _close_cb, ad);
+	   evas_object_smart_callback_add(o, "clicked", _btn_clicked_cb, ad);
 	   elm_table_pack(t, o, 1, 9, 3, 1);
 	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	   evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
@@ -231,6 +242,26 @@ app_create(void *data)
 	   ad->anim = ecore_animator_add(_anim_cb, ad);
 	   evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
 
+	   int status = 0;
+
+	   	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
+
+	   	int threadError = 0;
+
+	   	if ((threadError = pthread_create(&thread_id, NULL, socket_io_client, (void *)o))){
+	   			perror("pthread_create!\n");
+	   			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
+	   	}
+
+	   	/*
+	   	if ((threadError = pthread_join(thread_id,&thread_return))){
+	   				perror("pthread_join!\n");
+	   				dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
+	   	}
+	   	*/
+
+	   	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
+
 	   return true;
 }//add
 
@@ -238,25 +269,7 @@ static void
 app_control(app_control_h app_control, void *data)
 {
 
-	int status = 0;
 
-	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
-
-	int threadError = 0;
-
-	if ((threadError = pthread_create(&thread_id, NULL, socket_io_client, NULL))){
-			perror("pthread_create!\n");
-			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
-	}
-
-	/*
-	if ((threadError = pthread_join(thread_id,&thread_return))){
-				perror("pthread_join!\n");
-				dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
-	}
-	*/
-
-	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
 	/* Show window after base gui is set up */
 
 	/* Handle the launch request. */
@@ -333,6 +346,7 @@ main(int argc, char *argv[])
 	event_callback.pause = app_pause;
 	event_callback.resume = app_resume;
 	event_callback.app_control = app_control;
+
 
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);

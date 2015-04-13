@@ -11,18 +11,22 @@
 
 #include <pthread.h>
 #include <unistd.h>
-#include <bitset>
+
 
 #define LOG_TAG "socket.io"
 
 using namespace sio;
 using namespace std;
 
+extern "C" void setTextureData(char * tex,  Evas_Object *obj);
+extern "C" void draw_interface(char * temp);
+
 std::mutex _lock;
 
 std::condition_variable_any _cond;
 bool connect_finish = false;
 int participants = 0;
+char *texture22;
 
 class connection_listener
 {
@@ -63,11 +67,25 @@ extern "C" {
 		LOOP_FLAG = 0;
 	}
 }
+
+extern "C" {
+	char *texture_getter()
+	{
+		//dlog_print(DLOG_FATAL, LOG_TAG, "success%d ", texture);
+		//dlog_print(DLOG_FATAL, LOG_TAG, "texture_getter value c++ %d ", texture[0]);
+		dlog_print(DLOG_FATAL, LOG_TAG, "!texture_getter value %d", &texture22);
+		//out = &texture22[0];
+		//strcpy(out,texture22);
+		//dlog_print(DLOG_FATAL, LOG_TAG, "!texture_getter value %d", out);
+		//return texture22;
+	}
+}
+
 extern "C" {
 
-	void socket_io_client()
+	void socket_io_client(void *object)
 	{
-
+		Evas_Object *evas_object = (Evas_Object *)object;
 
 		sio::client h;
 		connection_listener l(h);
@@ -149,12 +167,18 @@ extern "C" {
 
 							shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buf"]->get_binary();
 							string user = *s_binary;
+							texture22 = (char *)user.c_str();
 
+							dlog_print(DLOG_FATAL, LOG_TAG, "texture_getter value %d", &texture22);
+							//draw_interface(texture22);
+							setTextureData(texture22, evas_object);//c++에서 c 호출
+
+							//dlog_print(DLOG_FATAL, LOG_TAG, "texture_getter value %d %d ", texture[0], texture[1]);
 							//user.c_str() == char * 로 byte가 들어잇음. opengl에서 참조하면 됨.
-
 							//dlog_print(DLOG_FATAL, LOG_TAG, "success %d %d %d %d %d %d %d %d", user.c_str()[0], user.c_str()[1], user.c_str()[2], user.c_str()[3], user.c_str()[4], user.c_str()[100],user.c_str()[200],user.c_str()[9300]);
 
 							_lock.unlock();
+							//sleep(5);
 					    });
 
 

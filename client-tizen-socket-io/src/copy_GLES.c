@@ -16,8 +16,10 @@
 
 #include <math.h>
 #include <Elementary_GL_Helpers.h>
+#include "socket.hpp"
+#include "socket_io_client.hpp"
 #include "other.h"
-
+#define LOG_TAG_SOCKET_IO "socket.io"
 #define ONEP  +1.0
 #define ONEN  -1.0
 #define ZERO   0.0
@@ -26,48 +28,19 @@
 extern const unsigned short IMAGE_565_128_128_1[];
 extern const unsigned short IMAGE_4444_128_128_1[];
 
+static Evas_Object *obj2;
+
 static void
 set_perspective(Evas_Object *obj, float fovDegree, int w, int h, float zNear,  float zFar)
 {
-   float aspect;
-   float fxdYMax, fxdYMin, fxdXMax, fxdXMin;
-   int degree;
-
    ELEMENTARY_GLVIEW_USE(obj);
 
-   if((w == 0) || (h == 0)) return;
-   aspect = (w < h)? ((float)w / h): ((float)h / w);
-
-   /* tan(double(degree) * 3.1415962 / 180.0 / 2.0); */
-   static const float HALF_TAN_TABLE[91] =
-   {
-      0.00000f, 0.00873f, 0.01746f, 0.02619f, 0.03492f, 0.04366f, 0.05241f, 0.06116f, 0.06993f,
-      0.07870f, 0.08749f, 0.09629f, 0.10510f, 0.11394f, 0.12278f, 0.13165f, 0.14054f, 0.14945f,
-      0.15838f, 0.16734f, 0.17633f, 0.18534f, 0.19438f, 0.20345f, 0.21256f, 0.22169f, 0.23087f,
-      0.24008f, 0.24933f, 0.25862f, 0.26795f, 0.27732f, 0.28675f, 0.29621f, 0.30573f, 0.31530f,
-      0.32492f, 0.33460f, 0.34433f, 0.35412f, 0.36397f, 0.37389f, 0.38386f, 0.39391f, 0.40403f,
-      0.41421f, 0.42448f, 0.43481f, 0.44523f, 0.45573f, 0.46631f, 0.47698f, 0.48773f, 0.49858f,
-      0.50953f, 0.52057f, 0.53171f, 0.54296f, 0.55431f, 0.56577f, 0.57735f, 0.58905f, 0.60086f,
-      0.61280f, 0.62487f, 0.63707f, 0.64941f, 0.66189f, 0.67451f, 0.68728f, 0.70021f, 0.71329f,
-      0.72654f, 0.73996f, 0.75356f, 0.76733f, 0.78129f, 0.79544f, 0.80979f, 0.82434f, 0.83910f,
-      0.85408f, 0.86929f, 0.88473f, 0.90041f, 0.91633f, 0.93252f, 0.94897f, 0.96569f, 0.98270f,
-      1.00000f
-   };
-
-   degree = (int)(fovDegree + 0.5f);
-   degree = (degree >=  0) ? degree :  0;
-   degree = (degree <= 90) ? degree : 90;
-
-   fxdYMax = zNear * HALF_TAN_TABLE[degree];
-   fxdYMin = -fxdYMax;
-
-   fxdXMax = fxdYMax * aspect;
-   fxdXMin = -fxdXMax;
-
    glViewport(0, 0, w, h);
+   float ratio = (float) w / (float)h;
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   glFrustumf(fxdXMin, fxdXMax, fxdYMin, fxdYMax, zNear, zFar);
+   //glFrustumf(fxdXMin, fxdXMax, fxdYMin, fxdYMax, zNear, zFar);
+   glFrustumf(-ratio, ratio, -1, 1, 1, 10);
 }
 
 void
@@ -75,29 +48,23 @@ init_gles(Evas_Object *obj)
 {
    int w, h;
    appdata_s *ad;
-
+   const unsigned char *texture_ids;
+  //texture_ids = (unsigned char*)texture_getter();
+   dlog_print(DLOG_FATAL, LOG_TAG, "success!!!! %d %d ", texture_ids, texture_ids);
    ELEMENTARY_GLVIEW_USE(obj);
    ad = evas_object_data_get(obj, APPDATA_KEY);
 
-   glGenTextures(2, ad->tex_ids);
+   glGenTextures(1, ad->tex_ids);
 
    /* Create and map texture 1 */
    glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, IMAGE_4444_128_128_1);
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE,   (void*)texture_ids);
+
    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-   /* Create and map texture 2 */
-   glBindTexture(GL_TEXTURE_2D, ad->tex_ids[1]);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, IMAGE_565_128_128_1);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-   ad->current_tex_index = 0;
 
    glShadeModel(GL_SMOOTH);
 
@@ -105,10 +72,65 @@ init_gles(Evas_Object *obj)
    glCullFace(GL_BACK);
 
    glEnable(GL_DEPTH_TEST);
-   glDepthFunc(GL_LESS);
+  // glDepthFunbeforec(GL_LESS);
 
    elm_glview_size_get(obj, &w, &h);
    set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
+
+   // obj2 = obj;//add
+}
+void
+genTex(Evas_Object *obj){
+
+	//char *tex;
+	//appdata_s *ad;
+	//char *tex = texture_getter();
+
+	//ELEMENTARY_GLVIEW_USE(obj);
+	//ad = evas_object_data_get(obj, APPDATA_KEY);
+
+	//glBindTexture(GL_TEXTURE_2D, ad->tex_ids[1]);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGB, GL_UNSIGNED_BYTE, (void *)tex);
+	  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE,   (void*)texture_ids);
+
+//	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	//dlog_print(DLOG_FATAL, LOG_TAG, "texture_getter value c %d ", tex[1]);
+	//dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "quit~~~~~~!!!!!!~~~~~~~~~~~~~~~~~");
+
+}
+
+void setTextureData(char* tex , Evas_Object *obj)
+{
+	appdata_s *ad;
+	ELEMENTARY_GLVIEW_USE(obj);
+	ad = evas_object_data_get(obj, APPDATA_KEY);
+	dlog_print(DLOG_FATAL, LOG_TAG, "another success~~%d %d %d %d %d %d %d %d", tex[0], tex[1], tex[2], tex[3], tex[4], tex[100],tex[200],tex[9300]);
+	//glGenTextures(1, ad->g_textureName);
+	glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
+	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+
+	//dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "quit~~~~~~!!!!!!~~~~~~~~~~~~~~~~~");
+
+	//dlog_print(DLOG_FATAL, LOG_TAG, "success!!!! %d %d ", tex[0], tex[2]);
+	//dlog_print(DLOG_FATAL, LOG_TAG, "another success %d %d %d %d %d %d %d %d", tex[0], tex[1], tex[2], tex[3], tex[4], tex[100],tex[200],tex[9300]);
+
+//	glGenTextures(1, &g_textureName);
+
+//	appdata_s *ad;
+//	ad = evas_object_data_get(obj, APPDATA_KEY);
+//   glBindTexture(GL_TEXTURE_2D, ad->tex_ids[1]);
+//   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, (void *)tex);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+//	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 }
 
 void
@@ -138,100 +160,94 @@ resize_gl(Evas_Object *obj)
    int w, h;
 
    elm_glview_size_get(obj, &w, &h);
+
    set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
 }
 
+//static void
+//draw_cube1(Evas_Object *obj)
+//{
+//   static int angle = 0;
+//
+//   ELEMENTARY_GLVIEW_USE(obj);
+//
+//   static const float VERTICES[] =
+//   {
+//      ONEN, ONEP, ONEN, // 0
+//      ONEP, ONEP, ONEN, // 1
+//      ONEN, ONEN, ONEN, // 2
+//      ONEP, ONEN, ONEN, // 3
+//      ONEN, ONEP, ONEP, // 4
+//      ONEP, ONEP, ONEP, // 5
+//      ONEN, ONEN, ONEP, // 6
+//      ONEP, ONEN, ONEP  // 7
+//   };
+//
+//   static const float VERTEX_COLOR[] =
+//   {
+//      0, 0, 0, 0,
+//      0, 0, 0, 0,
+//      0, 0, 0, 0,
+//      0, 0, 0, 0,
+//      0, 0, 0, 0,
+//      0, 0, 0, 0,
+//      0, 0, 0, 0,
+//      ZERO, ZERO, ZERO, ONEP
+//   };
+//
+//   static const unsigned short INDEX_BUFFER[] =
+//   {
+//      0, 1, 2, 2, 1, 3,
+//      1, 5, 3, 3, 5, 7,
+//      5, 4, 7, 7, 4, 6,
+//      4, 0, 6, 6, 0, 2,
+//      4, 5, 0, 0, 5, 1,
+//      2, 3, 6, 6, 3, 7
+//   };
+//
+//   glEnableClientState(GL_VERTEX_ARRAY);
+//   glVertexPointer(3, GL_FLOAT, 0, VERTICES);
+//
+//   glEnableClientState(GL_COLOR_ARRAY);
+//   glColorPointer(4, GL_FLOAT, 0, VERTEX_COLOR);
+//
+//   glMatrixMode(GL_MODELVIEW);
+//   glLoadIdentity();
+//   glTranslatef(0, -0.7f, -8.0f);
+//
+//   angle = (angle + 1) % (360 * 3);
+//   //glRotatef((float)angle / 3, 1.0f, 0, 0);
+//  // glRotatef((float)angle, 0, 0, 1.0f);
+//
+//   glDrawElements(GL_TRIANGLES, 6 * (3 * 2), GL_UNSIGNED_SHORT, &INDEX_BUFFER[0]);
+//
+//   glDisableClientState(GL_VERTEX_ARRAY);
+//   glDisableClientState(GL_COLOR_ARRAY);
+//}
+
 static void
-draw_cube1(Evas_Object *obj)
+draw_cube(Evas_Object *obj)
 {
-   static int angle = 0;
-
-   ELEMENTARY_GLVIEW_USE(obj);
-
-   static const float VERTICES[] =
-   {
-      ONEN, ONEP, ONEN, // 0
-      ONEP, ONEP, ONEN, // 1
-      ONEN, ONEN, ONEN, // 2
-      ONEP, ONEN, ONEN, // 3
-      ONEN, ONEP, ONEP, // 4
-      ONEP, ONEP, ONEP, // 5
-      ONEN, ONEN, ONEP, // 6
-      ONEP, ONEN, ONEP  // 7
-   };
-
-   static const float VERTEX_COLOR[] =
-   {
-      ONEP, ZERO, ONEP, ONEP,
-      ONEP, ONEP, ZERO, ONEP,
-      ZERO, ONEP, ONEP, ONEP,
-      ONEP, ZERO, ZERO, ONEP,
-      ZERO, ZERO, ONEP, ONEP,
-      ZERO, ONEP, ZERO, ONEP,
-      ONEP, ONEP, ONEP, ONEP,
-      ZERO, ZERO, ZERO, ONEP
-   };
-
-   static const unsigned short INDEX_BUFFER[] =
-   {
-      0, 1, 2, 2, 1, 3,
-      1, 5, 3, 3, 5, 7,
-      5, 4, 7, 7, 4, 6,
-      4, 0, 6, 6, 0, 2,
-      4, 5, 0, 0, 5, 1,
-      2, 3, 6, 6, 3, 7
-   };
-
-   glEnableClientState(GL_VERTEX_ARRAY);
-   glVertexPointer(3, GL_FLOAT, 0, VERTICES);
-
-   glEnableClientState(GL_COLOR_ARRAY);
-   glColorPointer(4, GL_FLOAT, 0, VERTEX_COLOR);
-
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   glTranslatef(0, -0.7f, -5.0f);
-
-   angle = (angle + 1) % (360 * 3);
-   glRotatef((float)angle / 3, 1.0f, 0, 0);
-   glRotatef((float)angle, 0, 0, 1.0f);
-
-   glDrawElements(GL_TRIANGLES, 6 * (3 * 2), GL_UNSIGNED_SHORT, &INDEX_BUFFER[0]);
-
-   glDisableClientState(GL_VERTEX_ARRAY);
-   glDisableClientState(GL_COLOR_ARRAY);
-}
-
-static void
-draw_cube2(Evas_Object *obj)
-{
-   int i;
    appdata_s *ad;
-   static float zPos = -5.0f;
-   static float zPosInc = Z_POS_INC;
-   static int angle = 0;
+
 
    ELEMENTARY_GLVIEW_USE(obj);
    ad = evas_object_data_get(obj, APPDATA_KEY);
 
    static const float VERTICES[] =
    {
-      ONEN, ONEN, ONEP, ONEP, ONEN, ONEP, ONEN, ONEP, ONEP, ONEP, ONEP, ONEP,
-      ONEN, ONEN, ONEN, ONEN, ONEP, ONEN, ONEP, ONEN, ONEN, ONEP, ONEP, ONEN,
-      ONEN, ONEN, ONEP, ONEN, ONEP, ONEP, ONEN, ONEN, ONEN, ONEN, ONEP, ONEN,
-      ONEP, ONEN, ONEN, ONEP, ONEP, ONEN, ONEP, ONEN, ONEP, ONEP, ONEP, ONEP,
-      ONEN, ONEP, ONEP, ONEP, ONEP, ONEP, ONEN, ONEP, ONEN, ONEP, ONEP, ONEN,
-      ONEN, ONEN, ONEP, ONEN, ONEN, ONEN, ONEP, ONEN, ONEP, ONEP, ONEN, ONEN
+		   -1.0f	, -1.0f, 0.0f,	// 3, Left Bottom
+		   1.0f	, -1.0f, 0.0f,	// 2, Right Bottom
+		   -1.0f	, 1.0f	, 0.0f, // 0, Left Top
+		   1.0f	, 1.0f	, 0.0f	// 1, Right Top
    };
 
    static const float TEXTURE_COORD[] =
    {
-      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
-      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
-      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
-      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
-      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP,
-      ONEP, ZERO, ZERO, ZERO, ONEP, ONEP, ZERO, ONEP
+		   0.0f, 1.0f,
+		   1.0f, 1.0f,
+		   0.0f, 0.0f,
+		   1.0f, 0.0f,
    };
 
    glEnableClientState(GL_VERTEX_ARRAY);
@@ -245,33 +261,67 @@ draw_cube2(Evas_Object *obj)
 
    glMatrixMode(GL_MODELVIEW);
 
-   zPos += zPosInc;
-
-   /* Keep switching textures in cube 2 */
-   if (zPos < -8.0f)
-   {
-      zPosInc = Z_POS_INC;
-      ad->current_tex_index = 1 - (ad->current_tex_index);
-   }
-
-   if (zPos > -5.0f)
-      zPosInc = -Z_POS_INC;
-
    glLoadIdentity();
-   glTranslatef(0, 1.2f, zPos);
+   glTranslatef(0, 0.0f, -2.0f);
 
-   angle = (angle + 1) % (360 * 3);
-   //glRotatef((float)angle / 3, 0, 0, 1.0f);
-   //glRotatef((float)angle, 0, 1.0f, 0);
-
-   for(i = 0; i < 6; i++)
-      glDrawArrays(GL_TRIANGLE_STRIP, (4 * i), 4);
+   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
    glDisable(GL_TEXTURE_2D);
    glDisableClientState(GL_VERTEX_ARRAY);
    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+static void
+draw_cube2(char * temp)//Evas_Object *obj
+{
+   appdata_s *ad;
+
+
+   ELEMENTARY_GLVIEW_USE(obj2);
+   ad = evas_object_data_get(obj2, APPDATA_KEY);
+
+   static const float VERTICES[] =
+   {
+		   -1.0f	, -1.0f, 0.0f,	// 3, Left Bottom
+		   1.0f	, -1.0f, 0.0f,	// 2, Right Bottom
+		   -1.0f	, 1.0f	, 0.0f, // 0, Left Top
+		   1.0f	, 1.0f	, 0.0f	// 1, Right Top
+   };
+
+   static const float TEXTURE_COORD[] =
+   {
+		   0.0f, 1.0f,
+		   1.0f, 1.0f,
+		   0.0f, 0.0f,
+		   1.0f, 0.0f,
+   };
+
+   glEnableClientState(GL_VERTEX_ARRAY);
+   glVertexPointer(3, GL_FLOAT, 0, VERTICES);
+
+   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+   glTexCoordPointer(2, GL_FLOAT, 0, TEXTURE_COORD);
+
+   glEnable(GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);
+
+   glMatrixMode(GL_MODELVIEW);
+
+   glLoadIdentity();
+   glTranslatef(0, 0.0f, -2.0f);
+
+   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+   glDisable(GL_TEXTURE_2D);
+   glDisableClientState(GL_VERTEX_ARRAY);
+   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+//void
+//draw_interface(char * temp)//Evas_Object *obj
+//{
+//	draw_gl(temp, obj2);
+//}
 
 void
 draw_gl(Evas_Object *obj)
@@ -281,6 +331,7 @@ draw_gl(Evas_Object *obj)
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-   draw_cube1(obj);
+   //dlog_print(DLOG_FATAL, LOG_TAG, "drawgl");
    //draw_cube2(obj);
+   draw_cube(obj);
 }

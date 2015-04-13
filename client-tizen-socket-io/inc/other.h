@@ -28,6 +28,7 @@ typedef struct appdata
 
    Evas_Object *label;//add
    GLuint tex_ids[2];
+   GLuint g_textureName;
    int current_tex_index;
 } appdata_s;
 //add

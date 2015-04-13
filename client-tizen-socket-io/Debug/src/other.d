@@ -2,12 +2,6 @@ src/other.d: ../src/other.c \
  /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket.hpp \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
  /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket_io_client.hpp \
- /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/other.h \
- /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h \
- /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_control.h \
- /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_common.h \
- /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_types.h \
- /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_i18n.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/Elementary.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/eina-1/Eina.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/eina-1/eina_config.h \
@@ -225,6 +219,12 @@ src/other.d: ../src/other.c \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_web.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_win.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_deprecated.h \
+ /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/other.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_control.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_common.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_types.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_i18n.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/system/system_settings.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension_events.h \
@@ -235,18 +235,6 @@ src/other.d: ../src/other.c \
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
 /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/socket_io_client.hpp:
-
-/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/other.h:
-
-/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h:
-
-/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_control.h:
-
-/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_common.h:
-
-/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_types.h:
-
-/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_i18n.h:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/Elementary.h:
 
@@ -681,6 +669,18 @@ src/other.d: ../src/other.c \
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_win.h:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_deprecated.h:
+
+/home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/other.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_control.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_common.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_types.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_i18n.h:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/system/system_settings.h:
 
