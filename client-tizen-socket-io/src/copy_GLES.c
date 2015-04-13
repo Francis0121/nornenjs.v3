@@ -61,10 +61,11 @@ init_gles(Evas_Object *obj)
    /* Create and map texture 1 */
    glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, IMAGE_4444_128_128_1);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
    glShadeModel(GL_SMOOTH);
 
@@ -75,7 +76,6 @@ init_gles(Evas_Object *obj)
 
    elm_glview_size_get(obj, &w, &h);
    set_perspective(obj, 60.0f, w, h, 1.0f, 400.0f);
-
 }
 
 #define SAMPLE_FILENAME "/tmp/dog.jpg"
@@ -109,14 +109,12 @@ void setTextureData(char* tex, int size, Evas_Object *obj)
 	error = image_util_decode_jpeg_from_memory((unsigned char *)tex, size, IMAGE_UTIL_COLORSPACE_RGBA8888, image, &bufWidth, &bufHeight, &decodeBufSize);
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d], DECODE_SIZE[%d]", image, error, bufWidth, bufHeight, decodeBufSize); // TODO Error invalid argument
 
-
-//	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x]", image[0][0]);
-//	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x]", image[0][512]);
-
 	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 	glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
+
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Two dimension to One dimension array Working well?");
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, *image);
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
