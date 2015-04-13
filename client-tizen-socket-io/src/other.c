@@ -67,12 +67,10 @@ _close_cb(void *data EINA_UNUSED,
    ui_app_exit();
 }//add
 
-static void
-_btn_clicked_cb(void *data EINA_UNUSED,
-          Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void _btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
 
-	genTex(obj);
+	//genTex(obj);
 	//elm_glview_resize_func_set(obj, resize_gl);
 	//ui_app_exit();
 }//add
