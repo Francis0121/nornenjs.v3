@@ -63,8 +63,8 @@ init_gles(Evas_Object *obj)
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 128, 128, 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, IMAGE_4444_128_128_1);
    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//   glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
    glShadeModel(GL_SMOOTH);
 
@@ -78,31 +78,53 @@ init_gles(Evas_Object *obj)
 
 }
 
+#define SAMPLE_FILENAME "/tmp/dog.jpg"
+#define OUTPUT_ROTATED_JPEG "/tmp/rotated.jpg"
+
+// ~ Image SET
+
 void setTextureData(char* tex, int size, Evas_Object *obj)
 {
-	//Evas_Object *image;
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "BUF_SIZE[%d] Memory set confirm [ %d, %d, %d, %d, %d, %d, %d, %d ]", tex[0], tex[1], tex[2], tex[3], tex[4], tex[100],tex[200],tex[9300]);
 
-// Tizen image util library
-// https://developer.tizen.org/dev-guide/2.3.0/org.tizen.native.mobile.apireference/group__CAPI__MEDIA__IMAGE__UTIL__MODULE.html#ga555342f09c6d99fccfca4a8ff16c7e6a
-// ~ Function use "image_util_decode_jpeg_from_memory"
+	unsigned char *img_source = NULL;
+	int width = 0, height = 0;
+	unsigned int size_decode = 0;
+	int ret = image_util_decode_jpeg(SAMPLE_FILENAME, IMAGE_UTIL_COLORSPACE_RGBA8888, &img_source, &width, &height, &size_decode);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "TEST FILE decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d]", img_source, ret, width, height);
 
+	// Tizen image util library
+	// https://developer.tizen.org/dev-guide/2.3.0/org.tizen.native.mobile.apireference/group__CAPI__MEDIA__IMAGE__UTIL__MODULE.html#ga555342f09c6d99fccfca4a8ff16c7e6a
+	// ~ Function use "image_util_decode_jpeg_from_memory"
 	// ~ Confirm This Part START
+
+	unsigned int bufferSize = 0;
+	int error = image_util_calculate_buffer_size(width, height, IMAGE_UTIL_COLORSPACE_RGBA8888, &bufferSize);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Calculate buffer size [%d] ERROR CODE[%d]", bufferSize, error);
+
+	//int image_util_decode_jpeg_from_memory( const unsigned char * jpeg_buffer , int jpeg_size , image_util_colorspace_e colorspace, unsigned char ** image_buffer , int *width , int *height , unsigned int *size);
 	unsigned char **image;
-	int width = 512, height = 512;
-	unsigned int imageSize = 512*512*4;
-	image_util_decode_jpeg_from_memory(tex, size, IMAGE_UTIL_COLORSPACE_RGBA8888, image, &width, &height, &imageSize);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[ %d, %d]", image[0], image[1]);
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "Memory set confirm [ %d, %d, %d, %d, %d, %d, %d, %d ]", tex[0], tex[1], tex[2], tex[3], tex[4], tex[100],tex[200],tex[9300]);
-	// ~ Confirm This Part END
+	int bufWidth = 0, bufHeight = 0;
+	unsigned int decodeBufSize = 0;
+	error = image_util_decode_jpeg_from_memory((unsigned char *)tex, size, IMAGE_UTIL_COLORSPACE_RGBA8888, image, &bufWidth, &bufHeight, &decodeBufSize);
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x] ERROR CODE[%d] WIDTH[%d] HEIGHT[%d], DECODE_SIZE[%d]", image, error, bufWidth, bufHeight, decodeBufSize); // TODO Error invalid argument
+
+
+//	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x]", image[0][0]);
+//	dlog_print(DLOG_VERBOSE, LOG_TAG, "Image decode confirm[%x]", image[0][512]);
 
 	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 	glBindTexture(GL_TEXTURE_2D, ad->tex_ids[0]);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, *image);
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 512, 512, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 128, 128, 0, GL_RGB, GL_UNSIGNED_BYTE, tex);
+
+
 
 }
 
