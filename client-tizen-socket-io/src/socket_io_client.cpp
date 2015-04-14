@@ -9,14 +9,22 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include <image_util.h>
+
+
 #define LOG_TAG "socket.io.client"
 
 using namespace sio;
 using namespace std;
 
-
+extern "C" unsigned char *image;
 extern "C" char * textBuf;
 extern "C" int sizeBuf;
+extern "C" int err;
+extern "C" int bufWidth;
+extern "C" int bufHeight;
+extern "C" unsigned int decodeBufSize;
+
 
 std::mutex _lock;
 std::condition_variable_any _cond;
@@ -99,6 +107,12 @@ extern "C" {
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
 			string buffer = *s_binary;
 			textBuf = (char *)buffer.c_str();
+
+			int error = -9;
+			error = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
+			err = error;
+
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "TEX BUF IN SOCKET.IO [%d, %d, %d]", textBuf[0], textBuf[1], textBuf[2]);
 			sizeBuf = size;
 
 

@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>QtzPS2wElkr9lpyBAyCDCbZ0CbN3NI1GQ83pYA0p9wY=</DigestValue>
+<DigestValue>P0PbpnqtLsQX8vTx+DZLabpM3Zr76PJdLfNHoonvWjw=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fother">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>1Gy4wppG552ROkHjhPdOVkvfJH4SJyH3hOYnDTkeKDQ=</DigestValue>
+<DigestValue>BdFR0FQ11N2u9tA3UWoKlBz+masqIlB7OauNeteBApw=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -35,9 +35,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-r/AC6kkN72RQ2ZQZAYzL/1RKg4MbpwJ5GRirDvPJ4obgX2ibWY9stqOm2haqpreUIWunMjpZCz67
-6dGcamMFIAydl9D3jQT7JZThTGMVcPqHNXY1kfDJsut2zCcFTV/j2wvIyE9j5xmpEPTGpiXc0p/N
-Q9DhyKDuPL6aSXpSh0M=
+JKKc5d0J/vrZKS/mXpMIebvlKAC4BRrgaHYuEH83pXmuwBVNNBGtsGpN+zKuw89EE8SM9av/ShtR
+tHWQDWW86cvQePAwG9WPW/D04apd6hY9nBPMPPGvwL6jkeEwJiO93DEZvzJLQWm33Y1qg5a6NCOJ
+AbDYUbdU7idG00AP+3Y=
 </SignatureValue>
 <KeyInfo>
 <X509Data>
