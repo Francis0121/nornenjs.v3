@@ -50,7 +50,7 @@ Handle<Value> Ctx::GetDevice(const Arguments& args) {
 
   CUresult error = cuCtxGetDevice(&(pctx->m_device));
 
-  return scope.Close(Number::New(error));;
+  return scope.Close(Number::New(pctx->m_device));;
 }
 
 Handle<Value> Ctx::Destroy(const Arguments& args) {
