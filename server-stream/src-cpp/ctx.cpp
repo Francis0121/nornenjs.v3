@@ -44,11 +44,13 @@ Handle<Value> Ctx::GetDevice(const Arguments& args) {
   HandleScope scope;
 
   Ctx *pctx = new Ctx();
+  pctx->Wrap(args.This());
+
   pctx->m_device = ObjectWrap::Unwrap<Device>(args[0]->ToObject())->m_device;
 
-  cuCtxGetDevice(pctx->m_device);
+  CUresult error = cuCtxGetDevice(&(pctx->m_device));
 
-  return args.This();
+  return scope.Close(Number::New(error));;
 }
 
 Handle<Value> Ctx::Destroy(const Arguments& args) {
