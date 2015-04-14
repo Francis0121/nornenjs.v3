@@ -10,8 +10,12 @@ var util = require('./util');
 
 var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
+
 var cuDevice = cu.Device(0);
 var cuCtx = new cu.Ctx(0, cuDevice);
+
+var cuDevice_ = cu.Device(1);
+var cuCtx_ = new cu.Ctx(0, cuDevice_);
 
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
