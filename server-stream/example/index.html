@@ -69,6 +69,100 @@
                 };
                 img.src = url;
             });
+
+
+
+            // ~ Touch
+
+            var canvas = document.getElementById('view_canvas');
+
+            var touch = {
+                isOn : false,
+                beforeX : 0,
+                beforeY : 0
+            };
+
+            var mouse = {
+                isOn : false,
+                beforeX : 0,
+                beforeY : 0,
+                count : 0
+            };
+
+            var option = {
+                rotationX : 0,
+                rotationY : 0
+            };
+
+            canvas.addEventListener('touchstart', function(event){
+                event.preventDefault();
+                var touches = event.changedTouches;
+
+                if(touches.length == 1){
+                    touch.isOn = true;
+                    touch.beforeX = touches[0].pageX;
+                    touch.beforeY = touches[0].pageY;
+                }
+            });
+
+            canvas.addEventListener('touchmove', function(event){
+                event.preventDefault();
+                var touches = event.changedTouches;
+
+                if(touch.isOn){
+                    option.rotationX += (touches[0].pageX - touch.beforeX)/10.0;
+                    option.rotationY += (touches[0].pageY - touch.beforeY)/10.0;
+
+                    touch.beforeX = touches[0].pageX;
+                    touch.beforeY = touches[0].pageY;
+
+                    socket.emit('touch', option);
+                }
+            });
+
+            canvas.addEventListener('touchend', function(event){
+                event.preventDefault();
+                touch.isOn = false;
+            });
+
+            canvas.addEventListener('touchcancel', function(event) {
+                event.preventDefault();
+                touch.isOn = false;
+            });
+
+            canvas.addEventListener('touchleave', function(event){
+                event.preventDefault();
+                touch.isOn = false;
+            });
+
+
+            canvas.addEventListener('mousedown', function(event){
+                event.preventDefault();
+
+                mouse.isOn = true;
+                mouse.beforeX = event.pageX;
+                mouse.beforeY = event.pageY;
+                mouse.count = 0;
+            });
+
+            canvas.addEventListener('mousemove', function(event){
+                event.preventDefault();
+                mouse.count++;
+                if(mouse.isOn && mouse.count%3 == 0){
+                    option.rotationX += (event.pageX - mouse.beforeX)/3.0;
+                    option.rotationY += (event.pageY - mouse.beforeY)/3.0;
+
+                    mouse.beforeX = event.pageX;
+                    mouse.beforeY = event.pageY;
+
+                    socket.emit('leftMouse', option);
+                }
+            });
+
+            canvas.addEventListener('mouseup', function(event){
+                event.preventDefault();
+                mouse.isOn = false;
+            });
         };
 
     </script>
@@ -79,103 +173,6 @@
 <canvas id="view_canvas" width="512" height="512">
 
 </canvas>
-
-<script>
-    
-    // ~ Touch
-
-    var canvas = document.getElementById('view_canvas');
-
-    var touch = {
-        isOn : false,
-        beforeX : 0,
-        beforeY : 0
-    };
-
-    var mouse = {
-        isOn : false,
-        beforeX : 0,
-        beforeY : 0,
-        count : 0
-    };
-    
-    var option = {
-        rotationX : 0,
-        rotationY : 0
-    };
-
-    canvas.addEventListener('touchstart', function(event){
-        event.preventDefault();
-        var touches = event.changedTouches;
-
-        if(touches.length == 1){
-            touch.isOn = true;
-            touch.beforeX = touches[0].pageX;
-            touch.beforeY = touches[0].pageY;
-        }
-    });
-
-    canvas.addEventListener('touchmove', function(event){
-        event.preventDefault();
-        var touches = event.changedTouches;
-
-        if(touch.isOn){
-            option.rotationX += (touches[0].pageX - touch.beforeX)/10.0;
-            option.rotationY += (touches[0].pageY - touch.beforeY)/10.0;
-
-            touch.beforeX = touches[0].pageX;
-            touch.beforeY = touches[0].pageY;
-
-            socket.emit('touch', option);
-        }
-    });
-
-    canvas.addEventListener('touchend', function(event){
-        event.preventDefault();
-        touch.isOn = false;
-    });
-
-    canvas.addEventListener('touchcancel', function(event) {
-        event.preventDefault();
-        touch.isOn = false;
-    });
-
-    canvas.addEventListener('touchleave', function(event){
-        event.preventDefault();
-        touch.isOn = false;
-    });
-
-
-    canvas.addEventListener('mousedown', function(event){
-        event.preventDefault();
-
-        mouse.isOn = true;
-        mouse.beforeX = event.pageX;
-        mouse.beforeY = event.pageY;
-        mouse.count = 0;
-    });
-
-    canvas.addEventListener('mousemove', function(event){
-        event.preventDefault();
-        mouse.count++;
-        if(mouse.isOn && mouse.count%3 == 0){
-            option.rotationX += (event.pageX - mouse.beforeX)/3.0;
-            option.rotationY += (event.pageY - mouse.beforeY)/3.0;
-
-            mouse.beforeX = event.pageX;
-            mouse.beforeY = event.pageY;
-
-            socket.emit('leftMouse', option);
-        }
-    });
-
-    canvas.addEventListener('mouseup', function(event){
-        event.preventDefault();
-        mouse.isOn = false;
-    });
-
-
-</script>
 
 </body>
 </html>
