@@ -19,6 +19,8 @@ void Ctx::Initialize(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "setCurrent", Ctx::SetCurrent);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "getCurrent", Ctx::GetCurrent);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "synchronize", Ctx::Synchronize);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "getDevice", Ctx::GetDevice);
+
   constructor_template->InstanceTemplate()->SetAccessor(String::New("apiVersion"), Ctx::GetApiVersion);
 
   target->Set(String::NewSymbol("Ctx"), constructor_template->GetFunction());
@@ -34,6 +36,17 @@ Handle<Value> Ctx::New(const Arguments& args) {
   pctx->m_device = ObjectWrap::Unwrap<Device>(args[1]->ToObject())->m_device;
 
   cuCtxCreate(&(pctx->m_context), flags, pctx->m_device);
+
+  return args.This();
+}
+
+Handle<Value> Ctx::GetDevice(const Arguments& args) {
+  HandleScope scope;
+
+  Ctx *pctx = new Ctx();
+  pctx->m_device = ObjectWrap::Unwrap<Device>(args[0]->ToObject())->m_device;
+
+  cuCtxGetDevice(pctx->m_device);
 
   return args.This();
 }
