@@ -7,12 +7,14 @@
     <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
     
     <script src="http://${ipAddress}:5000/socket.io/socket.io.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
     
     <script>
 
         var relay = io.connect('http://${ipAddress}:5000',{ forceNew : true, reconnection : false });
 
         var count = 0;
+        var fps = 0;
         /**
          * send connect message to server
          */
@@ -68,8 +70,16 @@
                     ctx.drawImage(img, 0, 0, 512, 512, 0, 0, canvas.clientWidth, canvas.clientWidth);
                 };
                 img.src = url;
+
+                fps++;
             });
 
+            var fpsInterval = function(){
+                console.log('Fps ['+fps+']')
+                fps = 0;
+            }
+
+            setInterval(fpsInterval, 1000);
 
 
             // ~ Touch
@@ -163,6 +173,32 @@
                 event.preventDefault();
                 mouse.isOn = false;
             });
+
+
+            var infinityFlag = false;
+            var infinityInterval = null;
+
+            var infinityFunction = function(){
+
+                option.rotationX += 1;
+                option.rotationY += 1;
+
+                socket.emit('leftMouse', option);
+
+            };
+
+            $('#infinityRotateEvent').on('click', function(){
+
+                if(infinityFlag){
+                    clearInterval(infinityInterval);
+                    infinityFlag = false;
+                }else{
+                    infinityInterval= setInterval(infinityFunction, 1000/30);
+                    infinityFlag = true;
+                }
+
+            });
+
         };
 
     </script>
@@ -173,6 +209,8 @@
 <canvas id="view_canvas" width="512" height="512">
 
 </canvas>
+
+<button id="infinityRotateEvent">Interval</button>
 
 </body>
 </html>

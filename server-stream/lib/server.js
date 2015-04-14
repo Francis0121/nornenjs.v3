@@ -10,12 +10,8 @@ var util = require('./util');
 
 var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
-
-var cuDevice = cu.Device(0);
-var cuCtx = new cu.Ctx(0, cuDevice);
-
-var cuDevice_ = cu.Device(1);
-var cuCtx_ = new cu.Ctx(0, cuDevice_);
+//var cuDevice = cu.Device(0);
+//var cuCtx = new cu.Ctx(0, cuDevice);
 
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
@@ -63,6 +59,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.ipAddress = null;
     this.redisProcess = undefined;
     this.isMaster = isMaster;
+    this.cuCtxs = [];
 
     if(isMaster){
         // ~ Master Relay server. Exec redis server and connect redis.
@@ -106,23 +103,29 @@ var keys = {
  *
  * @param callback
  */
-NornenjsServer.prototype.addDevice = function(callback){
+NornenjsServer.prototype.addDevice = function(callback) {
 
-    var launch = function(key, ipAddress, port, isLast, callback){
-        var client = redis.createClient(port, ipAddress, { } );
-        client.hset(keys.HOSTLIST, key, '0', function(err, reply){
-            logger.info('[Redis] ADD DEVICE '+keys.HOSTLIST+' add device ' + key + ' Reply ' + reply);
+    var launch = function (key, ipAddress, port, isLast, callback) {
+        var client = redis.createClient(port, ipAddress, {});
+        client.hset(keys.HOSTLIST, key, '0', function (err, reply) {
+            logger.info('[Redis] ADD DEVICE ' + keys.HOSTLIST + ' add device ' + key + ' Reply ' + reply);
             client.quit();
-            if(isLast){
-                if(typeof callback === 'function') callback();
+            if (isLast) {
+                if (typeof callback === 'function') callback();
             }
         });
     };
 
     var ipAddress = util.getIpAddress();
-    for(var i=0; i<cu.deviceCount; i++){
-        var key = ipAddress+'_'+i;
-        launch(key, this.ipAddress, this.REDIS_PORT, i+1 === cu.deviceCount ? true : false, callback);
+    for (var i = 0; i < cu.deviceCount; i++) {
+        var key = ipAddress + '_' + i;
+        launch(key, this.ipAddress, this.REDIS_PORT, i + 1 === cu.deviceCount ? true : false, callback);
+    }
+
+
+    for (var i = 0; i < cu.deviceCount; i++) {
+        logger.info('[Init] Cuda context initialize in constructor DeviceNumber', i);
+        this.cuCtxs.push(new cu.Ctx(0, cu.Device(i)));
     }
 
 };
@@ -260,11 +263,12 @@ NornenjsServer.prototype.distributed = function(socket, callback) {
  * Socket Io First Connect
  */
 var relayServer = [];
+var deviceMap = new HashMap();
+
 NornenjsServer.prototype.socketIoRelayServer = function(){
 
     var isRegisterSubscribe = true;
     var $this = this;
-    var deviceMap = new HashMap();
 
     $this.io.sockets.on('connection', function(socket){
         if(isRegisterSubscribe) {
@@ -295,7 +299,7 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
         socket.on('getInfo', function(count){
             logger.info('Count', count);
             var launch = function(){
-                if(relayServer.indexOf(socket.id) !== -1)
+                if(relayServer.indexOf(socket.id) === -1)
                     relayServer.push(socket.id);
             };
             logger.info('[Socket] CONNECT RELAY Server', socket.id);
@@ -316,6 +320,7 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
         socket.on('disconnect', function () {
 
             var index = relayServer.indexOf(socket.id);
+            logger.info('RELAY SERVER !!!!', index);
             if( index !== -1){
                 relayServer.splice(index, 1);
                 logger.info('[Socket] DISCONNECT RELAY Server KEY ['+socket.id+']', index);
@@ -338,10 +343,10 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
     });
 };
 
+
 NornenjsServer.prototype.socketIoSlaveServer = function(){
 
     var $this = this;
-    var deviceMap = new HashMap();
 
     $this.io.sockets.on('connection', function(socket){
 
@@ -401,12 +406,15 @@ NornenjsServer.prototype.socketIoCuda = function(){
                     // TODO Announce fail lode volume data to client
                     return;
                 }else {
+                    var deviceCount = deviceMap.get(socket.id);
                     logger.debug('[Stream] Register CUDA module ');
+                    logger.info('[Stream]           Device Number', deviceCount);
+
 
                     var cudaRender = new CudaRender(
                         ENUMS.RENDERING_TYPE.VOLUME, $this.CUDA_DATA_PATH + volume.save_name,
                         volume.width, volume.height, volume.depth,
-                        cuCtx, cu.moduleLoad($this.CUDA_PTX_PATH));
+                        $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
                     cudaRender.init();
 
                     $this.cudaRenderMap.set(clientId, cudaRender);
