@@ -126,6 +126,8 @@ NornenjsServer.prototype.addDevice = function(callback) {
     for (var i = 0; i < cu.deviceCount; i++) {
         logger.info('[Init] Cuda context initialize in constructor DeviceNumber', i);
         this.cuCtxs.push(new cu.Ctx(0, cu.Device(i)));
+        var device_num = this.cuCtxs[i].getDevice(cu.Device(i));
+        logger.info('[Init]',device_num);
     }
 
 };
