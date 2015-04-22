@@ -160,6 +160,26 @@
             <scope>runtime</scope>
         </dependency>
         
+        <!-- DataBase -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>${org.mybatis-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${org.mybatis.dbcp-version}</version>
+        </dependency>
+
+        <!-- MySQL database driver -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${org.mybatis.mysql-version}</version>
+        </dependency>
+        
     </dependencies>
 
     <build>
