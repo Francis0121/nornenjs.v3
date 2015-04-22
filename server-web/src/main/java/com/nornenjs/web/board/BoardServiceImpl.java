@@ -17,7 +17,7 @@ public class BoardServiceImpl extends SqlSessionDaoSupport implements BoardServi
 
     @Override
     public Board selectOne(Integer pn) {
-        return null;
+        return getSqlSession().selectOne("board.selectOne", pn);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class BoardServiceImpl extends SqlSessionDaoSupport implements BoardServi
 
     @Override
     public Integer insert(Board board) {
-        return null;
+        return getSqlSession().insert("board.insert", board);
     }
 
     @Override
