@@ -38,7 +38,7 @@ var redis = require('redis');
  * @constructor
  */
 var NornenjsServer = function(server, isMaster, masterIpAddres){
-    this.MAX_CONNECTION_CLIENT = 2;
+    this.MAX_CONNECTION_CLIENT = 4;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
@@ -122,14 +122,14 @@ NornenjsServer.prototype.addDevice = function(callback) {
         launch(key, this.ipAddress, this.REDIS_PORT, i + 1 === cu.deviceCount ? true : false, callback);
     }
 
-
     for (var i = 0; i < cu.deviceCount; i++) {
         logger.info('[Init] Cuda context initialize in constructor DeviceNumber', i);
         this.cuCtxs.push(new cu.Ctx(0, cu.Device(i)));
-        var device_num = this.cuCtxs[i].getDevice(cu.Device(i));
-        logger.info('[Init]',device_num);
-    }
+        //logger.info('[ctx name]',this.cuCtxs[i]);
 
+    }
+   // logger.info('[ctx confirm - 0]',this.cuCtxs[0]);
+   // logger.info('[ctx confirm - 1]',this.cuCtxs[1]);
 };
 
 /**
@@ -411,7 +411,6 @@ NornenjsServer.prototype.socketIoCuda = function(){
                     var deviceCount = deviceMap.get(socket.id);
                     logger.debug('[Stream] Register CUDA module ');
                     logger.info('[Stream]           Device Number', deviceCount);
-
 
                     var cudaRender = new CudaRender(
                         ENUMS.RENDERING_TYPE.VOLUME, $this.CUDA_DATA_PATH + volume.save_name,

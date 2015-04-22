@@ -3,6 +3,7 @@
 
 using namespace NodeCuda;
 
+
 Persistent<FunctionTemplate> Ctx::constructor_template;
 
 void Ctx::Initialize(Handle<Object> target) {
@@ -10,7 +11,7 @@ void Ctx::Initialize(Handle<Object> target) {
 
   Local<FunctionTemplate> t = FunctionTemplate::New(Ctx::New);
   constructor_template = Persistent<FunctionTemplate>::New(t);
-  constructor_template->InstanceTemplate()->SetInternalFieldCount(1);
+  constructor_template->InstanceTemplate()->SetInternalFieldCount(2);
   constructor_template->SetClassName(String::NewSymbol("CudaCtx"));
 
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "destroy", Ctx::Destroy);
@@ -21,36 +22,41 @@ void Ctx::Initialize(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "synchronize", Ctx::Synchronize);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "getDevice", Ctx::GetDevice);
 
-  constructor_template->InstanceTemplate()->SetAccessor(String::New("apiVersion"), Ctx::GetApiVersion);
+  constructor_template->InstanceTemplate()->SetAccessor(String::New("deviceNumber"), Ctx::GetApiVersion);
 
   target->Set(String::NewSymbol("Ctx"), constructor_template->GetFunction());
 }
+Ctx *temp;
 
 Handle<Value> Ctx::New(const Arguments& args) {
   HandleScope scope;
 
+
   Ctx *pctx = new Ctx();
+
   pctx->Wrap(args.This());
 
   unsigned int flags = args[0]->Uint32Value();
   pctx->m_device = ObjectWrap::Unwrap<Device>(args[1]->ToObject())->m_device;
-
   cuCtxCreate(&(pctx->m_context), flags, pctx->m_device);
 
   return args.This();
 }
 Handle<Value> Ctx::GetDevice(const Arguments& args) {
-  HandleScope scope;
 
-  Ctx *pctx = new Ctx();
-  pctx->Wrap(args.This());
+   HandleScope scope;
 
-  pctx->m_device = ObjectWrap::Unwrap<Device>(args[0]->ToObject())->m_device;
+   Ctx *pctx = new Ctx();
+   pctx->Wrap(args.This());
 
-  CUresult error = cuCtxGetDevice(&(pctx->m_device));
+   pctx->m_device = ObjectWrap::Unwrap<Device>(args[0]->ToObject())->m_device;
 
-  return scope.Close(Number::New(pctx->m_device));;
+   CUresult error = cuCtxGetDevice(&(pctx->m_device));
+
+   return scope.Close(Number::New(pctx->m_device));
 }
+
+
 Handle<Value> Ctx::Destroy(const Arguments& args) {
   HandleScope scope;
   Ctx *pctx = ObjectWrap::Unwrap<Ctx>(args.This());
@@ -171,11 +177,16 @@ void Ctx::After(uv_work_t* work_req, int status) {
 }
 
 Handle<Value> Ctx::GetApiVersion(Local<String> property, const AccessorInfo &info) {
+
   HandleScope scope;
   Ctx *pctx = ObjectWrap::Unwrap<Ctx>(info.Holder());
+  CUdevice m_device2;
 
-  unsigned int version;
-  CUresult error = cuCtxGetApiVersion(pctx->m_context, &version);
+  cuCtxSetCurrent(pctx->m_context);
+  CUresult error = cuCtxGetDevice(&(pctx->m_device));
 
-  return scope.Close(Number::New(version));
+  printf("pctx m_device %d\n", pctx->m_device);
+
+  return scope.Close(Number::New(m_device2));
+
 }
