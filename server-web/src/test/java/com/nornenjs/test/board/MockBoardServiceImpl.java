@@ -5,17 +5,21 @@ import com.nornenjs.web.board.BoardFilter;
 import com.nornenjs.web.board.BoardService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Francis on 2015-04-23.
  */
-@Service(value = "boardServiceImpl")
+@Service
 public class MockBoardServiceImpl implements BoardService{
 
+    private Integer autoIncrmentValue = 0;
+    private List<Board> boards = new ArrayList<Board>();
+    
     @Override
     public Board selectOne(Integer pn) {
-        return null;
+        return boards.get(pn);
     }
 
     @Override
@@ -30,7 +34,9 @@ public class MockBoardServiceImpl implements BoardService{
 
     @Override
     public Integer insert(Board board) {
-        return null;
+        board.setPn(autoIncrmentValue++);
+        boards.add(board);
+        return 1;
     }
 
     @Override
