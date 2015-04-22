@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration({"file:src/test/resources/spring/root-context.xml", "file:src/test/resources/spring/servlet-context.xml"})
+@ContextConfiguration({"file:src/test/resources/spring/root-test-context.xml", "file:src/test/resources/spring/servlet-context.xml"})
 public class UserControllerTest {
 
     private static Logger logger = LoggerFactory.getLogger(UserControllerTest.class);
