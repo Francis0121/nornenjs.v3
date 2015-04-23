@@ -1,5 +1,7 @@
 package com.nornenjs.web.group;
 
+import com.nornenjs.web.actor.Actor;
+import com.nornenjs.web.actor.ActorService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +29,11 @@ public class GroupServiceTest {
     private static Logger logger = LoggerFactory.getLogger(GroupServiceTest.class);
     
     @Autowired
+    private ActorService actorService;
+    
+    private Actor actor = new Actor("groupActor", "1q2w3e4r!", true);
+    
+    @Autowired
     private GroupService groupService;
     
     private Groups groups1 = new Groups("Admin");
@@ -41,6 +48,8 @@ public class GroupServiceTest {
         logger.debug("Initial group service");
         groupService.insert(groups1);
         groupService.insert(groups2);
+        
+        actorService.insert(actor);
     }
     
     @Test
@@ -71,6 +80,16 @@ public class GroupServiceTest {
         assertThat(list.size(), is(2));
         assertThat(groupNames, contains(groupAuthorities1.getAuthority(), groupAuthorities2.getAuthority()));
     }
+    
+    @Test
+    @Transactional
+    public void 그룹_유저_입력_및_조회() throws  Exception{
+        GroupMembers groupMembers = new GroupMembers(actor.getUsername(), groups1.getPn());
+        groupService.insertGroupMembers(groupMembers);
+        
+        GroupMembers getGroupMembers = groupService.selectGroupMembers(groupMembers.getPn());
+        Compare.groupMembers(groupMembers, getGroupMembers);
+    }
 
 }
 
@@ -79,6 +98,12 @@ class Compare{
     public static void groups(Groups groups, Groups getGroups) {
         assertThat(groups.getPn(), is(getGroups.getPn()));
         assertThat(groups.getGroupName(), is(getGroups.getGroupName()));
+    }
+    
+    public static void groupMembers(GroupMembers groupMembers, GroupMembers getGroupMembers){
+        assertThat(groupMembers.getPn(), is(getGroupMembers.getPn()));
+        assertThat(groupMembers.getGroupPn(), is(getGroupMembers.getGroupPn()));
+        assertThat(groupMembers.getUsername(), is(getGroupMembers.getUsername()));
     }
 }
 

@@ -39,4 +39,24 @@
           `groupPn` = #{groupPn}
     </select>
     
+    <insert id="insertGroupMembers" parameterType="GroupMembers">
+        INSERT INTO
+          `group_members`
+          ( `username`, `groupPn` )
+        VALUES
+          ( #{username}, #{groupPn} )
+        <selectKey keyProperty="pn" resultType="Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    
+    <select id="selectGroupMembers" parameterType="Integer" resultType="GroupMembers">
+        SELECT
+          `pn`, `username`, `groupPn`
+        FROM
+          `group_members`
+        WHERE
+          `pn` = #{pn}
+    </select>
+    
 </mapper>

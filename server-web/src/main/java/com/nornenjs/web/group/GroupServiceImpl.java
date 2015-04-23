@@ -45,13 +45,13 @@ public class GroupServiceImpl extends SqlSessionDaoSupport implements GroupServi
 
     // ~ GroupMembers
     @Override
-    public GroupMembers selectGroupMemberes(Integer groupMemberId) {
-        return null;
+    public GroupMembers selectGroupMembers(Integer pn) {
+        return getSqlSession().selectOne("group.selectGroupMembers", pn);
     }
 
     @Override
     public Integer insertGroupMembers(GroupMembers groupMembers) {
-        return null;
+        return getSqlSession().insert("group.insertGroupMembers", groupMembers);
     }
 
     // ~ GroupAuthorities

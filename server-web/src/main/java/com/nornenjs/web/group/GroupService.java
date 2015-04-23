@@ -9,7 +9,7 @@ import java.util.List;
  */
 public interface GroupService extends CRUDService<Groups, GroupsFilter>{
     
-    GroupMembers selectGroupMemberes(Integer groupMemberId);
+    GroupMembers selectGroupMembers(Integer pn);
     
     Integer insertGroupMembers(GroupMembers groupMembers);
     
