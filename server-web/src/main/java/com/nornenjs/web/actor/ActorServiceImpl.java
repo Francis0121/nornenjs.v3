@@ -14,6 +14,7 @@ import java.util.List;
 @Service
 public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorService, UserDetailsService{
     
+
     // ~ Actor service
     @Override
     public Actor selectOne(Integer pn) {
@@ -44,6 +45,17 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
     public Integer delete(Integer pn) {
         return null;
     }
+    
+    // ~ Authorities
+    @Override
+    public Integer insertAuthorities(Authorities authorities) {
+        return null;
+    }
+
+    @Override
+    public List<Authorities> selectAuthoritieses(String username) {
+        return null;
+    }
 
     // ~ UserDetailService
     
@@ -51,4 +63,5 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
+
 }
