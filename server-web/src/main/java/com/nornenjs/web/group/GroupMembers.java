@@ -5,27 +5,27 @@ package com.nornenjs.web.group;
  */
 public class GroupMembers {
     
-    private Integer id;
+    private Integer pn;
     
     private String username;
     
-    private Integer groupId;
+    private Integer groupPn;
 
     public GroupMembers() {
         
     }
-    
-    public GroupMembers(String username, Integer groupId) {
+
+    public GroupMembers(String username, Integer groupPn) {
         this.username = username;
-        this.groupId = groupId;
+        this.groupPn = groupPn;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getPn() {
+        return pn;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPn(Integer pn) {
+        this.pn = pn;
     }
 
     public String getUsername() {
@@ -36,20 +36,20 @@ public class GroupMembers {
         this.username = username;
     }
 
-    public Integer getGroupId() {
-        return groupId;
+    public Integer getGroupPn() {
+        return groupPn;
     }
 
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
+    public void setGroupPn(Integer groupPn) {
+        this.groupPn = groupPn;
     }
 
     @Override
     public String toString() {
         return "GroupMembers{" +
-                "id=" + id +
+                "pn=" + pn +
                 ", username='" + username + '\'' +
-                ", groupId=" + groupId +
+                ", groupPn=" + groupPn +
                 '}';
     }
 }

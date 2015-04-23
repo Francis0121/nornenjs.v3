@@ -2,4 +2,41 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="group">
 
+    <insert id="insert" parameterType="Groups">
+        INSERT INTO
+          `groups`
+          ( `groupName` )
+        VALUES
+          ( #{groupName} )
+        <selectKey keyProperty="pn" resultType="Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    
+    <select id="selectOne" parameterType="Integer" resultType="Groups">
+        SELECT
+          `pn`, `groupName`
+        FROM
+          `groups`
+        WHERE
+          `pn` = #{value}
+    </select>
+    
+    <insert id="insertGroupAuthorities" parameterType="GroupAuthorities">
+        INSERT INTO
+          `group_authorities`
+          ( `groupPn`, `authority` )
+        VALUES
+          ( #{groupPn}, #{authority} )
+    </insert>
+    
+    <select id="selectGroupAuthorities" parameterType="Integer" resultType="GroupAuthorities">
+        SELECT
+          `groupPn`, `authority`
+        FROM
+          `group_authorities`
+        WHERE
+          `groupPn` = #{groupPn}
+    </select>
+    
 </mapper>

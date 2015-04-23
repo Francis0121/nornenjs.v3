@@ -5,24 +5,24 @@ package com.nornenjs.web.group;
  */
 public class GroupAuthorities {
     
-    private Integer groupId;
+    private Integer groupPn;
     
     private String authority;
 
     public GroupAuthorities() {
     }
 
-    public GroupAuthorities(Integer groupId, String authority) {
-        this.groupId = groupId;
+    public GroupAuthorities(Integer groupPn, String authority) {
+        this.groupPn = groupPn;
         this.authority = authority;
     }
 
-    public Integer getGroupId() {
-        return groupId;
+    public Integer getGroupPn() {
+        return groupPn;
     }
 
-    public void setGroupId(Integer groupId) {
-        this.groupId = groupId;
+    public void setGroupPn(Integer groupPn) {
+        this.groupPn = groupPn;
     }
 
     public String getAuthority() {
@@ -36,7 +36,7 @@ public class GroupAuthorities {
     @Override
     public String toString() {
         return "GroupAuthorities{" +
-                "groupId=" + groupId +
+                "groupPn=" + groupPn +
                 ", authority='" + authority + '\'' +
                 '}';
     }

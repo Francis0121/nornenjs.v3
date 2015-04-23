@@ -73,16 +73,16 @@ public class ActorServiceTest {
         getActor = actorService.selectOne(actor2.getPn());
         Compare.actor(actor2, getActor);
     }
-    
+
 }
 
 class Compare {
-    
+
     public static void actor(Actor actor, Actor getActor){
         assertThat(actor.getPn(), is(getActor.getPn()));
         assertThat(actor.getUsername(), is(getActor.getUsername()));
         assertThat(actor.getPassword(), is(getActor.getPassword()));
         assertThat(actor.getEnabled(), is(getActor.getEnabled()));
     }
-    
+
 }

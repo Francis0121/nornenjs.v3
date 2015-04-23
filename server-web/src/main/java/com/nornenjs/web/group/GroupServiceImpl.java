@@ -15,7 +15,7 @@ public class GroupServiceImpl extends SqlSessionDaoSupport implements GroupServi
     
     @Override
     public Groups selectOne(Integer pn) {
-        return null;
+        return getSqlSession().selectOne("group.selectOne", pn);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class GroupServiceImpl extends SqlSessionDaoSupport implements GroupServi
 
     @Override
     public Integer insert(Groups groups) {
-        return null;
+        return getSqlSession().insert("group.insert", groups);
     }
 
     @Override
@@ -42,5 +42,28 @@ public class GroupServiceImpl extends SqlSessionDaoSupport implements GroupServi
     public Integer delete(Integer pn) {
         return null;
     }
-    
+
+    // ~ GroupMembers
+    @Override
+    public GroupMembers selectGroupMemberes(Integer groupMemberId) {
+        return null;
+    }
+
+    @Override
+    public Integer insertGroupMembers(GroupMembers groupMembers) {
+        return null;
+    }
+
+    // ~ GroupAuthorities
+
+
+    @Override
+    public List<GroupAuthorities> selectGroupAuthorities(Integer groupPn) {
+        return getSqlSession().selectList("group.selectGroupAuthorities", groupPn);
+    }
+
+    @Override
+    public Integer insertGroupAuthorities(GroupAuthorities groupAuthorities) {
+        return getSqlSession().insert("group.insertGroupAuthorities", groupAuthorities);
+    }
 }

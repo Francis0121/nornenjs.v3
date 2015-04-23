@@ -14,4 +14,6 @@ public interface ActorService extends CRUDService<Actor, ActorFilter>{
     
     List<Authorities> selectAuthoritieses(String username);
     
+    
+    
 }

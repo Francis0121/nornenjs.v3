@@ -5,7 +5,7 @@ package com.nornenjs.web.group;
  */
 public class Groups {
     
-    private Integer id;
+    private Integer pn;
     
     private String groupName;
 
@@ -16,12 +16,12 @@ public class Groups {
         this.groupName = groupName;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getPn() {
+        return pn;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPn(Integer pn) {
+        this.pn = pn;
     }
 
     public String getGroupName() {
@@ -35,7 +35,7 @@ public class Groups {
     @Override
     public String toString() {
         return "Groups{" +
-                "id=" + id +
+                "pn=" + pn +
                 ", groupName='" + groupName + '\'' +
                 '}';
     }
