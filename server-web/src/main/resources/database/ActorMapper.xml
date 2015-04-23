@@ -13,6 +13,24 @@
         </selectKey>
     </insert>
     
+    <update id="update" parameterType="Actor">
+        UPDATE
+          `actor`
+        SET
+          `username` = #{username},
+          `password` = #{password},
+          `enabled` = #{enabled}
+        WHERE
+          `pn` = #{pn}
+    </update>
+    
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM
+          `actor`
+        WHERE
+          `pn` = #{pn}
+    </delete>
+    
     <select id="selectOne" parameterType="Integer" resultType="Actor">
         SELECT
           `pn`, `username`, `password`, `enabled`

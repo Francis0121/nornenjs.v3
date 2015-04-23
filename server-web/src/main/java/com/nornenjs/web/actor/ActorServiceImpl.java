@@ -38,12 +38,12 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     @Override
     public Integer update(Actor actor) {
-        return null;
+        return getSqlSession().update("actor.update", actor);
     }
 
     @Override
     public Integer delete(Integer pn) {
-        return null;
+        return getSqlSession().delete("actor.delete", pn);
     }
     
     // ~ Authorities
