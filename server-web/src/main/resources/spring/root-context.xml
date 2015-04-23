@@ -20,6 +20,10 @@
 		<property name="basenames" value="properties.messages"/>
 		<property name="defaultEncoding" value="utf-8"/>
 	</bean>
+
+	<bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
+		<constructor-arg ref="messageSource"/>
+	</bean>
 	
 	<import resource="classpath:/spring/datasource-context.xml"/>
 

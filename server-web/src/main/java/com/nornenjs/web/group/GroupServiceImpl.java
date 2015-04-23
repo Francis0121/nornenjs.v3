@@ -1,8 +1,11 @@
 package com.nornenjs.web.group;
 
 import org.mybatis.spring.support.SqlSessionDaoSupport;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,5 +68,16 @@ public class GroupServiceImpl extends SqlSessionDaoSupport implements GroupServi
     @Override
     public Integer insertGroupAuthorities(GroupAuthorities groupAuthorities) {
         return getSqlSession().insert("group.insertGroupAuthorities", groupAuthorities);
+    }
+    
+    // ~ Join
+
+    public List<GrantedAuthority> selectGroupAuthoritiesInfo(String username){
+        List<Groups> groups = getSqlSession().selectList("group.selectGroupAuthoritiesInfo", username);
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        for(Groups g : groups){
+            grantedAuthorities.add(new SimpleGrantedAuthority(g.getGroupName()));
+        }
+        return grantedAuthorities;
     }
 }

@@ -40,4 +40,13 @@
           `pn` = #{pn}
     </select>
     
+    <select id="selectUsersByUsername" parameterType="String" resultType="Actor">
+        SELECT
+          `pn`, `username`, `password`, `enabled`
+        FROM
+          `actor`
+        WHERE
+          `username` = #{username}
+    </select>
+    
 </mapper>

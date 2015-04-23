@@ -9,6 +9,8 @@ public class Groups {
     
     private String groupName;
 
+    private String authority;
+    
     public Groups() {
     }
 
@@ -32,11 +34,20 @@ public class Groups {
         this.groupName = groupName;
     }
 
+    public String getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
+    }
+
     @Override
     public String toString() {
         return "Groups{" +
                 "pn=" + pn +
                 ", groupName='" + groupName + '\'' +
+                ", authority='" + authority + '\'' +
                 '}';
     }
 }

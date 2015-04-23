@@ -4,7 +4,6 @@
 	<typeAliases>
 		
 		<typeAlias type="com.nornenjs.web.actor.Actor" alias="Actor"/>
-		<typeAlias type="com.nornenjs.web.actor.Authorities" alias="Authorities"/>
 
 		<typeAlias type="com.nornenjs.web.group.Groups" alias="Groups"/>
 		<typeAlias type="com.nornenjs.web.group.GroupMembers" alias="GroupMembers"/>

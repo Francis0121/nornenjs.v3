@@ -27,7 +27,7 @@
         </security:http>
 
         <security:authentication-manager>
-              <security:authentication-provider user-service-ref="myUserDetailsService"/>
+              <security:authentication-provider user-service-ref="actorServiceImpl"/>
         </security:authentication-manager>
     
         <bean id="myUserDetailsService" class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">

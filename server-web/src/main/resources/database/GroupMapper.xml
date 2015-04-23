@@ -58,5 +58,21 @@
         WHERE
           `pn` = #{pn}
     </select>
-    
+
+    <select id="selectGroupAuthoritiesInfo" parameterType="String" resultType="Groups">
+        SELECT
+          g.`pn`, g.`groupName`, ga.`authority`
+        FROM
+          `groups` g,
+          `group_members` gm,
+          `group_authorities` ga
+        WHERE
+          gm.`username` = #{username}
+        AND
+          g.`pn` = ga.`groupPn`
+        AND
+          g.`pn` = gm.`groupPn`
+    </select>
+
+
 </mapper>
