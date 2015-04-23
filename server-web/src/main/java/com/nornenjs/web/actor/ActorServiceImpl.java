@@ -18,7 +18,7 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
     // ~ Actor service
     @Override
     public Actor selectOne(Integer pn) {
-        return null;
+        return getSqlSession().selectOne("actor.selectOne", pn);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     @Override
     public Integer insert(Actor actor) {
-        return null;
+        return getSqlSession().insert("actor.insert", actor);
     }
 
     @Override

@@ -3,6 +3,9 @@
 <configuration>
 	<typeAliases>
 		
+		<typeAlias type="com.nornenjs.web.actor.Actor" alias="Actor"/>
+		<typeAlias type="com.nornenjs.web.actor.Authorities" alias="Authorities"/>
+		
 		<typeAlias type="com.nornenjs.web.board.Board" alias="Board"/>
 		
 	</typeAliases>

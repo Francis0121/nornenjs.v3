@@ -5,6 +5,8 @@ package com.nornenjs.web.actor;
  */
 public class Actor {
     
+    private Integer pn;
+    
     private String username;
     
     private String password;
@@ -18,6 +20,14 @@ public class Actor {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+    }
+
+    public Integer getPn() {
+        return pn;
+    }
+
+    public void setPn(Integer pn) {
+        this.pn = pn;
     }
 
     public String getUsername() {
@@ -47,7 +57,8 @@ public class Actor {
     @Override
     public String toString() {
         return "Actor{" +
-                "username='" + username + '\'' +
+                "pn=" + pn +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", enabled=" + enabled +
                 '}';

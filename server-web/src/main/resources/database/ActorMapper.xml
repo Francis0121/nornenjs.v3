@@ -2,4 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="actor">
 
+    <insert id="insert" parameterType="Actor">
+        INSERT INTO
+          `actor`
+          ( `username`, `password`, `enabled` )
+        VALUES
+          ( #{username}, #{password}, #{enabled} )
+        <selectKey keyProperty="pn" resultType="Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    
+    <select id="selectOne" parameterType="Integer" resultType="Actor">
+        SELECT
+          `pn`, `username`, `password`, `enabled`
+        FROM
+          `actor`
+        WHERE
+          `pn` = #{pn}
+    </select>
+    
 </mapper>
