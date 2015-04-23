@@ -24,5 +24,7 @@
 	</bean>
 	
 	<import resource="classpath:/spring/datasource-context.xml"/>
+
+	<import resource="classpath:/spring/security-context.xml"/>
 	
 </beans>

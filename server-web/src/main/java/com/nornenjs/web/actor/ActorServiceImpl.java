@@ -4,6 +4,8 @@ import com.nornenjs.web.group.GroupService;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.security.authentication.dao.SaltSource;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -25,9 +27,13 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     @Autowired
     private MessageSourceAccessor messages;
-    
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private SaltSource saltSource;
+    
 
     // ~ Actor service
     @Override
@@ -47,6 +53,7 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     @Override
     public Integer insert(Actor actor) {
+        setEncodedPassword(actor);
         return getSqlSession().insert("actor.insert", actor);
     }
 
@@ -62,6 +69,12 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     // ~ UserDetailService
 
+    public void setEncodedPassword(Actor actor) {
+        User user = new User(actor.getUsername(), actor.getPassword(), actor.getEnabled(), true, true, true, AuthorityUtils.NO_AUTHORITIES);
+        String encodedPassword = passwordEncoder.encodePassword(actor.getPassword(), saltSource.getSalt(user));
+        actor.setPassword(encodedPassword);
+    }
+    
     /**
      * Allows subclasses to add their own granted authorities to the list to be returned in the <tt>UserDetails</tt>.
      *
