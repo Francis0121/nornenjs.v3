@@ -3,7 +3,7 @@
 
 <section class="layoutFullSection">
     
-    <article class="layoutFullArticle">
+    <article class="layoutSignInArticle">
         
         <header class="actorHeader">
             <h1>Nornen<span class="colorOrange">js</span></h1>
@@ -29,7 +29,7 @@
                         <label for="nornenjsRememberme" class="colorGray size">자동 로그인</label>
                     </div>
                     <div>
-                        <a href="#" class="colorGrayHover size">회원가입</a>
+                        <a href="${cp}/join" class="colorGrayHover size">회원가입</a>
                         <a href="#" class="colorGrayHover size">비밀번호 찾기</a>
                     </div>
                 </li>

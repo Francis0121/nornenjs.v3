@@ -1,4 +1,6 @@
-
+/**
+* Actor signIn page
+*/
 .actorHeader{ width: 100%; padding: 10px;}
 .actorHeader>h1{ font-size: 150%; font-weight: bold; color: #fff; padding: 5px 10px; }
 .actorHeader>h2{ font-size: 100%; color: #fff; padding: 5px 10px; font-weight: 100;}
@@ -7,6 +9,7 @@
 .actorForm>ul{ width: 100%;}
 .actorForm>ul>li{ text-align: center;}
 .actorForm input.text{ width: 276px; height: 36px; border: 2px solid #cccccc; padding: 0 10px; font-size: 81.25%; border-radius: 5px; margin: 8px 10px;}
+.actorForm input.text:focus{ border: 2px solid #777777;}
 .actorForm input.checkbox{ margin: 0; padding: 0;}
 
 .actorForm li.divide{ height: 50px;}
@@ -21,3 +24,8 @@
 .actorForm li.error{ font-size: 75%; color: #ffa563; text-align: left; padding: 8px 6% 0 6%; width: 88%; }
 
 .actorForm .size{ font-size: 75%; }
+
+/**
+* Actor join page
+*/
+.actorJoinForm{  }
