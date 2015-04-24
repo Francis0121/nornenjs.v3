@@ -16,8 +16,8 @@
         
               <security:form-login
                       login-page="/signIn"
-                      password-parameter="nornenjs_password"
-                      username-parameter="nornenjs_username"
+                      password-parameter="nornenjsPassword"
+                      username-parameter="nornenjsUsername"
                       always-use-default-target="true"
                       authentication-failure-url="/signIn?login_error=1"
                       default-target-url="/"/>
