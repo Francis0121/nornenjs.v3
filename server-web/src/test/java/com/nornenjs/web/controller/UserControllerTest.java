@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -36,7 +37,15 @@ public class UserControllerTest {
     }
     
     @Test
-    public void 컨트롤러_테스트() throws Exception{
+    public void 로그인_페이지() throws Exception{
         mockMvc.perform(get("/signIn")).andExpect(status().isOk());
+        mockMvc.perform(get("/")).andExpect(status().isOk());
     }
+    
+    @Test
+    public void 로그인_시도() throws Exception{
+        mockMvc.perform(post("/j_spring_security_check"))
+                .andExpect(status().isOk());
+    }
+    
 }

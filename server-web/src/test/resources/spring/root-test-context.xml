@@ -12,4 +12,17 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 
+	<context:property-placeholder location="classpath:/properties/datasource.properties"/>
+
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basenames" value="properties.messages"/>
+		<property name="defaultEncoding" value="utf-8"/>
+	</bean>
+
+	<bean id="messageSourceAccessor" class="org.springframework.context.support.MessageSourceAccessor">
+		<constructor-arg ref="messageSource"/>
+	</bean>
+
+	<import resource="classpath:/spring/security-context.xml"/>
+
 </beans>

@@ -3,6 +3,9 @@ package com.nornenjs.test.board;
 import com.nornenjs.web.board.Board;
 import com.nornenjs.web.board.BoardFilter;
 import com.nornenjs.web.board.BoardService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,7 +15,7 @@ import java.util.List;
  * Created by Francis on 2015-04-23.
  */
 @Service
-public class MockBoardServiceImpl implements BoardService{
+public class MockBoardServiceImpl implements BoardService, UserDetailsService{
 
     private Integer autoIncrmentValue = 0;
     private List<Board> boards = new ArrayList<Board>();
@@ -46,6 +49,11 @@ public class MockBoardServiceImpl implements BoardService{
 
     @Override
     public Integer delete(Integer pn) {
+        return null;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return null;
     }
 }
