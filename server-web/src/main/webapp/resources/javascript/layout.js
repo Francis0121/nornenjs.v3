@@ -1,6 +1,6 @@
 function LayoutFunction(){
     this.isSignInFull = this.isSignInFull();
-    this.isJoinInFull = this.isJoinFull();
+    this.isJoinFull = this.isJoinFull();
 };
 
 LayoutFunction.prototype.isSignInFull = function(){
@@ -8,9 +8,6 @@ LayoutFunction.prototype.isSignInFull = function(){
 };
 
 LayoutFunction.prototype.signInResize = function(){
-    if(!this.isSignInFull){
-        return;
-    }
     var windowHeight = $(window).height();
     $('.layoutFullSection').height(windowHeight);
 
@@ -20,10 +17,6 @@ LayoutFunction.prototype.signInResize = function(){
         'margin-top' : margin-30,
         'margin-bottom' : margin+30
     });
-
-    $(window).resize(function () {
-        layoutFunction.signInResize();
-    });
 };
 
 LayoutFunction.prototype.isJoinFull = function(){
@@ -31,10 +24,6 @@ LayoutFunction.prototype.isJoinFull = function(){
 };
 
 LayoutFunction.prototype.joinResize = function(){
-    if(!this.isJoinInFull){
-        return;
-    }
-    
     var windowHeight = $(window).height();
     $('.layoutFullSection').height(windowHeight);
 
@@ -44,14 +33,22 @@ LayoutFunction.prototype.joinResize = function(){
         'margin-top' : margin-30,
         'margin-bottom' : margin+30
     });
-
-    $(window).resize(function () {
-        layoutFunction.joinResize();
-    });
 };
 
 $(function(){
     var layoutFunction = new LayoutFunction();
-    layoutFunction.signInResize();
-    layoutFunction.joinResize();
+    
+    if(layoutFunction.isSignInFull) {
+        layoutFunction.signInResize();
+        $(window).resize(function () {
+            layoutFunction.signInResize();
+        });
+    }
+
+    if(layoutFunction.isJoinFull) {
+        layoutFunction.joinResize();
+        $(window).resize(function () {
+            layoutFunction.joinResize();
+        });
+    }
 });
