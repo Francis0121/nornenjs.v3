@@ -50,4 +50,42 @@
           `pn` = #{pn}
     </select>
     
+    <select id="selectCount" parameterType="VolumeFilter" resultType="Integer">
+        SELECT
+          COUNT(*)
+        FROM
+          `volume`
+        WHERE
+          `actorPn` = #{actorPn}
+        <if test="title != null">
+          AND
+            `title` LIKE CONCAT('%',#{title},'%')
+        </if>
+        <if test="from != null and to != null">
+          AND
+            DATE_FORMAT(`inputDate`, '%Y-%m-%d') BETWEEN #{from} AND #{to}
+        </if>
+    </select>
+    
+    <select id="selectList" parameterType="VolumeFilter" resultType="Volume">
+        SELECT
+          `pn`, `actorPn`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`
+        FROM
+          `volume`
+        WHERE
+          `actorPn` = #{actorPn}
+        <if test="title != null">
+          AND
+            `title` LIKE CONCAT('%',#{title},'%')
+        </if>
+        <if test="from != null and to != null">
+          AND
+            DATE_FORMAT(`inputDate`, '%Y-%m-%d') BETWEEN #{from} AND #{to}
+        </if>
+        ORDER BY
+            `pn` DESC
+        LIMIT #{pagination.itemSeqBegin}, #{pagination.numItemsPerPage}
+    </select>
+    
+    
 </mapper>

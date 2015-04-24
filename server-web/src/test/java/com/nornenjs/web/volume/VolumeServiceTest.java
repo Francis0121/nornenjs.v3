@@ -1,10 +1,12 @@
 package com.nornenjs.web.volume;
 
 import com.nornenjs.web.actor.Actor;
+import com.nornenjs.web.actor.ActorFilter;
 import com.nornenjs.web.actor.ActorService;
 import com.nornenjs.web.data.Data;
 import com.nornenjs.web.data.DataService;
 import com.nornenjs.web.data.DataType;
+import com.nornenjs.web.util.DateUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -111,7 +115,29 @@ public class VolumeServiceTest {
     @Test
     @Transactional
     public void 볼륨_조회() throws Exception{
+        Actor actor = new Actor("actor", "password", true);
+        actorService.insert(actor);
         
+        for(int i=0; i<20; i++){
+            Data data = new Data(DataType.IMAGE.getValue(), "name", "savepath");
+            dataService.insert(data);
+            Volume volume = new Volume(actor.getPn(), data.getPn(), "title"+i, 100, 100, 10);
+            volumeService.insert(volume);
+        }
+
+        VolumeFilter volumeFilter = new VolumeFilter();
+        volumeFilter.setActorPn(actor.getPn()); 
+        List<Volume> volumes = volumeService.selectList(volumeFilter);
+        assertThat(10, is(volumes.size()));
+
+        volumeFilter.setFrom(DateUtil.getToday("YYYY-MM-DD"));
+        volumeFilter.setTo(DateUtil.getToday("YYYY-MM-DD"));
+        volumes = volumeService.selectList(volumeFilter);
+        assertThat(10, is(volumes.size()));
+        
+        volumeFilter.setTitle("title2");
+        volumes = volumeService.selectList(volumeFilter);
+        assertThat(1, is(volumes.size()));
     }
     
     

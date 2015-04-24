@@ -1,6 +1,7 @@
 package com.nornenjs.web.actor;
 
 import com.nornenjs.web.group.GroupService;
+import com.nornenjs.web.util.Pagination;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -43,12 +44,18 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     @Override
     public Integer selectCount(ActorFilter actorFilter) {
-        return null;
+        return getSqlSession().selectOne("selectCount", actorFilter);
     }
 
     @Override
     public List<Actor> selectList(ActorFilter actorFilter) {
-        return null;
+        Pagination pagination = actorFilter.getPagination();
+        Integer count = selectCount(actorFilter);
+        pagination.setNumItems(count);
+        if(count == 0){
+            return new ArrayList<Actor>();
+        }
+        return getSqlSession().selectList("selectList", actorFilter);
     }
 
     @Override

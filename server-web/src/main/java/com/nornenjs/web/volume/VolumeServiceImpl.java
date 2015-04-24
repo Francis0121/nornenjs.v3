@@ -1,8 +1,10 @@
 package com.nornenjs.web.volume;
 
+import com.nornenjs.web.util.Pagination;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,12 +20,18 @@ public class VolumeServiceImpl extends SqlSessionDaoSupport implements VolumeSer
 
     @Override
     public Integer selectCount(VolumeFilter volumeFilter) {
-        return null;
+        return getSqlSession().selectOne("volume.selectCount", volumeFilter);
     }
 
     @Override
     public List<Volume> selectList(VolumeFilter volumeFilter) {
-        return null;
+        Pagination pagination = volumeFilter.getPagination();
+        Integer count = selectCount(volumeFilter);
+        pagination.setNumItems(count);
+        if(count.equals(0)){
+            return new ArrayList<Volume>();
+        }
+        return getSqlSession().selectList("volume.selectList", volumeFilter);
     }
 
     @Override
