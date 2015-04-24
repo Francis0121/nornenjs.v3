@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="volume">
+
+    <insert id="insert" parameterType="Volume">
+        INSERT INTO
+          `volume`
+          ( `actorPn`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate` )
+        VALUES
+          ( #{actorPn}, #{volumeDataPn}, #{title}, #{width}, #{height}, #{depth}, SYSDATE() )
+        <selectKey keyProperty="pn" resultType="Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM
+          `volume`
+        WHERE
+          `pn` = #{pn}
+    </delete>
+    
+    <update id="update" parameterType="Volume">
+        UPDATE 
+          `volume`
+        SET
+          `title` = #{title}
+        WHERE
+          `pn` = #{pn}
+    </update>
+    
+    <update id="updateData" parameterType="Volume">
+        UPDATE
+          `volume`
+        SET
+          `volumeDataPn` = #{volumeDataPn},
+          `width` = #{width},
+          `height` = #{height},
+          `depth` = #{depth}
+        WHERE
+          `pn` = #{pn}
+    </update>
+    
+    <select id="selectOne" parameterType="Integer" resultType="Volume">
+        SELECT
+          `pn`, `actorPn`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`
+        FROM
+          `volume`
+        WHERE
+          `pn` = #{pn}
+    </select>
+    
+</mapper>

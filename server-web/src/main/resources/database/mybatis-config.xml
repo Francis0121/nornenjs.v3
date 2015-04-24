@@ -14,5 +14,8 @@
 		<typeAlias type="com.nornenjs.web.data.Data" alias="Data"/>
 		<typeAlias type="com.nornenjs.web.data.DataFilter" alias="DataFilter"/>
 		
+		<typeAlias type="com.nornenjs.web.volume.Volume" alias="Volume"/>
+		<typeAlias type="com.nornenjs.web.volume.VolumeFilter" alias="VolumeFilter"/>
+		
 	</typeAliases>
 </configuration>
