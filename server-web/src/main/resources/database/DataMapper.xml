@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="data">
+
+    <insert id="insert" parameterType="Data">
+        INSERT INTO
+          `data`
+          ( `type`, `name`, `savePath`, `inputDate`)
+        VALUES
+          ( #{type}, #{name}, #{savePath}, SYSDATE() )
+        <selectKey keyProperty="pn" resultType="Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    
+    <delete id="delete" parameterType="Integer">
+        DELETE FROM
+          `data`
+        WHERE
+          `pn` = #{pn}
+    </delete>
+    
+    <select id="selectOne" parameterType="Integer" resultType="Data">
+        SELECT
+          `pn`, `type`, `name`, `savePath`, `inputDate`
+        FROM
+          `data`
+        WHERE
+          `pn` = #{pn}
+    </select>
+    
+</mapper>

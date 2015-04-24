@@ -11,5 +11,8 @@
 		
 		<typeAlias type="com.nornenjs.web.board.Board" alias="Board"/>
 		
+		<typeAlias type="com.nornenjs.web.data.Data" alias="Data"/>
+		<typeAlias type="com.nornenjs.web.data.DataFilter" alias="DataFilter"/>
+		
 	</typeAliases>
 </configuration>
