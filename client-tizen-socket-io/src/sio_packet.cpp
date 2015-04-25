@@ -38,7 +38,7 @@ namespace sio
     
     void accept_binary_message(binary_message const& msg,Value& val,Document& doc,vector<shared_ptr<const string> >& buffers)
     {
-    	 dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message1");
+
         val.SetObject();
         Value boolVal;
         boolVal.SetBool(true);
@@ -46,31 +46,23 @@ namespace sio
         Value numVal;
         numVal.SetInt((int)buffers.size());
 
-        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message2");
-
         val.AddMember("num", numVal, doc.GetAllocator());
         //FIXME can not avoid binary copy here.
-        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message2-1");
         shared_ptr<string> write_buffer = make_shared<string>();
-        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message2-2");
         write_buffer->reserve(msg.get_binary()->size()+1);//msg.get_binary()->size()+1
 
-        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message3");
+
 
         char frame_char = packet::frame_message;
         write_buffer->append(&frame_char,1);
-        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message4");
         msg.get_binary();
-        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message4-1");
         write_buffer->append(*(msg.get_binary()));
-        dlog_print(DLOG_FATAL, "sio_packet", "accept_binary_message5");
 
         buffers.push_back(write_buffer);
     }
     
     void accept_array_message(array_message const& msg,Value& val,Document& doc,vector<shared_ptr<const string> >& buffers)
     {
-    	dlog_print(DLOG_FATAL, "sio_packet", "start accept_array_message()");
         val.SetArray();
         for (vector<message::ptr>::const_iterator it = msg.get_vector().begin(); it!=msg.get_vector().end(); ++it) {
             Value child;
@@ -93,7 +85,6 @@ namespace sio
     
     void accept_message(message const& msg,Value& val, Document& doc,vector<shared_ptr<const string> >& buffers)
     {
-    	dlog_print(DLOG_FATAL, "sio_packet", "start accept_message");
         const message* msg_ptr = &msg;
         switch(msg.get_flag())
         {
@@ -114,20 +105,17 @@ namespace sio
             }
             case message::flag_binary:
             {
-            	dlog_print(DLOG_FATAL, "sio_packet", "bin!!!!!@@@@@!!!!!!!!!!!!!!");
                 accept_binary_message(*(static_cast<const binary_message*>(msg_ptr)), val,doc,buffers);
 
                 break;
             }
             case message::flag_array:
             {
-            	dlog_print(DLOG_FATAL, "sio_packet", "arr, but we will use it like binary");
                 accept_array_message(*(static_cast<const array_message*>(msg_ptr)), val,doc,buffers);
                 break;
             }
             case message::flag_object:
             {
-            	dlog_print(DLOG_FATAL, "sio_packet", "it's object");
                 accept_object_message(*(static_cast<const object_message*>(msg_ptr)), val,doc,buffers);
                 break;
             }
@@ -139,11 +127,9 @@ namespace sio
     message::ptr from_json(Value const& value, vector<shared_ptr<const string> > const& buffers)
     {
 
-    	dlog_print(DLOG_DEBUG, "sio_packet", "from json");
-        if(value.IsInt64())
+    	if(value.IsInt64())
         {
-        	dlog_print(DLOG_DEBUG, "sio_packet", "IsInt64");
-            return int_message::create(value.GetInt64());
+           return int_message::create(value.GetInt64());
         }
         else if(value.IsDouble())
         {
@@ -156,7 +142,6 @@ namespace sio
         }
         else if(value.IsArray())
         {
-        	dlog_print(DLOG_DEBUG, "value.IsArray()", "if arr from json");//자주 보여서 WARNING으로 바꿈
 
             message::ptr ptr = array_message::create();
 
@@ -167,7 +152,6 @@ namespace sio
         }
         else if(value.IsObject())
         {
-        	dlog_print(DLOG_DEBUG, "value.IsObject()", "if binary from json");
              //binary placeholder
             auto mem_it = value.FindMember(kBIN_PLACE_HOLDER);
             if (mem_it!=value.MemberEnd() && mem_it->value.GetBool()) {
@@ -175,8 +159,6 @@ namespace sio
                 int num = value["num"].GetInt();
                 if(num >= 0 && num < buffers.size())//if(num > 0 && num < buffers.size())
                 {
-                	dlog_print(DLOG_FATAL, "value.IsObject()", "num!!!!!%d",num);
-                	dlog_print(DLOG_FATAL, "value.IsObject()", "buf size!!!!!%d",buffers.size());
                     return binary_message::create(buffers[num]);
                 }
                 return message::ptr();

@@ -17,20 +17,13 @@
 using namespace sio;
 using namespace std;
 
-extern "C" unsigned char *image;
-extern "C" char * textBuf;
-extern "C" int sizeBuf;
-extern "C" int err;
-extern "C" int bufWidth;
-extern "C" int bufHeight;
-extern "C" unsigned int decodeBufSize;
-
-
 std::mutex _lock;
 std::condition_variable_any _cond;
 bool connect_finish = false;
 
-char *chTexture;
+unsigned char * deprecated[6];
+int count = -1;
+
 
 class connection_listener
 {
@@ -77,6 +70,7 @@ extern "C" {
 
 	void socket_io_client(void *object)
 	{
+		err = -9;//초기화
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function start");
 
 		Evas_Object *evas_object = (Evas_Object *)object;
@@ -106,15 +100,42 @@ extern "C" {
 			int size = data->get_map()["stream"]->get_map()["size"]->get_int();
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
 			string buffer = *s_binary;
+			char* textBuf = NULL;
 			textBuf = (char *)buffer.c_str();
 
-			int error = -9;
-			error = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
-			err = error;
+			err = -9;
+			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
 
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "TEX BUF IN SOCKET.IO [%d, %d, %d]", textBuf[0], textBuf[1], textBuf[2]);
+			deprecated[++count] = image;
+
 			sizeBuf = size;
 
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "before delete....image : %d, deprecated[%d] : ", image,count,deprecated[count]);
+			if(err == 0)//IMAGE_UTIL_ERROR_NONE != error
+			{
+				dlog_print(DLOG_VERBOSE, LOG_TAG, "free image..error : %d", err);
+				for(int i = 0; i < 6; i++)
+				{
+					if(deprecated[i])
+						dlog_print(DLOG_VERBOSE, LOG_TAG, "array[%d] is not NULL", i);
+					else
+						dlog_print(DLOG_VERBOSE, LOG_TAG, "array[%d] is NULL", i);
+				}
+				if(count == 5)
+				{
+
+					for(int i = 0; i < 5; i++)
+					{
+						free(deprecated[i]);
+						deprecated[i] = NULL;
+					}
+					deprecated[0] = deprecated[5];
+
+					count = -1;
+				}
+
+			}
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "after image array delete! ...%d", image);
 
 			_lock.unlock();
 		});
@@ -128,5 +149,14 @@ extern "C" {
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function close");
 
 
+	}
+}
+
+extern "C" {
+
+	void free_que()
+	{
+		for(int i = 0; i < 6; i++)//or count
+			if(deprecated[i]) free(deprecated[i]);
 	}
 }

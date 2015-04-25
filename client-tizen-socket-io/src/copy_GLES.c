@@ -23,6 +23,7 @@
 #include "other.h"
 #include <pthread.h>
 
+
 pthread_mutex_t  mutex = PTHREAD_MUTEX_INITIALIZER; // 쓰레드 초기화
 
 #define LOG_TAG "socket.io.opengl"
@@ -34,12 +35,14 @@ pthread_mutex_t  mutex = PTHREAD_MUTEX_INITIALIZER; // 쓰레드 초기화
 #define ZERO   0.0
 #define Z_POS_INC 0.01f
 
-unsigned char *image = NULL;
-char* textBuf = NULL;
-int sizeBuf;
-int err;
-int bufWidth = 0, bufHeight = 0;
-unsigned int decodeBufSize = 0;
+
+//extern "C" unsigned char *image;
+//extern "C" int sizeBuf;
+//extern "C" int err;
+//extern "C" int bufWidth;
+//extern "C" int bufHeight;
+//extern "C" unsigned int decodeBufSize;
+
 
 static void set_perspective(Evas_Object *obj, float fovDegree, int w, int h, float zNear,  float zFar)
 {
@@ -160,30 +163,28 @@ void draw_gl(Evas_Object *obj)
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-	if(textBuf != NULL){
+	dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
+	if(image != NULL){
 
 		pthread_mutex_lock(&mutex);
 
 		if(err == 0)
 		{
-			dlog_print(DLOG_VERBOSE, "TEX ERROR", "Decode char[%d] IN NORMAL", image[0]);
-			dlog_print(DLOG_VERBOSE, "TEX ERROR", "TEX BUF NO ERROR [%d, %d, %d]", textBuf[0], textBuf[1], textBuf[2]);
-			glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);//ad->current_tex_index
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
+			//dlog_print(DLOG_VERBOSE, "TEX ERROR", "Decode char[%d] IN NORMAL", image[0]);
+			//dlog_print(DLOG_VERBOSE, "TEX ERROR", "TEX BUF NO ERROR [%d, %d, %d]", textBuf[0], textBuf[1], textBuf[2]);
+			glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);//ad->current_tex_index
+
+			//if(image == NULL)
+				//dlog_print(DLOG_VERBOSE, LOG_TAG, "image array is NULL");
+			unsigned char * dd = NULL;
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "after 2Dimage");
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 			//dlog_print(DLOG_VERBOSE, LOG_TAG, "NO ERROR SIZE_BUF [%d]", sizeBuf);
-
-		}else{
-			dlog_print(DLOG_VERBOSE, "TEX ERROR", "TEX BUF IN ERROR [%d, %d, %d]", textBuf[0], textBuf[1], textBuf[2]);
-			//dlog_print(DLOG_VERBOSE, "TEX ERROR", "JPEG Decode Error code[%d]", error);
-			dlog_print(DLOG_VERBOSE, "TEX ERROR", "ERROR SIZE_BUF [%d]", sizeBuf);
-			textBuf = "";
 		}
 		pthread_mutex_unlock(&mutex); // 잠금을 해제한다.
-		//free(image);
 	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
