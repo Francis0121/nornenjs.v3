@@ -10,8 +10,6 @@ LayoutFunction.prototype.isSignInFull = function(){
 
 LayoutFunction.prototype.signInResize = function(){
     var windowHeight = $(window).height();
-    $('.layoutFullSection').height(windowHeight);
-
     var articleHeight = $('.layoutSignInArticle').height();
     var margin = (windowHeight - articleHeight)/2;
     $('.layoutSignInArticle').css({
@@ -26,19 +24,12 @@ LayoutFunction.prototype.isJoinFull = function(){
 
 LayoutFunction.prototype.joinResize = function(){
     var windowHeight = $(window).height();
-    $('.layoutFullSection').height(windowHeight);
-
     var articleHeight = $('.layoutJoinArticle').height();
     var margin = (windowHeight - articleHeight)/2;
     $('.layoutJoinArticle').css({
         'margin-top' : margin-30,
         'margin-bottom' : margin+30
     });
-    
-    $('.actorJoinDescription').css({
-        'margin-top' : -articleHeight,
-        'height' : articleHeight
-    })
 };
 
 LayoutFunction.prototype.isForgotFull = function(){
@@ -47,8 +38,6 @@ LayoutFunction.prototype.isForgotFull = function(){
 
 LayoutFunction.prototype.forgotResize = function(){
     var windowHeight = $(window).height();
-    $('.layoutFullSection').height(windowHeight);
-
     var articleHeight = $('.layoutForgotArticle').height();
     var margin = (windowHeight - articleHeight)/2;
     $('.layoutForgotArticle').css({

@@ -1,0 +1,54 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<nav class="navigation">
+  
+    <header>
+        <a href="#"><h1>Nornen<span class="colorOrange">js</span></h1></a>
+        <h2>Volume Rendering System</h2>
+    </header>
+  
+    <ul class="menu">
+        <li class="title">
+            <span>MYPAGE</span>
+        </li>
+        <li>
+            <a href="#">Dash Board</a>
+        </li>
+        <li>
+            <a href="#">My Info</a>
+        </li>
+        <li>
+            <a href="#">Setting</a>
+        </li>
+    </ul>
+  
+    <ul class="menu">
+        <li class="title">
+            <span>VOLUME</span>
+        </li>
+        <li>
+            <a href="#">List</a>
+        </li>
+        <li>
+            <a href="#">Upload</a>
+        </li>
+        <li>
+            <a href="#">Rendering</a>
+        </li>
+    </ul>
+  
+    <ul class="menu">
+        <li class="title">
+            <span>HELP</span>
+        </li>
+        <li>
+            <a href="#">List Page</a>
+        </li>
+        <li>
+            <a href="#">Upload Page</a>
+        </li>
+        <li>
+            <a href="#">Rendering Page</a>
+        </li>
+    </ul>
+</nav>
