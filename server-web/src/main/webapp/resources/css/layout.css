@@ -20,7 +20,7 @@ body{ background: #34495e; overflow-y: hidden; height: 100%;}
 /**
 * Navigation
 */
-.navigation{ width: 200px; height: 100%; position: fixed; background: #34495e;}
+.navigation{ width: 200px; height: 100%; position: fixed; background: #34495e; z-index: 10;}
 .navigation header{ padding: 20px; width: 180px;}
 .navigation header h1{ font-size: 81.25%; font-weight: bold; color: #fff; padding: 5px 0; }
 .navigation header h2{ font-size: 75%; color: #fff; padding: 5px 0; font-weight: 100;}
@@ -35,5 +35,5 @@ body{ background: #34495e; overflow-y: hidden; height: 100%;}
 /**
 * Common layout section
 */
-.layoutContentSectionWrap{ position: fixed; width: 100%; height: 100%; }
-.layoutContentSection{ margin: 0 0 0 200px; overflow-y: scroll; background: #fff; min-height: 100%;}
+.layoutContentSectionWrap{ position: fixed; width: 100%; height: 100%; z-index: 5;}
+.layoutContentSection{ margin: 0 0 0 200px; overflow-y: scroll; background: #fff; min-height: 100%; }
