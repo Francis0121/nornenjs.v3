@@ -97,7 +97,6 @@ void destroy_gles(Evas_Object *obj)
       ad->tex_ids[1] = 0;
    }
 
-   free(image);
 }
 
 void resize_gl(Evas_Object *obj)

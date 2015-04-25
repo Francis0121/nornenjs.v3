@@ -26,10 +26,16 @@ char* texture_getter();
 #ifdef __cplusplus
 extern "C"
 #endif
+void free_que();
+
+
+#ifdef __cplusplus
+extern "C"
+#endif
 unsigned char *image;
 int sizeBuf;
 int err;
 int bufWidth;
 int bufHeight;
 unsigned int decodeBufSize;
-unsigned char *decoded_image;
+//decoded_image 지움

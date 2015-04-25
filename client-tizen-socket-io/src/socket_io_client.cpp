@@ -105,46 +105,33 @@ extern "C" {
 
 			err = -9;
 			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
-
-			deprecated[++count] = image;
-
 			sizeBuf = size;
 
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "before delete....image : %d, deprecated[%d] : ", image,count,deprecated[count]);
+			//error이면 memory 생성되지 않는가?
+			//그러면 ++count를 if문 안으로 넣어 줘야 함. 그래도 생성된다면 여기에 있는게 맞고.
+			deprecated[++count] = image;
+
 			if(err == 0)//IMAGE_UTIL_ERROR_NONE != error
 			{
-				dlog_print(DLOG_VERBOSE, LOG_TAG, "free image..error : %d", err);
-				for(int i = 0; i < 6; i++)
-				{
-					if(deprecated[i])
-						dlog_print(DLOG_VERBOSE, LOG_TAG, "array[%d] is not NULL", i);
-					else
-						dlog_print(DLOG_VERBOSE, LOG_TAG, "array[%d] is NULL", i);
-				}
 				if(count == 5)
 				{
-
 					for(int i = 0; i < 5; i++)
 					{
 						free(deprecated[i]);
 						deprecated[i] = NULL;
 					}
 					deprecated[0] = deprecated[5];
-
 					count = -1;
 				}
 
 			}
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "after image array delete! ...%d", image);
 
 			_lock.unlock();
 		});
 
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind event listener\n");
 
-		while(LOOP_FLAG){
-
-		}
+		while(LOOP_FLAG){}
 
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function close");
 
@@ -153,10 +140,15 @@ extern "C" {
 }
 
 extern "C" {
-
 	void free_que()
 	{
 		for(int i = 0; i < 6; i++)//or count
-			if(deprecated[i]) free(deprecated[i]);
+		{
+			if(deprecated[i])
+			{
+				free(deprecated[i]);
+				deprecated[i] = NULL;
+			}
+		}
 	}
 }

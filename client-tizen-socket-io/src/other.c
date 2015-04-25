@@ -177,6 +177,11 @@ app_terminate(void *data)
 {
 	/* Release all resources. */
 	turn_off_flag();
+
+   free_que();
+   if(image)
+	   free(image);
+   //예외사항..메모리 생성 후 que에 저장하기 전에 종료사항이 있다면
 }
 
 static void
