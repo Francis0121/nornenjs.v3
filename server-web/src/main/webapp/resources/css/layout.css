@@ -4,7 +4,7 @@ body{background: #34495e; overflow-y: hidden;}
 
 .layoutFullSection{ width: 100%; }
 .layoutSignInArticle{ width: 340px; margin: 0 auto; }
-.layoutJoinArticle{ width: 600px; margin: 0 auto; background: #fafafa; border-radius: 2px;}
+.layoutJoinArticle{ width: 500px; margin: 0 auto; background: #fafafa; border-radius: 2px;}
 .layoutForgotArticle{ width: 400px; margin: 0 auto;}
 
 .colorOrange{ color: #feca6d; }

@@ -34,6 +34,11 @@ LayoutFunction.prototype.joinResize = function(){
         'margin-top' : margin-30,
         'margin-bottom' : margin+30
     });
+    
+    $('.actorJoinDescription').css({
+        'margin-top' : -articleHeight,
+        'height' : articleHeight
+    })
 };
 
 LayoutFunction.prototype.isForgotFull = function(){
