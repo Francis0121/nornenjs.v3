@@ -1,6 +1,7 @@
 function LayoutFunction(){
     this.isSignInFull = this.isSignInFull();
     this.isJoinFull = this.isJoinFull();
+    this.isForgotFull  = this.isForgotFull();
 };
 
 LayoutFunction.prototype.isSignInFull = function(){
@@ -35,6 +36,22 @@ LayoutFunction.prototype.joinResize = function(){
     });
 };
 
+LayoutFunction.prototype.isForgotFull = function(){
+    return $('.layoutForgotArticle').html() != undefined;
+};
+
+LayoutFunction.prototype.forgotResize = function(){
+    var windowHeight = $(window).height();
+    $('.layoutFullSection').height(windowHeight);
+
+    var articleHeight = $('.layoutForgotArticle').height();
+    var margin = (windowHeight - articleHeight)/2;
+    $('.layoutForgotArticle').css({
+        'margin-top' : margin-30,
+        'margin-bottom' : margin+30
+    });
+};
+
 $(function(){
     var layoutFunction = new LayoutFunction();
     
@@ -51,4 +68,12 @@ $(function(){
             layoutFunction.joinResize();
         });
     }
+    
+    if(layoutFunction.isForgotFull){
+        layoutFunction.forgotResize();
+        $(window).resize(function(){
+            layoutFunction.forgotResize();
+        });
+    }
+    
 });

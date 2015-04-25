@@ -30,7 +30,7 @@
                     </div>
                     <div>
                         <a href="${cp}/join" class="colorGrayHover size">회원가입</a>
-                        <a href="#" class="colorGrayHover size">비밀번호 찾기</a>
+                        <a href="${cp}/forgotPassword" class="colorGrayHover size">비밀번호 찾기</a>
                     </div>
                 </li>
                 <li class="button">

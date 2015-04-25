@@ -28,4 +28,28 @@
 /**
 * Actor join page
 */
-.actorJoinForm{  }
+.actorJoinHeader{ padding: 20px; font-size: 150%; font-weight: 100; }
+.actorJoinForm{ padding: 0 20px 20px 20px; }
+.actorJoinForm li{ width: 100%; }
+.actorJoinForm li>label{ width: 100%; display: block; font-size: 75%; padding: 10px 0;}
+.actorJoinForm li>input{ width: 60%; height: 26px; border: 2px solid #cccccc; padding: 0 6px; font-size: 75%; border-radius: 5px; }
+.actorJoinForm li>input:focus{ border: 2px solid #777777; }
+
+.actorJoinForm li.actorJoinBtn{ padding: 15px 0 0 0; text-align: center;}
+.actorJoinForm li.actorJoinBtn>button{ width: 90px; letter-spacing: .6px;}
+
+/**
+* Actor forgot page
+*/
+.actorForgotHeader{ padding: 15px; color: #fff; }
+.actorForgotHeader>h1{ font-size: 100%; margin: 5px 0;}
+.actorForgotHeader>h2{ font-size: 87.5%; font-weight: 200; margin: 5px 0;}
+
+.actorForgotForm{ padding: 20px 0 0 0; background: #fafafa; border-radius: 4px;}
+.actorForgotForm li{ width: 100%; padding: 0; text-align: center;}
+.actorForgotForm li.description{ margin: 0 0 10px 35px; font-size: 75%; text-align: left; color: #e04836;}
+.actorForgotForm li>input{ width: 80%; height: 26px; border: 2px solid #cccccc; font-size: 75%; border-radius: 5px; padding: 0 6px; margin: 10px 0 5px 0;}
+.actorForgotForm li>input:focus{ border: 2px solid #777777; }
+.actorForgotForm li.actorForgotBtn{ }
+.actorForgotForm li.actorForgotBtn>button{ margin: 20px 0 0 0; width: 100%; padding: 0; border: 0px; height: 40px; color: #666666; background: #f3f3f3; font-size: 75%;}
+.actorForgotForm li.actorForgotBtn>button:hover{ background: #d9d9d9; }

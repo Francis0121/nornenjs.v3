@@ -4,10 +4,14 @@ body{background: #34495e; overflow-y: hidden;}
 
 .layoutFullSection{ width: 100%; }
 .layoutSignInArticle{ width: 340px; margin: 0 auto; }
-.layoutJoinArticle{ width: 700px; margin: 0 auto; background: #fafafa; border-radius: 2px;}
+.layoutJoinArticle{ width: 600px; margin: 0 auto; background: #fafafa; border-radius: 2px;}
+.layoutForgotArticle{ width: 400px; margin: 0 auto;}
 
 .colorOrange{ color: #feca6d; }
 
 .colorGray{ color: #9f9f9f; font-size: 75%;}
 .colorGrayHover{ color: #9f9f9f; }
 .colorGrayHover:hover{ color: #737373; text-decoration: underline;}
+
+.orangeButton{ background: #f39d41; color: #fff; font-size: 75%; border-radius: 4px; border: 0px; padding: 8px 10px; }
+.orangeButton:hover{ background: #e08a2e; }
