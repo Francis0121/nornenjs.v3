@@ -6,7 +6,8 @@
     <article class="layoutJoinArticle">
         
         <header class="actorJoinHeader">
-            <h1>Join&nbsp;Nornen<span class="colorOrange">js</span></h1>
+            <a href="${cp}/"><h1>Nornen<span class="colorOrange">js</span></h1></a>
+            <a href="${cp}/join"><h2>회원가입</h2></a>
         </header>
         
         <form:form commandName="actorInfo"  action="${cp}/join" method="post" htmlEscape="true" cssClass="actorJoinForm">

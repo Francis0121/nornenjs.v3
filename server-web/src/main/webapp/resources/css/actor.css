@@ -2,8 +2,8 @@
 * Actor signIn page
 */
 .actorHeader{ width: 100%; padding: 10px;}
-.actorHeader>h1{ font-size: 150%; font-weight: bold; color: #fff; padding: 5px 10px; }
-.actorHeader>h2{ font-size: 100%; color: #fff; padding: 5px 10px; font-weight: 100;}
+.actorHeader h1{ font-size: 150%; font-weight: bold; color: #fff; padding: 5px 10px; }
+.actorHeader h2{ font-size: 100%; color: #fff; padding: 5px 10px; font-weight: 100;}
 
 .actorForm{ width: 100%; background: #fafafa; padding-top: 15px; border-radius: 2px;}
 .actorForm>ul{ width: 100%;}
@@ -28,7 +28,9 @@
 /**
 * Actor join page
 */
-.actorJoinHeader{ padding: 20px; font-size: 150%; font-weight: 100; }
+.actorJoinHeader{ padding: 20px; font-weight: 100; }
+.actorJoinHeader h1{ font-size: 125%; font-weight: bold; color: #000; }
+.actorJoinHeader h2{ font-size: 75%; color: #000; margin-top: 10px; }
 .actorJoinForm{ padding: 0 20px 20px 20px; }
 .actorJoinForm li{ width: 100%; }
 .actorJoinForm li>label{ width: 100%; display: block; font-size: 75%; padding: 10px 0;}
@@ -42,8 +44,8 @@
 * Actor forgot page
 */
 .actorForgotHeader{ padding: 15px; color: #fff; }
-.actorForgotHeader>h1{ font-size: 100%; margin: 5px 0;}
-.actorForgotHeader>h2{ font-size: 87.5%; font-weight: 200; margin: 5px 0;}
+.actorForgotHeader h1{ font-size: 125%; margin: 5px 0; color: #fff;}
+.actorForgotHeader h2{ font-size: 75%; margin: 10px 0 0 0; color: #fff;}
 
 .actorForgotForm{ padding: 20px 0 0 0; background: #fafafa; border-radius: 4px;}
 .actorForgotForm li{ width: 100%; padding: 0; text-align: center;}

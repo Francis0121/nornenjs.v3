@@ -6,7 +6,7 @@
     <article class="layoutSignInArticle">
         
         <header class="actorHeader">
-            <h1>Nornen<span class="colorOrange">js</span></h1>
+            <a href="${cp}/"><h1>Nornen<span class="colorOrange">js</span></h1></a>
             <h2>Volume Rendering system</h2>
         </header>
         

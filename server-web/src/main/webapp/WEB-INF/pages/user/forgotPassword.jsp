@@ -6,7 +6,8 @@
     <article class="layoutForgotArticle">
 
         <header class="actorForgotHeader">
-            <h1>비밀번호 찾기</h1>
+            <a href="${cp}/"><h1>Nornen<span class="colorOrange">js</span></h1></a>
+            <a href="${cp}/forgotPassword"><h2>비밀번호 찾기</h2></a>
         </header>
         
         <form:form commandName="actorInfo" action="${cp}/forgotPassword" method="post" htmlEscape="true" cssClass="actorForgotForm">
