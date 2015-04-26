@@ -14,13 +14,13 @@
         <li>
             <ul class="submenu">
                 <li>
-                    <a href="#" class="dashboard">Dash Board</a>
+                    <a href="/dashboard" class="dashboard">Dash Board</a>
                 </li>
                 <li>
-                    <a href="#">My Info</a>
+                    <a href="/myInfo">My Info</a>
                 </li>
                 <li>
-                    <a href="#">Setting</a>
+                    <a href="/setting">Setting</a>
                 </li>
             </ul>
         </li>

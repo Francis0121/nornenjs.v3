@@ -1,5 +1,6 @@
 package com.nornenjs.web.controller;
 
+import com.nornenjs.web.actor.Actor;
 import com.nornenjs.web.actor.ActorInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,17 @@ public class ActorController {
     public String forgotPassword(@ModelAttribute ActorInfo actorInfo){
         logger.debug(actorInfo.toString());
         return "redirect:/forgotPassword";
+    }
+    
+    @RequestMapping(value = "/myInfo", method = RequestMethod.GET)
+    public String myInfoPage(Model model){
+        model.addAttribute("actor", new ActorInfo(new Actor("username", "qwertyuijhgfd23456789@!@", true), "myemail@nornenjs.com", "성근", "김", "2015-04-30", "2015-04-31"));
+        return "user/myInfo";
+    }
+
+    @RequestMapping(value = "/setting", method = RequestMethod.GET)
+    public String settingPage() {
+        return "user/setting";
     }
     
 }
