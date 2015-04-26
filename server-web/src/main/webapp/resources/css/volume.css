@@ -55,3 +55,23 @@
 .volumeRenderingSampleWrap figure:nth-child(4){ border-radius: 0 0 5px 0; padding-bottom: 10px;}
 .volumeRenderingSampleWrap figure img{ width: 150px; }
 .volumeRenderingSampleWrap figure figcaption{ width: 150px; height: 20px; font-size: 75%; line-height: 20px; text-align: center; color: #fafafa;}
+
+/**
+* Volume Rendering page
+*/
+.volumeRenderingOne{ background: #000; float: left; text-align: center;}
+.volumeRenderingOne:nth-child(1){ border-top: 2px solid #ccc; border-left: 2px solid #ccc; border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; }
+.volumeRenderingOne:nth-child(2){ border-top: 2px solid #ccc; border-left: 1px solid #ccc; border-bottom: 1px solid #ccc; border-right: 2px solid #ccc; }
+.volumeRenderingOne:nth-child(3){ border-top: 1px solid #ccc; border-left: 2px solid #ccc; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; }
+.volumeRenderingOne:nth-child(4){ border-top: 1px solid #ccc; border-left: 1px solid #ccc; border-bottom: 2px solid #ccc; border-right: 2px solid #ccc; }
+
+.volumeRenderingBig{ border: 2px solid #ccc; background: #000; float: left; text-align: center;}
+.volumeRenderingOTP{ display: none; border-left: 2px solid #ccc; border-right: 2px solid #ccc; border-bottom: 2px solid #ccc; float: left; height: 248px;}
+
+.layoutContentSection .title{ position: absolute; color: #fff; font-size: 75%; z-index: 1; text-align: left;}
+.layoutContentSection .title>span{ display: block; padding: 8px 10px; float: left; border-bottom: 1px solid #808080; border-right: 1px solid #808080;}
+.layoutContentSection img{ z-index: 10;}
+
+.renderingExpandBtn{ background: #000 url("../image/icon/expand.png") no-repeat 5px 5px; width: 20px; height: 20px; padding: 15px; margin: 0; text-indent: 9999px; border-top: 0px; border-left: 0px; float: left;}
+.renderingReduceBtn{ background: #000 url("../image/icon/reduce.png") no-repeat 5px 5px; width: 20px; height: 20px; padding: 15px; margin: 0; text-indent: 9999px; border-top: 0px; border-left: 0px; float: left;}
+
