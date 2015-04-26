@@ -86,5 +86,27 @@ $(function(){
     if(layoutFunction.isNaigation){
         layoutFunction.menuEventListener();
     }
+
+    $('#volumeFilter #from').datepicker({
+        changeMonth: true,
+        numberOfMonths: 1,
+        dateFormat: 'yy-mm-dd',
+        onClose: function( selectedDate ) {
+            $('#volumeFilter #to').datepicker('option', 'minDate', selectedDate);
+        },
+        onSelect : function(){
+        }
+    });
+
+    $('#volumeFilter #to').datepicker({
+        changeMonth: true,
+        numberOfMonths: 1,
+        dateFormat : 'yy-mm-dd',
+        onClose: function( selectedDate ) {
+            $('#volumeFilter #from').datepicker('option', 'maxDate', selectedDate );
+        },
+        onSelect : function(){
+        }
+    });
     
 });

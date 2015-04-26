@@ -1,6 +1,9 @@
 package com.nornenjs.web.volume;
 
 import com.nornenjs.web.util.AbstractListFilter;
+import com.nornenjs.web.util.DateUtil;
+
+import java.util.Date;
 
 /**
  * Created by Francis on 2015-04-24.
@@ -16,6 +19,8 @@ public class VolumeFilter extends AbstractListFilter{
     private String to;
 
     public VolumeFilter() {
+        this.from = "2015-01-01";
+        this.to = DateUtil.getToday("YYYY-MM-DD");
     }
 
     public VolumeFilter(Integer actorPn, String title, String from, String to) {

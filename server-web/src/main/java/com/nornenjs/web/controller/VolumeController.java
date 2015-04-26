@@ -19,6 +19,7 @@ public class VolumeController {
     
     @RequestMapping(value = {"", "/list"}, method = RequestMethod.GET)
     public String listPage(@ModelAttribute VolumeFilter volumeFilter){
+        logger.debug(volumeFilter.toString());
         return "volume/list";
     }
 }

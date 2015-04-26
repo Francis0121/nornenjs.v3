@@ -1,0 +1,14 @@
+
+.volumeFilterForm{ padding: 20px; }
+.volumeFilterForm>ul{ height: 30px;}
+.volumeFilterForm>ul>li{ float: left; margin-right: 10px;}
+
+.volumeFilterForm .searchIcon{ padding: 4px; margin:1px 10px 1px 0; background: #2f5168; border-radius: 5px;}
+.volumeFilterForm .searchIcon>img{ float: left; width: 18px; padding: 1px;}
+
+.volumeFilterForm .search{ width: 200px; height: 26px; border: 2px solid #cccccc; padding: 0 6px; font-size: 75%; border-radius: 5px; }
+.volumeFilterForm .search:hover{ border: 2px solid #777777; }
+
+.volumeFilterForm .dateIcon{ padding: 4px; margin:1px 10px 1px 0; background: #2f5168; border-radius: 5px;}
+.volumeFilterForm .dateIcon>img{ float: left; width: 18px; padding: 1px;}
+.volumeFilterForm .date{ width: 80px; height: 26px; border: 2px solid #cccccc; padding: 0 6px; font-size: 75%; border-radius: 5px; text-align: center; cursor: pointer;}
