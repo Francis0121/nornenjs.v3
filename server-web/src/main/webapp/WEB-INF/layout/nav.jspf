@@ -9,46 +9,59 @@
   
     <ul class="menu">
         <li class="title">
-            <span>MYPAGE</span>
+            <a href="#">MYPAGE</a>
         </li>
         <li>
-            <a href="#">Dash Board</a>
-        </li>
-        <li>
-            <a href="#">My Info</a>
-        </li>
-        <li>
-            <a href="#">Setting</a>
+            <ul class="submenu">
+                <li>
+                    <a href="#" class="dashboard">Dash Board</a>
+                </li>
+                <li>
+                    <a href="#">My Info</a>
+                </li>
+                <li>
+                    <a href="#">Setting</a>
+                </li>
+            </ul>
         </li>
     </ul>
   
     <ul class="menu">
         <li class="title">
-            <span>VOLUME</span>
+            <a href="#">VOLUME</a>
         </li>
         <li>
-            <a href="#">List</a>
+            <ul class="submenu">
+                <li>
+                    <a href="#">List</a>
+                </li>
+                <li>
+                    <a href="#">Upload</a>
+                </li>
+                <li>
+                    <a href="#">Rendering</a>
+                </li>
+            </ul>
         </li>
-        <li>
-            <a href="#">Upload</a>
-        </li>
-        <li>
-            <a href="#">Rendering</a>
-        </li>
+        
     </ul>
   
     <ul class="menu">
         <li class="title">
-            <span>HELP</span>
+            <a href="#">HELP</a>
         </li>
         <li>
-            <a href="#">List Page</a>
-        </li>
-        <li>
-            <a href="#">Upload Page</a>
-        </li>
-        <li>
-            <a href="#">Rendering Page</a>
+            <ul class="submenu">
+                <li>
+                    <a href="#">List Page</a>
+                </li>
+                <li>
+                    <a href="#">Upload Page</a>
+                </li>
+                <li>
+                    <a href="#">Rendering Page</a>
+                </li>
+            </ul>
         </li>
     </ul>
 </nav>

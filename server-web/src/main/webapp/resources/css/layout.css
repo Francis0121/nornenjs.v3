@@ -25,12 +25,18 @@ body{ background: #34495e; overflow-y: hidden; height: 100%;}
 .navigation header h1{ font-size: 81.25%; font-weight: bold; color: #fff; padding: 5px 0; }
 .navigation header h2{ font-size: 75%; color: #fff; padding: 5px 0; font-weight: 100;}
 
-.navigation .menu{ width: 200px; }
+.navigation .menu{ width: 200px; margin: 2px 0;}
 .navigation .menu>li{ width: 100%; }
 .navigation .menu>li.title{ border-top: 1px solid #5d6d7e; border-bottom: 1px solid #5d6d7e;}
-.navigation .menu>li.title>span{ font-size: 75%; color: #fff; width: 160px; padding: 10px 20px; display: block;}
-.navigation .menu>li a{ width: 160px; padding: 15px 20px; display: block; color: #fff; font-size: 75%; font-weight: 100;}
-.navigation .menu>li a:hover{ color: #ff8a00; background: #15202c;}
+.navigation .menu>li.title>a{ font-size: 75%; color: #fff; width: 160px; padding: 12px 20px; display: block; letter-spacing: .6px; }
+.navigation .menu>li.title>a:hover{ color: #eb7636; background: #0d1620;}
+
+.navigation .menu .submenu{ width: 100%; display: none;}
+.navigation .menu .submenu>li{width: 100%;}
+.navigation .submenu>li a{ width: 160px; padding: 15px 20px; display: block; color: #fff; font-size: 75%; font-weight: 100; background: url("../image/icon/dashboard.png") no-repeat 17px 12px; text-indent: 22px;}
+.navigation .submenu>li a:hover{ color: #f39d41; background: url("../image/icon/dashboard-hover.png") no-repeat 17px 12px #143042;}
+
+
 
 /**
 * Common layout section

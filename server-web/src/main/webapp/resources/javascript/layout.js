@@ -2,6 +2,7 @@ function LayoutFunction(){
     this.isSignInFull = this.isSignInFull();
     this.isJoinFull = this.isJoinFull();
     this.isForgotFull  = this.isForgotFull();
+    this.isNaigation = this.isNavigation();
 };
 
 LayoutFunction.prototype.isSignInFull = function(){
@@ -46,6 +47,18 @@ LayoutFunction.prototype.forgotResize = function(){
     });
 };
 
+LayoutFunction.prototype.isNavigation = function(){
+    return $('.navigation').html() != undefined;
+};
+
+LayoutFunction.prototype.menuEventListener = function(){
+    $('.menu>.title>a').off('click').on('click', function(){
+        var menu = $(this).parents('ul.menu'),
+            submenu = menu.find('ul.submenu');
+        submenu.toggle('blind', { }, 500 );
+    });
+};
+
 $(function(){
     var layoutFunction = new LayoutFunction();
     
@@ -68,6 +81,10 @@ $(function(){
         $(window).resize(function(){
             layoutFunction.forgotResize();
         });
+    }
+    
+    if(layoutFunction.isNaigation){
+        layoutFunction.menuEventListener();
     }
     
 });
