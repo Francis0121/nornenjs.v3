@@ -90,7 +90,7 @@ LayoutFunction.prototype.renderingPageResize = function(){
 
         $('#volumeRendering').width(width).height(height);
         $('#volumeRendering>img').width(height).height(height);
-        $('.volumeRenderingOTP').width(width);
+        $('.volumeRenderingOTF').width(width);
     }
 };
 
@@ -105,7 +105,7 @@ LayoutFunction.prototype.expandEventListener = function(){
             width = windowWidth - navWidth - 4;
 
         $('.volumeRenderingMpr').hide();
-        $('.volumeRenderingOTP').show().width(width);
+        $('.volumeRenderingOTF').show().width(width);
         
         $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(height);
         $('#volumeRendering>img').width(height).height(height);
@@ -121,7 +121,7 @@ LayoutFunction.prototype.expandEventListener = function(){
             width = (windowWidth - navWidth)/2 - 3;
         
         $('.volumeRenderingMpr').show();
-        $('.volumeRenderingOTP').hide();
+        $('.volumeRenderingOTF').hide();
         $('#volumeRendering').addClass('volumeRenderingOne').removeClass('volumeRenderingBig');
         $('#renderingSizeBtn').addClass('renderingExpandBtn').removeClass('renderingReduceBtn');
         
@@ -220,5 +220,58 @@ $(function(){
     $('#renderingSizeBtn').off('click').on('click', function(){
         layoutFunction.expandEventListener();
     });
+
+    var isTopCircle = false;
+    var isBottomCircle = false;
+    var beforeX;
+    
+    $('#otfTopCircle').on('mousedown',function(event){
+        isTopCircle = true;
+        beforeX = event.pageX;
+    });
+
+    $('#otfBottomCircle').on('mousedown',function(event){
+        isBottomCircle = true;
+        beforeX = event.pageX;
+    });
+    
+    $('#otfTopCircle').on('mousemove',function(event){
+        var circle = event.target;
+        if(isTopCircle){
+            if(event.pageX >= beforeX){ // +
+                var cx = Number(circle.getAttribute('cx'))+2;
+                circle.setAttribute('cx', cx);
+                $('#otfTopLine').attr('x1', cx);
+                $('#otfDashLine').attr('x2', cx);
+            } else{ // -
+                var cx = Number(circle.getAttribute('cx'))-2;
+                circle.setAttribute('cx', cx);
+                $('#otfTopLine').attr('x1', cx);
+                $('#otfDashLine').attr('x2', cx);
+            }
+        }
+        beforeX = event.pageX;
+    });
+
+    $('#otfBottomCircle').on('mousemove',function(event){
+        var circle = event.target;
+        if(isBottomCircle){
+            if(event.pageX >= beforeX){ // +
+                var cx = Number(circle.getAttribute('cx'))+2;
+                circle.setAttribute('cx', cx);
+                $('#otfDashLine').attr('x1', cx);
+            } else{ // -
+                var cx = Number(circle.getAttribute('cx'))-2;
+                circle.setAttribute('cx', cx);
+                $('#otfDashLine').attr('x1', cx);
+            }
+        }
+        beforeX = event.pageX;
+    });
+    
+    $(window).on('mouseup', function(event){
+        isTopCircle = false;
+        isBottomCircle = false;
+    })
     
 });
