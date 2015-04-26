@@ -33,13 +33,13 @@
         <li>
             <ul class="submenu">
                 <li>
-                    <a href="#">List</a>
+                    <a href="${cp}/volume/list">List</a>
                 </li>
                 <li>
-                    <a href="#">Upload</a>
+                    <a href="${cp}/volume/upload">Upload</a>
                 </li>
                 <li>
-                    <a href="#">Rendering</a>
+                    <a href="${cp}/volume/1">Rendering</a>
                 </li>
             </ul>
         </li>

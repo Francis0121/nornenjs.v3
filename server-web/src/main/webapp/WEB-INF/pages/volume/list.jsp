@@ -41,7 +41,7 @@
                         </ul>
                         
                         <figcaption>
-                            <span class="name">Skull</span><span class="number">225 x 225 x 100</span><br/>
+                            <a href="${cp}/volume/${i.count}" class="name">Skull</a><span class="number">225 x 225 x 100</span><br/>
                             <span class="date">2015.04.26</span>
                         </figcaption>
                     </figure>
