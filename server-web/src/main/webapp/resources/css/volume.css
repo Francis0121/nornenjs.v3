@@ -47,7 +47,7 @@
 .volumeBtnWrap{ width: 585px; clear: left; padding-top: 15px; text-align: center;}
 .volumeDataBtn{ width: 124px; height: 34px; }
 
-.volumeRenderingSampleWrap{ width: 430px; float: left; padding: 10px 30px; }
+.volumeRenderingSampleWrap{ width: 340px; float: left; padding: 10px 30px; }
 .volumeRenderingSampleWrap figure{ width: 150px; float: left; padding: 10px 10px 0 10px; background: #000000;}
 .volumeRenderingSampleWrap figure:nth-child(1){ border-radius: 5px 0 0 0; }
 .volumeRenderingSampleWrap figure:nth-child(2){ border-radius: 0 5px 0 0; }
