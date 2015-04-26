@@ -128,5 +128,14 @@ $(function(){
             }
         }
     });
+
+    $('#dataUpload').uploadify({
+        'buttonText' : '파일선택',
+        'buttonClass' : 'volumeDataBtn',
+        'fileTypeDesc' : 'Volume Data',
+        'fileTypeExts' : '*.den; *.data',
+        'swf': contextPath + '/resources/javascript/uploadify.swf',
+        'uploader' : ''
+    });
     
 });
