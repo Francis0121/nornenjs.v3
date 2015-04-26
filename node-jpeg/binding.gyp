@@ -10,11 +10,15 @@
                 "src/dynamic_jpeg_stack.cpp",
                 "src/module.cpp",
             ],
+	    "libraries":['-lturbojpeg'],
+	    "include_dirs":['/usr/include'],
+            "library_dirs":['/usr/lib/i386-linux-gnu'],
             "conditions" : [
                 [
                     'OS=="linux"', {
                         "libraries" : [
                             '-ljpeg'
+			  
                         ],
                         'cflags!': [ '-fno-exceptions' ],
                         'cflags_cc!': [ '-fno-exceptions' ]

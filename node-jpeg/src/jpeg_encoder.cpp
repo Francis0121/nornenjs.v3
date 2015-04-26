@@ -1,5 +1,5 @@
 #include "jpeg_encoder.h"
-
+#include <turbojpeg.h>
 JpegEncoder::JpegEncoder(unsigned char *ddata, int wwidth, int hheight,
     int qquality, buffer_type bbuf_type)
     :
@@ -79,7 +79,7 @@ jpeg_mem_dest (j_compress_ptr cinfo,
 	       unsigned char ** outbuffer, unsigned long * outsize)
 {
   my_mem_dest_ptr dest;
-
+  printf("~!!!!!!!!1\n");
   /* The destination object is made permanent so that multiple JPEG images
    * can be written to the same buffer without re-executing jpeg_mem_dest.
    */
@@ -113,6 +113,7 @@ jpeg_mem_dest (j_compress_ptr cinfo,
 void
 JpegEncoder::encode()
 {
+    printf("5\n");
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
 
@@ -120,7 +121,7 @@ JpegEncoder::encode()
 
     jpeg_create_compress(&cinfo);
     jpeg_mem_dest(&cinfo, &jpeg, &jpeg_len);
-
+    printf("7\n");
     if (offset.isNull()) {
         cinfo.image_width = width;
         cinfo.image_height = height;
@@ -136,7 +137,22 @@ JpegEncoder::encode()
     jpeg_set_quality(&cinfo, quality, TRUE);
     cinfo.smoothing_factor = smoothing;
     jpeg_start_compress(&cinfo, TRUE);
-
+    
+    const int JPEG_QUALITY = 75;
+    const int COLOR_COMPONENTS = 3;
+    int _width = 512;
+    int _height = 512;
+    long unsigned int _jpegSize = 0;
+    unsigned char* _compressedImage = NULL; //!< Memory is allocated by tjCompress2 if _jpegSize == 0
+    //unsigned char buffer[_width*_height*COLOR_COMPONENTS]; //!< Contains the uncompressed image
+    printf("start\n");
+    tjhandle _jpegCompressor = tjInitCompress();
+    tjCompress2(_jpegCompressor, data, _width, 0, _height, TJPF_RGB,
+          &jpeg, &_jpegSize, TJSAMP_444, JPEG_QUALITY,
+          0);
+    tjDestroy(_jpegCompressor);
+    tjFree(jpeg);
+    printf("end\n");
     unsigned char *rgb_data;
     switch (buf_type) {
     case BUF_RGBA:
@@ -193,7 +209,8 @@ void JpegEncoder::set_smoothing(int ssmoothing)
 const unsigned char *
 JpegEncoder::get_jpeg() const
 {
-    return jpeg;
+  printf("~~~~~~~~~~~~~~~~~`\n");   
+ return jpeg;
 }
 
 unsigned int

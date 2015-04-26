@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <jpeglib.h>
+#include <turbojpeg.h>
 #include "common.h"
 
 class JpegEncoder {

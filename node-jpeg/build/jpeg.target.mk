@@ -29,7 +29,8 @@ CFLAGS_CC_Debug := \
 INCS_Debug := \
 	-I/home/russa/.node-gyp/0.10.35/src \
 	-I/home/russa/.node-gyp/0.10.35/deps/uv/include \
-	-I/home/russa/.node-gyp/0.10.35/deps/v8/include
+	-I/home/russa/.node-gyp/0.10.35/deps/v8/include \
+	-I/usr/include
 
 DEFS_Release := \
 	'-D_LARGEFILE_SOURCE' \
@@ -58,7 +59,8 @@ CFLAGS_CC_Release := \
 INCS_Release := \
 	-I/home/russa/.node-gyp/0.10.35/src \
 	-I/home/russa/.node-gyp/0.10.35/deps/uv/include \
-	-I/home/russa/.node-gyp/0.10.35/deps/v8/include
+	-I/home/russa/.node-gyp/0.10.35/deps/v8/include \
+	-I/usr/include
 
 OBJS := \
 	$(obj).target/$(TARGET)/src/common.o \
@@ -95,14 +97,17 @@ $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.cpp FORCE_DO_CMD
 LDFLAGS_Debug := \
 	-pthread \
 	-rdynamic \
-	-m32
+	-m32 \
+	-L/usr/lib/i386-linux-gnu
 
 LDFLAGS_Release := \
 	-pthread \
 	-rdynamic \
-	-m32
+	-m32 \
+	-L/usr/lib/i386-linux-gnu
 
 LIBS := \
+	-lturbojpeg \
 	-ljpeg
 
 $(obj).target/jpeg.node: GYP_LDFLAGS := $(LDFLAGS_$(BUILDTYPE))
