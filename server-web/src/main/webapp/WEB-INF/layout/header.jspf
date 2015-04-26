@@ -26,6 +26,7 @@
     <script src="${cp}/resources/javascript/jquery-ui.js"></script>
     <script src="${cp}/resources/javascript/jquery.ui.datepicker-ko.js"></script>
     <script src="${cp}/resources/javascript/jquery.bxslider.min.js"></script>
+    <script src="${cp}/resources/javascript/jquery.jscroll.min.js"></script>
 
     <script>
         var contextPath = '<c:out value="${cp}"/>';
