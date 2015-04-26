@@ -70,7 +70,7 @@
                 <!-- Top -->
                 <line x1="100" y1="20" x2="500" y2="20" style="stroke:rgb(243,157,65);stroke-width:3" id="otfTopLine"/>
                 <!-- Line -->
-                <line x1="50" y1="100" x2="100" y2="20" style="stroke:rgb(243,157,65);stroke-width:3" id="otfDashLine"/>
+                <line x1="50" y1="100" x2="100" y2="20" style="stroke:rgb(243,157,65);stroke-width:10" id="otfDashLine" class="otfDashLine"/>
                 <!-- Bottom -->
                 <line x1="20" y1="100" x2="500" y2="100" style="stroke:rgb(243,157,65);stroke-width:3" id="otfBottomLine"/>
                 <!-- Top Circle-->

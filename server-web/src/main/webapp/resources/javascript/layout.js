@@ -223,15 +223,11 @@ $(function(){
 
     var isTopCircle = false;
     var isBottomCircle = false;
+    var isDashLine = false;
     var beforeX;
     
     $('#otfTopCircle').on('mousedown',function(event){
         isTopCircle = true;
-        beforeX = event.pageX;
-    });
-
-    $('#otfBottomCircle').on('mousedown',function(event){
-        isBottomCircle = true;
         beforeX = event.pageX;
     });
     
@@ -253,6 +249,11 @@ $(function(){
         beforeX = event.pageX;
     });
 
+    $('#otfBottomCircle').on('mousedown',function(event){
+        isBottomCircle = true;
+        beforeX = event.pageX;
+    });
+    
     $('#otfBottomCircle').on('mousemove',function(event){
         var circle = event.target;
         if(isBottomCircle){
@@ -268,10 +269,44 @@ $(function(){
         }
         beforeX = event.pageX;
     });
+
+    $('#otfDashLine').on('mousedown',function(event){
+        isDashLine = true;
+        beforeX = event.pageX;
+    });
+
+    $('#otfDashLine').on('mousemove',function(event){
+
+        if(isDashLine){
+            if(event.pageX >= beforeX){ // +
+                var cxTop = Number($('#otfTopCircle').attr('cx'))+2;
+                var cxBottom = Number($('#otfBottomCircle').attr('cx'))+2
+
+                $('#otfTopLine').attr('x1', cxTop);
+                $('#otfTopCircle').attr('cx', cxTop);
+                $('#otfBottomCircle').attr('cx', cxBottom);
+                
+                $('#otfDashLine').attr('x1', cxBottom);
+                $('#otfDashLine').attr('x2', cxTop);
+            } else{ // -
+                var cxTop = Number($('#otfTopCircle').attr('cx'))-2;
+                var cxBottom = Number($('#otfBottomCircle').attr('cx'))-2
+
+                $('#otfTopLine').attr('x1', cxTop);
+                $('#otfTopCircle').attr('cx', cxTop);
+                $('#otfBottomCircle').attr('cx', cxBottom);
+
+                $('#otfDashLine').attr('x1', cxBottom);
+                $('#otfDashLine').attr('x2', cxTop);
+            }
+        }
+        beforeX = event.pageX;
+    });
     
     $(window).on('mouseup', function(event){
         isTopCircle = false;
         isBottomCircle = false;
+        isDashLine = false;
     })
     
 });
