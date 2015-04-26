@@ -27,6 +27,29 @@
             </ul>
             
         </form:form>
+        
+        <article class="volumeListArticle">
+            
+            <ul class="list">
+                <c:forEach begin="0" end="19" varStatus="i">
+                <li class="one">
+                    <figure>
+
+                        <ul class="volumeListSlider">
+                            <li><img src="${cp}/resources/image/sample/01.jpg" /></li>
+                            <li><img src="${cp}/resources/image/sample/02.jpg" /></li>
+                        </ul>
+                        
+                        <figcaption>
+                            <span class="name">Skull</span><span class="number">225 x 225 x 100</span><br/>
+                            <span class="date">2015.04.26</span>
+                        </figcaption>
+                    </figure>
+                </li>
+                </c:forEach>
+            </ul>
+            
+        </article>
             
     </section>
     

@@ -108,5 +108,15 @@ $(function(){
         onSelect : function(){
         }
     });
-    
+
+    var volumeListSlider = $('.volumeListSlider').bxSlider({
+        'preloadImages' : 'all',
+        'pager' : false
+    });
+
+    $('.volumeListSlider').css({
+        'max-height' : $('.volumeListSlider>li>img').height(),
+        'border-top' : 0
+    });
+
 });
