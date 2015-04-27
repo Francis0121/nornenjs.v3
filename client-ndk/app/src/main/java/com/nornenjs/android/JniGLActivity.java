@@ -30,8 +30,6 @@ public class JniGLActivity extends Activity {
 
     static final int NONE = 0;
     static final int DRAG = 1;
-    static final int ZOOM = 2;
-    static final int MULTI_TOUCH = 3;
     int mode = NONE;
 
     float oldDist = 1.0f;
@@ -123,7 +121,7 @@ public class JniGLActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-       // Log.v("opengl", "onTouchEvent");
+
         int act = event.getAction();
         switch(act & MotionEvent.ACTION_MASK) {
 
@@ -159,8 +157,7 @@ public class JniGLActivity extends Activity {
                     if((VecotrDirection(oldVectorX1,newVectorX1) == (VecotrDirection(oldVectorX2,newVectorX2)) &&  //multi touch translation
                             (VecotrDirection(oldVectorY1,newVectorY1) == (VecotrDirection(oldVectorY2,newVectorY2))))){
 
-                       newDist = spacing(event);
-                       // if(Math.abs(newDist - oldDist) < 10 && newDist < 150) { // 이동
+                            newDist = spacing(event);
 
                             newMidVectorX= midPoint(newVectorX1,newVectorX2);
                             newMidVectorY= midPoint(newVectorY1,newVectorY2);
@@ -173,9 +170,7 @@ public class JniGLActivity extends Activity {
 
                             myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
                             move++;
-                          //  Log.d("opengl two finger translateion", "" + translationX + "  " + translationY);
 
-                      //  }
 
                     }
                     else{ // multi touch pinch zoom
@@ -191,7 +186,6 @@ public class JniGLActivity extends Activity {
                             }
                             myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
                             pinch++;
-                            //Log.d("opengl zoom out", "" + div);
 
                         } else if (oldDist - newDist > 15) { // zoom out
 
@@ -203,8 +197,6 @@ public class JniGLActivity extends Activity {
                             }
                             myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
                             pinch++;
-
-                            // Log.d("opengl zoom in", "" + div);
                         }
                     }
                 }
@@ -217,7 +209,7 @@ public class JniGLActivity extends Activity {
                 mode = NONE;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
-                // newDist = spacing(event);
+
                 oldDist = spacing(event);
 
                 oldVectorX1 = event.getX(0);oldVectorX2 = event.getX(1);
@@ -250,6 +242,7 @@ public class JniGLActivity extends Activity {
 
     }
     private boolean VecotrDirection(float vector1, float vector2) { //음수면 0 양수면 1
+
         if(vector2 - vector1<0){
             return false;
         }else{
@@ -322,7 +315,7 @@ class TouchSurfaceView extends GLSurfaceView {
             Log.d("socket", "connectin");
             // ~ socket connection
             try {
-                socket = IO.socket("http://112.108.40.19:4389");
+                socket = IO.socket("http://112.108.40.19:5000");
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }

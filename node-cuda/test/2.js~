@@ -5,8 +5,8 @@ var vec3 = require('./vec3');
 
 var fs  = require('fs');
 var sys = require('sys');
-var Png = require('/usr/local/lib/node_modules/png').Png;
-var Jpeg = require('/usr/local/lib/node_modules/jpeg').Jpeg;
+
+var Jpeg = require('/home/russa/node-jpeg').Jpeg;
 
 var renderig_type_volume = 2;
 
@@ -188,17 +188,13 @@ var error = cuCtx.synchronize(function(error) {
     error = cuCtx.destroy();
  
 });
-//var jpeg = new Jpeg(d_outputBuffer, 512, 512, 'rgba');
-//var jpeg_img = jpeg.encodeSync().toString('binary');
-
-var png = new Png(d_outputBuffer, 512, 512, 'rgba');
-var png_image = png.encodeSync();
-fs.writeFileSync('./png.png', png_image.toString('binary'), 'binary');
-
+var jpeg = new Jpeg(d_outputBuffer, 512, 512, 'rgba');
+var jpeg_img = jpeg.encodeSync().toString('binary');
+fs.writeFileSync('./jpeg.jpeg', jpeg_img, 'binary');
 console.info("------------------------------------");
 hrend = process.hrtime(hrstart);
 console.info("Execution time (hr): %ds %dms", hrend[0], hrend[1]/1000000);
 
-//fs.writeFileSync('./jpeg.jpeg', jpeg_img, 'binary');
+
 
 

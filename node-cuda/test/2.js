@@ -188,9 +188,12 @@ var error = cuCtx.synchronize(function(error) {
     error = cuCtx.destroy();
  
 });
+
 var jpeg = new Jpeg(d_outputBuffer, 512, 512, 'rgba');
 var jpeg_img = jpeg.encodeSync().toString('binary');
+
 fs.writeFileSync('./jpeg.jpeg', jpeg_img, 'binary');
+
 console.info("------------------------------------");
 hrend = process.hrtime(hrstart);
 console.info("Execution time (hr): %ds %dms", hrend[0], hrend[1]/1000000);

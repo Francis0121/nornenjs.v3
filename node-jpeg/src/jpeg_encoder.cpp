@@ -1,5 +1,6 @@
 #include "jpeg_encoder.h"
 #include <turbojpeg.h>
+#include <stdio.h>
 JpegEncoder::JpegEncoder(unsigned char *ddata, int wwidth, int hheight,
     int qquality, buffer_type bbuf_type)
     :
@@ -145,13 +146,21 @@ JpegEncoder::encode()
     long unsigned int _jpegSize = 0;
     unsigned char* _compressedImage = NULL; //!< Memory is allocated by tjCompress2 if _jpegSize == 0
     //unsigned char buffer[_width*_height*COLOR_COMPONENTS]; //!< Contains the uncompressed image
+    int error_;
     printf("start\n");
+    //FILE *p_file = fopen("/home/russa/Desktop/test.jpg", "wb");
+   
     tjhandle _jpegCompressor = tjInitCompress();
-    tjCompress2(_jpegCompressor, data, _width, 0, _height, TJPF_RGB,
-          &jpeg, &_jpegSize, TJSAMP_444, JPEG_QUALITY,
-          0);
+    error_ = tjCompress2(_jpegCompressor, data, _width, 0, _height, TJPF_RGB,
+          &_compressedImage, &_jpegSize, TJSAMP_GRAY, JPEG_QUALITY,
+          2048);
+    
+    unsigned char index = 0, byte = 0;
+    char line[32]; // Arbitrary, few characters should be enough
+
+    printf("error 코드 %d %d\n",error_,_jpegSize);
     tjDestroy(_jpegCompressor);
-    tjFree(jpeg);
+    tjFree(_compressedImage);
     printf("end\n");
     unsigned char *rgb_data;
     switch (buf_type) {
