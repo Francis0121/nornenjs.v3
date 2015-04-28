@@ -11,7 +11,7 @@
 
 #include <image_util.h>
 
-
+#define QSIZE 5
 #define LOG_TAG "socket.io.client"
 
 using namespace sio;
@@ -101,29 +101,25 @@ extern "C" {
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
 			string buffer = *s_binary;
 			char* textBuf = NULL;
-			textBuf = (char *)buffer.c_str();
+			textBuf = (char *)buffer.c_str();//함수화 하기
 
 			err = -9;
-			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
-			sizeBuf = size;
+			sizeBuf = size;//순서?
 
+			unsigned int decodeBufSize;
+
+			//dlog_print(DLOG_VERBOSE, LOG_TAG, "before decode %d, %d, %d, %d, %d, %d, %d, %d, %d",image[],image[],image[],image[],image[],image[],image[],image[],image[]);
+			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
+			//sizeBuf = size;//순서?
+			//dlog_print(DLOG_VERBOSE, LOG_TAG, "after decode %d, %d, %d, %d, %d, %d, %d, %d, %d",image[],image[],image[],image[],image[],image[],image[],image[],image[]);
 			//error이면 memory 생성되지 않는가?
 			//그러면 ++count를 if문 안으로 넣어 줘야 함. 그래도 생성된다면 여기에 있는게 맞고.
 			deprecated[++count] = image;
 
-			if(err == 0)//IMAGE_UTIL_ERROR_NONE != error
+			if(!err)//IMAGE_UTIL_ERROR_NONE != error
 			{
-				if(count == 5)
-				{
-					for(int i = 0; i < 5; i++)
-					{
-						free(deprecated[i]);
-						deprecated[i] = NULL;
-					}
-					deprecated[0] = deprecated[5];
-					count = -1;
-				}
-
+				if(count == QSIZE)
+					fresh_que();
 			}
 
 			_lock.unlock();
@@ -136,6 +132,18 @@ extern "C" {
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function close");
 
 
+	}
+}
+extern "C" {
+	void fresh_que()
+	{
+		for(int i = 0; i < 5; i++)
+		{
+			free(deprecated[i]);
+			deprecated[i] = NULL;
+		}
+		deprecated[0] = deprecated[5];
+		count = -1;
 	}
 }
 

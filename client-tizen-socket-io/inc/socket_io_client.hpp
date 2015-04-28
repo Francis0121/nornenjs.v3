@@ -28,6 +28,10 @@ extern "C"
 #endif
 void free_que();
 
+#ifdef __cplusplus
+extern "C"
+#endif
+void fresh_que();
 
 #ifdef __cplusplus
 extern "C"
@@ -37,5 +41,5 @@ int sizeBuf;
 int err;
 int bufWidth;
 int bufHeight;
-unsigned int decodeBufSize;
+//unsigned int decodeBufSize;
 //decoded_image 지움
