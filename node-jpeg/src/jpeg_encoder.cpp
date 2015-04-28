@@ -110,7 +110,29 @@ jpeg_mem_dest (j_compress_ptr cinfo,
   dest->pub.free_in_buffer = dest->bufsize = *outsize;
 }
 #endif
+void writeJPEG(unsigned char *jpegBuf, unsigned long jpegSize)
+{
+	FILE *file=fopen("/home/russa/Desktop/test.jpg", "wb");
+	if(!file || fwrite(jpegBuf, jpegSize, 1, file)!=1)
+	{
+		printf("errrrrrrrrr\n");
+		
+	}
+	if(file) fclose(file);
+}
+void compTest(tjhandle handle, unsigned char **dstBuf,
+        unsigned long *dstSize, int w, int h, int pf, char *basename,
+	int subsamp, int jpegQual, int flags,unsigned char* data){
 
+	if(*dstBuf && *dstSize>0) memset(*dstBuf, 0, *dstSize);
+	tjBufSize(512, 512, TJSAMP_GRAY);
+	int error_ =tjCompress2(handle, data, 512, 0, 512, TJPF_RGBA, dstBuf, dstSize, TJSAMP_GRAY,
+			jpegQual, 2048);
+	
+	writeJPEG(*dstBuf, *dstSize);
+	printf("error 코드 %d\n",error_);
+      
+}
 void
 JpegEncoder::encode()
 {
@@ -138,30 +160,24 @@ JpegEncoder::encode()
     jpeg_set_quality(&cinfo, quality, TRUE);
     cinfo.smoothing_factor = smoothing;
     jpeg_start_compress(&cinfo, TRUE);
-    
-    const int JPEG_QUALITY = 75;
-    const int COLOR_COMPONENTS = 3;
-    int _width = 512;
-    int _height = 512;
-    long unsigned int _jpegSize = 0;
-    unsigned char* _compressedImage = NULL; //!< Memory is allocated by tjCompress2 if _jpegSize == 0
-    //unsigned char buffer[_width*_height*COLOR_COMPONENTS]; //!< Contains the uncompressed image
-    int error_;
-    printf("start\n");
-    //FILE *p_file = fopen("/home/russa/Desktop/test.jpg", "wb");
-   
-    tjhandle _jpegCompressor = tjInitCompress();
-    error_ = tjCompress2(_jpegCompressor, data, _width, 0, _height, TJPF_RGB,
-          &_compressedImage, &_jpegSize, TJSAMP_GRAY, JPEG_QUALITY,
-          2048);
-    
-    unsigned char index = 0, byte = 0;
-    char line[32]; // Arbitrary, few characters should be enough
+     
+    ///////////////////////////////////////////////////////////////////
 
-    printf("error 코드 %d %d\n",error_,_jpegSize);
-    tjDestroy(_jpegCompressor);
-    tjFree(_compressedImage);
+    tjhandle chandle=NULL, dhandle=NULL;
+    unsigned char *dstBuf=NULL; 
+    unsigned long size=0; 
+    
+    tjBufSize(512, 512, TJSAMP_GRAY);
+    dstBuf=(unsigned char *)tjAlloc(size);
+    chandle=tjInitCompress();
+    
+    compTest(chandle, &dstBuf, &size, 512, 512, -1, "test", -1, 75, -1, data);
+  
+    tjDestroy(chandle);
+    tjFree(dstBuf);
     printf("end\n");
+
+   /////////////////////////////////////////////////////////////////
     unsigned char *rgb_data;
     switch (buf_type) {
     case BUF_RGBA:
