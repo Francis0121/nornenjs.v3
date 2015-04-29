@@ -51,10 +51,10 @@
     
     <insert id="insertActorInfo" parameterType="ActorInfo">
         INSERT INTO
-          `actorInfo`
+          `actor_info`
           ( `actorPn`, `email`, `firstName`, `lastName`, `inputDate`, `updateDate`)
         VALUES
-          ( #{actorPn}, #{email}, #{firstName}, #{lastName}, SYSDATE(), SYSDATE() )
+          ( #{actor.pn}, #{email}, #{firstName}, #{lastName}, SYSDATE(), SYSDATE() )
     </insert>
     
     <select id="selectUsernameExist" parameterType="String" resultType="Integer">
@@ -70,7 +70,7 @@
         SELECT
           COUNT(*)
         FROM
-          `actorInfo`
+          `actor_info`
         WHERE
           `email` = #{email}
     </select>
