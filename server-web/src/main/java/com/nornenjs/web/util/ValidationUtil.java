@@ -22,7 +22,7 @@ public class ValidationUtil {
     }
     
     public static Boolean isChar(String str){
-        return !str.matches("^[\\w]{2,20}$");
+        return !str.matches("^[\\w]{1,20}$");
     }
     
 }

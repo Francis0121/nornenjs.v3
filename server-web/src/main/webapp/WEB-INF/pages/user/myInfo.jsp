@@ -13,6 +13,7 @@
         
         <sec:authentication property="principal.username" var="username"/>
         <form:form commandName="actorInfo" action="${cp}/myInfo/${username}" method="post" htmlEscape="true" cssClass="actorUpdateForm">
+            <form:hidden path="updateDate"/>
             <ul>
                 <li>
                     <span class="updateDate">[ 최신 수정 일자 : <c:out value="${actorInfo.updateDate}"/> ]</span>
@@ -35,9 +36,9 @@
                 <li>
                     <form:label path="firstName">이름</form:label>
                     <form:input path="firstName" placeholder="이름을 입력해주세요" maxlength="20"/>
-                    <form:label path="firstName" cssClass="error"/>
+                    <form:errors path="firstName" cssClass="error"/>
                 </li>
-                <li>
+                <li class="actorUpdateBtn">
                     <button type="submit" class="orangeButton">정보수정</button>
                 </li>
             </ul>
