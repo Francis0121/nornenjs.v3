@@ -7,6 +7,13 @@ import com.nornenjs.web.util.ValidationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +22,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.WebRequest;
 
 
 /**
@@ -27,10 +35,81 @@ public class ActorController {
     
     @Autowired
     private ActorService actorService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
     
     @RequestMapping(value ={"/", "/signIn"}, method = RequestMethod.GET)
-    public String signInPage() {
+    public String signInPage(Model model) {
+        model.addAttribute("actor", new Actor());
         return "user/signIn";
+    }
+
+    @RequestMapping(value = "/signIn", method = RequestMethod.POST)
+    public String formLoginPage(WebRequest request, @ModelAttribute Actor actor, BindingResult result) {
+        new Validator(){
+            @Override
+            public boolean supports(Class<?> aClass) {
+                return ActorInfo.class.isAssignableFrom(aClass);
+            }
+
+            @Override
+            public void validate(Object object, Errors errors) {
+                Actor actor = (Actor) object;
+                
+                String username = actor.getUsername();
+                if(ValidationUtil.isNull(username)){
+                    errors.rejectValue("username", "actorInfo.actor.username.empty");
+                }else{
+                    Boolean isEmail = !ValidationUtil.isEmail(username);
+                    Boolean isFormat = isEmail || !ValidationUtil.isUsername(username);
+                    if(!isFormat){
+                        errors.rejectValue("username", "actorInfo.actor.username.wrong");
+                    }else{
+                        if(isEmail){
+                            if(!actorService.selectEmailExist(username)){
+                                errors.rejectValue("username", "actor.username.notExist");
+                            }else{
+                                actor.setUsername(actorService.selectUsernameFromEmail(username));
+                            }
+                        }else{
+                            if(!actorService.selectUsernameExist(username)){
+                                errors.rejectValue("username", "actor.username.notExist");
+                            }
+                        }
+                    }
+                }
+                
+                String password = actor.getPassword();
+                if(ValidationUtil.isNull(password)){
+                    errors.rejectValue("password", "actorInfo.actor.password.empty");
+                }
+            }
+        }.validate(actor, result);
+
+        if (result.hasErrors()) {
+            logger.debug(result.getAllErrors().toString());
+            return "user/signIn";
+        }
+
+        try {
+            
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                    actor.getUsername(), actor.getPassword());
+            Authentication auth = authenticationManager.authenticate(token);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            request.setAttribute(
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    SecurityContextHolder.getContext(),
+                    WebRequest.SCOPE_SESSION);
+
+        } catch (AuthenticationException e) {
+            logger.debug("loginPasswordError");
+            result.rejectValue("password", "actor.password.wrong");
+            return "user/signIn";
+        }
+
+        return "redirect:/dashboard";
     }
 
     @RequestMapping(value = "/noPermission", method = RequestMethod.GET)
@@ -68,12 +147,14 @@ public class ActorController {
         return "redirect:/forgotPassword";
     }
     
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value = "/myInfo", method = RequestMethod.GET)
     public String myInfoPage(Model model){
         model.addAttribute("actor", new ActorInfo(new Actor("username", "qwertyuijhgfd23456789@!@", true), "myemail@nornenjs.com", "성근", "김", "2015-04-30", "2015-04-31"));
         return "user/myInfo";
     }
 
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value = "/setting", method = RequestMethod.GET)
     public String settingPage() {
         return "user/setting";

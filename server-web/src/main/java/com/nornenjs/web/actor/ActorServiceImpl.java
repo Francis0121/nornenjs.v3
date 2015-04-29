@@ -1,5 +1,7 @@
 package com.nornenjs.web.actor;
 
+import com.nornenjs.web.group.Authority;
+import com.nornenjs.web.group.GroupMembers;
 import com.nornenjs.web.group.GroupService;
 import com.nornenjs.web.util.Pagination;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
@@ -91,15 +93,25 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
     @Override
     public Boolean createActor(ActorInfo actorInfo) {
         // TODO Make test case
+        // 로그인 DB 입력
         Actor actor = actorInfo.getActor();
         actor.setEnabled(true);
         Integer result = insert(actor);
         if(!result.equals(1)) return false;
-
+        // 사용자 정보 입력
         result = getSqlSession().insert("actor.insertActorInfo", actorInfo);
+        if(!result.equals(1)) return false;
+        
+        // 그룹 입력
+        result = groupService.insertGroupMembers(new GroupMembers(actor.getUsername(), Authority.DOCTOR.getValue()));
         return result.equals(1);
     }
-    
+
+    @Override
+    public String selectUsernameFromEmail(String username) {
+        return getSqlSession().selectOne("actor.selectUsernameFromEmail", username);
+    }
+
     // ~ UserDetailService
 
     public void setEncodedPassword(Actor actor) {
@@ -156,6 +168,7 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     protected UserDetails createUserDetails(String username, UserDetails userFromUserQuery,
                                             List<GrantedAuthority> combinedAuthorities) {
+        logger.debug(combinedAuthorities);
         return new User(username, userFromUserQuery.getPassword(), userFromUserQuery.isEnabled(),
                 true, true, true, combinedAuthorities);
     }

@@ -4,6 +4,7 @@ import com.nornenjs.web.volume.Volume;
 import com.nornenjs.web.volume.VolumeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * Created by Francis on 2015-04-26.
  */
 @Controller
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 @RequestMapping(value = "/volume")
 public class VolumeController {
     

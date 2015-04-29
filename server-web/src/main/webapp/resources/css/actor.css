@@ -21,6 +21,8 @@
 .actorForm li.button>button{ width: 100%; border: 0px; color: #666666; background: #f3f3f3; padding: 15px 0; }
 .actorForm li.button>button:hover{ background: #d9d9d9; }
 
+.actorForm li>span.error{ width: 100%; font-size: 68.75%; color: #e04836; display: block; padding: 5px 0;}
+.actorForm li>span.username{ width: 100%; text-align: left; color: #031a28; font-size: 75%; padding: 0 0 12px 0; display: block; text-indent: 20px; font-weight: bold;}
 .actorForm li.error{ font-size: 75%; color: #ffa563; text-align: left; padding: 8px 6% 0 6%; width: 88%; }
 
 .actorForm .size{ font-size: 75%; }

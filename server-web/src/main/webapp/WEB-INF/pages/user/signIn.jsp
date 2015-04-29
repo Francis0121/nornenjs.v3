@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="../../layout/header.jspf" %>
-
 <section class="layoutFullSection">
     
     <article class="layoutSignInArticle">
@@ -10,19 +9,17 @@
             <h2>Volume Rendering system</h2>
         </header>
         
-        <form id="user" action="${cp}/j_spring_security_check" method="post" class="actorForm">
+        <form:form commandName="actor" action="${cp}/signIn" method="post" htmlEscape="true" cssClass="actorForm">
+            <sec:authorize access="isAnonymous()">
             <ul>
                 <li>
-                    <input class="text" id="nornenjsUsername" name="nornenjsUsername" type="text" placeholder="아이디 또는 이메일"/>
+                    <form:input path="username" placeholder="아이디 또는 이메일" maxlength="200" cssClass="text"/>
+                    <form:errors path="username" cssClass="error"/>
                 </li>
                 <li>
-                    <input class="text" id="nornenjsPassword" name="nornenjsPassword" type="password" placeholder="비밀번호"/>
+                    <form:password path="password" placeholder="비밀번호" maxlength="20" cssClass="text"/>
+                    <form:errors path="password" cssClass="error"/>
                 </li>
-                <c:if test="${not empty param.login_error}">
-                    <li class="error">
-                        <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>
-                    </li>
-                </c:if>
                 <li class="divide">
                     <div>
                         <input class="checkbox" type="checkbox" name="nornenjsRememberme" id="nornenjsRememberme"/>
@@ -37,7 +34,16 @@
                     <button type="submit">로그인</button>
                 </li>
             </ul>
-        </form>
+            </sec:authorize>
+            <sec:authorize access="hasRole('ROLE_DOCTOR')">
+            <ul>
+                <li>
+                    <sec:authentication property="principal.username" var="username"/>
+                    <span class="username">Welcome! <c:out value="${username}"/></span>
+                </li>
+            </ul>
+            </sec:authorize>
+        </form:form>
         
     </article>
     

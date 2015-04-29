@@ -76,7 +76,7 @@ public class GroupServiceImpl extends SqlSessionDaoSupport implements GroupServi
         List<Groups> groups = getSqlSession().selectList("group.selectGroupAuthoritiesInfo", username);
         List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
         for(Groups g : groups){
-            grantedAuthorities.add(new SimpleGrantedAuthority(g.getGroupName()));
+            grantedAuthorities.add(new SimpleGrantedAuthority(g.getAuthority()));
         }
         return grantedAuthorities;
     }
