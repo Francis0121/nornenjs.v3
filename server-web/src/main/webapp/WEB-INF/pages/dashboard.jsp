@@ -8,11 +8,11 @@
     <section class="layoutContentSection">
 
         <sec:authorize access="hasRole('ROLE_DOCTOR')">
-            ROLE_DOCTOR
+        
         </sec:authorize>
         
         <sec:authorize access="isAnonymous()">
-            Anonymous
+        
         </sec:authorize>
         
     </section>
