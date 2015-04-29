@@ -42,6 +42,7 @@
 .volumeForm li>textarea{ width: 88%; height: 50px; border: 2px solid #ccc; padding: 6px; font-size: 75%; border-radius: 5px; resize: none;}
 .volumeForm li>textarea:focus{ border: 2px solid #777;}
 .volumeForm li>input.text{ width: 88%; height: 26px; border: 2px solid #cccccc; padding: 0 6px; font-size: 75%; border-radius: 5px; }
+.volumeForm li>span.error{ width: 100%; font-size: 68.75%; color: #e04836; display: block; padding: 5px 0;}
 .volumeForm input.text:focus{ border: 2px solid #777777;}
 
 .volumeBtnWrap{ width: 585px; clear: left; padding-top: 15px; text-align: center;}
