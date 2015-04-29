@@ -19,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
 
@@ -194,15 +191,60 @@ public class ActorController {
     }
     
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
-    @RequestMapping(value = "/myInfo", method = RequestMethod.GET)
-    public String myInfoPage(Model model){
-        model.addAttribute("actor", new ActorInfo(new Actor("username", "qwertyuijhgfd23456789@!@", true), "myemail@nornenjs.com", "성근", "김", "2015-04-30", "2015-04-31"));
+    @RequestMapping(value = "/myInfo/{username}", method = RequestMethod.GET)
+    public String myInfoPage(Model model, @PathVariable("username") String username){
+        ActorInfo actorInfo = actorService.selectOneFromUsername(username);
+        model.addAttribute("actorInfo", actorInfo);
         return "user/myInfo";
+    }
+
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @RequestMapping(value = "/myInfo/{username}", method = RequestMethod.POST)
+    public String myInfoPagePost(Model model, @PathVariable("username") String username,
+                                 @ModelAttribute ActorInfo actorInfo, BindingResult result){
+        logger.debug(actorInfo.toString());
+        new Validator(){
+            @Override
+            public boolean supports(Class<?> aClass) {
+                return ActorInfo.class.isAssignableFrom(aClass);
+            }
+
+            @Override
+            public void validate(Object object, Errors errors) {
+                ActorInfo actorInfo = (ActorInfo) object;
+
+                String lastName = actorInfo.getLastName();
+                if(ValidationUtil.isNull(lastName)){
+                    errors.rejectValue("lastName", "actorInfo.lastName.empty");
+                }else{
+                    if(ValidationUtil.isChar(lastName)){
+                        errors.rejectValue("lastName", "actorInfo.lastName.wrong");
+                    }
+                }
+                        
+                String firstName = actorInfo.getFirstName();
+                if(ValidationUtil.isNull(firstName)){
+                    errors.rejectValue("firstName", "actorInfo.firstName.empty");
+                }else{
+                    if(ValidationUtil.isChar(firstName)){
+                        errors.rejectValue("firstName", "actorInfo.firstName.wrong");
+                    }
+                }
+            }
+        }.validate(actorInfo, result);
+        
+        if(result.hasErrors()){
+            return "user/myInfo";
+        }else{
+            actorService.updateActorInfo(actorInfo);
+            return "redirect:/myInfo/"+username;
+        }
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value = "/setting", method = RequestMethod.GET)
     public String settingPage() {
+        
         return "user/setting";
     }
 

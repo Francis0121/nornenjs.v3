@@ -16,4 +16,8 @@ public interface ActorService extends CRUDService<Actor, ActorFilter>{
     String selectUsernameFromEmail(String username);
 
     String selectEmailFromUsername(String email);
+
+    ActorInfo selectOneFromUsername(String username);
+
+    Integer updateActorInfo(ActorInfo actorInfo);
 }

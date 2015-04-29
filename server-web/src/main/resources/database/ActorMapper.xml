@@ -24,6 +24,17 @@
           `pn` = #{pn}
     </update>
     
+    <update id="updateActorInfo" parameterType="ActorInfo">
+        UPDATE
+          `actor_info`
+        SET
+          `lastName` = #{lastName},
+          `firstName` = #{firstName},
+          `updateDate` = SYSDATE()
+        WHERE
+          `email` = #{email}
+    </update>
+    
     <delete id="delete" parameterType="Integer">
         DELETE FROM
           `actor`
@@ -90,6 +101,19 @@
     <select id="selectEmailFromUsername" parameterType="String" resultType="String">
         SELECT
           `email`
+        FROM
+          `actor` AS `a`,
+          `actor_info` AS `ai`
+        WHERE
+          a.`pn` = ai.`actorPn`
+        AND
+          a.`username` = #{username}
+    </select>
+    
+    <select id="selectOneFromUsername" parameterType="String" resultType="ActorInfo">
+        SELECT
+          a.`pn` AS `actor.pn`, a.`username` AS `actor.username`,
+          ai.`email`, ai.`firstName`, ai.`lastName`, ai.`inputDate`, ai.`updateDate`
         FROM
           `actor` AS `a`,
           `actor_info` AS `ai`

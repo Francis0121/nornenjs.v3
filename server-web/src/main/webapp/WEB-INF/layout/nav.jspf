@@ -17,7 +17,8 @@
                     <a href="/dashboard" class="dashboard">Dash Board</a>
                 </li>
                 <li>
-                    <a href="/myInfo">My Info</a>
+                    <sec:authentication property="principal.username" var="username"/>
+                    <a href="/myInfo/<c:out value="${username}"/>">My Info</a>
                 </li>
                 <li>
                     <a href="/setting">Setting</a>

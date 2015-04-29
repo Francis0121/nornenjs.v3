@@ -60,3 +60,23 @@
 .actorForgotForm li.actorForgotBtn{ }
 .actorForgotForm li.actorForgotBtn>button{ margin: 20px 0 0 0; width: 100%; padding: 0; border: 0px; height: 40px; color: #666666; background: #f3f3f3; font-size: 75%;}
 .actorForgotForm li.actorForgotBtn>button:hover{ background: #d9d9d9; }
+
+/**
+* Actor update page
+*/
+.actorUpdateForm{ padding: 20px; font-weight: 100; }
+.actorUpdateForm{ width: 500px; padding: 0 20px 20px 20px; }
+.actorUpdateForm li{ }
+.actorUpdateForm li>label{ width: 100%; display: block; font-size: 75%; padding: 10px 0;}
+.actorUpdateForm li>span.error{ width: 100%; font-size: 68.75%; color: #e04836; display: block; padding: 5px 0;}
+
+.actorUpdateForm li>input.readonly{ width: 88%; height: 26px; border: 2px solid #f2f2f2; padding: 0 6px; font-size: 75%; border-radius: 5px; }
+.actorUpdateForm li>input.readonly:focus{ border: 2px solid #f2f2f2; }
+
+.actorUpdateForm li>input{ width: 88%; height: 26px; border: 2px solid #cccccc; padding: 0 6px; font-size: 75%; border-radius: 5px; }
+.actorUpdateForm li>input:focus{ border: 2px solid #777777; }
+
+.actorUpdateForm li.actorJoinBtn{ padding: 15px 0 0 0; text-align: center;}
+.actorUpdateForm li.actorJoinBtn>button{ width: 90px; letter-spacing: .6px;}
+.inputDate{ font-size: 68.75%; color: #1a1a1a;}
+.updateDate{ font-size: 68.75%; color: #666666;}

@@ -117,6 +117,16 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
         return getSqlSession().selectOne("actor.selectEmailFromUsername", email);
     }
 
+    @Override
+    public ActorInfo selectOneFromUsername(String username) {
+        return getSqlSession().selectOne("actor.selectOneFromUsername", username);
+    }
+
+    @Override
+    public Integer updateActorInfo(ActorInfo actorInfo) {
+        return getSqlSession().update("actor.updateActorInfo", actorInfo);
+    }
+
     // ~ UserDetailService
 
     public void setEncodedPassword(Actor actor) {
