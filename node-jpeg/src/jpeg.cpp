@@ -32,7 +32,6 @@ Jpeg::Jpeg(unsigned char *ddata, int wwidth, int hheight, buffer_type bbuf_type)
 Handle<Value>
 Jpeg::JpegEncodeSync()
 {
-    printf("4\n");
     HandleScope scope;
     try {
         jpeg_encoder.encode_tj();
@@ -63,7 +62,6 @@ Handle<Value>
 Jpeg::New(const Arguments &args)
 {
     HandleScope scope;
-    printf("1\n");
     if (args.Length() < 3)
         return VException("At least three arguments required - buffer, width, height, [and buffer type]");
     if (!Buffer::HasInstance(args[0]))
@@ -97,10 +95,8 @@ Jpeg::New(const Arguments &args)
             buf_type = BUF_RGB;
         else if (str_eq(*bt, "bgr"))
             buf_type = BUF_BGR;
-        else if (str_eq(*bt, "rgba")){
+        else if (str_eq(*bt, "rgba"))
             buf_type = BUF_RGBA;
-	    printf("2\n");	
-	}
         else if (str_eq(*bt, "bgra"))
             buf_type = BUF_BGRA;
         else 
@@ -117,7 +113,6 @@ Handle<Value>
 Jpeg::JpegEncodeSync(const Arguments &args)
 {
     HandleScope scope;
-    printf("3\n");
     Jpeg *jpeg = ObjectWrap::Unwrap<Jpeg>(args.This());
     return scope.Close(jpeg->JpegEncodeSync());
 }

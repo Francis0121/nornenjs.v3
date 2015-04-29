@@ -1,7 +1,6 @@
 #include <node.h>
 #include <node_buffer.h>
 #include <jpeglib.h>
-#include <turbojpeg.h>
 #include <cstdlib>
 #include <cstring>
 
@@ -33,10 +32,9 @@ Jpeg::Jpeg(unsigned char *ddata, int wwidth, int hheight, buffer_type bbuf_type)
 Handle<Value>
 Jpeg::JpegEncodeSync()
 {
-    printf("4\n");
     HandleScope scope;
     try {
-        jpeg_encoder.encode();
+        jpeg_encoder.encode_tj();
     }
     catch (const char *err) {
         return VException(err);
@@ -64,7 +62,6 @@ Handle<Value>
 Jpeg::New(const Arguments &args)
 {
     HandleScope scope;
-    printf("1\n");
     if (args.Length() < 3)
         return VException("At least three arguments required - buffer, width, height, [and buffer type]");
     if (!Buffer::HasInstance(args[0]))
@@ -118,7 +115,6 @@ Handle<Value>
 Jpeg::JpegEncodeSync(const Arguments &args)
 {
     HandleScope scope;
-    printf("3\n");
     Jpeg *jpeg = ObjectWrap::Unwrap<Jpeg>(args.This());
     return scope.Close(jpeg->JpegEncodeSync());
 }

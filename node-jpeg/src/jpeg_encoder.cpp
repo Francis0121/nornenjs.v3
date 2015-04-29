@@ -129,7 +129,7 @@ void compTest(tjhandle handle, unsigned char **dstBuf,
 			jpegQual, 2048);
 	
 	//writeJPEG(*dstBuf, *dstSize);
-	printf("error 코드 %d\n",error_);
+	
 }
 void
 JpegEncoder::encode_tj()
@@ -144,15 +144,15 @@ JpegEncoder::encode_tj()
     compTest(chandle, &dstBuf, &jpeg_len, 512, 512, -1, "test", -1, 60, -1, data);
   
     tjDestroy(chandle);
-    tjFree(dstBuf);
-    printf("end\n");
+    //tjFree(dstBuf);
+    
 
 }
 
 void
 JpegEncoder::encode()
 {
-    printf("5\n");
+    
     
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
@@ -163,7 +163,7 @@ JpegEncoder::encode()
 
     jpeg_create_compress(&cinfo);
     jpeg_mem_dest(&cinfo, &dstBuf, &jpeg_len);
-    printf("7\n");
+    
     if (offset.isNull()) {
         cinfo.image_width = width;
         cinfo.image_height = height;
