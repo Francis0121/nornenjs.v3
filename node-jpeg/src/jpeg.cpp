@@ -35,7 +35,7 @@ Jpeg::JpegEncodeSync()
     printf("4\n");
     HandleScope scope;
     try {
-        jpeg_encoder.encode();
+        jpeg_encoder.encode_tj();
     }
     catch (const char *err) {
         return VException(err);

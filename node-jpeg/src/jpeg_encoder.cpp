@@ -6,11 +6,11 @@ JpegEncoder::JpegEncoder(unsigned char *ddata, int wwidth, int hheight,
     :
       data(ddata), width(wwidth), height(hheight), quality(qquality), smoothing(0),
     buf_type(bbuf_type),
-    jpeg(NULL), jpeg_len(0),
+    dstBuf(NULL), jpeg_len(0),
     offset(0, 0, 0, 0) {}
 
 JpegEncoder::~JpegEncoder() {
-    free(jpeg);
+    free(dstBuf);
 }
 
 #if JPEG_LIB_VERSION < 80
@@ -80,7 +80,7 @@ jpeg_mem_dest (j_compress_ptr cinfo,
 	       unsigned char ** outbuffer, unsigned long * outsize)
 {
   my_mem_dest_ptr dest;
-  printf("~!!!!!!!!1\n");
+  
   /* The destination object is made permanent so that multiple JPEG images
    * can be written to the same buffer without re-executing jpeg_mem_dest.
    */
@@ -115,8 +115,7 @@ void writeJPEG(unsigned char *jpegBuf, unsigned long jpegSize)
 	FILE *file=fopen("/home/russa/Desktop/test.jpg", "wb");
 	if(!file || fwrite(jpegBuf, jpegSize, 1, file)!=1)
 	{
-		printf("errrrrrrrrr\n");
-		
+		printf("error\n");
 	}
 	if(file) fclose(file);
 }
@@ -129,21 +128,41 @@ void compTest(tjhandle handle, unsigned char **dstBuf,
 	int error_ =tjCompress2(handle, data, 512, 0, 512, TJPF_RGBA, dstBuf, dstSize, TJSAMP_GRAY,
 			jpegQual, 2048);
 	
-	writeJPEG(*dstBuf, *dstSize);
+	//writeJPEG(*dstBuf, *dstSize);
 	printf("error 코드 %d\n",error_);
-      
 }
+void
+JpegEncoder::encode_tj()
+{
+  
+    tjhandle chandle=NULL, dhandle=NULL;
+    
+    tjBufSize(512, 512, TJSAMP_GRAY);
+    dstBuf=(unsigned char *)tjAlloc(jpeg_len);
+    chandle=tjInitCompress();
+    
+    compTest(chandle, &dstBuf, &jpeg_len, 512, 512, -1, "test", -1, 60, -1, data);
+  
+    tjDestroy(chandle);
+    tjFree(dstBuf);
+    printf("end\n");
+
+}
+
 void
 JpegEncoder::encode()
 {
     printf("5\n");
+    
     struct jpeg_compress_struct cinfo;
     struct jpeg_error_mgr jerr;
+    //unsigned char *dstBuf=NULL; 
+    //unsigned long size=0; 
 
     cinfo.err = jpeg_std_error(&jerr);
 
     jpeg_create_compress(&cinfo);
-    jpeg_mem_dest(&cinfo, &jpeg, &jpeg_len);
+    jpeg_mem_dest(&cinfo, &dstBuf, &jpeg_len);
     printf("7\n");
     if (offset.isNull()) {
         cinfo.image_width = width;
@@ -161,23 +180,6 @@ JpegEncoder::encode()
     cinfo.smoothing_factor = smoothing;
     jpeg_start_compress(&cinfo, TRUE);
      
-    ///////////////////////////////////////////////////////////////////
-
-    tjhandle chandle=NULL, dhandle=NULL;
-    unsigned char *dstBuf=NULL; 
-    unsigned long size=0; 
-    
-    tjBufSize(512, 512, TJSAMP_GRAY);
-    dstBuf=(unsigned char *)tjAlloc(size);
-    chandle=tjInitCompress();
-    
-    compTest(chandle, &dstBuf, &size, 512, 512, -1, "test", -1, 75, -1, data);
-  
-    tjDestroy(chandle);
-    tjFree(dstBuf);
-    printf("end\n");
-
-   /////////////////////////////////////////////////////////////////
     unsigned char *rgb_data;
     switch (buf_type) {
     case BUF_RGBA:
@@ -218,6 +220,7 @@ JpegEncoder::encode()
 
     if (buf_type == BUF_BGR || buf_type == BUF_RGBA || buf_type == BUF_BGRA)
         free(rgb_data);
+  
 }
 
 void
@@ -234,8 +237,7 @@ void JpegEncoder::set_smoothing(int ssmoothing)
 const unsigned char *
 JpegEncoder::get_jpeg() const
 {
-  printf("~~~~~~~~~~~~~~~~~`\n");   
- return jpeg;
+    return dstBuf;
 }
 
 unsigned int

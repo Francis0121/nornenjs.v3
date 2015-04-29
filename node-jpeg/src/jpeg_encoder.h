@@ -12,7 +12,7 @@ class JpegEncoder {
     buffer_type buf_type;
     unsigned char *data;
 
-    unsigned char *jpeg;
+    unsigned char *dstBuf;
     long unsigned int jpeg_len;
 
     Rect offset;
@@ -23,6 +23,7 @@ public:
     ~JpegEncoder();
 
     void encode();
+    void encode_tj();
     void set_quality(int qquality);
     void set_smoothing(int ssmoothing);
     const unsigned char *get_jpeg() const;

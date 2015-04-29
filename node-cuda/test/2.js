@@ -188,10 +188,11 @@ var error = cuCtx.synchronize(function(error) {
     error = cuCtx.destroy();
  
 });
-
+var hrStart = process.hrtime();
 var jpeg = new Jpeg(d_outputBuffer, 512, 512, 'rgba');
 var jpeg_img = jpeg.encodeSync().toString('binary');
-
+var hrEnd = process.hrtime(hrStart);
+console.info('Make start finish frame jpeg compress execution time (hr) : %dms', hrEnd[1]/1000000);
 fs.writeFileSync('./jpeg.jpeg', jpeg_img, 'binary');
 
 console.info("------------------------------------");
