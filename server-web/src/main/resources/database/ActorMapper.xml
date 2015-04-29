@@ -49,4 +49,30 @@
           `username` = #{username}
     </select>
     
+    <insert id="insertActorInfo" parameterType="ActorInfo">
+        INSERT INTO
+          `actorInfo`
+          ( `actorPn`, `email`, `firstName`, `lastName`, `inputDate`, `updateDate`)
+        VALUES
+          ( #{actorPn}, #{email}, #{firstName}, #{lastName}, SYSDATE(), SYSDATE() )
+    </insert>
+    
+    <select id="selectUsernameExist" parameterType="String" resultType="Integer">
+        SELECT
+          COUNT(*)
+        FROM
+          `actor`
+        WHERE
+          `username` = #{username}
+    </select>
+    
+    <select id="selectEmailExist" parameterType="String" resultType="Integer">
+        SELECT
+          COUNT(*)
+        FROM
+          `actorInfo`
+        WHERE
+          `email` = #{email}
+    </select>
+    
 </mapper>

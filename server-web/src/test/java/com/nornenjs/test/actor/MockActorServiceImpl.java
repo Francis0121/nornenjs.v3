@@ -2,6 +2,7 @@ package com.nornenjs.test.actor;
 
 import com.nornenjs.web.actor.Actor;
 import com.nornenjs.web.actor.ActorFilter;
+import com.nornenjs.web.actor.ActorInfo;
 import com.nornenjs.web.actor.ActorService;
 import org.springframework.stereotype.Service;
 
@@ -40,6 +41,21 @@ public class MockActorServiceImpl implements ActorService{
 
     @Override
     public Integer delete(Integer pn) {
+        return null;
+    }
+
+    @Override
+    public Boolean selectUsernameExist(String username) {
+        return null;
+    }
+
+    @Override
+    public Boolean selectEmailExist(String email) {
+        return null;
+    }
+
+    @Override
+    public Boolean createActor(ActorInfo actorInfo) {
         return null;
     }
 }

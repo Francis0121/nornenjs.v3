@@ -73,7 +73,33 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
     public Integer delete(Integer pn) {
         return getSqlSession().delete("actor.delete", pn);
     }
+    
+    @Override
+    public Boolean selectUsernameExist(String username) {
+        // TODO Make test case
+        Integer count = getSqlSession().selectOne("actor.selectUsernameExist", username);
+        return count > 0;
+    }
 
+    @Override
+    public Boolean selectEmailExist(String email) {
+        // TODO Make test case
+        Integer count = getSqlSession().selectOne("actor.selectEmailExist", email);
+        return count > 0;
+    }
+
+    @Override
+    public Boolean createActor(ActorInfo actorInfo) {
+        // TODO Make test case
+        Actor actor = actorInfo.getActor();
+        actor.setEnabled(true);
+        Integer result = insert(actor);
+        if(!result.equals(1)) return false;
+
+        result = getSqlSession().insert("actor.insertActorInfo", actorInfo);
+        return result.equals(1);
+    }
+    
     // ~ UserDetailService
 
     public void setEncodedPassword(Actor actor) {
@@ -133,6 +159,5 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
         return new User(username, userFromUserQuery.getPassword(), userFromUserQuery.isEnabled(),
                 true, true, true, combinedAuthorities);
     }
-
-
+    
 }

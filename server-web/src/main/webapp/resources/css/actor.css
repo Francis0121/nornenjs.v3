@@ -34,6 +34,7 @@
 .actorJoinForm{ width: 100%; padding: 0 20px 20px 20px; }
 .actorJoinForm li{ }
 .actorJoinForm li>label{ width: 100%; display: block; font-size: 75%; padding: 10px 0;}
+.actorJoinForm li>span.error{ width: 100%; font-size: 68.75%; color: #e04836; display: block; padding: 5px 0;}
 .actorJoinForm li>input{ width: 88%; height: 26px; border: 2px solid #cccccc; padding: 0 6px; font-size: 75%; border-radius: 5px; }
 .actorJoinForm li>input:focus{ border: 2px solid #777777; }
 

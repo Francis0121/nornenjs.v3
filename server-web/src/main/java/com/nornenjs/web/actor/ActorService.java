@@ -7,4 +7,9 @@ import com.nornenjs.web.util.CRUDService;
  */
 public interface ActorService extends CRUDService<Actor, ActorFilter>{
 
+    Boolean selectUsernameExist(String username);
+
+    Boolean selectEmailExist(String email);
+
+    Boolean createActor(ActorInfo actorInfo);
 }
