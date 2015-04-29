@@ -87,4 +87,16 @@
           ai.`email` = #{email}
     </select>
     
+    <select id="selectEmailFromUsername" parameterType="String" resultType="String">
+        SELECT
+          `email`
+        FROM
+          `actor` AS `a`,
+          `actor_info` AS `ai`
+        WHERE
+          a.`pn` = ai.`actorPn`
+        AND
+          a.`username` = #{username}
+    </select>
+    
 </mapper>

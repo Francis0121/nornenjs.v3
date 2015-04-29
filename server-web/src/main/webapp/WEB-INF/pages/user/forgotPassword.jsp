@@ -17,7 +17,10 @@
                 </li>
                 <lI>
                     <form:input path="email" placeholder="이메일 주소나 아이디를 입력해주세요."/>
-                    <form:errors path="email"/>
+                    <form:errors path="email" cssClass="error"/>
+                    <c:if test="${isSuccessEmail ne null}">
+                        <span class="success"><c:out value="${isSuccessEmail}"/> 로 메일을 전송하였습니다.</span>
+                    </c:if>
                 </lI>
                 <li class="actorForgotBtn">
                     <button type="submit">변경 이메일 전송</button>

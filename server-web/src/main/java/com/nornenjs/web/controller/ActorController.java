@@ -22,6 +22,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 
 
@@ -136,15 +137,60 @@ public class ActorController {
     }
     
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
-    public String forgotPasswordPage(Model model){
+    public String forgotPasswordPage(Model model, @RequestParam(required = false) String email){
         model.addAttribute("actorInfo", new ActorInfo());
+        model.addAttribute("isSuccessEmail", email);
         return "user/forgotPassword";
     }
     
     @RequestMapping(value = "/forgotPassword", method = RequestMethod.POST)
-    public String forgotPassword(@ModelAttribute ActorInfo actorInfo){
+    public String forgotPassword(Model model, @ModelAttribute ActorInfo actorInfo, BindingResult result){
         logger.debug(actorInfo.toString());
-        return "redirect:/forgotPassword";
+        new Validator(){
+            @Override
+            public boolean supports(Class<?> aClass) {
+                return ActorInfo.class.isAssignableFrom(aClass);
+            }
+
+            @Override
+            public void validate(Object object, Errors errors) {
+                ActorInfo actorInfo = (ActorInfo) object;
+                String email = actorInfo.getEmail();
+                
+                if(ValidationUtil.isNull(email)){
+                    errors.rejectValue("email", "actorInfo.email.forgot.empty");
+                }else{
+                    Boolean isEmail = !ValidationUtil.isEmail(email);
+                    Boolean isFormat = isEmail || !ValidationUtil.isUsername(email);
+                    if(!isFormat){
+                        errors.rejectValue("email", "actorInfo.email.forgot.wrong");
+                    }else{
+                        if(isEmail){
+                            if(!actorService.selectEmailExist(email)){
+                                errors.rejectValue("email", "actorInfo.email.forgot.notExist");
+                            }
+                        }else{
+                            if(!actorService.selectUsernameExist(email)){
+                                errors.rejectValue("email", "actorInfo.email.forgot.notExist");
+                            }else{
+                                actorInfo.setEmail(actorService.selectEmailFromUsername(email));
+                            }
+                        }
+                    }
+                }
+            }
+        }.validate(actorInfo, result);
+        
+        String email = actorInfo.getEmail();
+        logger.debug(email);
+        if(result.hasErrors()) {
+            return "user/forgotPassword";
+        }else{
+            // TODO send mail
+            logger.debug(actorInfo.toString());
+            model.addAttribute("email", email);
+            return "redirect:/forgotPassword";
+        }
     }
     
     @PreAuthorize("hasRole('ROLE_DOCTOR')")

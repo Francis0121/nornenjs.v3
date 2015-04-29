@@ -63,4 +63,9 @@ public class MockActorServiceImpl implements ActorService{
     public String selectUsernameFromEmail(String username) {
         return null;
     }
+
+    @Override
+    public String selectEmailFromUsername(String email) {
+        return null;
+    }
 }

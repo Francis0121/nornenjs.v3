@@ -53,6 +53,8 @@
 .actorForgotForm{ padding: 20px 0 0 0; background: #fafafa; border-radius: 4px;}
 .actorForgotForm li{ width: 100%; padding: 0; text-align: center;}
 .actorForgotForm li.description{ margin: 0 0 10px 35px; font-size: 75%; text-align: left; color: #e04836;}
+.actorForgotForm li>span.error{ width: 100%; font-size: 68.75%; color: #e04836; display: block; padding: 5px 0;}
+.actorForgotForm li>span.success{ width: 100%; font-size: 68.75%; color: #0099FF; display: block; padding: 5px 0;}
 .actorForgotForm li>input{ width: 80%; height: 26px; border: 2px solid #cccccc; font-size: 75%; border-radius: 5px; padding: 0 6px; margin: 10px 0 5px 0;}
 .actorForgotForm li>input:focus{ border: 2px solid #777777; }
 .actorForgotForm li.actorForgotBtn{ }
