@@ -7,7 +7,9 @@
 
     <section class="layoutContentSection">
 
-
+        <header>
+            <h2>Setting</h2>
+        </header>
 
     </section>
 

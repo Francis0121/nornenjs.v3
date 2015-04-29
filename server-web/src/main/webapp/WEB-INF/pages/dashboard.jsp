@@ -7,6 +7,10 @@
 
     <section class="layoutContentSection">
 
+        <header>
+            <h2>Dash Board</h2>
+        </header>
+        
         <sec:authorize access="hasRole('ROLE_DOCTOR')">
         
         </sec:authorize>
