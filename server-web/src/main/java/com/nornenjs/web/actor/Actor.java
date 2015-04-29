@@ -11,8 +11,10 @@ public class Actor {
     
     private String password;
     
+    private String changePassword;
+    
     private Boolean enabled;
-
+    
     public Actor() {
     }
 
@@ -20,6 +22,10 @@ public class Actor {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
+    }
+
+    public Actor(String username) {
+        this.username = username;
     }
 
     public Integer getPn() {
@@ -54,12 +60,21 @@ public class Actor {
         this.enabled = enabled;
     }
 
+    public String getChangePassword() {
+        return changePassword;
+    }
+
+    public void setChangePassword(String changePassword) {
+        this.changePassword = changePassword;
+    }
+
     @Override
     public String toString() {
         return "Actor{" +
                 "pn=" + pn +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", changePassword='" + changePassword + '\'' +
                 ", enabled=" + enabled +
                 '}';
     }

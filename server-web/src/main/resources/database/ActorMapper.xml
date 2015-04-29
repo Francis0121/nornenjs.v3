@@ -24,6 +24,24 @@
           `pn` = #{pn}
     </update>
     
+    <update id="updatePassword" parameterType="Actor">
+        UPDATE
+          `actor`
+        SET
+          `password` = #{password}
+        WHERE
+          `username` = #{username}
+    </update>
+    
+    <update id="updateDate" parameterType="Actor">
+        UPDATE
+            `actor_info`
+        SET
+            `updateDate` = SYSDATE()
+        WHERE
+            `actorPn` = ( SELECT `pn` FROM `actor` WHERE `username` = #{username} )
+    </update>
+    
     <update id="updateActorInfo" parameterType="ActorInfo">
         UPDATE
           `actor_info`
@@ -49,6 +67,15 @@
           `actor`
         WHERE
           `pn` = #{pn}
+    </select>
+
+    <select id="selectOneFromUsername" parameterType="String" resultType="Actor">
+        SELECT
+          `pn`, `username`, `password`, `enabled`
+        FROM
+          `actor`
+        WHERE
+          `username` = #{username}
     </select>
     
     <select id="selectUsersByUsername" parameterType="String" resultType="Actor">
@@ -110,7 +137,7 @@
           a.`username` = #{username}
     </select>
     
-    <select id="selectOneFromUsername" parameterType="String" resultType="ActorInfo">
+    <select id="selectActorInfoFromUsername" parameterType="String" resultType="ActorInfo">
         SELECT
           a.`pn` AS `actor.pn`, a.`username` AS `actor.username`,
           ai.`email`, ai.`firstName`, ai.`lastName`, ai.`inputDate`, ai.`updateDate`

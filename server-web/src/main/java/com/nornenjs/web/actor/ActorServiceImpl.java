@@ -118,13 +118,34 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
     }
 
     @Override
-    public ActorInfo selectOneFromUsername(String username) {
-        return getSqlSession().selectOne("actor.selectOneFromUsername", username);
+    public ActorInfo selectActorInfoFromUsername(String username) {
+        return getSqlSession().selectOne("actor.selectActorInfoFromUsername", username);
     }
 
     @Override
     public Integer updateActorInfo(ActorInfo actorInfo) {
         return getSqlSession().update("actor.updateActorInfo", actorInfo);
+    }
+
+    @Override
+    public Boolean updatePassword(Actor actor) {
+        Integer result = getSqlSession().update("actor.updatePassword", actor);
+        if(!result.equals(1)) return false;
+        
+        result = getSqlSession().update("actor.updateDate", actor);
+        return result.equals(1);
+    }
+
+    @Override
+    public Boolean selectIsRightPassword(Actor actor) {
+        logger.debug(actor.toString());
+        actor.setEnabled(true);
+        setEncodedPassword(actor);
+        Actor getActor = getSqlSession().selectOne("actor.selectOneFromUsername", actor.getUsername());
+        
+        logger.debug(actor.toString());
+        logger.debug(getActor.toString());
+        return actor.getPassword().equals(getActor.getPassword());
     }
 
     // ~ UserDetailService

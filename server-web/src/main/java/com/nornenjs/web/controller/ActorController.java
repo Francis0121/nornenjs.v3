@@ -193,8 +193,9 @@ public class ActorController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value = "/myInfo/{username}", method = RequestMethod.GET)
     public String myInfoPage(Model model, @PathVariable("username") String username){
-        ActorInfo actorInfo = actorService.selectOneFromUsername(username);
+        ActorInfo actorInfo = actorService.selectActorInfoFromUsername(username);
         model.addAttribute("actorInfo", actorInfo);
+        model.addAttribute("actor", new Actor(username));
         return "user/myInfo";
     }
 
@@ -234,9 +235,56 @@ public class ActorController {
         }.validate(actorInfo, result);
         
         if(result.hasErrors()){
+            model.addAttribute("actor", new Actor(username));
             return "user/myInfo";
         }else{
             actorService.updateActorInfo(actorInfo);
+            return "redirect:/myInfo/"+username;
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
+    @RequestMapping(value = "/myInfo/{username}", method = RequestMethod.PUT)
+    public String passwordChangePost(Model model, @PathVariable("username") String username,
+                                 @ModelAttribute Actor actor, BindingResult result){
+        logger.debug(actor.toString());        
+        new Validator(){
+            @Override
+            public boolean supports(Class<?> aClass) {
+                return Actor.class.isAssignableFrom(aClass);
+            }
+
+            @Override
+            public void validate(Object object, Errors errors) {
+                Actor actor = (Actor) object;
+                
+                String password = actor.getPassword();
+                if(ValidationUtil.isNull(password)){
+                    errors.rejectValue("password", "actor.password.empty");
+                }else{
+                    if(!actorService.selectIsRightPassword(actor)){
+                        errors.rejectValue("password", "actor.password.wrong");
+                    }
+                }
+                
+                String changePassword = actor.getChangePassword();
+                if(ValidationUtil.isNull(changePassword)){
+                    errors.rejectValue("changePassword", "actor.changePassword.empty");
+                }else{
+                    if(ValidationUtil.isPassword(changePassword)){
+                        errors.rejectValue("changePassword", "actor.changePassword.wrong");
+                    }
+                }
+            }
+            
+        }.validate(actor, result);
+        
+        if(result.hasErrors()){
+            ActorInfo actorInfo = actorService.selectActorInfoFromUsername(username);
+            model.addAttribute("actorInfo", actorInfo);
+            return "user/myInfo";
+        }else{
+            actorService.updatePassword(actor);
             return "redirect:/myInfo/"+username;
         }
     }

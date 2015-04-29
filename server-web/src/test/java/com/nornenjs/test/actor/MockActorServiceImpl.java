@@ -13,7 +13,17 @@ import java.util.List;
  */
 @Service("actorServiceImpl")
 public class MockActorServiceImpl implements ActorService{
-    
+
+    @Override
+    public Boolean updatePassword(Actor actor) {
+        return null;
+    }
+
+    @Override
+    public Boolean selectIsRightPassword(Actor actor) {
+        return null;
+    }
+
     @Override
     public Actor selectOne(Integer pn) {
         return null;
@@ -70,7 +80,7 @@ public class MockActorServiceImpl implements ActorService{
     }
 
     @Override
-    public ActorInfo selectOneFromUsername(String username) {
+    public ActorInfo selectActorInfoFromUsername(String username) {
         return null;
     }
 

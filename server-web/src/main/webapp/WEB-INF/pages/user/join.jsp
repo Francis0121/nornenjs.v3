@@ -24,7 +24,7 @@
                 </li>
                 <li>
                     <form:label path="actor.password">비밀번호</form:label>
-                    <form:password path="actor.password" placeholder="8자리 이상 1개 이상 문자,숫자,특수문자를 입력해주세요." maxlength="20"/>
+                    <form:password path="actor.password" placeholder="문자,숫자,특수문자로 구성된 8자리 이상 비밀번호를 입력해주세요." maxlength="20"/>
                     <form:errors path="actor.password" cssClass="error"/>
                 </li>
                 <li>

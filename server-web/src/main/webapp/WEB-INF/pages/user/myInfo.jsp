@@ -43,6 +43,34 @@
                 </li>
             </ul>
         </form:form>
+
+        <header>
+            <h2>Change Password</h2>
+        </header>
+
+        <form:form commandName="actor" action="${cp}/myInfo/${username}" method="put" htmlEscape="true" cssClass="actorUpdateForm">
+            <form:hidden path="username"/>
+            <ul>
+                <li>
+                    <form:label path="password">비밀번호</form:label>
+                    <form:password path="password" cssClass="text" placeholder="현재 비밀번호를 입력해주세요." maxlength="20"/>
+                    <form:errors path="password" cssClass="error"/>
+                </li>
+                <li>
+                    <form:label path="changePassword">비밀번호변경</form:label>
+                    <form:password path="changePassword" cssClass="text" placeholder="문자,숫자,특수문자로 구성된 8자리 이상 비밀번호를 입력해주세요." maxlength="20"/>
+                    <form:errors path="changePassword" cssClass="error"/>
+                </li>
+                <li>
+                    <label for="confirmPassword">비밀번호 확인</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="동일한 비밀번호를 입력해주세요."/>
+                </li>
+                <li class="actorUpdateBtn">
+                    <button type="submit" class="orangeButton">비밀번호수정</button>
+                </li>
+            </ul>
+        </form:form>
+        
     </section>
     
 </section>
