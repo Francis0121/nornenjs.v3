@@ -189,7 +189,6 @@ $(function(){
     });
 
     var volumeListSlider = $('.volumeListSlider').bxSlider({
-        'preloadImages' : 'all',
         'pager' : false
     });
 

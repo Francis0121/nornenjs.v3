@@ -10,21 +10,21 @@
             <div class="title">
                 <span>MPR-X</span>
             </div>
-            <img src="${cp}/resources/image/sample/01.jpg"/>
+            <img src="${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}"/>
         </article>
 
         <article class="volumeRenderingOne volumeRenderingMpr" id="volumeMprY">
             <div class="title">
                 <span>MPR-Y</span>
             </div>
-            <img src="${cp}/resources/image/sample/01.jpg"/>
+            <img src="${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}"/>
         </article>
 
         <article class="volumeRenderingOne volumeRenderingMpr" id="volumeMprZ">
             <div class="title">
                 <span>MPR-Z</span>
             </div>
-            <img src="${cp}/resources/image/sample/01.jpg"/>
+            <img src="${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}"/>
         </article>
         
         <article class="volumeRenderingOne" id="volumeRendering">
@@ -32,7 +32,7 @@
                 <button type="button" id="renderingSizeBtn" class="renderingExpandBtn" title="Size Change">Expand</button>
                 <span>VOLUME</span>
             </div>
-            <img src="${cp}/resources/image/sample/01.jpg"/>
+            <img src="${cp}/data/thumbnail/${thumbnails[0] eq null ? -1 : thumbnails[0]}"/>
         </article>
         
         <article class="volumeRenderingOTF">

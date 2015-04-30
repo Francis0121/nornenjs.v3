@@ -48,7 +48,12 @@ public class VolumeServiceImpl extends SqlSessionDaoSupport implements VolumeSer
     public Integer updateData(Volume updateVolume) {
         return getSqlSession().update("volume.updateData", updateVolume);
     }
-    
+
+    @Override
+    public Integer selectMaxVolume() {
+        return getSqlSession().selectOne("volume.selectMaxVolume");
+    }
+
     @Override
     public Integer delete(Integer pn) {
         return getSqlSession().delete("volume.delete", pn);

@@ -41,6 +41,13 @@
           `pn` = #{pn}
     </update>
     
+    <select id="selectMaxVolume" resultType="Integer">
+        SELECT
+          MAX(`pn`)
+        FROM
+          `volume`
+    </select>
+
     <select id="selectOne" parameterType="Integer" resultType="Volume">
         SELECT
           `pn`, `username`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`

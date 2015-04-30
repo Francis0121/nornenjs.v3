@@ -19,7 +19,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
@@ -42,15 +45,19 @@ public class VolumeController {
     @Autowired
     private Publisher publisher;
 
-    @ResponseBody
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public void whyThisIsCall(){
-        logger.debug("why this controller call");
+    @RequestMapping(method = RequestMethod.GET)
+    public String maxVolumeRenderingPage(){
+        Integer maxVolumePn = volumeService.selectMaxVolume();
+        return "redirect:/volume/"+maxVolumePn;
     }
     
     @RequestMapping(value = "/{volumePn}", method = RequestMethod.GET)
-    public String renderingPage(@PathVariable Integer volumePn){
-        logger.debug(volumePn.toString());
+    public String renderingPage(Model model, @PathVariable Integer volumePn){
+        Volume volume = volumeService.selectOne(volumePn);
+        Data data = dataService.selectOne(volume.getVolumeDataPn());
+        model.addAttribute("volume", volume);
+        model.addAttribute("data", data);
+        model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
         return "volume/one";
     }
     

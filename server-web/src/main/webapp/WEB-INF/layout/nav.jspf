@@ -43,7 +43,7 @@
                     <a href="${cp}/volume/upload">Upload</a>
                 </li>
                 <li>
-                    <a href="${cp}/volume/1">Rendering</a>
+                    <a href="${cp}/volume">Rendering</a>
                 </li>
             </ul>
         </li>

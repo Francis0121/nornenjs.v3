@@ -8,4 +8,6 @@ import com.nornenjs.web.util.CRUDService;
 public interface VolumeService extends CRUDService<Volume, VolumeFilter>{
     
     Integer updateData(Volume updateVolume);
+
+    Integer selectMaxVolume();
 }

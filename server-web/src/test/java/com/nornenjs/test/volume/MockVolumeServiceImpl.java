@@ -19,6 +19,11 @@ public class MockVolumeServiceImpl implements VolumeService{
     }
 
     @Override
+    public Integer selectMaxVolume() {
+        return null;
+    }
+
+    @Override
     public Volume selectOne(Integer pn) {
         return null;
     }
