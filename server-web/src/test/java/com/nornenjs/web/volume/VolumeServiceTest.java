@@ -52,8 +52,8 @@ public class VolumeServiceTest {
         data2 = new Data(DataType.IMAGE.getValue(), actor.getUsername(), "name2", "savePath2");
         dataService.insert(data1);
         dataService.insert(data2);
-        volume1 = new Volume(actor.getPn(), data1.getPn(), "title", 100, 100, 10);
-        volume2 = new Volume(actor.getPn(), data2.getPn(), "title", 100, 100, 10);
+        volume1 = new Volume(actor.getUsername(), data1.getPn(), "title", 100, 100, 10);
+        volume2 = new Volume(actor.getUsername(), data2.getPn(), "title", 100, 100, 10);
         
         volumeService.insert(volume1);
         volumeService.insert(volume2);
@@ -124,12 +124,12 @@ public class VolumeServiceTest {
         for(int i=0; i<20; i++){
             Data data = new Data(DataType.IMAGE.getValue(), actor.getUsername(),"name", "savepath");
             dataService.insert(data);
-            Volume volume = new Volume(actor.getPn(), data.getPn(), "title"+i, 100, 100, 10);
+            Volume volume = new Volume(actor.getUsername(), data.getPn(), "title"+i, 100, 100, 10);
             volumeService.insert(volume);
         }
 
         VolumeFilter volumeFilter = new VolumeFilter();
-        volumeFilter.setActorPn(actor.getPn()); 
+        volumeFilter.setUsername(actor.getUsername());
         List<Volume> volumes = volumeService.selectList(volumeFilter);
         assertThat(10, is(volumes.size()));
 
@@ -150,7 +150,7 @@ class Compare {
     
     public static void volume(Volume volume, Volume getVolume){
         assertThat(volume.getPn(), is(getVolume.getPn()));
-        assertThat(volume.getActorPn(), is(getVolume.getActorPn()));
+        assertThat(volume.getUsername(), is(getVolume.getUsername()));
         assertThat(volume.getVolumeDataPn(), is(getVolume.getVolumeDataPn()));
         assertThat(volume.getDepth(), is(getVolume.getDepth()));
         assertThat(volume.getWidth(), is(getVolume.getWidth()));

@@ -1,5 +1,6 @@
 package com.nornenjs.web.controller;
 
+import com.nornenjs.web.data.DataService;
 import com.nornenjs.web.util.ValidationUtil;
 import com.nornenjs.web.volume.Volume;
 import com.nornenjs.web.volume.VolumeFilter;
@@ -8,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +33,9 @@ public class VolumeController {
     
     @Autowired
     private VolumeService volumeService;
+    
+    @Autowired
+    private DataService dataService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public void whyThisIsCall(){
@@ -55,7 +61,7 @@ public class VolumeController {
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public String uploadPost(@ModelAttribute Volume volume, BindingResult result) {
+    public String uploadPost(Model model, @ModelAttribute Volume volume, BindingResult result) {
         new Validator(){
             @Override
             public boolean supports(Class<?> aClass) {
@@ -95,8 +101,13 @@ public class VolumeController {
         }. validate(volume, result);
         
         if (result.hasErrors()) {
+            model.addAttribute("data", dataService.selectOne(volume.getVolumeDataPn()));
             return "volume/upload";
         }else{
+            User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = user.getUsername();
+            volume.setUsername(username);
+            volumeService.insert(volume);
             return "redirect:/volume/list";   
         }
     }

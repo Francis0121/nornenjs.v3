@@ -5,9 +5,9 @@
     <insert id="insert" parameterType="Volume">
         INSERT INTO
           `volume`
-          ( `actorPn`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate` )
+          ( `username`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate` )
         VALUES
-          ( #{actorPn}, #{volumeDataPn}, #{title}, #{width}, #{height}, #{depth}, SYSDATE() )
+          ( #{username}, #{volumeDataPn}, #{title}, #{width}, #{height}, #{depth}, SYSDATE() )
         <selectKey keyProperty="pn" resultType="Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -43,7 +43,7 @@
     
     <select id="selectOne" parameterType="Integer" resultType="Volume">
         SELECT
-          `pn`, `actorPn`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`
+          `pn`, `username`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`
         FROM
           `volume`
         WHERE
@@ -56,7 +56,7 @@
         FROM
           `volume`
         WHERE
-          `actorPn` = #{actorPn}
+          `username` = #{username}
         <if test="title != null">
           AND
             `title` LIKE CONCAT('%',#{title},'%')
@@ -69,11 +69,11 @@
     
     <select id="selectList" parameterType="VolumeFilter" resultType="Volume">
         SELECT
-          `pn`, `actorPn`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`
+          `pn`, `username`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`
         FROM
           `volume`
         WHERE
-          `actorPn` = #{actorPn}
+          `username` = #{username}
         <if test="title != null">
           AND
             `title` LIKE CONCAT('%',#{title},'%')

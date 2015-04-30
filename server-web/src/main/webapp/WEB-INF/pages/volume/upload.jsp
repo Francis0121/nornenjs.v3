@@ -31,7 +31,9 @@
                 <li>
                     <label for="dataUpload">볼륨 데이터</label>
                     <div id="volumeUploadBtn">
-
+                        <c:if test="${data ne null}">
+                            <span class="success">파일업로드 : <c:out value="${data.name}"/></span>
+                        </c:if>
                     </div>
                     <input type="file" id="dataUpload" name="dataUpload"/>
                     <form:hidden path="volumeDataPn"/>

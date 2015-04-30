@@ -221,8 +221,9 @@ $(function(){
         'onUploadSuccess' : function(file, data, response){
             console.log('On Upload Success');
             if(response){
-                $('#volume #volumeDataPn').val(data);
-                $('#volumeUploadBtn').html('<span class="success">파일업로드 : '+file.name+'</span>');
+                var data = JSON.parse(data)
+                $('#volume #volumeDataPn').val(data.pn);
+                $('#volumeUploadBtn').html('<span class="success">파일업로드 : '+data.name+'</span>');
                 console.log(JSON.stringify(file));
             }
         }

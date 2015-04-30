@@ -7,7 +7,7 @@ public class Volume {
     
     private Integer pn;
     
-    private Integer actorPn;
+    private String username;
     
     private Integer volumeDataPn;
     
@@ -24,8 +24,8 @@ public class Volume {
     public Volume() {
     }
 
-    public Volume(Integer actorPn, Integer volumeDataPn, String title, Integer width, Integer height, Integer depth) {
-        this.actorPn = actorPn;
+    public Volume(String username, Integer volumeDataPn, String title, Integer width, Integer height, Integer depth) {
+        this.username = username;
         this.volumeDataPn = volumeDataPn;
         this.title = title;
         this.width = width;
@@ -41,12 +41,12 @@ public class Volume {
         this.pn = pn;
     }
 
-    public Integer getActorPn() {
-        return actorPn;
+    public String getUsername() {
+        return username;
     }
 
-    public void setActorPn(Integer actorPn) {
-        this.actorPn = actorPn;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Integer getVolumeDataPn() {
@@ -101,7 +101,7 @@ public class Volume {
     public String toString() {
         return "Volume{" +
                 "pn=" + pn +
-                ", actorPn=" + actorPn +
+                ", username='" + username + '\'' +
                 ", volumeDataPn=" + volumeDataPn +
                 ", title='" + title + '\'' +
                 ", width=" + width +

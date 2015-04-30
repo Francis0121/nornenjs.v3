@@ -7,7 +7,7 @@
     <section class="layoutContentSection">
 
         <form:form commandName="volumeFilter" htmlEscape="true" cssClass="volumeFilterForm">
-            <form:hidden path="actorPn"/>
+            <form:hidden path="username"/>
             <ul>
                 <li class="searchIcon">
                     <img src="${cp}/resources/image/icon/search.png"/>

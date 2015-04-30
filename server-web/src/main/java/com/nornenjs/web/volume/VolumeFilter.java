@@ -10,7 +10,7 @@ import java.util.Date;
  */
 public class VolumeFilter extends AbstractListFilter{
     
-    private Integer actorPn;
+    private String username;
     
     private String title;
     
@@ -23,19 +23,19 @@ public class VolumeFilter extends AbstractListFilter{
         this.to = DateUtil.getToday("YYYY-MM-DD");
     }
 
-    public VolumeFilter(Integer actorPn, String title, String from, String to) {
-        this.actorPn = actorPn;
+    public VolumeFilter(String username, String title, String from, String to) {
+        this.username = username;
         this.title = title;
         this.from = from;
         this.to = to;
     }
 
-    public Integer getActorPn() {
-        return actorPn;
+    public String getUsername() {
+        return username;
     }
 
-    public void setActorPn(Integer actorPn) {
-        this.actorPn = actorPn;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getTitle() {
@@ -65,7 +65,7 @@ public class VolumeFilter extends AbstractListFilter{
     @Override
     public String toString() {
         return "VolumeFilter{" +
-                "actorPn=" + actorPn +
+                "username='" + username + '\'' +
                 ", title='" + title + '\'' +
                 ", from='" + from + '\'' +
                 ", to='" + to + '\'' +

@@ -28,9 +28,9 @@ public class DataController {
 
     @ResponseBody
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public Integer upload(@ModelAttribute MultipartFile multipartFile, WebRequest request){
+    public Data upload(@ModelAttribute MultipartFile multipartFile, WebRequest request){
         if(multipartFile.getFiledata() == null || multipartFile.getFiledata().getSize() == 0){
-            return -1;
+            return null;
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
@@ -38,7 +38,7 @@ public class DataController {
         Data data = dataService.uploadData(multipartFile.getFiledata(), username);
         logger.debug(data.toString());
         
-        return data.getPn();
+        return dataService.selectOne(data.getPn());
     }
     
 }
