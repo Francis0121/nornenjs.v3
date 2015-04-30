@@ -42,13 +42,6 @@ public class VolumeController {
     private Publisher publisher;
 
     @ResponseBody
-    @RequestMapping(value="/publisher", method = RequestMethod.GET)
-    public String testPublisher(){
-        publisher.testPublish();
-        return "message";
-    }
-
-    @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public void whyThisIsCall(){
         logger.debug("why this controller call");

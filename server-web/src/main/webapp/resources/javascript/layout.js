@@ -208,6 +208,7 @@ $(function(){
         }
     });
 
+    // ~ STEP 01 볼륨을 업로드한다.
     $('#dataUpload').uploadify({
         'buttonText' : '파일선택',
         'buttonClass' : 'volumeDataBtn',
@@ -221,9 +222,32 @@ $(function(){
         'onUploadSuccess' : function(file, data, response){
             //console.log('On Upload Success');
             if(response){
+                // ~ STEP 02 섬네일 생성 요청을 한다.
                 var data = JSON.parse(data)
                 $('#volume #volumeDataPn').val(data.pn);
                 $('#volumeUploadBtn').html('<span class="success">파일업로드 : '+data.name+'</span>');
+
+                var url = contextPath + '/data/thumbnail';
+                var json = {
+                    volumeDataPn : data.pn,
+                    width : $('#width').val(),
+                    height : $('#height').val(),
+                    depth : $('#depth').val()
+                }
+
+                $.postJSON(url, json, function(result){
+                    // ~ STEP 03 Thumbnail 이 모두 생성되었는지 폴링한다. 비교값은 result 랑 연동
+                    var pollingFunc = function() {
+                        var polling = contextPath + '/data/polling/' + data.pn;
+                        console.log('polling')
+                        $.getJSON(polling, function (list) {
+                            if(list.lenght != result){
+                                setTimeout(pollingFunc, 1000);
+                            }
+                        });
+                    }
+                    setTimeout(pollingFunc, 1000);
+                });
             }
         }
     });

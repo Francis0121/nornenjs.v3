@@ -28,5 +28,14 @@
         WHERE
           `pn` = #{pn}
     </select>
+
+    <select id="selectVolumeThumbnailPn" parameterType="Thumbnail" resultType="Integer">
+        SELECT
+          `dataPn`, `thumbnailPn`
+        FROM
+          `thumbnail`
+        WHERE
+          `dataPn` = #{dataPn}
+    </select>
     
 </mapper>

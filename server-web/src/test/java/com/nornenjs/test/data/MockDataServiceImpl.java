@@ -3,6 +3,7 @@ package com.nornenjs.test.data;
 import com.nornenjs.web.data.Data;
 import com.nornenjs.web.data.DataFilter;
 import com.nornenjs.web.data.DataService;
+import com.nornenjs.web.volume.thumbnail.Thumbnail;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
@@ -50,6 +51,11 @@ public class MockDataServiceImpl implements DataService{
 
     @Override
     public Data uploadData(CommonsMultipartFile multipartFile, String username) {
+        return null;
+    }
+
+    @Override
+    public List<Integer> selectVolumeThumbnailPn(Thumbnail thumbnail) {
         return null;
     }
 }

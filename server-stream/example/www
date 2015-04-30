@@ -73,7 +73,7 @@ redisClient.auth('');
 redisClient.on('error', function(err) {
     console.log('Error In Redis Server');
 });
-redisClient.subscribe('testPublish');
+redisClient.subscribe('thumbnail');
 
 redisClient.on('message', function(channel, message) {
     console.log('Channel : '+ channel + ' Message : ' + message);

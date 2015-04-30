@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 
 /**
  * Created by pi on 15. 4. 30.
@@ -20,17 +22,11 @@ public class Publisher {
 
     @Autowired
     private StringRedisTemplate publishTemplate;
-    @Autowired
-    private ActorService actorService;
 
-
-    public void testPublish() {
+    public void makeThumbnail(Map<String, Object> data) {
         try {
             Gson gson = new Gson();
-            ActorInfo actorInfo = actorService.selectActorInfoFromUsername("nornenjs");
-            String json = gson.toJson(actorInfo);
-            logger.debug(json.toString());
-            publishTemplate.convertAndSend("testPublish", json);
+            publishTemplate.convertAndSend("thumbnail", gson.toJson(data));
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Redis 서버가 작동하지 않고 있습니다. Redis 서버를 실행시켜야 합니다");

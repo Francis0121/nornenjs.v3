@@ -1,6 +1,7 @@
 package com.nornenjs.web.data;
 
 import com.nornenjs.web.util.PropertiesService;
+import com.nornenjs.web.volume.thumbnail.Thumbnail;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,5 +97,10 @@ public class DataServiceImpl extends SqlSessionDaoSupport implements DataService
         logger.debug(data.toString());
         
         return data;
+    }
+
+    @Override
+    public List<Integer> selectVolumeThumbnailPn(Thumbnail thumbnail) {
+        return getSqlSession().selectList("data.selectVolumeThumbnailPn", thumbnail);
     }
 }

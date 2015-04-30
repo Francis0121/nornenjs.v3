@@ -17,6 +17,9 @@
 		
 		<typeAlias type="com.nornenjs.web.volume.Volume" alias="Volume"/>
 		<typeAlias type="com.nornenjs.web.volume.VolumeFilter" alias="VolumeFilter"/>
+
+		<typeAlias type="com.nornenjs.web.volume.thumbnail.Thumbnail" alias="Thumbnail"/>
+		<typeAlias type="com.nornenjs.web.volume.thumbnail.ThumbnailOption" alias="ThumbnailOption"/>
 		
 	</typeAliases>
 </configuration>
