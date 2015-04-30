@@ -2,6 +2,7 @@ package com.nornenjs.web.controller;
 
 import com.nornenjs.web.data.Data;
 import com.nornenjs.web.data.DataService;
+import com.nornenjs.web.util.Publisher;
 import com.nornenjs.web.util.ValidationUtil;
 import com.nornenjs.web.volume.Volume;
 import com.nornenjs.web.volume.VolumeFilter;
@@ -36,6 +37,16 @@ public class VolumeController {
     
     @Autowired
     private DataService dataService;
+
+    @Autowired
+    private Publisher publisher;
+
+    @ResponseBody
+    @RequestMapping(value="/publisher", method = RequestMethod.GET)
+    public String testPublisher(){
+        publisher.testPublish();
+        return "message";
+    }
 
     @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.GET)
