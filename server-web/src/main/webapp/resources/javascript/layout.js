@@ -220,6 +220,11 @@ $(function(){
         },
         'onUploadSuccess' : function(file, data, response){
             console.log('On Upload Success');
+            if(response){
+                $('#volume #volumeDataPn').val(data);
+                $('#volumeUploadBtn').html('<span class="success">파일업로드 : '+file.name+'</span>');
+                console.log(JSON.stringify(file));
+            }
         }
     });
     

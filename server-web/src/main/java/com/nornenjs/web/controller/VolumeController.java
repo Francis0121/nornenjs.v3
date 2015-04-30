@@ -31,6 +31,11 @@ public class VolumeController {
     @Autowired
     private VolumeService volumeService;
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public void whyThisIsCall(){
+
+    }
+    
     @RequestMapping(value = "/{volumePn}", method = RequestMethod.GET)
     public String listPage(@PathVariable Integer volumePn){
         logger.debug(volumePn.toString());

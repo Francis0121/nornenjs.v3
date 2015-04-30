@@ -30,6 +30,9 @@
                 </li>
                 <li>
                     <label for="dataUpload">볼륨 데이터</label>
+                    <div id="volumeUploadBtn">
+
+                    </div>
                     <input type="file" id="dataUpload" name="dataUpload"/>
                     <form:hidden path="volumeDataPn"/>
                     <form:errors path="volumeDataPn" cssClass="error"/>
