@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+var logger = require('../lib/logger');
 
 var http = require('http'),
     url = require('url'),
@@ -17,10 +18,12 @@ for (var k in interfaces) {
     }
 }
 
-var server = http.createServer(function(request, response){
-    
+var HTTP_PORT = 5000;
+
+var server = http.createServer(function (request, response) {
+
     var reqUrl = url.parse(request.url, true);
-    
+
     fs.readFile(path.join(__dirname, './index.html'), function(err, data){
         if(err){
             response.writeHead(404, {'Content-type' : 'text/plain'});
@@ -32,20 +35,30 @@ var server = http.createServer(function(request, response){
         if(volumePrimaryPn === '' || (volumePrimaryPn != 1 && volumePrimaryPn != 2)){
             volumePrimaryPn = 1;
         }
-        
+
         var html = data.toString()
             .replace(/\$\{volumePrimaryPn\}/gi, volumePrimaryPn)
             .replace(/\$\{ipAddress\}/gi, ipAddress);
-        
+
         response.writeHead(200, {'Content-type' : 'text/html'});
         response.end(html);
     });
-    
-}).listen(5000, function() {
-    console.log('Server listening on port ' + server.address().port);
-});
+
+}).listen(HTTP_PORT);
 
 // ~ Create nornenjs server
 var NornenjsServer = require('../lib/server').NornenjsServer;
-var nornenjsServer = new NornenjsServer(server);
+var nornenjsServer = new NornenjsServer(server, true);
+//var nornenjsServer = new NornenjsServer(server, false, '112.108.40.166');
 nornenjsServer.connect();
+
+/**
+ * Override nodejs process delete function
+ */
+process.on('SIGINT', function() {
+    nornenjsServer.close(function(){
+        server.close(function() {
+            process.exit(0);
+        });
+    });
+});

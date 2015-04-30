@@ -1,115 +1,396 @@
 /**
  * Copyright Francis kim.
  */
+
+// ~ Import module (Me)
 var ENUMS = require('./enums');
 var logger = require('./logger');
 var sqlite = require('./sql/default');
-
-var path = require('path');
-var HashMap = require('hashmap').HashMap;
-var socketIo = require('socket.io');
+var util = require('./util');
 
 var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
-var cuCtx = new cu.Ctx(0, cu.Device(0));
+//var cuDevice = cu.Device(0);
+//var cuCtx = new cu.Ctx(0, cuDevice);
 
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
 
+// ~ Import module (Nodejs)
+var path = require('path');
+var HashMap = require('hashmap').HashMap;
+var socketIo = require('socket.io');
+var exec = require('child_process').exec;
+var redis = require('redis');
+
+
 /**
- * Nornejs server create 
+ * Create constructor
+ *
  * @param server
- *  HttpCreateServer 
+ *  Http server
+ * @param httpPort
+ *  Socket.io port
+ * @param isMaster
+ *  true : relay server master, false : slave server
+ * @param masterIpAddres
+ *  it`s only need slave server
  * @constructor
- *  SET max conection client, cuda ptx path, cuda data path;
  */
-var NornenjsServer = function(server){
-    this.MAX_CONNECTION_CLIENT = 10;
+var NornenjsServer = function(server, isMaster, masterIpAddres){
+    this.MAX_CONNECTION_CLIENT = 4;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
     this.CUDA_DATA_PATH = path.join(__dirname, './data/');
 
-    this.server = server;
-    this.io = socketIo.listen(this.server);
+    this.io = socketIo.listen(server);
     this.cudaRenderMap = new HashMap();
-    
-    //TODO 해당되는 클라이언트가 무엇인지에 따라서 사용되는 socket event Handler를 다르게 한다.
+
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
+
+    // Exec Redis Server create
+    if(typeof isMaster !== 'boolean'){
+        throw new Error('IsRoot type is "Boolean" type');
+    }
+
+    this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
+    this.REDIS_PORT = 6379;
+    this.ipAddress = null;
+    this.redisProcess = undefined;
+    this.isMaster = isMaster;
+    this.cuCtxs = [];
+
+    if(isMaster){
+        // ~ Master Relay server. Exec redis server and connect redis.
+        this.redisProcess = exec(this.REDIS_PATH, function (error) {
+            if (error !== null) {
+                throw new Error(error);
+            }
+        });
+
+        this.ipAddress = util.getIpAddress();
+
+        var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+        client.flushall(function (error, reply){
+            logger.info('Redis "Flushall command"', reply);
+            client.quit();
+        });
+
+        this.addDevice();
+
+        this.subscribe = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
+        this.subscribe.subscribe('streamOut');
+
+    }else{
+        // ~ Slave server. Connect master server redis.
+        if(typeof masterIpAddres !== 'string'){
+            throw new Error('IpAddress type is "String" type')
+        }
+
+        this.ipAddress = masterIpAddres;
+        this.addDevice();
+    }
+};
+
+// ~ Redis key
+var keys = {
+    HOSTLIST : 'HostList'
+};
+
+/**
+ * Add graphic device
+ *
+ * @param callback
+ */
+NornenjsServer.prototype.addDevice = function(callback) {
+
+    var launch = function (key, ipAddress, port, isLast, callback) {
+        var client = redis.createClient(port, ipAddress, {});
+        client.hset(keys.HOSTLIST, key, '0', function (err, reply) {
+            logger.info('[Redis] ADD DEVICE ' + keys.HOSTLIST + ' add device ' + key + ' Reply ' + reply);
+            client.quit();
+            if (isLast) {
+                if (typeof callback === 'function') callback();
+            }
+        });
+    };
+
+    var ipAddress = util.getIpAddress();
+    for (var i = 0; i < cu.deviceCount; i++) {
+        var key = ipAddress + '_' + i;
+        launch(key, this.ipAddress, this.REDIS_PORT, i + 1 === cu.deviceCount ? true : false, callback);
+    }
+
+    for (var i = 0; i < cu.deviceCount; i++) {
+        logger.info('[Init] Cuda context initialize in constructor DeviceNumber', i);
+        this.cuCtxs.push(new cu.Ctx(0, cu.Device(i)));
+        //logger.info('[ctx name]',this.cuCtxs[i]);
+
+    }
+   // logger.info('[ctx confirm - 0]',this.cuCtxs[0]);
+   // logger.info('[ctx confirm - 1]',this.cuCtxs[1]);
+};
+
+/**
+ * Remove graphic device
+ *
+ * @param callback
+ */
+NornenjsServer.prototype.removeDevice = function(callback){
+
+    var launch = function(key, ipAddress, port, isLast, callback){
+        var client = redis.createClient(port, ipAddress, { } );
+        client.hdel(keys.HOSTLIST, key, function(err, reply){
+            logger.info('[Redis] REMOVE DEVICE '+keys.HOSTLIST+' remove device ' + key + ' Reply ' + reply);
+            client.quit();
+            if(isLast){
+                if(typeof callback === 'function') callback();
+            }
+        });
+    };
+
+    var ipAddress = util.getIpAddress();
+    for(var i=0; i<cu.deviceCount; i++){
+        var key = ipAddress+'_'+i;
+        launch(key, this.ipAddress, this.REDIS_PORT, i+1 === cu.deviceCount ? true : false, callback);
+    }
+};
+
+/**
+ * Increase or decrease Device count
+ */
+NornenjsServer.prototype.updateDevice = function(key, type, callback){
+
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+
+    client.hincrby(keys.HOSTLIST, key, type, function(err, reply){
+        logger.info('[Redis] INCREMENT ' + keys.HOSTLIST+ ' hash key update ' + type + ' Reply ' + reply);
+        client.quit();
+
+        if(typeof callback === 'function') callback();
+    });
+};
+
+/**
+ * Minimum device key Or No device count
+ */
+NornenjsServer.prototype.getDeviceKey = function(callback){
+
+    var $this = this;
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, { } );
+    var min = $this.MAX_CONNECTION_CLIENT+1,
+        select = undefined;
+
+    client.hgetall(keys.HOSTLIST, function (err, list) {
+        client.quit();
+        for (key in list) {
+            var val = list[key];
+            if(min > val && val < $this.MAX_CONNECTION_CLIENT){
+                select = key, min = val;
+                if(min === 0) break;
+            }
+        }
+        if(typeof callback === 'function') callback(select, min);
+    });
+};
+
+/**
+ * User remove publish client to server
+ */
+NornenjsServer.prototype.publish = function(){
+
+    console.log('[REDIS]               PUBLISH START');
+    var client = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
+    client.publish('streamOut', util.getIpAddress());
+    client.quit();
+    console.log('[REDIS]               PUBLISH END');
+
 };
 
 /**
  * Nornensjs server create
  */
 NornenjsServer.prototype.connect = function(){
-    this.socketIoConnect();
+    if(this.isMaster) {
+        this.socketIoRelayServer();
+    }else{
+        this.socketIoSlaveServer();
+    }
+    this.socketIoCuda();
 };
+
+
+/**
+ * Distributed User
+ */
+var clientQueue = [];
+NornenjsServer.prototype.distributed = function(socket, callback) {
+
+    var $this = this;
+
+    this.getDeviceKey(function(select, deviceCount){
+
+        var socketId = socket.id;
+        var info = {
+                ipAddress : null,
+                deviceNumber : null,
+                deviceCount : deviceCount,
+                port : 5000,
+                conn : true
+            };
+
+        if(typeof select !== 'string'){
+            clientQueue.push(socketId);
+            logger.info('[Redis] CONNECT DEVICE FULL');
+            logger.info('[Redis] CLIENT QUEUE LIST', clientQueue);
+            info.conn = false;
+        }else{
+            $this.updateDevice(select, ENUMS.REDIS_UPDATE_TYPE.INCREASE);
+            var split = select.split('_');
+            info.ipAddress = split[0];
+            info.deviceNumber = split[1];
+            info.conn = true;
+            logger.info('[Redis] SELECTED ', split);
+        }
+
+        socket.emit('getInfoClient', info);
+        if(typeof callback === 'function') callback();
+    });
+
+};
+
 
 /**
  * Socket Io First Connect
  */
-NornenjsServer.prototype.socketIoConnect = function(){
+var relayServer = [];
+var deviceMap = new HashMap();
 
+NornenjsServer.prototype.socketIoRelayServer = function(){
+
+    var isRegisterSubscribe = true;
     var $this = this;
-    var clientQueue = [];
-    var streamClientCount = 0;
 
-    this.io.sockets.on('connection', function(socket){
-        
-        $this.android.addSocketEventListener(socket);
-        $this.web.addSocketEventListener(socket);
-        
+    $this.io.sockets.on('connection', function(socket){
+        if(isRegisterSubscribe) {
+            isRegisterSubscribe = false;
+            $this.subscribe.on('message', function (channel, message) {
+
+                var connSocketId = undefined;
+                while(typeof connSocketId === 'undefined' && clientQueue.length !== 0){
+                    connSocketId = clientQueue.shift();
+                    console.log(connSocketId, typeof socket.server.eio.clients[connSocketId]);
+                    if(typeof socket.server.eio.clients[connSocketId] === 'undefined'){
+                        connSocketId = undefined;
+                    }
+
+                }
+
+                if(typeof connSocketId !== 'undefined') {
+                    logger.info('[Subscribe]            ', connSocketId, typeof connSocketId, '\n');
+                    socket.broadcast.to(connSocketId).emit('connSocket');
+                }
+
+            });
+        }
+
         /**
-         * Connection User
-         * TODO 사용자 관리는 프록시 서버가 되는 부분으로 이전될 예정
+         * Connection Relay Server
          */
-        socket.on('connectMessage', function(){
-
-            var clientId = socket.id;
-
-            var message = {
-                error : '',
-                success : false,
-                clientId : clientId
+        socket.on('getInfo', function(count){
+            logger.info('Count', count);
+            var launch = function(){
+                if(relayServer.indexOf(socket.id) === -1)
+                    relayServer.push(socket.id);
             };
+            logger.info('[Socket] CONNECT RELAY Server', socket.id);
+            $this.distributed(socket, launch());
+        });
 
-            if(streamClientCount < $this.MAX_CONNECTION_CLIENT){
-                streamClientCount++;
-                message.success = true;
-            }else{
-                clientQueue.push(clientId);
-                message.error = 'Visitor limit';
-            }
-
-            logger.debug('[Connect] Stream user count [' + streamClientCount + ']');
-            logger.debug('Send message client id [' + clientId + ']');
-
-            socket.emit('connectMessage', message);
+        /**
+         * Connection Stream Server
+         */
+        socket.on('join', function(deviceNumber){
+            logger.info('[Socket]           CONNECT STREAM server\n');
+            deviceMap.set(socket.id, deviceNumber);
         });
 
         /**
          * Disconnection User - Wait queue client connect request
          */
         socket.on('disconnect', function () {
-            
-            var clientId = socket.id;
-            
-            if(clientQueue.indexOf(clientId) == -1){
-                streamClientCount--;
-                logger.debug('[Disconnect] Stream user count [' + streamClientCount + ']');
-                logger.debug('Disconnect socket client id ['+ clientId +']');
+
+            var index = relayServer.indexOf(socket.id);
+            logger.info('RELAY SERVER !!!!', index);
+            if( index !== -1){
+                relayServer.splice(index, 1);
+                logger.info('[Socket] DISCONNECT RELAY Server KEY ['+socket.id+']', index);
+                logger.info('[Socket]        RELAY SERVER CONNECT List    -', relayServer.length == 0 ? 'NONE' : relayServer);
+            }else{
+                var deviceNumber = deviceMap.get(socket.id);
+                deviceMap.remove(socket.id);
+                logger.info('[Socket] DISCONNECT stream server', deviceNumber);
+
+                if(typeof deviceNumber !== 'undefined') {
+                    var launch = function(){
+                        // Publish client to server
+                        $this.publish();
+                    };
+                    // Update Redis Info
+                    $this.updateDevice(util.getIpAddress() + '_' + deviceNumber, ENUMS.REDIS_UPDATE_TYPE.DECREASE, launch);
+                }
             }
+        });
+    });
+};
 
-            var connectClientId = clientQueue.shift();
 
-            if(connectClientId != undefined){
-                logger.debug('Connect socket client id [' + connectClientId + ']');
-                socket.broadcast.to(connectClientId).emit('otherClientDisconnect');
-            }
+NornenjsServer.prototype.socketIoSlaveServer = function(){
 
+    var $this = this;
+
+    $this.io.sockets.on('connection', function(socket){
+
+        /**
+         * Connection Stream Server
+         */
+        socket.on('join', function(deviceNumber){
+            logger.info('Connect stream server');
+            deviceMap.set(socket.id, deviceNumber);
         });
 
+        socket.on('disconnect', function () {
+            var deviceNumber = deviceMap.get(socket.id);
+            deviceMap.remove(socket.id);
+            logger.info('Disconnect stream server', deviceNumber);
 
+            if(typeof deviceNumber !== 'undefined') {
+                var launch = function(){
+                    // Publish client to server
+                    $this.publish();
+                };
+
+                // Update Redis Info
+                $this.updateDevice(util.getIpAddress() + '_' + deviceNumber, ENUMS.REDIS_UPDATE_TYPE.DECREASE, launch);
+
+            }
+        });
+    });
+};
+
+/**
+ * Cuda Init
+ */
+NornenjsServer.prototype.socketIoCuda = function(){
+
+    var $this = this;
+
+    $this.io.sockets.on('connection', function(socket){
+
+        $this.android.addSocketEventListener(socket);
+
+        $this.web.addSocketEventListener(socket);
         /**
          * Init cudaRenderObject
          */
@@ -127,22 +408,66 @@ NornenjsServer.prototype.socketIoConnect = function(){
                     // TODO Announce fail lode volume data to client
                     return;
                 }else {
+                    var deviceCount = deviceMap.get(socket.id);
                     logger.debug('[Stream] Register CUDA module ');
+                    logger.info('[Stream]           Device Number', deviceCount);
 
                     var cudaRender = new CudaRender(
-                                            ENUMS.RENDERING_TYPE.VOLUME, $this.CUDA_DATA_PATH + volume.save_name,
-                                            volume.width, volume.height, volume.depth,
-                                            cuCtx, cu.moduleLoad($this.CUDA_PTX_PATH));
+                        ENUMS.RENDERING_TYPE.VOLUME, $this.CUDA_DATA_PATH + volume.save_name,
+                        volume.width, volume.height, volume.depth,
+                        $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
                     cudaRender.init();
-                    
+
                     $this.cudaRenderMap.set(clientId, cudaRender);
+
                     socket.emit('loadCudaMemory');
                 }
             });
         });
 
     });
+};
 
+
+/**
+ * NornenjsServer close event. (Important Need server is closed)
+ * @param callback
+ */
+NornenjsServer.prototype.close = function(callback){
+    var $this = this;
+
+    if(typeof $this.redisProcess !== 'object') {
+
+        // ~ Slave Server
+        logger.info('Nornenjs server closed.');
+        $this.removeDevice(callback);
+
+    }else {
+        // ~ Relay Server Remove all redis key
+        this.subscribe.quit();
+        logger.info('Redis subscribe client quit');
+
+        var client = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
+
+        client.hgetall(keys.HOSTLIST, function (err, list) {
+            var i = 0, size = Object.keys(list).length;
+            for (key in list) {
+                logger.info('Delete redis key - ', key, ': value -', list[key]);
+                client.hdel(keys.HOSTLIST, key, function (err, reply) {
+                    i++;
+                    if (i == size) {
+                        client.quit();
+
+                        logger.info('Redis server kill.');
+                        logger.info('Nornenjs server closed.');
+
+                        $this.redisProcess.kill();
+                        callback();
+                    }
+                });
+            }
+        });
+    }
 };
 
 module.exports.NornenjsServer = NornenjsServer;

@@ -24,6 +24,11 @@ var ENUMS = {
     COMPRESS_TYPE : {
         PNG : 1,
         JPEG : 2
+    },
+
+    REDIS_UPDATE_TYPE : {
+        INCREASE : 1,
+        DECREASE : -1
     }
 };
 
