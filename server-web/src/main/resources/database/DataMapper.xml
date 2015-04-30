@@ -5,9 +5,9 @@
     <insert id="insert" parameterType="Data">
         INSERT INTO
           `data`
-          ( `type`, `name`, `savePath`, `inputDate`)
+          ( `type`, `username`, `name`, `savePath`, `inputDate`)
         VALUES
-          ( #{type}, #{name}, #{savePath}, SYSDATE() )
+          ( #{type}, #{username}, #{name}, #{savePath}, SYSDATE() )
         <selectKey keyProperty="pn" resultType="Integer">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -22,7 +22,7 @@
     
     <select id="selectOne" parameterType="Integer" resultType="Data">
         SELECT
-          `pn`, `type`, `name`, `savePath`, `inputDate`
+          `pn`, `username`, `type`, `name`, `savePath`, `inputDate`
         FROM
           `data`
         WHERE

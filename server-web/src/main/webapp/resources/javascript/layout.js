@@ -214,7 +214,13 @@ $(function(){
         'fileTypeDesc' : 'Volume Data',
         'fileTypeExts' : '*.den; *.data',
         'swf': contextPath + '/resources/javascript/uploadify.swf',
-        'uploader' : ''
+        'uploader' : contextPath+'/data/upload',
+        'onUploadStart' : function(){
+            console.log('On Upload Start');
+        },
+        'onUploadSuccess' : function(file, data, response){
+            console.log('On Upload Success');
+        }
     });
     
     $('#renderingSizeBtn').off('click').on('click', function(){

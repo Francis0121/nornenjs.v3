@@ -1,5 +1,7 @@
 package com.nornenjs.web.data;
 
+import com.nornenjs.web.actor.Actor;
+import com.nornenjs.web.actor.ActorService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,13 +25,21 @@ public class DataServiceTest {
     private static Logger logger = LoggerFactory.getLogger(DataServiceTest.class);
     
     @Autowired
+    private ActorService actorService;
+    
+    @Autowired
     private DataService dataService;
     
-    private Data data1 = new Data(DataType.IMAGE.getValue(), "name", "path");
-    private Data data2 = new Data(DataType.IMAGE.getValue(), "name2", "path2");
-    
+    private Data data1;
+    private Data data2;
+    private Actor actor1 = new Actor("user01", "1q2w3e4r!", true);
     @Before
     public void Before(){
+        actorService.insert(actor1);
+        
+        data1 = new Data(DataType.IMAGE.getValue(), actor1.getUsername(), "name", "path");
+        data2 = new Data(DataType.IMAGE.getValue(), actor1.getUsername(), "name2", "path2");
+        
         dataService.insert(data1);
         dataService.insert(data2);
     }

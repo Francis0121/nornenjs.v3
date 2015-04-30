@@ -9,6 +9,8 @@ public class Data {
     
     private Integer type;
     
+    private String username;
+    
     private String name;
     
     private String savePath;
@@ -18,10 +20,19 @@ public class Data {
     public Data() {
     }
 
-    public Data(Integer type, String name, String savePath) {
+    public Data(Integer type, String username, String name, String savePath) {
         this.type = type;
+        this.username = username;
         this.name = name;
         this.savePath = savePath;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Integer getPn() {
@@ -69,9 +80,11 @@ public class Data {
         return "Data{" +
                 "pn=" + pn +
                 ", type=" + type +
+                ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", savePath='" + savePath + '\'' +
                 ", inputDate='" + inputDate + '\'' +
                 '}';
     }
+    
 }

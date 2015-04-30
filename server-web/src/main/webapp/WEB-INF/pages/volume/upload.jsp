@@ -6,7 +6,7 @@
 
     <section class="layoutContentSection">
 
-        <form:form commandName="volume" action="${cp}/volume/upload" method="post" htmlEscape="true" cssClass="volumeForm">
+        <form:form commandName="volume" action="${cp}/volume/upload" method="post" htmlEscape="true" cssClass="volumeForm" enctype="multipart/form-data">
             <ul>
                 <li>
                     <form:label path="width">가로</form:label>

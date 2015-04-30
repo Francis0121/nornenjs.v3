@@ -30,8 +30,8 @@
                 </lI>
                 <li>
                     <form:label path="lastName">성</form:label>
-                    <form:input path="lastName" placeholder="성을 입력해주세요." maxlength="20"/>
                     <form:errors path="lastName" cssClass="error"/>
+                    <form:input path="lastName" placeholder="성을 입력해주세요." maxlength="20"/>
                 </li>
                 <li>
                     <form:label path="firstName">이름</form:label>

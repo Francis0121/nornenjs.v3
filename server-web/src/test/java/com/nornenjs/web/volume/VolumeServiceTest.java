@@ -39,14 +39,17 @@ public class VolumeServiceTest {
     private DataService dataService;
 
     private Actor actor = new Actor("username", "password", true);
-    private Data data1 = new Data(DataType.IMAGE.getValue(), "name", "savePath");
-    private Data data2 = new Data(DataType.IMAGE.getValue(), "name", "savePath");
+    private Data data1;
+    private Data data2;
     private Volume volume1;
     private Volume volume2;
     
     @Before
     public void Before() throws Exception{
         actorService.insert(actor);
+
+        data1 = new Data(DataType.IMAGE.getValue(), actor.getUsername(), "name", "savePath");
+        data2 = new Data(DataType.IMAGE.getValue(), actor.getUsername(), "name2", "savePath2");
         dataService.insert(data1);
         dataService.insert(data2);
         volume1 = new Volume(actor.getPn(), data1.getPn(), "title", 100, 100, 10);
@@ -94,7 +97,7 @@ public class VolumeServiceTest {
     @Test
     @Transactional
     public void 볼륨_데이터_수정() throws Exception{
-        Data updateData = new Data(DataType.IMAGE.getValue(), "updateName", "savePath");
+        Data updateData = new Data(DataType.IMAGE.getValue(), actor.getUsername(), "updateName", "savePath");
         dataService.insert(updateData);
         
         Volume updateVolume = new Volume(null, updateData.getPn(), null, 200, 200, 20);
@@ -119,7 +122,7 @@ public class VolumeServiceTest {
         actorService.insert(actor);
         
         for(int i=0; i<20; i++){
-            Data data = new Data(DataType.IMAGE.getValue(), "name", "savepath");
+            Data data = new Data(DataType.IMAGE.getValue(), actor.getUsername(),"name", "savepath");
             dataService.insert(data);
             Volume volume = new Volume(actor.getPn(), data.getPn(), "title"+i, 100, 100, 10);
             volumeService.insert(volume);
