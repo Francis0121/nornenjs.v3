@@ -43,8 +43,15 @@
 
         console.log(info);
 
+        var init = {
+            savePath : '<c:out value="${data.savePath}"/>',
+            width : <c:out value="${volume.width}"/>,
+            height : <c:out value="${volume.height}"/>,
+            depth : <c:out value="${volume.depth}"/>
+        };
+
         socket.emit('join', info.deviceNumber);
-        socket.emit('init');
+        socket.emit('init', init);
 
         socket.on('loadCudaMemory', function(){
             socket.emit('webPng');

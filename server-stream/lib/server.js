@@ -394,35 +394,22 @@ NornenjsServer.prototype.socketIoCuda = function(){
         /**
          * Init cudaRenderObject
          */
-        socket.on('init', function(){
-
-            var volumePn = 1;
+        socket.on('init', function(init){
+            logger.info('[Socket] '+JSON.stringify(init));
             var clientId = socket.id;
+            var deviceCount = deviceMap.get(socket.id);
+            logger.debug('[Stream] Register CUDA module ');
+            var cudaRender = new CudaRender(
+                ENUMS.RENDERING_TYPE.VOLUME, init.savePath,
+                init.width, init.height, init.depth,
+                $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
 
-            sqlite.db.get(sqlite.sql.volume.selectVolumeOne, { $pn: volumePn }, function(err, volume){
+            logger.info('[Stream]           Device Number', deviceCount);
+            cudaRender.init();
 
-                logger.debug('[Stream] volume object ', volume);
+            $this.cudaRenderMap.set(clientId, cudaRender);
 
-                if(volume == undefined) {
-                    logger.error('[Stream] Fail select volume data');
-                    // TODO Announce fail lode volume data to client
-                    return;
-                }else {
-                    var deviceCount = deviceMap.get(socket.id);
-                    logger.debug('[Stream] Register CUDA module ');
-                    logger.info('[Stream]           Device Number', deviceCount);
-
-                    var cudaRender = new CudaRender(
-                        ENUMS.RENDERING_TYPE.VOLUME, $this.CUDA_DATA_PATH + volume.save_name,
-                        volume.width, volume.height, volume.depth,
-                        $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
-                    cudaRender.init();
-
-                    $this.cudaRenderMap.set(clientId, cudaRender);
-
-                    socket.emit('loadCudaMemory');
-                }
-            });
+            socket.emit('loadCudaMemory');
         });
 
     });
