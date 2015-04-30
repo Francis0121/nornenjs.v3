@@ -88,7 +88,6 @@ redisClient.subscribe('thumbnail');
 
 redisClient.on('message', function(channel, message) {
     var map = JSON.parse(message);
-    console.log(channel, map);
     if(channel == 'thumbnail'){
 
         var thumbnailOptionList = map.thumbnailOptionList;
@@ -111,7 +110,12 @@ redisClient.on('message', function(channel, message) {
 
         var thumbnailPns = [];
         for(var i=0; i<thumbnailOptionList.length; i++){
-            var thumbnailOtion = thumbnailOptionList[i];
+            var thumbnailOption = thumbnailOptionList[i];
+            cudaRender.type = thumbnailOption.type;
+            cudaRender.mprType = thumbnailOption.mprType;
+            cudaRender.transferScaleX = thumbnailOption.transferScaleX;
+            cudaRender.transferScaleY = thumbnailOption.transferScaleY;
+            cudaRender.transferScaleZ = thumbnailOption.transferScaleZ;
 
             var savePath = savePaths[i];
 
