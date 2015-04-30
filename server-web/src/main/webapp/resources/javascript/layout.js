@@ -80,6 +80,7 @@ LayoutFunction.prototype.renderingPageResize = function(){
 
         $('.volumeRenderingOne').width(width).height(height);
         $('.volumeRenderingOne>img').width(height).height(height);
+        $('.volumeRenderingOne>canvas').attr('width', height).attr('height', height);
     }else{
         var windowHeight = $(window).height(),
             height = windowHeight - 250;
@@ -90,6 +91,7 @@ LayoutFunction.prototype.renderingPageResize = function(){
 
         $('#volumeRendering').width(width).height(height);
         $('#volumeRendering>img').width(height).height(height);
+        $('#volumeRendering>canvas').attr('width', height).attr('height', height);
         $('.volumeRenderingOTF').width(width);
     }
 };
@@ -109,6 +111,7 @@ LayoutFunction.prototype.expandEventListener = function(){
         
         $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(height);
         $('#volumeRendering>img').width(height).height(height);
+        $('#volumeRendering>canvas').attr('width', height).attr('height', height);
         $('#renderingSizeBtn').removeClass('renderingExpandBtn').addClass('renderingReduceBtn');
 
     }else{
@@ -127,6 +130,7 @@ LayoutFunction.prototype.expandEventListener = function(){
         
         $('.volumeRenderingOne').width(width).height(height);
         $('.volumeRenderingOne>img').width(height).height(height);
+        $('.volumeRenderingOne>canvas').attr('width', height).attr('height', height);
     }
 };
 
