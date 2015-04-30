@@ -60,6 +60,7 @@ public class VolumeController {
         Data data = dataService.selectOne(volume.getVolumeDataPn());
         model.addAttribute("volume", volume);
         model.addAttribute("data", data);
+        model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
         return "volume/update";
     }
 
@@ -69,6 +70,7 @@ public class VolumeController {
         new VolumeValidator().validate(volume, result);
         if(result.hasErrors()){
             model.addAttribute("data", volumeService.selectOne(volume.getVolumeDataPn()));
+            model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
             return "volume/update";
         }else {
             volumeService.update(volume);
