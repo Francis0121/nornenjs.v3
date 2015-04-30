@@ -216,15 +216,14 @@ $(function(){
         'swf': contextPath + '/resources/javascript/uploadify.swf',
         'uploader' : contextPath+'/data/upload',
         'onUploadStart' : function(){
-            console.log('On Upload Start');
+            //console.log('On Upload Start');
         },
         'onUploadSuccess' : function(file, data, response){
-            console.log('On Upload Success');
+            //console.log('On Upload Success');
             if(response){
                 var data = JSON.parse(data)
                 $('#volume #volumeDataPn').val(data.pn);
                 $('#volumeUploadBtn').html('<span class="success">파일업로드 : '+data.name+'</span>');
-                console.log(JSON.stringify(file));
             }
         }
     });
