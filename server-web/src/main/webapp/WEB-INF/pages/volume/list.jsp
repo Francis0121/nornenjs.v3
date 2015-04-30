@@ -31,8 +31,8 @@
         <article class="volumeListArticle">
             
             <ul class="list">
-                <c:forEach begin="0" end="19" varStatus="i">
-                <li class="one">
+                <c:forEach items="${volumes}" var="volume" varStatus="loop">
+                <li class="one" data-pn="<c:out value="${volume.pn}"/>">
                     <figure>
 
                         <ul class="volumeListSlider">
@@ -41,7 +41,7 @@
                         </ul>
                         
                         <figcaption>
-                            <a href="${cp}/volume/${i.count}" class="name">Skull</a><span class="number">225 x 225 x 100</span><br/>
+                            <a href="${cp}/volume/${loop.count}" class="name"><c:out value="${volume.title}"/></a><span class="number"><c:out value="${volume.width}"/> x <c:out value="${volume.height}"/> x <c:out value="${volume.depth}"/></span><br/>
                             <span class="date">2015.04.26</span>
                         </figcaption>
                     </figure>

@@ -16,10 +16,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Created by Francis on 2015-04-26.
@@ -37,20 +36,26 @@ public class VolumeController {
     @Autowired
     private DataService dataService;
 
+    @ResponseBody
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public void whyThisIsCall(){
-
+        logger.debug("why this controller call");
     }
     
     @RequestMapping(value = "/{volumePn}", method = RequestMethod.GET)
-    public String listPage(@PathVariable Integer volumePn){
+    public String renderingPage(@PathVariable Integer volumePn){
         logger.debug(volumePn.toString());
         return "volume/one";
     }
     
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public String listPage(@ModelAttribute VolumeFilter volumeFilter){
-        logger.debug(volumeFilter.toString());
+    public String listPage(Model model, @ModelAttribute VolumeFilter volumeFilter){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = user.getUsername();
+        volumeFilter.setUsername(username);
+        
+        List<Volume> volumes = volumeService.selectList(volumeFilter);
+        model.addAttribute("volumes", volumes);
         return "volume/list";
     }
     
