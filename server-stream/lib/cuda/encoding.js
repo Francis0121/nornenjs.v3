@@ -4,7 +4,7 @@
 var logger = require('../logger');
 var Jpeg = require('jpeg').Jpeg;
 var Png = require('png').Png;
-
+var fs = require('fs');
 /**
  * Encoding Jpeg and png Image
  * @constructor
@@ -12,6 +12,23 @@ var Png = require('png').Png;
 var Encoding = function(){
     
 };
+
+Encoding.prototype.extractPng = function(cudaRender){
+    var hrStart = process.hrtime();
+
+    cudaRender.start();
+    var hrCuda = process.hrtime(hrStart);
+    logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrCuda[1]/1000000);
+
+    var png = new Png(cudaRender.d_outputBuffer, 512, 512, 'rgba');
+    var buf = png.encodeSync();
+
+    fs.writeFileSync('/storage/temp.png', buf, 'binary');
+
+    var hrEnd = process.hrtime(hrStart);
+    logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrEnd[1]/1000000);
+};
+
 
 /**
  * Make Jpeg Encoding image And streaming client
