@@ -13,7 +13,7 @@ var Encoding = function(){
     
 };
 
-Encoding.prototype.extractPng = function(cudaRender){
+Encoding.prototype.thumbnail = function(cudaRender, savePath){
     var hrStart = process.hrtime();
 
     cudaRender.start();
@@ -23,7 +23,7 @@ Encoding.prototype.extractPng = function(cudaRender){
     var png = new Png(cudaRender.d_outputBuffer, 512, 512, 'rgba');
     var buf = png.encodeSync();
 
-    fs.writeFileSync('/storage/temp.png', buf, 'binary');
+    fs.writeFileSync(savePath, buf, 'binary');
 
     var hrEnd = process.hrtime(hrStart);
     logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrEnd[1]/1000000);

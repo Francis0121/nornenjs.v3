@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,5 +103,15 @@ public class DataServiceImpl extends SqlSessionDaoSupport implements DataService
     @Override
     public List<Integer> selectVolumeThumbnailPn(Thumbnail thumbnail) {
         return getSqlSession().selectList("data.selectVolumeThumbnailPn", thumbnail);
+    }
+
+    @Override
+    public List<String> makeSavePaths(Integer size) {
+        List<String> savePaths = new ArrayList<String>();
+        for(int i=0; i<size; i++){
+            String path = getFreeFilePath(new String[]{"thumbnail"});
+            savePaths.add(path);
+        }
+        return savePaths;
     }
 }

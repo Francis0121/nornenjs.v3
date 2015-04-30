@@ -64,6 +64,16 @@ process.on('SIGINT', function() {
     });
 });
 
+// ~ Redis and mysql
+
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+    host     : '112.108.40.166',
+    user     : 'dotory',
+    password : '1q2w3e4r!',
+    database : 'nornenjs'
+});
+
 
 const redisHost = '127.0.0.1';
 const redisPort = 6379;
@@ -84,6 +94,8 @@ redisClient.on('message', function(channel, message) {
         var thumbnailOptionList = map.thumbnailOptionList;
         var data = map.data;
         var volume = map.volume;
+        var savePaths = map.savePaths;
+        var username = map.username;
 
         var CudaRender = require('../lib/cuda/render').CudaRender;
         var cu = require('../lib/cuda/load');
@@ -97,12 +109,32 @@ redisClient.on('message', function(channel, message) {
         var encoding = new Encoding();
         cudaRender.init();
 
+        var thumbnailPns = [];
         for(var i=0; i<thumbnailOptionList.length; i++){
             var thumbnailOtion = thumbnailOptionList[i];
-            encoding.extractPng(cudaRender);
+
+            var savePath = savePaths[i];
+
+            encoding.thumbnail(cudaRender, savePath);
+
+            connection.query('INSERT INTO `data`( `username`, `type`, `name`, `savePath`, `inputDate` ) VALUES ( ?, ?, ?, ?, SYSDATE() ) ', [ username, 2, 'thumbnail.png', savePath ], function (err, result) {
+                if (!err) {
+                    logger.info(result);
+                }
+                thumbnailPns.push(result.insertId)
+                if(i == thumbnailOptionList.length){
+                    logger.info(thumbnailPns);
+                    for(var j=0; j<thumbnailPns.length; j++) {
+                        connection.query('INSERT INTO `thumbnail` (`dataPn`,`thumbnailPn`) VALUES ( ?, ? )', [data.pn, thumbnailPns[j]], function (err, result) {
+                            if (!err) {
+                                logger.info(result);
+                            }
+                        });
+                    }
+                }
+            });
         }
 
-        console.log(thumbnailOptionList, data, volume);
     }
 
 });

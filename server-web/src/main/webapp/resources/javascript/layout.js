@@ -241,8 +241,14 @@ $(function(){
                         var polling = contextPath + '/data/polling/' + data.pn;
                         console.log('polling')
                         $.getJSON(polling, function (list) {
-                            if(list.lenght != result){
+                            if(list.length != result.thumbnailOptionList.length){
                                 setTimeout(pollingFunc, 1000);
+                            }else{
+                                console.log(list);
+                                $('#thumbnailMPRx').attr('src', contextPath+'/data/thumbnail/'+list[0]);
+                                $('#thumbnailMPRy').attr('src', contextPath+'/data/thumbnail/'+list[1]);
+                                $('#thumbnailMPRz').attr('src', contextPath+'/data/thumbnail/'+list[2]);
+                                $('#thumbnailMPRvolume').attr('src', contextPath+'/data/thumbnail/'+list[3]);
                             }
                         });
                     }

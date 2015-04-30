@@ -43,25 +43,25 @@
 
             <div class="volumeRenderingSampleWrap">
                 <figure>
-                    <img src="${cp}/resources/image/icon/empty.png"/>
+                    <img src="${cp}/resources/image/icon/empty.png" id="thumbnailMPRx"/>
                     <figcaption>
                         MPR-X 영상
                     </figcaption>
                 </figure>
                 <figure>
-                    <img src="${cp}/resources/image/icon/empty.png"/>
+                    <img src="${cp}/resources/image/icon/empty.png" id="thumbnailMPRy"/>
                     <figcaption>
                         MPR-Y 영상
                     </figcaption>
                 </figure>
                 <figure>
-                    <img src="${cp}/resources/image/icon/empty.png"/>
+                    <img src="${cp}/resources/image/icon/empty.png" id="thumbnailMPRz"/>
                     <figcaption>
                         MPR-Z 영상
                     </figcaption>
                 </figure>
                 <figure>
-                    <img src="${cp}/resources/image/icon/empty.png"/>
+                    <img src="${cp}/resources/image/icon/empty.png" id="thumbnailMPRvolume"/>
                     <figcaption>
                         볼륨 영상
                     </figcaption>

@@ -5,7 +5,7 @@ package com.nornenjs.web.data;
  */
 public enum DataType {
     
-    VOLUME(1), IMAGE(2), ETC(3);
+    VOLUME(1), THUMBNAIL(2), ETC(3);
     
     int value;
 

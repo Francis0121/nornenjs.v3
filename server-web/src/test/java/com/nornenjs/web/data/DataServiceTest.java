@@ -37,8 +37,8 @@ public class DataServiceTest {
     public void Before(){
         actorService.insert(actor1);
         
-        data1 = new Data(DataType.IMAGE.getValue(), actor1.getUsername(), "name", "path");
-        data2 = new Data(DataType.IMAGE.getValue(), actor1.getUsername(), "name2", "path2");
+        data1 = new Data(DataType.THUMBNAIL.getValue(), actor1.getUsername(), "name", "path");
+        data2 = new Data(DataType.THUMBNAIL.getValue(), actor1.getUsername(), "name2", "path2");
         
         dataService.insert(data1);
         dataService.insert(data2);

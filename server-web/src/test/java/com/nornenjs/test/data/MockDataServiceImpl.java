@@ -58,4 +58,9 @@ public class MockDataServiceImpl implements DataService{
     public List<Integer> selectVolumeThumbnailPn(Thumbnail thumbnail) {
         return null;
     }
+
+    @Override
+    public List<String> makeSavePaths(Integer size) {
+        return null;
+    }
 }

@@ -31,7 +31,7 @@
 
     <select id="selectVolumeThumbnailPn" parameterType="Thumbnail" resultType="Integer">
         SELECT
-          `dataPn`, `thumbnailPn`
+          `thumbnailPn`
         FROM
           `thumbnail`
         WHERE
