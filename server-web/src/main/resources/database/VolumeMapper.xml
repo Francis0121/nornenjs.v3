@@ -54,33 +54,48 @@
         SELECT
           COUNT(*)
         FROM
-          `volume`
+          `volume` AS `v`,
+          (
+            SELECT `dataPn`, GROUP_CONCAT(`thumbnailPn`) AS `thumbnailPns`
+            FROM `thumbnail`
+            GROUP BY `dataPn`
+          ) `gt`
         WHERE
-          `username` = #{username}
+          v.`volumeDataPn` = gt.`dataPn`
+        AND
+          v.`username` = #{username}
         <if test="title != null">
           AND
-            `title` LIKE CONCAT('%',#{title},'%')
+            v.`title` LIKE CONCAT('%',#{title},'%')
         </if>
         <if test="from != null and to != null">
           AND
-            DATE_FORMAT(`inputDate`, '%Y-%m-%d') BETWEEN #{from} AND #{to}
+            DATE_FORMAT(v.`inputDate`, '%Y-%m-%d') BETWEEN #{from} AND #{to}
         </if>
     </select>
     
     <select id="selectList" parameterType="VolumeFilter" resultType="Volume">
         SELECT
-          `pn`, `username`, `volumeDataPn`, `title`, `width`, `height`, `depth`, `inputDate`
+          v.`pn`, v.`username`, v.`volumeDataPn`, v.`title`, v.`width`, v.`height`, v.`depth`, v.`inputDate`,
+          gt.`thumbnailPns`
         FROM
-          `volume`
+          `volume` AS `v`,
+          (
+            SELECT `dataPn`, GROUP_CONCAT(`thumbnailPn`) AS `thumbnailPns`
+            FROM `thumbnail`
+            GROUP BY `dataPn`
+          ) `gt`
         WHERE
+          v.`volumeDataPn` = gt.`dataPn`
+        AND
           `username` = #{username}
         <if test="title != null">
           AND
-            `title` LIKE CONCAT('%',#{title},'%')
+            v.`title` LIKE CONCAT('%',#{title},'%')
         </if>
         <if test="from != null and to != null">
           AND
-            DATE_FORMAT(`inputDate`, '%Y-%m-%d') BETWEEN #{from} AND #{to}
+            DATE_FORMAT(v.`inputDate`, '%Y-%m-%d') BETWEEN #{from} AND #{to}
         </if>
         ORDER BY
             `pn` DESC

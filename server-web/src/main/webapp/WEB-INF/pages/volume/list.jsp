@@ -34,10 +34,10 @@
                 <c:forEach items="${volumes}" var="volume" varStatus="loop">
                 <li class="one" data-pn="<c:out value="${volume.pn}"/>">
                     <figure>
-
                         <ul class="volumeListSlider">
-                            <li><img src="${cp}/resources/image/sample/01.jpg" /></li>
-                            <li><img src="${cp}/resources/image/sample/02.jpg" /></li>
+                            <c:forEach items="${volume.thumbnailPnList}" var="thumbnailPn" varStatus="loop">
+                                <li><img src="${cp}/data/thumbnail/${thumbnailPn}" /></li>
+                            </c:forEach>
                         </ul>
                         
                         <figcaption>

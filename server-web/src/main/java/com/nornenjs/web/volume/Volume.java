@@ -1,5 +1,8 @@
 package com.nornenjs.web.volume;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Francis on 2015-04-24.
  */
@@ -21,6 +24,8 @@ public class Volume {
     
     private String inputDate;
 
+    private String thumbnailPns;
+
     public Volume() {
     }
 
@@ -31,6 +36,26 @@ public class Volume {
         this.width = width;
         this.height = height;
         this.depth = depth;
+    }
+
+    public void setThumbnailPns(String thumbnailPns) {
+        this.thumbnailPns = thumbnailPns;
+    }
+
+    public String getThumbnailPns() {
+        return thumbnailPns;
+    }
+
+    public List<Integer> getThumbnailPnList() {
+        List<Integer> thumbnailPnList = new ArrayList<Integer>();
+        if(thumbnailPns == null){
+            return thumbnailPnList;
+        }
+        String[] split = this.thumbnailPns.split(",");
+        for(int i=0; i<split.length; i++){
+            thumbnailPnList.add(Integer.parseInt(split[i]));
+        }
+        return thumbnailPnList;
     }
 
     public Integer getPn() {
