@@ -26,10 +26,15 @@
 .volumeListArticle figcaption{ width: 100%; border-left: 8px solid #ccc; border-right: 8px solid #ccc; padding: 5px 0 10px 0; margin: 0 0 12px 0; background: #ccc;}
 .volumeListArticle figcaption span{ font-size: 75%; line-height: 1.2;}
 .volumeListArticle figcaption a.name{ font-weight: bold; font-size: 75%; color: #000;}
-.volumeListArticle figcaption span.number{ margin-left: 8px;}
+.volumeListArticle figcaption span.number{ margin-right: 5px; }
+.volumeListArticle figcaption span.date{ margin-left: 5px; }
 
 .volumeListSlider img{ width: 100%; }
 .volumeListSlider { width: 100%; max-height: 290px; overflow: hidden; border-left: 8px solid #ccc; border-right: 8px solid #ccc; border-top: 8px solid #ccc; }
+
+
+.volumeUpdateBtn{ font-size: 62.5%; color: #fff;}
+.volumeUpdateBtn:hover{ color: #f2f2f2;}
 
 /**
 * Volume form

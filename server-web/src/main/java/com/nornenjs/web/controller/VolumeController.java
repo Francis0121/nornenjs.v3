@@ -1,5 +1,6 @@
 package com.nornenjs.web.controller;
 
+import com.nornenjs.web.data.Data;
 import com.nornenjs.web.data.DataService;
 import com.nornenjs.web.util.ValidationUtil;
 import com.nornenjs.web.volume.Volume;
@@ -48,6 +49,29 @@ public class VolumeController {
         return "volume/one";
     }
     
+    @RequestMapping(value = "/page/{volumePn}", method = RequestMethod.GET)
+    public String volumeUpadatePage(Model model, @PathVariable Integer volumePn){
+        Volume volume = volumeService.selectOne(volumePn);
+        Data data = dataService.selectOne(volume.getVolumeDataPn());
+        model.addAttribute("volume", volume);
+        model.addAttribute("data", data);
+        return "volume/update";
+    }
+
+    @RequestMapping(value = "/page/{volumePn}", method = RequestMethod.POST)
+    public String volumeUpdatePost(Model model, @PathVariable Integer volumePn, 
+                                   @ModelAttribute Volume volume, BindingResult result) {
+        new VolumeValidator().validate(volume, result);
+        if(result.hasErrors()){
+            model.addAttribute("data", volumeService.selectOne(volume.getVolumeDataPn()));
+            return "volume/update";
+        }else {
+            volumeService.update(volume);
+            volumeService.updateData(volume);
+            return "redirect:/volume/page/" + volumePn;
+        }
+    }
+    
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listPage(Model model, @ModelAttribute VolumeFilter volumeFilter){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -67,43 +91,7 @@ public class VolumeController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String uploadPost(Model model, @ModelAttribute Volume volume, BindingResult result) {
-        new Validator(){
-            @Override
-            public boolean supports(Class<?> aClass) {
-                return Volume.class.isAssignableFrom(aClass);
-            }
-
-            @Override
-            public void validate(Object object, Errors errors) {
-                Volume volume = (Volume) object;
-                
-                Integer volumeDataPn = volume.getVolumeDataPn();
-                if(volumeDataPn == null){
-                    errors.rejectValue("volumeDataPn", "volume.volumeDataPn.empty");
-                }
-                
-                Integer width = volume.getWidth();
-                if(width == null){
-                    errors.rejectValue("width", "volume.width.empty");
-                }
-                
-                Integer height = volume.getHeight();
-                if(height == null){
-                    errors.rejectValue("height", "volume.height.empty");
-                }
-                
-                Integer depth = volume.getDepth();
-                if(depth == null){
-                    errors.rejectValue("depth", "volume.depth.empty");
-                }
-                
-                String title = volume.getTitle();
-                if(ValidationUtil.isNull(title)){
-                    errors.rejectValue("title", "volume.title.empty");
-                }
-                
-            }
-        }. validate(volume, result);
+        new VolumeValidator().validate(volume, result);
         
         if (result.hasErrors()) {
             model.addAttribute("data", dataService.selectOne(volume.getVolumeDataPn()));
@@ -116,5 +104,42 @@ public class VolumeController {
             return "redirect:/volume/list";   
         }
     }
-    
+
+    private class VolumeValidator implements Validator {
+        @Override
+        public boolean supports(Class<?> aClass) {
+            return Volume.class.isAssignableFrom(aClass);
+        }
+
+        @Override
+        public void validate(Object object, Errors errors) {
+            Volume volume = (Volume) object;
+
+            Integer volumeDataPn = volume.getVolumeDataPn();
+            if (volumeDataPn == null) {
+                errors.rejectValue("volumeDataPn", "volume.volumeDataPn.empty");
+            }
+
+            Integer width = volume.getWidth();
+            if (width == null) {
+                errors.rejectValue("width", "volume.width.empty");
+            }
+
+            Integer height = volume.getHeight();
+            if (height == null) {
+                errors.rejectValue("height", "volume.height.empty");
+            }
+
+            Integer depth = volume.getDepth();
+            if (depth == null) {
+                errors.rejectValue("depth", "volume.depth.empty");
+            }
+
+            String title = volume.getTitle();
+            if (ValidationUtil.isNull(title)) {
+                errors.rejectValue("title", "volume.title.empty");
+            }
+
+        }
+    }
 }

@@ -41,8 +41,8 @@
                         </ul>
                         
                         <figcaption>
-                            <a href="${cp}/volume/${loop.count}" class="name"><c:out value="${volume.title}"/></a><span class="number"><c:out value="${volume.width}"/> x <c:out value="${volume.height}"/> x <c:out value="${volume.depth}"/></span><br/>
-                            <span class="date">2015.04.26</span>
+                            <a href="${cp}/volume/${loop.count}" class="name"><c:out value="${volume.title}"/></a> <a href="${cp}/volume/page/${volume.pn}" class="volumeUpdateBtn">수정</a><br/>
+                            <span class="number"><c:out value="${volume.width}"/> x <c:out value="${volume.height}"/> x <c:out value="${volume.depth}"/></span> <span class="date">[ 2015.04.26 ]</span>
                         </figcaption>
                     </figure>
                 </li>
