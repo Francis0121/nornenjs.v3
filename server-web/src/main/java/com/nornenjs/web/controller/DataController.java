@@ -111,7 +111,7 @@ public class DataController {
             String originalName;
             java.io.File snapshotFile;
             if(data == null){
-                Resource resource = appContext.getResource("/resources/image/sample/02.jpg");
+                Resource resource = appContext.getResource("/resources/image/icon/empty.png");
                 snapshotFile = resource.getFile();
                 originalName = "none.png";
             }else{

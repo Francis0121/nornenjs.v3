@@ -245,10 +245,10 @@ $(function(){
                                 setTimeout(pollingFunc, 1000);
                             }else{
                                 console.log(list);
-                                $('#thumbnailMPRx').attr('src', contextPath+'/data/thumbnail/'+list[0]);
-                                $('#thumbnailMPRy').attr('src', contextPath+'/data/thumbnail/'+list[1]);
-                                $('#thumbnailMPRz').attr('src', contextPath+'/data/thumbnail/'+list[2]);
-                                $('#thumbnailMPRvolume').attr('src', contextPath+'/data/thumbnail/'+list[3]);
+                                $('#thumbnailMPRx').attr('src', contextPath+'/data/thumbnail/'+list[1]);
+                                $('#thumbnailMPRy').attr('src', contextPath+'/data/thumbnail/'+list[2]);
+                                $('#thumbnailMPRz').attr('src', contextPath+'/data/thumbnail/'+list[3]);
+                                $('#thumbnailMPRvolume').attr('src', contextPath+'/data/thumbnail/'+list[0]);
                             }
                         });
                     }

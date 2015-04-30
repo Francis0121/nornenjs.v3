@@ -7,6 +7,7 @@ import com.nornenjs.web.util.ValidationUtil;
 import com.nornenjs.web.volume.Volume;
 import com.nornenjs.web.volume.VolumeFilter;
 import com.nornenjs.web.volume.VolumeService;
+import com.nornenjs.web.volume.thumbnail.Thumbnail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,6 +100,7 @@ public class VolumeController {
         
         if (result.hasErrors()) {
             model.addAttribute("data", dataService.selectOne(volume.getVolumeDataPn()));
+            model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
             return "volume/upload";
         }else{
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
