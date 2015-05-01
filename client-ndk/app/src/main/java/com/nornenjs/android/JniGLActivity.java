@@ -295,6 +295,11 @@ class TouchSurfaceView extends GLSurfaceView {
                 json.put("height", "256");
                 json.put("depth", "200");
 
+//                json.put("savePath", "/storage/data/478485a6-8b7b-4921-be98-06da53d9da1a");
+//                json.put("width", "512");
+//                json.put("height", "512");
+//                json.put("depth", "300");
+
                 socket.emit("join", deviceNumber);
                 socket.emit("init", json);
 
