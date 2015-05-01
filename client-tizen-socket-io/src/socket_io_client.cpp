@@ -1,32 +1,29 @@
 #include "sio_client.h"
 #include "socket_io_client.hpp"
 
-#define HIGHLIGHT(__O__) std::cout<<"\e[1;31m"<<__O__<<"\e[0m"<<std::endl
-#define EM(__O__) std::cout<<"\e[1;30;1m"<<__O__<<"\e[0m"<<std::endl
 #include <functional>
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
 #include <string>
-
 #include <pthread.h>
 #include <unistd.h>
 
+#include <image_util.h>
 
-#define LOG_TAG "socket.io"
+#define QSIZE 5
+#define LOG_TAG "socket.io.client"
 
 using namespace sio;
 using namespace std;
 
-extern "C" void setTextureData(char * tex,  Evas_Object *obj);
-extern "C" void draw_interface(char * temp);
-
 std::mutex _lock;
-
 std::condition_variable_any _cond;
 bool connect_finish = false;
-int participants = 0;
-char *texture22;
+
+unsigned char * deprecated[6];
+int count = -1;
+
 
 class connection_listener
 {
@@ -34,11 +31,10 @@ class connection_listener
 
 public:
 
-    connection_listener(sio::client& h):
-    handler(h)
+    connection_listener(sio::client& h):handler(h)
     {
+    	dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io client call constructor");
     }
-
 
     void on_connected()
     {
@@ -46,22 +42,24 @@ public:
         _cond.notify_all();
         connect_finish = true;
         _lock.unlock();
+        dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io client connect");
     }
+
     void on_close(client::close_reason const& reason)
     {
-        std::cout<<"sio closed "<<std::endl;
-        dlog_print(DLOG_FATAL, LOG_TAG, "sio closed");
-        //exit(0);
+        dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io client closed");
     }
 
     void on_fail()
     {
-        std::cout<<"sio failed "<<std::endl;
-        dlog_print(DLOG_FATAL, LOG_TAG, "sio closed");
-        //exit(0);
+        dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io client failed");
     }
 };
+
 extern "C" {
+	/**
+	 * LOOP FLAG - Terminater application - while statement finish
+	 */
 	void turn_off_flag()
 	{
 		LOOP_FLAG = 0;
@@ -69,127 +67,96 @@ extern "C" {
 }
 
 extern "C" {
-	char *texture_getter()
+
+	void socket_io_client(void *object)
 	{
-		//dlog_print(DLOG_FATAL, LOG_TAG, "success%d ", texture);
-		//dlog_print(DLOG_FATAL, LOG_TAG, "texture_getter value c++ %d ", texture[0]);
-		dlog_print(DLOG_FATAL, LOG_TAG, "!texture_getter value %d", &texture22);
-		//out = &texture22[0];
-		//strcpy(out,texture22);
-		//dlog_print(DLOG_FATAL, LOG_TAG, "!texture_getter value %d", out);
-		//return texture22;
+		err = -9;//초기화
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function start");
+
+		Evas_Object *evas_object = (Evas_Object *)object;
+		sio::client h;
+		connection_listener l(h);
+		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
+		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
+		h.set_fail_listener(std::bind(&connection_listener::on_fail, &l));
+		h.connect("http://112.108.40.164:5000");
+
+		_lock.lock();
+		if(!connect_finish)
+		{
+			_cond.wait(_lock);
+		}
+		_lock.unlock();
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io connect finish");
+
+		h.emit("init", "");
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "Emit \"init\" message\n");
+
+		h.bind_event("stream_buf", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+			_lock.lock();
+
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind event \"stream_buf\"\n");
+
+			int size = data->get_map()["stream"]->get_map()["size"]->get_int();
+			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
+			string buffer = *s_binary;
+			char* textBuf = NULL;
+			textBuf = (char *)buffer.c_str();//함수화 하기
+
+			err = -9;
+			sizeBuf = size;//순서?
+
+			unsigned int decodeBufSize;
+
+			//dlog_print(DLOG_VERBOSE, LOG_TAG, "before decode %d, %d, %d, %d, %d, %d, %d, %d, %d",image[],image[],image[],image[],image[],image[],image[],image[],image[]);
+			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
+			//sizeBuf = size;//순서?
+			//dlog_print(DLOG_VERBOSE, LOG_TAG, "after decode %d, %d, %d, %d, %d, %d, %d, %d, %d",image[],image[],image[],image[],image[],image[],image[],image[],image[]);
+			//error이면 memory 생성되지 않는가?
+			//그러면 ++count를 if문 안으로 넣어 줘야 함. 그래도 생성된다면 여기에 있는게 맞고.
+			deprecated[++count] = image;
+
+			if(!err)//IMAGE_UTIL_ERROR_NONE != error
+			{
+				if(count == QSIZE)
+					fresh_que();
+			}
+
+			_lock.unlock();
+		});
+
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind event listener\n");
+
+		while(LOOP_FLAG){}
+
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function close");
+
+
+	}
+}
+extern "C" {
+	void fresh_que()
+	{
+		for(int i = 0; i < 5; i++)
+		{
+			free(deprecated[i]);
+			deprecated[i] = NULL;
+		}
+		deprecated[0] = deprecated[5];
+		count = -1;
 	}
 }
 
 extern "C" {
-
-	void socket_io_client(void *object)
+	void free_que()
 	{
-		Evas_Object *evas_object = (Evas_Object *)object;
-
-		sio::client h;
-		connection_listener l(h);
-		dlog_print(DLOG_FATAL, LOG_TAG, "Connect Start");
-		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
-		dlog_print(DLOG_FATAL, LOG_TAG, "Set ConnectListener");
-
-		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
-		dlog_print(DLOG_FATAL, LOG_TAG, "Set ClosetListener");
-
-		h.set_fail_listener(std::bind(&connection_listener::on_fail, &l));
-		dlog_print(DLOG_FATAL, LOG_TAG, "Set FaileListener");
-
-		h.connect("http://112.108.40.164:5000");
-		dlog_print(DLOG_FATAL, LOG_TAG, "Connect");
-
-		_lock.lock();
-		dlog_print(DLOG_FATAL, LOG_TAG, "Lock");
-		if(!connect_finish)
+		for(int i = 0; i < 6; i++)//or count
 		{
-			dlog_print(DLOG_FATAL, LOG_TAG, "!!!");
-			_cond.wait(_lock);
+			if(deprecated[i])
+			{
+				free(deprecated[i]);
+				deprecated[i] = NULL;
+			}
 		}
-		dlog_print(DLOG_FATAL, LOG_TAG, "unlock");
-		_lock.unlock();
-
-		dlog_print(DLOG_FATAL, LOG_TAG, "emit connectMessage");
-		h.emit("connectMessage", "{\"project\":\"rapidjson\",\"stars\":10}");
-
-		dlog_print(DLOG_FATAL, LOG_TAG, "bind connectMessage");
-		h.bind_event("connectMessage", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){
-			_lock.lock();
-
-			unsigned int pid = (unsigned) getpid();
-			dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [connectMessage] %u", pid);
-
-			string error = data->get_map()["error"]->get_string();
-			dlog_print(DLOG_FATAL, LOG_TAG, "connectMessage :: %s", error.c_str());
-
-			_lock.unlock();
-	    });
-
-
-		dlog_print(DLOG_FATAL, LOG_TAG, "emit connectMessage");
-		h.emit("init", "");
-
-		h.bind_event("stream", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
-					_lock.lock();
-
-					unsigned int pid = (unsigned) getpid();
-					dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test1] %u", pid);
-
-
-					vector<message::ptr> arr;
-					arr = data->get_map()["stream"]->get_vector();
-					dlog_print(DLOG_FATAL, LOG_TAG, "arr.size :  %d", arr.size());
-
-					int count = 0;
-
-					int * texture = new int[arr.size()];
-
-					for(const auto&  p : arr)
-					{
-						texture[count++] = p->get_int();
-					}
-
-					delete[] texture;
-					_lock.unlock();
-			    });
-		h.bind_event("test2", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
-							_lock.lock();
-
-							unsigned int pid = (unsigned) getpid();
-							dlog_print(DLOG_FATAL, LOG_TAG, "bind_event [test2] %u", pid);
-
-							//int num1 = data->get_map()["stream"]->get_map()["num"]->get_int(); get size
-							int d = data->get_map()["stream"]->get_map()["size"]->get_int();
-							dlog_print(DLOG_FATAL, LOG_TAG, "key size : %d", d);
-
-							shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buf"]->get_binary();
-							string user = *s_binary;
-							texture22 = (char *)user.c_str();
-
-							dlog_print(DLOG_FATAL, LOG_TAG, "texture_getter value %d", &texture22);
-							//draw_interface(texture22);
-							setTextureData(texture22, evas_object);//c++에서 c 호출
-
-							//dlog_print(DLOG_FATAL, LOG_TAG, "texture_getter value %d %d ", texture[0], texture[1]);
-							//user.c_str() == char * 로 byte가 들어잇음. opengl에서 참조하면 됨.
-							//dlog_print(DLOG_FATAL, LOG_TAG, "success %d %d %d %d %d %d %d %d", user.c_str()[0], user.c_str()[1], user.c_str()[2], user.c_str()[3], user.c_str()[4], user.c_str()[100],user.c_str()[200],user.c_str()[9300]);
-
-							_lock.unlock();
-							//sleep(5);
-					    });
-
-
-		unsigned int pidThread = (unsigned) getpid();
-		dlog_print(DLOG_FATAL, LOG_TAG, "close %u", pidThread);
-
-		while(LOOP_FLAG){
-		}
-
-		dlog_print(DLOG_FATAL, LOG_TAG, "close");
-
-
 	}
 }

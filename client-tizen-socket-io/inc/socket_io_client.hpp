@@ -23,3 +23,23 @@ extern "C"
 #endif
 char* texture_getter();
 
+#ifdef __cplusplus
+extern "C"
+#endif
+void free_que();
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void fresh_que();
+
+#ifdef __cplusplus
+extern "C"
+#endif
+unsigned char *image;
+int sizeBuf;
+int err;
+int bufWidth;
+int bufHeight;
+//unsigned int decodeBufSize;
+//decoded_image 지움

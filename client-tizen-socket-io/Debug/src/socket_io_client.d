@@ -219,7 +219,11 @@ src/socket_io_client.d: ../src/socket_io_client.cpp \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_video.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_web.h \
  /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_win.h \
- /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_deprecated.h
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_deprecated.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/image_util.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/image_util_type.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/media_packet.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/media_format.h
 
 /home/hyok/tizen-workspace-2/nornenjs_v3/client-tizen-socket-io/inc/sio_client.h:
 
@@ -662,3 +666,11 @@ src/socket_io_client.d: ../src/socket_io_client.cpp \
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_win.h:
 
 /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_deprecated.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/image_util.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/image_util_type.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/media_packet.h:
+
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/media_format.h:
