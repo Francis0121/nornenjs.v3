@@ -1,7 +1,6 @@
 package com.nornenjs.android;
 
 
-import android.graphics.PointF;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.FloatMath;
@@ -15,7 +14,6 @@ import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.SurfaceHolder;
-import android.widget.Toast;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -23,8 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class JniGLActivity extends Activity {
 
@@ -50,54 +46,30 @@ public class JniGLActivity extends Activity {
     public float oldMidVectorX=0.0f, oldMidVectorY=0.0f;
     public float newMidVectorX=0.0f, newMidVectorY=0.0f;
 
-    private MyEventListener myEventListener;
-
-    public void setMyEventListener(MyEventListener myEventListener) {
-        this.myEventListener = myEventListener;
-    }
-
-
-    private TimerTask mTask;
-    private Timer mTimer;
     public Integer count = 0;
     public Integer draw = 0;
     public Integer pinch = 0;
     public Integer rotation = 0;
     public Integer move = 0;
 
+    private MyEventListener myEventListener;
+
+    public void setMyEventListener(MyEventListener myEventListener) {
+        this.myEventListener = myEventListener;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String host = getString(R.string.host);
         setContentView(R.layout.activity_jni_gl);
-        mGLSurfaceView = new TouchSurfaceView(this);
+        mGLSurfaceView = new TouchSurfaceView(this, host);
         setContentView(mGLSurfaceView);
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
-        
-        Log.d("bmp", "onCreate");
 
-//        mTask = new TimerTask() {
-//            @Override
-//            public void run() {
-//
-//                runOnUiThread(new Runnable() {
-//                    public void run() {
-//                        Toast.makeText(JniGLActivity.this, "FPS " + count, Toast.LENGTH_SHORT).show();
-//                        Log.d("opengles", "FPS " + count + ", Draw " + draw + ", Pinch " + pinch + ", Rotation " + rotation + ", Move " + move);
-//                        count = 0;
-//                        draw = 0;
-//                        pinch = 0;
-//                        rotation = 0;
-//                        move = 0;
-//                    }
-//                });
-//            }
-//        };
-//
-//        mTimer = new Timer();
-//        mTimer.schedule(mTask, 1000, 1000);
     }
 
 
@@ -285,9 +257,11 @@ class TouchSurfaceView extends GLSurfaceView {
     private CubeRenderer mRenderer;
     private JniGLActivity mActivity;
     private Context mContext;
+    private String host;
 
-    public TouchSurfaceView(Context context) {
+    public TouchSurfaceView(Context context, String host) {
         super(context);
+        this.host = host;
         mContext = context;
         mActivity = (JniGLActivity) context;
         mRenderer = new CubeRenderer(mActivity);
@@ -308,59 +282,89 @@ class TouchSurfaceView extends GLSurfaceView {
 
         private JniGLActivity mActivity;
         private byte[] byteArray;
+        private Socket relay;
         private Socket socket;
+
+        public void bindSocket(String ipAddress, String port, String deviceNumber){
+            try {
+                socket = IO.socket("http://"+ipAddress+":"+port);
+
+                JSONObject json = new JSONObject();
+                json.put("savePath", "/storage/data/33011c05-b375-458f-9681-c4f627f4b169");
+                json.put("width", "256");
+                json.put("height", "256");
+                json.put("depth", "200");
+
+                socket.emit("join", deviceNumber);
+                socket.emit("init", json);
+
+                socket.on("loadCudaMemory", new Emitter.Listener() { //112.108.40.166
+                    @Override
+                    public void call(Object... args) {
+                        socket.emit("androidPng");
+                    }
+                });
+
+                socket.on("stream", new Emitter.Listener() { //112.108.40.166
+                    @Override
+                    public void call(Object... args) {
+                        byteArray = (byte[]) args[0];
+                        mActivity.count++;
+                    }
+                });
+
+                socket.connect();
+
+            } catch (Exception e) {
+                Log.e("socket", e.getMessage(), e);
+
+            }
+        }
 
         public CubeRenderer(JniGLActivity activity) {
             mActivity = activity;
-            Log.d("socket", "connectin");
+            Log.d("socket", "connection");
             // ~ socket connection
             try {
-                socket = IO.socket("http://112.108.40.19:5000");
+                relay = IO.socket(host);
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
 
-            socket.emit("connectMessage");
+            relay.emit("getInfo", 0);
 
-            socket.on("connectMessage", new Emitter.Listener() {
+            /**
+             * emit connect - response message
+             */
+            relay.on("getInfoClient", new Emitter.Listener() {
 
                 @Override
                 public void call(Object... args) {
-                    Log.d("socket", "on connectMessage");
-                    JSONObject message = (JSONObject) args[0];
+
+                    JSONObject info = (JSONObject) args[0];
 
                     try {
-                        if (!((Boolean) message.get("success"))) {
+                        Log.d("socket", "Connection");
+                        if (!info.getBoolean("conn")) {
+                            Log.d("socket", "Connection User is full");
                             return;
+                        } else {
+                            relay.disconnect();
+                            String ipAddress = info.getString("ipAddress");
+                            String port = info.getString("port");
+                            String deviceNumber = info.getString("deviceNumber");
+
+                            bindSocket(ipAddress, port, deviceNumber);
                         }
-                        socket.emit("init");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    }catch (Exception e){
+                        Log.e("Socket", e.getMessage(), e);
                     }
-
-                }
-
-            });
-
-            socket.on("loadCudaMemory", new Emitter.Listener() { //112.108.40.166
-                @Override
-                public void call(Object... args) {
-                    socket.emit("androidPng");
                 }
             });
 
-            socket.on("stream", new Emitter.Listener() { //112.108.40.166
-                @Override
-                public void call(Object... args) {
-                    byteArray = (byte[]) args[0];
-                    mActivity.count++;
-                }
-            });
-
-            socket.connect();
+            relay.connect();
             
             mActivity.setMyEventListener(this);
-
         }
         
         Bitmap imgPanda;
@@ -400,9 +404,6 @@ class TouchSurfaceView extends GLSurfaceView {
 
         @Override
         public void onMyevent(float rotationX, float rotationY,float translationX, float translationY ,float div) {
-            //받아서 서버에 보내기
-            //Log.d("opengl", "!!!!!!!!!!!");
-            
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("rotationX", rotationX);
