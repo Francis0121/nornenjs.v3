@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns="http://tizen.org/ns/packages" api-version="2.3" package="org.tizen.nornenjs" version="1.0.1">
-    <profile name="mobile" />
-    <ui-application appid="org.tizen.nornenjs" exec="nornenjs" type="capp" multiple="false" taskmanage="true" nodisplay="false">
-        <icon>nornenjs.png</icon>
-        <label>nornenjs</label>
-	</ui-application>
-</manifest>
