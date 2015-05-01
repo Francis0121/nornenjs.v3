@@ -2,7 +2,7 @@
  * Copyright Francis kim.
  */
 var logger = require('../logger');
-var Jpeg = require('../node-jpeg').Jpeg;
+var Jpeg = require('../node-jpeg/build/Release/jpeg').Jpeg;
 var Png = require('png').Png;
 var fs = require('fs');
 /**
