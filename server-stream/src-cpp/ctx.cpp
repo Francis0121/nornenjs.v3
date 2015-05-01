@@ -42,6 +42,7 @@ Handle<Value> Ctx::New(const Arguments& args) {
 
   return args.This();
 }
+
 Handle<Value> Ctx::GetDevice(const Arguments& args) {
 
    HandleScope scope;
@@ -54,20 +55,6 @@ Handle<Value> Ctx::GetDevice(const Arguments& args) {
    CUresult error = cuCtxGetDevice(&(pctx->m_device));
 
    return scope.Close(Number::New(pctx->m_device));
-}
-
-
-Handle<Value> Ctx::GetDevice(const Arguments& args) {
-  HandleScope scope;
-
-  Ctx *pctx = new Ctx();
-  pctx->Wrap(args.This());
-
-  pctx->m_device = ObjectWrap::Unwrap<Device>(args[0]->ToObject())->m_device;
-
-  CUresult error = cuCtxGetDevice(&(pctx->m_device));
-
-  return scope.Close(Number::New(pctx->m_device));;
 }
 
 Handle<Value> Ctx::Destroy(const Arguments& args) {
