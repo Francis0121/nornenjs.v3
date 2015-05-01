@@ -2,7 +2,7 @@
  * Copyright Francis kim.
  */
 var logger = require('../logger');
-var Jpeg = require('/home/russa/node-jpeg').Jpeg;
+var Jpeg = require('../node-jpeg').Jpeg;
 var Png = require('png').Png;
 var fs = require('fs');
 /**
@@ -46,7 +46,7 @@ Encoding.prototype.jpeg = function(cudaRender, socket){
     logger.debug('Make start finish frame jpeg compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
     var jpeg = new Jpeg(cudaRender.d_outputBuffer, 512, 512, 'rgba');
-    socket.emit('stream', jpeg.encodeSync());
+    socket.emit('stream', jpeg.turboencodeSync());
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
