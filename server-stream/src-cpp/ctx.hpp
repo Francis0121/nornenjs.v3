@@ -21,6 +21,7 @@ namespace NodeCuda {
       static Handle<Value> SetCurrent(const Arguments& args);
       static Handle<Value> GetCurrent(const Arguments& args);
       static Handle<Value> Synchronize(const Arguments& args);
+      static Handle<Value> GetDevice(const Arguments& args);
       static Handle<Value> GetApiVersion(Local<String> property, const AccessorInfo &info);
       static Handle<Value> GetDevice(const Arguments& args);
 

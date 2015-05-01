@@ -66,6 +66,9 @@ Android.prototype.touchEventListener = function(){
 
         cudaRender.rotationX = option.rotationX;
         cudaRender.rotationY = option.rotationY;
+        cudaRender.positionX = option.positionX;
+        cudaRender.positionY = option.positionY;
+        cudaRender.positionZ = option.positionZ;
 
         $this.encoding.jpeg(cudaRender, socket);
     });
