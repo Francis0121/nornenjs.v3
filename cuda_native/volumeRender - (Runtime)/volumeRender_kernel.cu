@@ -235,33 +235,33 @@ d_render(uint *d_output, uint imageW, uint imageH,
 			//float4 col = tex3D(transferTex1,sample,sample_next,0);
 
 
-			//float3 nV = {0.0, 0.0, 0.0};
-			//float3 lV = {0.0, 0.0, 0.0};
+			float3 nV = {0.0, 0.0, 0.0};
+			float3 lV = {0.0, 0.0, 0.0};
 
-			//lV.x = eyeRay.d.x;
-			//lV.y = eyeRay.d.y;
-			//lV.z = eyeRay.d.z;
-			//
-			//float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-			//float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+			lV.x = eyeRay.d.x;
+			lV.y = eyeRay.d.y;
+			lV.z = eyeRay.d.z;
+			
+			float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+			float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
 
-			//float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
-			//float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
+			float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
+			float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
 
-			//float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
-			//float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
+			float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
+			float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
 
-			//nV.x = (x_plus - x_minus)/2.0f;
-			//nV.y = (y_plus - y_minus)/2.0f;
-			//nV.z = (z_plus - z_minus)/2.0f;
+			nV.x = (x_plus - x_minus)/2.0f;
+			nV.y = (y_plus - y_minus)/2.0f;
+			nV.z = (z_plus - z_minus)/2.0f;
 
-			////nV = cudaNormalize(nV);
+			//nV = cudaNormalize(nV);
 
-			//float NL = 0.0f;
-			//NL = lV.x*nV.x + lV.y*nV.y + lV.z*nV.z;
+			float NL = 0.0f;
+			NL = lV.x*nV.x + lV.y*nV.y + lV.z*nV.z;
 
-			//if(NL < 0.0f) NL = 0.0f;
-			//float localShading = 0.2 + 0.8*NL;
+			if(NL < 0.0f) NL = 0.0f;
+			float localShading = 0.2 + 0.8*NL;
 			
 			//col*=localShading;
 			// pre-multiply alpha
@@ -425,181 +425,182 @@ void initBlockTexture(void *h_volume_block, int x, int y, int z)
 //	}
 //	return OTF_2D;
 //}
-int start = 10;
-int end=40;
-extern "C"
-void getOTFtable()
-{
-    start++;
-	end++;
-	float4 transferFunc[256];
-	//float4 transferFunc1[256]={0.0f};
-	
-	 for(int i=0; i<=start; i++){    //alpha
-		 transferFunc[i].w = 0.0f;
-		 transferFunc[i].x = 0.0f;
-		 transferFunc[i].y = 0.0f;
-		 transferFunc[i].z = 0.0f;
-	}
-	for(int i=start+1; i<=end; i++){
-		transferFunc[i].w = (1.0 / (100-end)) * ( i - end);
-		transferFunc[i].x = (1.0 / (100-end)) * ( i - end);
-		transferFunc[i].y = (1.0 / (100-end)) * ( i - end);
-		transferFunc[i].z = (1.0 / (100-end)) * ( i - end);
-	}
-	for(int i=end+1; i<256; i++){
-		transferFunc[i].w =1.0f;
-		transferFunc[i].x =1.0f;
-		transferFunc[i].y =1.0f;
-		transferFunc[i].z =1.0f;
-	}
-	
-	//transferFunc1[0].w= transferFunc[0].w;
-	//transferFunc1[0].x= transferFunc[0].x * transferFunc[0].w;
-	//transferFunc1[0].y= transferFunc[0].y * transferFunc[0].w;
-	//transferFunc1[0].z= transferFunc[0].z * transferFunc[0].w;		
-	
-	//for(int i=1; i<256; i++)
-	//{		
-	//	
-
-	//	transferFunc1[i].w += transferFunc1[i-1].w + transferFunc[i].w;
-	//	transferFunc1[i].x += transferFunc1[i-1].x + transferFunc[i].x * transferFunc[i].w;
-	//	transferFunc1[i].y += transferFunc1[i-1].y + transferFunc[i].y * transferFunc[i].w;
-	//	transferFunc1[i].z += transferFunc1[i-1].z + transferFunc[i].z * transferFunc[i].w;
-	//	
-	//	transferFunc1[i].w =(transferFunc1[i].w/256.0f);
-	//	transferFunc1[i].x =(transferFunc1[i].x/256.0f);
-	//	transferFunc1[i].y =(transferFunc1[i].y/256.0f);
-	//	transferFunc1[i].z =(transferFunc1[i].z/256.0f);
-	//	//printf("%f %f\n",transferFunc1[i].w/256,transferFunc1[i].x/256);
-	//	//printf("%f,%f,%f,%f\n",tempA[i],OTF_2Da[before],tempG[i],OTF_2Dg[before]);
-
-	//}
-	//for(int x=0; x<256; x++){
-	//	for(int y=0; y<256; y++){
-
-	//		float4 result;
-	//		float4 temp={0.0f};
-
-	//		if(y > x){
-	//			for(int i=x; i<y; i++){
-	//				temp.x = transferFunc[i].x;
-	//				temp.y = transferFunc[i].y;
-	//				temp.z = transferFunc[i].z;
-	//				temp.w = transferFunc[i].w;
-	//				
-	//				float diff = i-x;
-
-	//				if(diff == 0.0f)
-	//					diff = 1.0f;
-
-	//				temp.w = 1.0f-pow(1-temp.w, 1/diff);
-
-	//				result.x += (1-result.w)*temp.x*temp.w;
-	//				result.y += (1-result.w)*temp.y*temp.w;
-	//				result.z += (1-result.w)*temp.z*temp.w;
-	//				result.w += (1-result.w)*temp.w;
-	//			}
-	//		}
-	//		else if(x > y){
-	//			for(int i=y; i<x; i++){
-	//				temp.x = transferFunc[i].x;
-	//				temp.y = transferFunc[i].y;
-	//				temp.z = transferFunc[i].z;
-	//				temp.w = transferFunc[i].w;
-
-	//				float diff = i-y;
-
-	//				if(diff == 0.0f)
-	//					diff = 1.0f;
-
-	//				temp.w = 1.0f-pow(1-temp.w, 1/diff);
-
-	//				result.x += (1-result.w)*temp.x*temp.w;
-	//				result.y += (1-result.w)*temp.y*temp.w;
-	//				result.z += (1-result.w)*temp.z*temp.w;
-	//				result.w += (1-result.w)*temp.w;
-	//			}
-	//		}
-	//		else {
-	//			result.x = 1.0f;
-	//			result.y = 1.0f;
-	//			result.z = 1.0f;
-	//			result.w = 0.0f;
-	//		}
-	//		OTF_2D[256*x + y].sum_R = result.x;
-	//		OTF_2D[256*x + y].sum_G = result.y;
-	//		OTF_2D[256*x + y].sum_B = result.z;
-	//		OTF_2D[256*x + y].sum_a = result.w;
-	//	}
-	//}
-	//struct OTF_2D *p;
-	//p=getPre_integration();
-	//for(int i=0; i<256; i++)
-	//{
-	//	printf("%f\n",transferFunc1[i].x);
-	//}
-	//-------------------------------------------------------------------
-	// create transfer function texture
-  //  float4 transferFunc[] =
-  //  {
-  //     /* {  0.0, 0.0, 0.0, 0.0, },
-  //      {  1.0, 0.0, 0.0, 1.0, },
-  //      {  1.0, 0.5, 0.0, 1.0, },
-  //      {  1.0, 1.0, 0.0, 1_.0, },
-  //      {  0.0, 1.0, 0.0, 1.0, },
-  //      {  0.0, 1.0, 1.0, 1.0, },
-  //      {  0.0, 0.0, 1.0, 1.0, },
-  //      {  1.0, 0.0, 1.0, 1.0, },
-  //      {  0.0, 0.0, 0.0, 0.0, },*/
-
-		//{  0.0, 0.0, 0.0, 0.0, },
-  //      {  0.0, 0.0, 0.0, 1.0, },
-  //      {  0.0, 0.0, 0.1, 0.2, },
-  //      {  0.3, 0.4, 0.5, 0.6, },
-  //      {  0.7, 0.8, 0.9, 1.0, },
-  //      {  1.0, 1.0, 1.0, 1.0, },
-  //      {  1.0, 1.0, 1.0, 1.0, },
-  //      {  1.0, 1.0, 1.0, 1.0, },
-  //      {  1.0, 1.0, 1.0, 0.0, },
-  //  };
-
-   // create 3D array
-
-	//cudaExtent Size2 = make_cudaExtent(256, 256, 1);
- //   cudaChannelFormatDesc channelDesc3 = cudaCreateChannelDesc<float4>();
- //   checkCudaErrors(cudaMalloc3DArray(&d_transferFuncArray1, &channelDesc3, Size2));
-
- //   // copy data to 3D array
- //   cudaMemcpy3DParms copyParams3 = {0};
- //   copyParams3.srcPtr   = make_cudaPitchedPtr(OTF_2D, Size2.width*sizeof(float4), Size2.width, Size2.height);
- //   copyParams3.dstArray = d_transferFuncArray1;
- //   copyParams3.extent   = Size2;
- //   copyParams3.kind     = cudaMemcpyHostToDevice;
- //   checkCudaErrors(cudaMemcpy3D(&copyParams3));
-
- //   // set texture parameters
- //   tex.normalized = true;                      // access with normalized texture coordinates
- //   tex.filterMode = cudaFilterModeLinear;      // linear interpolation
- //   tex.addressMode[0] = cudaAddressModeBorder;  // clamp texture coordinates
- //   tex.addressMode[1] = cudaAddressModeBorder;
- //   // tex.addressMode[2] = cudaAddressModeBorder;
- //   // bind array to 3D texture
- //   checkCudaErrors(cudaBindTextureToArray(transferTex1, d_transferFuncArray1, channelDesc3));
-//////////////////////////////////////////////////////////////////////////////////////////////
-	cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
-    cudaArray *d_transferFuncArray;
-    checkCudaErrors(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
-    checkCudaErrors(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
-
-    transferTex.filterMode = cudaFilterModeLinear;
-    transferTex.normalized = true;    // access with normalized texture coordinates
-    transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
-
-    // Bind the array to the texture
-    checkCudaErrors(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
-}
+//int start = 60;
+//int end=120;
+//
+//extern "C"
+//void getOTFtable()
+//{
+//    start++;
+//	end++;
+//	float4 transferFunc[256];
+//	//float4 transferFunc1[256]={0.0f};
+//	
+//	 for(int i=0; i<=start; i++){    //alpha
+//		 transferFunc[i].w = 0.0f;
+//		 transferFunc[i].x = 0.0f;
+//		 transferFunc[i].y = 0.0f;
+//		 transferFunc[i].z = 0.0f;
+//	}
+//	for(int i=start+1; i<=end; i++){
+//		transferFunc[i].w = (1.0 / (start-end)) * ( i - end);
+//		transferFunc[i].x = (1.0 / (start-end)) * ( i - end);
+//		transferFunc[i].y = (1.0 / (start-end)) * ( i - end);
+//		transferFunc[i].z = (1.0 / (start-end)) * ( i - end);
+//	}
+//	for(int i=end+1; i<256; i++){
+//		transferFunc[i].w =1.0f;
+//		transferFunc[i].x =1.0f;
+//		transferFunc[i].y =1.0f;
+//		transferFunc[i].z =1.0f;
+//	}
+//	
+//	//transferFunc1[0].w= transferFunc[0].w;
+//	//transferFunc1[0].x= transferFunc[0].x * transferFunc[0].w;
+//	//transferFunc1[0].y= transferFunc[0].y * transferFunc[0].w;
+//	//transferFunc1[0].z= transferFunc[0].z * transferFunc[0].w;		
+//	
+//	//for(int i=1; i<256; i++)
+//	//{		
+//	//	
+//
+//	//	transferFunc1[i].w += transferFunc1[i-1].w + transferFunc[i].w;
+//	//	transferFunc1[i].x += transferFunc1[i-1].x + transferFunc[i].x * transferFunc[i].w;
+//	//	transferFunc1[i].y += transferFunc1[i-1].y + transferFunc[i].y * transferFunc[i].w;
+//	//	transferFunc1[i].z += transferFunc1[i-1].z + transferFunc[i].z * transferFunc[i].w;
+//	//	
+//	//	transferFunc1[i].w =(transferFunc1[i].w/256.0f);
+//	//	transferFunc1[i].x =(transferFunc1[i].x/256.0f);
+//	//	transferFunc1[i].y =(transferFunc1[i].y/256.0f);
+//	//	transferFunc1[i].z =(transferFunc1[i].z/256.0f);
+//	//	//printf("%f %f\n",transferFunc1[i].w/256,transferFunc1[i].x/256);
+//	//	//printf("%f,%f,%f,%f\n",tempA[i],OTF_2Da[before],tempG[i],OTF_2Dg[before]);
+//
+//	//}
+//	//for(int x=0; x<256; x++){
+//	//	for(int y=0; y<256; y++){
+//
+//	//		float4 result;
+//	//		float4 temp={0.0f};
+//
+//	//		if(y > x){
+//	//			for(int i=x; i<y; i++){
+//	//				temp.x = transferFunc[i].x;
+//	//				temp.y = transferFunc[i].y;
+//	//				temp.z = transferFunc[i].z;
+//	//				temp.w = transferFunc[i].w;
+//	//				
+//	//				float diff = i-x;
+//
+//	//				if(diff == 0.0f)
+//	//					diff = 1.0f;
+//
+//	//				temp.w = 1.0f-pow(1-temp.w, 1/diff);
+//
+//	//				result.x += (1-result.w)*temp.x*temp.w;
+//	//				result.y += (1-result.w)*temp.y*temp.w;
+//	//				result.z += (1-result.w)*temp.z*temp.w;
+//	//				result.w += (1-result.w)*temp.w;
+//	//			}
+//	//		}
+//	//		else if(x > y){
+//	//			for(int i=y; i<x; i++){
+//	//				temp.x = transferFunc[i].x;
+//	//				temp.y = transferFunc[i].y;
+//	//				temp.z = transferFunc[i].z;
+//	//				temp.w = transferFunc[i].w;
+//
+//	//				float diff = i-y;
+//
+//	//				if(diff == 0.0f)
+//	//					diff = 1.0f;
+//
+//	//				temp.w = 1.0f-pow(1-temp.w, 1/diff);
+//
+//	//				result.x += (1-result.w)*temp.x*temp.w;
+//	//				result.y += (1-result.w)*temp.y*temp.w;
+//	//				result.z += (1-result.w)*temp.z*temp.w;
+//	//				result.w += (1-result.w)*temp.w;
+//	//			}
+//	//		}
+//	//		else {
+//	//			result.x = 1.0f;
+//	//			result.y = 1.0f;
+//	//			result.z = 1.0f;
+//	//			result.w = 0.0f;
+//	//		}
+//	//		OTF_2D[256*x + y].sum_R = result.x;
+//	//		OTF_2D[256*x + y].sum_G = result.y;
+//	//		OTF_2D[256*x + y].sum_B = result.z;
+//	//		OTF_2D[256*x + y].sum_a = result.w;
+//	//	}
+//	//}
+//	//struct OTF_2D *p;
+//	//p=getPre_integration();
+//	//for(int i=0; i<256; i++)
+//	//{
+//	//	printf("%f\n",transferFunc1[i].x);
+//	//}
+//	//-------------------------------------------------------------------
+//	// create transfer function texture
+//  //  float4 transferFunc[] =
+//  //  {
+//  //     /* {  0.0, 0.0, 0.0, 0.0, },
+//  //      {  1.0, 0.0, 0.0, 1.0, },
+//  //      {  1.0, 0.5, 0.0, 1.0, },
+//  //      {  1.0, 1.0, 0.0, 1_.0, },
+//  //      {  0.0, 1.0, 0.0, 1.0, },
+//  //      {  0.0, 1.0, 1.0, 1.0, },
+//  //      {  0.0, 0.0, 1.0, 1.0, },
+//  //      {  1.0, 0.0, 1.0, 1.0, },
+//  //      {  0.0, 0.0, 0.0, 0.0, },*/
+//
+//		//{  0.0, 0.0, 0.0, 0.0, },
+//  //      {  0.0, 0.0, 0.0, 1.0, },
+//  //      {  0.0, 0.0, 0.1, 0.2, },
+//  //      {  0.3, 0.4, 0.5, 0.6, },
+//  //      {  0.7, 0.8, 0.9, 1.0, },
+//  //      {  1.0, 1.0, 1.0, 1.0, },
+//  //      {  1.0, 1.0, 1.0, 1.0, },
+//  //      {  1.0, 1.0, 1.0, 1.0, },
+//  //      {  1.0, 1.0, 1.0, 0.0, },
+//  //  };
+//
+//   // create 3D array
+//
+//	//cudaExtent Size2 = make_cudaExtent(256, 256, 1);
+// //   cudaChannelFormatDesc channelDesc3 = cudaCreateChannelDesc<float4>();
+// //   checkCudaErrors(cudaMalloc3DArray(&d_transferFuncArray1, &channelDesc3, Size2));
+//
+// //   // copy data to 3D array
+// //   cudaMemcpy3DParms copyParams3 = {0};
+// //   copyParams3.srcPtr   = make_cudaPitchedPtr(OTF_2D, Size2.width*sizeof(float4), Size2.width, Size2.height);
+// //   copyParams3.dstArray = d_transferFuncArray1;
+// //   copyParams3.extent   = Size2;
+// //   copyParams3.kind     = cudaMemcpyHostToDevice;
+// //   checkCudaErrors(cudaMemcpy3D(&copyParams3));
+//
+// //   // set texture parameters
+// //   tex.normalized = true;                      // access with normalized texture coordinates
+// //   tex.filterMode = cudaFilterModeLinear;      // linear interpolation
+// //   tex.addressMode[0] = cudaAddressModeBorder;  // clamp texture coordinates
+// //   tex.addressMode[1] = cudaAddressModeBorder;
+// //   // tex.addressMode[2] = cudaAddressModeBorder;
+// //   // bind array to 3D texture
+// //   checkCudaErrors(cudaBindTextureToArray(transferTex1, d_transferFuncArray1, channelDesc3));
+////////////////////////////////////////////////////////////////////////////////////////////////
+//	cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
+//    cudaArray *d_transferFuncArray;
+//    checkCudaErrors(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
+//    checkCudaErrors(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
+//
+//    transferTex.filterMode = cudaFilterModeLinear;
+//    transferTex.normalized = true;    // access with normalized texture coordinates
+//    transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
+//
+//    // Bind the array to the texture
+//    checkCudaErrors(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
+//}
 
 extern "C"
 void initCuda(void *h_volume, cudaExtent volumeSize)
@@ -625,7 +626,78 @@ void initCuda(void *h_volume, cudaExtent volumeSize)
     // bind array to 3D texture
     checkCudaErrors(cudaBindTextureToArray(tex, d_volumeArray, channelDesc));
 
+	float4 transferFunc[256];
+    int tf_start =65;
+	int tf_middle1 =70;
+	int tf_middle2=70;
+	int tf_end =70;
 	
+	for(int i=0; i<=tf_start; i++){    //alpha
+		 transferFunc[i].w = 0.0f;
+		 transferFunc[i].x = 0.0f;
+		 transferFunc[i].y = 0.0f;
+		 transferFunc[i].z = 0.0f;
+	}
+	for(int i=tf_start+1; i<=tf_middle1; i++){
+		transferFunc[i].w = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
+		transferFunc[i].x = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
+		transferFunc[i].y = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
+		transferFunc[i].z = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
+	}
+	for(int i=tf_middle1+1; i<=tf_middle2; i++){
+		transferFunc[i].w =1.0f;
+		transferFunc[i].x =1.0f;
+		transferFunc[i].y =1.0f;
+		transferFunc[i].z =1.0f;
+	}
+	for(int i=tf_middle2+1; i<=tf_end; i++){
+		transferFunc[i].w = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
+		transferFunc[i].x = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
+		transferFunc[i].y = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
+		transferFunc[i].z = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
+	}
+	for(int i=tf_end+1; i<256; i++){
+	     transferFunc[i].w = 0.0f;
+		 transferFunc[i].x = 0.0f;
+		 transferFunc[i].y = 0.0f;
+		 transferFunc[i].z = 0.0f;
+	}
+	//-------------------------------------------------------------------
+	// create transfer function texture
+  //  float4 transferFunc[] =
+  //  {
+  //     /* {  0.0, 0.0, 0.0, 0.0, },
+  //      {  1.0, 0.0, 0.0, 1.0, },
+  //      {  1.0, 0.5, 0.0, 1.0, },
+  //      {  1.0, 1.0, 0.0, 1.0, },
+  //      {  0.0, 1.0, 0.0, 1.0, },
+  //      {  0.0, 1.0, 1.0, 1.0, },
+  //      {  0.0, 0.0, 1.0, 1.0, },
+  //      {  1.0, 0.0, 1.0, 1.0, },
+  //      {  0.0, 0.0, 0.0, 0.0, },*/
+
+		//{  0.0, 0.0, 0.0, 0.0, },
+  //      {  0.0, 0.0, 0.0, 1.0, },
+  //      {  0.0, 0.0, 0.1, 0.2, },
+  //      {  0.3, 0.4, 0.5, 0.6, },
+  //      {  0.7, 0.8, 0.9, 1.0, },
+  //      {  1.0, 1.0, 1.0, 1.0, },
+  //      {  1.0, 1.0, 1.0, 1.0, },
+  //      {  1.0, 1.0, 1.0, 1.0, },
+  //      {  1.0, 1.0, 1.0, 0.0, },
+  //  };
+
+    cudaChannelFormatDesc channelDesc2 = cudaCreateChannelDesc<float4>();
+    cudaArray *d_transferFuncArray;
+    checkCudaErrors(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
+    checkCudaErrors(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
+
+    transferTex.filterMode = cudaFilterModeLinear;
+    transferTex.normalized = true;    // access with normalized texture coordinates
+    transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
+
+    // Bind the array to the texture
+    checkCudaErrors(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
 }
 
 extern "C"

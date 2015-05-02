@@ -80,9 +80,9 @@ const char *sReference[] =
 
 const char *sSDKsample = "CUDA 3D Volume Render";
 
-const char *volumeFilename = "Bighead.den";
-cudaExtent volumeSize = make_cudaExtent(256, 256, 225);
-cudaExtent volumeSize_block = make_cudaExtent(256/4, 256/4, 225/4);
+const char *volumeFilename = "abdomen1.den";
+cudaExtent volumeSize = make_cudaExtent(512, 512, 300);
+cudaExtent volumeSize_block = make_cudaExtent(512/4, 512/4, 300/4);
 typedef unsigned char VolumeType;
 
 //char *volumeFilename = "mrt16_angio.raw";
@@ -131,7 +131,7 @@ extern "C" void render_kernel(dim3 gridSize, dim3 blockSize, uint *d_output, uin
 extern "C" void copyInvViewMatrix(float *invViewMatrix, size_t sizeofMatrix);
 extern "C" void* make_blockVolume(void* image, cudaExtent volumeSize_block, cudaExtent volumeSize);
 extern "C" void initBlockTexture(const void *h_volume_block, int x, int y, int z);
-extern "C" void getOTFtable();
+//extern "C" void getOTFtable();
 
 void initPixelBuffer();
 
@@ -234,7 +234,7 @@ void ScreenCapture( const char *strFilePath ,uchar *d_output)
 void render()
 {
     copyInvViewMatrix(invViewMatrix, sizeof(float4)*3);
-	getOTFtable();
+	
     // map PBO to get CUDA device pointer
 	uint  *d_output;
 	uint  *c_output; 
@@ -654,7 +654,7 @@ main(int argc, char **argv)
     
 	void *h_volume = loadRawFile(path, size);
     void *block_volume = make_blockVolume(h_volume, volumeSize_block, volumeSize); //블락 볼륨 만들기
-    
+   // getOTFtable();
 	initCuda(h_volume, volumeSize);
 	initBlockTexture(block_volume,volumeSize_block.width,volumeSize_block.height,volumeSize_block.depth);
     
