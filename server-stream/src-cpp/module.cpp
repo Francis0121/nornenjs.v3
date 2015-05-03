@@ -21,7 +21,8 @@ void Module::Initialize(Handle<Object> target) {
   // Module objects can only be created by load functions
   NODE_SET_METHOD(target, "moduleLoad", Module::Load);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "getFunction", Module::GetFunction);
-  NODE_SET_PROTOTYPE_METHOD(constructor_template, "memTextureAlloc", Module::TextureAlloc);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "memVolumeTextureAlloc", Module::VolumeTextureAlloc);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "memOTFTextureAlloc", Module::OTFTextureAlloc);
 }
 
 Handle<Value> Module::New(const Arguments& args) {
@@ -115,32 +116,34 @@ void Module::otfTableTextureLoad(float4 *input_float_1D, unsigned int otf_size, 
    cuTexRefSetFormat(otf_texref, CU_AD_FORMAT_FLOAT, 4);
    cuTexRefSetArray(otf_texref, otf_array, CU_TRSA_OVERRIDE_FORMAT);
 }
-float4 *Module::getOTFtable(int otf_start, int otf_end, int otf_size){
 
-    float4 *otf_table= (float4 *)malloc(sizeof(float4)*otf_size);
+float4 *Module::getOTFtable(unsigned int tf_start, unsigned int tf_middle1, unsigned int tf_middle2, unsigned int tf_end, unsigned int tf_size){
 
-    for(int i=0; i<=otf_start; i++){    //alpha
-		 otf_table[i].x = 0.0f;
-		 otf_table[i].y = 0.0f;
-		 otf_table[i].z = 0.0f;
-		 otf_table[i].w = 0.0f;
-	}
-	for(int i=otf_start+1; i<=otf_end; i++){
-		otf_table[i].x = (1.0f / ((float)otf_end-(float)otf_start)) * ( i - (float)otf_start);
-		otf_table[i].y = (1.0f / ((float)otf_end-(float)otf_start)) * ( i - (float)otf_start);
-		otf_table[i].z = (1.0f / ((float)otf_end-(float)otf_start)) * ( i - (float)otf_start);
-		otf_table[i].w = (1.0f / ((float)otf_end-(float)otf_start)) * ( i - (float)otf_start);
+    float4 *otf_table= (float4 *)malloc(sizeof(float4)*tf_size);
+    memset(otf_table, 0, sizeof(float4)*tf_size);
 
+	for(int i=tf_start+1; i<=tf_middle1; i++){
+		otf_table[i].x = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
+		otf_table[i].y = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
+		otf_table[i].z = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
+		otf_table[i].w = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
 	}
-	for(int i=otf_end+1; i<otf_size; i++){
-		otf_table[i].x =1.0f;
-		otf_table[i].y =1.0f;
-		otf_table[i].z =1.0f;
-		otf_table[i].w =1.0f;
-	}
+	for(int i=tf_middle1+1; i<=tf_middle2; i++){
+    	otf_table[i].w =1.0f;
+    	otf_table[i].x =1.0f;
+    	otf_table[i].y =1.0f;
+    	otf_table[i].z =1.0f;
+    }
+    for(int i=tf_middle2+1; i<=tf_end; i++){
+    	otf_table[i].w = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
+    	otf_table[i].x = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
+    	otf_table[i].y = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
+    	otf_table[i].z = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
+    }
+
     return otf_table;
 }
-Handle<Value> Module::TextureAlloc(const Arguments& args) {
+Handle<Value> Module::VolumeTextureAlloc(const Arguments& args) {
   
    HandleScope scope;
    Local<Object> result = constructor_template->InstanceTemplate()->NewInstance();
@@ -154,21 +157,30 @@ Handle<Value> Module::TextureAlloc(const Arguments& args) {
    unsigned int height = args[2]->Uint32Value();
    unsigned int depth = args[3]->Uint32Value();
 
-   unsigned int otf_start = 60;
-   unsigned int otf_end = 120;
-   unsigned int otf_size = 256;
-
-   float4 *input_float_1D = NULL;
-   input_float_1D =getOTFtable(otf_start,otf_end, otf_size);
-
    volumeTextureLoad(width, height, depth, filename, pmodule);   //volume Texture 생성
-   otfTableTextureLoad(input_float_1D, otf_size, pmodule);  //otf 생성.
-
-   free(input_float_1D);
-  
    return scope.Close(result);
 }
+Handle<Value> Module::OTFTextureAlloc(const Arguments& args) {
 
+   HandleScope scope;
+   Local<Object> result = constructor_template->InstanceTemplate()->NewInstance();
+   Module *pmodule = ObjectWrap::Unwrap<Module>(args.This());
+
+   /*OTF binding*/
+   unsigned int tf_start   =  args[0]->Uint32Value();
+   unsigned int tf_middle1 =  args[1]->Uint32Value();
+   unsigned int tf_middle2 =  args[2]->Uint32Value();
+   unsigned int tf_end     =  args[3]->Uint32Value();
+   unsigned int tf_size    =  256;
+
+   float4 *input_float_1D = NULL;
+   input_float_1D =getOTFtable(tf_start, tf_middle1, tf_middle2, tf_end, tf_size);
+
+   otfTableTextureLoad(input_float_1D, tf_size, pmodule);  //otf 생성.
+   free(input_float_1D);
+
+   return scope.Close(result);
+}
 Handle<Value> Module::GetFunction(const Arguments& args) {
   HandleScope scope;
   Local<Object> result = NodeCuda::Function::constructor_template->InstanceTemplate()->NewInstance();

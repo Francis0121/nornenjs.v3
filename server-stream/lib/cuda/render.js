@@ -45,6 +45,10 @@ var vec3 = require('./mat/vec3');
         positionZ: 3.0,
         rotationX: 0,
         rotationY: 0,
+        transferStart: 100,
+        transferMiddle1: 140,
+        transferMiddle2: 160,
+        transferEnd: 180,
         mprType:1,
         quality:2,
 
@@ -53,13 +57,15 @@ var vec3 = require('./mat/vec3');
         d_outputBuffer : undefined,
 
         init : function(){
-            // ~ VolumeLoad & VolumeTexture & TextureBinding
-            var error = this.cuModule.memTextureAlloc(this.textureFilePath, this.volumewidth,this.volumeheight, this.volumedepth);
+            // ~ VolumeLoad & VolumeTexture Binding
+            var error = this.cuModule.memVolumeTextureAlloc(this.textureFilePath, this.volumewidth,this.volumeheight, this.volumedepth);
             logger.debug('[INFO_CUDA] _cuModule.memTextureAlloc', error);
         },
 
         start : function(){
 
+            // OTF TextureBinding
+            var error = this.cuModule.memOTFTextureAlloc(this.transferStart, this.transferMiddle1,this.transferMiddle2, this.transferEnd);
             // ~ 3D volume array
             this.d_output = cu.memAlloc(this.imageWidth * this.imageHeight * 4);
             var error = this.d_output.memSet(this.imageWidth * this.imageHeight * 4);

@@ -4,6 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_jni_gl">JniGLActivity</string>
-    <string name="host">http://112.108.40.166:5000</string>
+    <string name="host">http://112.108.40.19:5000</string>
 
 </resources>

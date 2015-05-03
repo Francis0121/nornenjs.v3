@@ -128,7 +128,7 @@ void compTest(tjhandle handle, unsigned char **jpeg,
 	int error_ =tjCompress2(handle, data, w, 0, h, TJPF_RGBA, jpeg, dstSize, TJSAMP_GRAY,
 			jpegQual, flags);
 	
-	writeJPEG(*jpeg, *dstSize);
+	//writeJPEG(*jpeg, *dstSize);
 }
 void
 JpegEncoder::encode_tj()

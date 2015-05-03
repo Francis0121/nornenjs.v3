@@ -20,10 +20,12 @@ var Web = require('./event/web').Web;
 var path = require('path');
 var HashMap = require('hashmap').HashMap;
 var socketIo = require('socket.io');
+var sys = require('sys')
 var exec = require('child_process').exec;
 var redis = require('redis');
 
-
+function puts(error, stdout, stderr) { sys.puts(stdout) }
+exec("sudo mount 112.108.40.14:/storage /storage", puts);
 /**
  * Create constructor
  *
@@ -54,7 +56,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         throw new Error('IsRoot type is "Boolean" type');
     }
 
-    this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
+    this.REDIS_PATH = '/home/russa/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
     this.redisProcess = undefined;
