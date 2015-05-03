@@ -35,7 +35,7 @@ var vec3 = require('./mat/vec3');
         imageWidth : 512,
         imageHeight : 512,
         density : 0.05,
-        brightness : 1.0,
+        brightness : 2.0,
         transferOffset : 0.0,
         transferScaleX : 0.0,
         transferScaleY : 0.0,
@@ -45,14 +45,18 @@ var vec3 = require('./mat/vec3');
         positionZ: 3.0,
         rotationX: 0,
         rotationY: 0,
-        transferStart: 100,
-        transferMiddle1: 140,
-        transferMiddle2: 160,
-        transferEnd: 180,
+        transferStart: 65,
+        transferMiddle1: 80,
+        transferMiddle2: 100,
+        transferEnd: 120,
+        transferSize : 256,
         mprType:1,
         quality:2,
 
+
         d_output : undefined,
+        d_tf2Dtable : undefined,
+        d_tf2DtableBuffer : undefined,
         d_invViewMatrix : undefined,
         d_outputBuffer : undefined,
 
@@ -62,10 +66,46 @@ var vec3 = require('./mat/vec3');
             logger.debug('[INFO_CUDA] _cuModule.memTextureAlloc', error);
         },
 
+        make2Dtable :function(){
+
+            this.d_tf2Dtable = cu.memAlloc(this.transferSize * this.transferSize * 4 * 4);
+            var error = this.d_tf2Dtable.memSet(this.transferSize * this.transferSize * 4 * 4);
+            logger.debug('[INFO_CUDA_TF] d_tf2Dtable.memSet', error);
+
+            var _cuModule = this.cuModule;
+            var cuFunction = _cuModule.getFunction('TF2d_kernel');
+            logger.debug('[INFO_CUDA_TF] cuFunction', cuFunction);
+
+            var error = cu.launch(
+                cuFunction, [16, 16, 1], [16, 16, 1],
+                [
+                    {
+                        type: 'DevicePtr',
+                        value: this.d_tf2Dtable.devicePtr
+                    },{
+                        type: 'Uint32',
+                        value: this.transferSize
+                    }
+                ]
+            );
+            logger.debug('[INFO_CUDA_TF] cu.launch', error);
+
+            this.d_tf2DtableBuffer = new Buffer(this.transferSize * this.transferSize * 4 * 4);
+            this.d_tf2Dtable.copyDtoH(this.d_tf2DtableBuffer, false);
+
+            var error = this.cuModule.memOTF2DTextureAlloc(this.d_tf2DtableBuffer, this.transferSize);
+            logger.debug('[INFO_CUDA] _cuModule.memOTF2DTextureAlloc', error);
+
+
+
+        },
         start : function(){
 
             // OTF TextureBinding
             var error = this.cuModule.memOTFTextureAlloc(this.transferStart, this.transferMiddle1,this.transferMiddle2, this.transferEnd);
+            logger.debug('[INFO_CUDA] _cuModule.memOTFTextureAlloc', error);
+            this.make2Dtable()
+
             // ~ 3D volume array
             this.d_output = cu.memAlloc(this.imageWidth * this.imageHeight * 4);
             var error = this.d_output.memSet(this.imageWidth * this.imageHeight * 4);
@@ -204,12 +244,13 @@ var vec3 = require('./mat/vec3');
             logger.debug('[INFO_CUDA] cu.launch', error);
 
             // cuMemcpyDtoH
-            this.d_outputBuffer = new Buffer(this.imageWidth * this.imageHeight * 4);
+            this.d_outputBuffer = new Buffer(this.imageWidth * this.imageHeight * 4 );
             this.d_output.copyDtoH(this.d_outputBuffer, false);
         },
 
         end : function(){
             this.d_output.free();
+            this.d_tf2Dtable.free();
             this.d_invViewMatrix.free();
         }
     };
