@@ -23,14 +23,18 @@ typedef unsigned char uchar;
 cudaArray *d_volumeArray = 0;
 cudaArray *d_blockArray = 0;
 cudaArray *d_transferFuncArray;
-cudaArray *d_transferFuncArray1 = 0;
+cudaArray *d_TF2dArray = 0;
+//cudaArray *d_transferFuncArray1 = 0;
+
 typedef unsigned char VolumeType;
 //typedef unsigned short VolumeType;
 
 texture<VolumeType, 3, cudaReadModeNormalizedFloat> tex;         // 3D texture
 texture<VolumeType, 3, cudaReadModeNormalizedFloat> tex_block;         // 3D texture
+
 texture<float4, 1, cudaReadModeElementType>         transferTex; // 1D transfer function texture
 texture<float4, 1, cudaReadModeElementType>         transferTex1; // 1D transfer function texture
+texture<float4, 3, cudaReadModeElementType> tex_TF2d;		//pre-integral
 typedef struct
 {
     float4 m[3];
@@ -195,7 +199,7 @@ d_render(uint *d_output, uint imageW, uint imageH,
         // read from 3D texture
         // remap position to [0, 1] coordinates
 
-	   // float block_den = tex3D(tex_block, (pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f))*65535;
+	    //float block_den = tex3D(tex_block, (pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f))*65535;
 		//float3 advanced = {0.0f,0.0f.0.0f};
 		//uint density = __float2uint_rn(block_den*256);
 		/*temp.w = block_den;
@@ -205,7 +209,7 @@ d_render(uint *d_output, uint imageW, uint imageH,
 		uint density =  ((unsigned int)(temp.w*255)<<24) | ((unsigned int)(temp.z*255)<<16) | ((unsigned int)(temp.y*255)<<8) | (unsigned int)(temp.x*255);*/
 	   //	if(block_den >= max) 
        //				max = block_den;*/
-	   //if((int)block_den < 80) { //빈공간 도약 - PALLET_START~PALLET_END까지만 그리기 때문에
+	   //if((int)block_den < 65) { //빈공간 도약 - PALLET_START~PALLET_END까지만 그리기 때문에
 		  // int3 nowPos= {(pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f)};
 		  // int3 advpos;
 		  // do{
@@ -214,13 +218,17 @@ d_render(uint *d_output, uint imageW, uint imageH,
 		  // }
 		
 	    //
-	    //}
+	 //   }
 		//else{
 			float sample = tex3D(tex, pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+			float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5),  pos.z*0.5f+0.5f+(step.z*0.5));
 	       // float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f+(step.z*0.5));
 			
 			// lookup in transfer function texture
-			float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
+			//float4 col = tex1D(transferTex, sample);
+			float4 col = tex3D(tex_TF2d, sample,sample_next,0);
+			
+			//float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
 			//float4 col={0.0};
 			//float diff;
 			//if(sample<=sample_next){
@@ -235,34 +243,34 @@ d_render(uint *d_output, uint imageW, uint imageH,
 			//float4 col = tex3D(transferTex1,sample,sample_next,0);
 
 
-			float3 nV = {0.0, 0.0, 0.0};
-			float3 lV = {0.0, 0.0, 0.0};
+			//float3 nV = {0.0, 0.0, 0.0};
+			//float3 lV = {0.0, 0.0, 0.0};
 
-			lV.x = eyeRay.d.x;
-			lV.y = eyeRay.d.y;
-			lV.z = eyeRay.d.z;
-			
-			float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-			float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+			//lV.x = eyeRay.d.x;
+			//lV.y = eyeRay.d.y;
+			//lV.z = eyeRay.d.z;
+			//
+			//float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+			//float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
 
-			float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
-			float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
+			//float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
+			//float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
 
-			float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
-			float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
+			//float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
+			//float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
 
-			nV.x = (x_plus - x_minus)/2.0f;
-			nV.y = (y_plus - y_minus)/2.0f;
-			nV.z = (z_plus - z_minus)/2.0f;
+			//nV.x = (x_plus - x_minus)/2.0f;
+			//nV.y = (y_plus - y_minus)/2.0f;
+			//nV.z = (z_plus - z_minus)/2.0f;
 
-			//nV = cudaNormalize(nV);
+			////nV = cudaNormalize(nV);
 
-			float NL = 0.0f;
-			NL = lV.x*nV.x + lV.y*nV.y + lV.z*nV.z;
+			//float NL = 0.0f;
+			//NL = lV.x*nV.x + lV.y*nV.y + lV.z*nV.z;
 
-			if(NL < 0.0f) NL = 0.0f;
-			float localShading = 0.2 + 0.8*NL;
-			
+			//if(NL < 0.0f) NL = 0.0f;
+			//float localShading = 0.2 + 0.8*NL;
+			//
 			//col*=localShading;
 			// pre-multiply alpha
 			col.x *= col.w;
@@ -312,7 +320,7 @@ void* make_blockVolume(void* image, cudaExtent blockSize, cudaExtent volumeSize)
 	cudaMalloc((void**)&dest_p, bsize);
 
 	dim3 Db = dim3(16, 16);
-	dim3 Dg = dim3(4, 4);
+	dim3 Dg = dim3(8,8);
 
 	makeBlock_kernel<<<Dg, Db>>>(image_p, dest_p, blockSize, volumeSize);
 
@@ -351,16 +359,118 @@ void initBlockTexture(void *h_volume_block, int x, int y, int z)
     // set texture parameters
     tex_block.normalized = true;                      // access with normalized texture coordinates
     tex_block.filterMode = cudaFilterModeLinear;      // linear interpolation
-    tex_block.channelDesc = channelDesc;
-	tex_block.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
-    tex_block.addressMode[1] = cudaAddressModeClamp;
+	tex_block.addressMode[0] = cudaAddressModeBorder;   // wrap texture coordinates
+    tex_block.addressMode[1] = cudaAddressModeBorder;
 
 	// bind array to 3D texture
-    checkCudaErrors(cudaBindTextureToArray(tex_block, d_blockArray, channelDesc));            
+    checkCudaErrors(cudaBindTextureToArray(tex_block, d_blockArray, channelDesc));       
+
+
+
+	
 } 
 
 
+__global__ void TF2d_kernel(float4* TF2d_k, int TFSize)
+{
+	int x = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
+    int y = __umul24(blockIdx.y, blockDim.y) + threadIdx.y;
 
+	if(x>=TFSize || y>=TFSize)
+		return;
+
+	//float4 result;				//1번 방법 - pre-integral : OTF 뾰족하게 해도 한겹만 나오게 할수있다.
+	//float4 temp = {0.0f};
+	//
+	//if(y > x){
+	//	for(int i=x; i<y; i++){
+	//		temp = tex1D(tex_TF, i);
+
+	//		float diff = i-x;
+
+	//		if(diff == 0.0f)
+	//			diff = 1.0f;
+
+	//		temp.w = 1.0f-pow(1-temp.w, 1/diff);
+
+	//		result.x += (1-result.w)*temp.x*temp.w;
+	//		result.y += (1-result.w)*temp.y*temp.w;
+	//		result.z += (1-result.w)*temp.z*temp.w;
+	//		result.w += (1-result.w)*temp.w;
+	//	}
+	//}
+	//else if(x > y){
+	//	for(int i=y; i<x; i++){
+	//		temp = tex1D(tex_TF, i);
+
+	//		float diff = i-y;
+
+	//		if(diff == 0.0f)
+	//			diff = 1.0f;
+
+	//		temp.w = 1.0f-pow(1-temp.w, 1/diff);
+
+	//		result.x += (1-result.w)*temp.x*temp.w;
+	//		result.y += (1-result.w)*temp.y*temp.w;
+	//		result.z += (1-result.w)*temp.z*temp.w;
+	//		result.w += (1-result.w)*temp.w;
+	//	}
+	//}
+	//else {
+	//	result.x = 255.0f;
+	//	result.y = 255.0f;
+	//	result.z = 255.0f;
+	//	result.w = 0.0f;
+	//}
+
+	float4 temp;					//2번 방법 - 1번방법보다 물결무늬가 덜 생긴다 : summed 2d table
+	float4 result = {0.0};
+	float4 sum = {0.0f};
+	
+	int nx, ny, diff;
+	if(x>y){
+		diff = x-y;
+		ny = x;
+		nx = y;
+	}
+	else if(y>x){
+		diff = y-x;
+		nx = x;
+		ny = y;
+	}
+	else{
+		diff=1;
+		nx = ny = x;
+		sum.w = 0.0f;
+	}
+
+	for(int i=nx; i<ny; i++){
+		temp = tex1D(transferTex, i);
+
+		temp.x *= temp.w;
+		temp.y *= temp.w;
+		temp.z *= temp.w;
+
+		sum.x += temp.x;
+		sum.y += temp.y;
+		sum.z += temp.z;
+		sum.w += temp.w;
+	}
+
+	result.x = sum.x / diff; //* (newAlpha/sum.w);
+	result.y = sum.y / diff; //* (newAlpha/sum.w);
+	result.z = sum.z / diff; //* (newAlpha/sum.w);
+	result.w = sum.w / diff;
+
+		
+
+	TF2d_k[TFSize*y + x].x = result.x;
+	TF2d_k[TFSize*y + x].y = result.y;
+	TF2d_k[TFSize*y + x].z = result.z;
+	TF2d_k[TFSize*y + x].w = result.w;
+
+
+}
 
 //struct OTF_2D* getPre_integration(){
 //
@@ -628,9 +738,9 @@ void initCuda(void *h_volume, cudaExtent volumeSize)
 
 	float4 transferFunc[256];
     int tf_start =65;
-	int tf_middle1 =70;
-	int tf_middle2=70;
-	int tf_end =70;
+	int tf_middle1 =80;
+	int tf_middle2=100;
+	int tf_end =120;
 	
 	for(int i=0; i<=tf_start; i++){    //alpha
 		 transferFunc[i].w = 0.0f;
@@ -692,12 +802,51 @@ void initCuda(void *h_volume, cudaExtent volumeSize)
     checkCudaErrors(cudaMallocArray(&d_transferFuncArray, &channelDesc2, sizeof(transferFunc)/sizeof(float4), 1));
     checkCudaErrors(cudaMemcpyToArray(d_transferFuncArray, 0, 0, transferFunc, sizeof(transferFunc), cudaMemcpyHostToDevice));
 
-    transferTex.filterMode = cudaFilterModeLinear;
-    transferTex.normalized = true;    // access with normalized texture coordinates
+    transferTex.filterMode = cudaFilterModePoint;
+    transferTex.normalized = false;    // access with normalized texture coordinates
     transferTex.addressMode[0] = cudaAddressModeClamp;   // wrap texture coordinates
 
     // Bind the array to the texture
     checkCudaErrors(cudaBindTextureToArray(transferTex, d_transferFuncArray, channelDesc2));
+
+
+	int size = 256*256;
+	float4* TF2d_k;
+	cudaMalloc((void**)&TF2d_k, size*sizeof(float4));
+	cudaMemset(TF2d_k, 0, size*sizeof(float4));
+
+	dim3 Db = dim3( 16, 16 ); 
+    dim3 Dg = dim3( 16, 16 );
+	
+	TF2d_kernel<<<Dg, Db>>>(TF2d_k, 256); //pre-integral OTF init kernel - threads 4096*4096
+
+	float4* TF2d;
+	TF2d = new float4[size];
+	memset(TF2d, 0, size*sizeof(float4));
+
+	cudaMemcpy(TF2d, TF2d_k, size*sizeof(float4), cudaMemcpyDeviceToHost);
+	
+	cudaExtent Size = make_cudaExtent(256, 256, 1);
+	cudaChannelFormatDesc channelDesc3 = cudaCreateChannelDesc<float4>();
+    checkCudaErrors(cudaMalloc3DArray(&d_TF2dArray, &channelDesc3, Size));
+
+    // copy data to 3D array
+    cudaMemcpy3DParms copyParams2 = {0};
+    copyParams2.srcPtr   = make_cudaPitchedPtr(TF2d, 256*sizeof(float4), 256, 256);
+    copyParams2.dstArray = d_TF2dArray;
+    copyParams2.extent   = Size;
+    copyParams2.kind     = cudaMemcpyHostToDevice;
+    checkCudaErrors(cudaMemcpy3D(&copyParams2));
+
+    // set texture parameters
+    tex_TF2d.normalized = true;                      // access with normalized texture coordinates
+    tex_TF2d.filterMode = cudaFilterModeLinear;      // linear interpolation
+    tex_TF2d.addressMode[0] = cudaAddressModeBorder;  // clamp texture coordinates
+    tex_TF2d.addressMode[1] = cudaAddressModeBorder;
+    tex_TF2d.addressMode[2] = cudaAddressModeBorder;
+    // bind array to 3D texture
+    checkCudaErrors(cudaBindTextureToArray(tex_TF2d, d_TF2dArray, channelDesc3));
+	delete[] TF2d;
 }
 
 extern "C"

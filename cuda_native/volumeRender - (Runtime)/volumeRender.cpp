@@ -658,6 +658,7 @@ main(int argc, char **argv)
 	initCuda(h_volume, volumeSize);
 	initBlockTexture(block_volume,volumeSize_block.width,volumeSize_block.height,volumeSize_block.depth);
     
+
 	free(h_volume);
 	free(block_volume);
     sdkCreateTimer(&timer);
