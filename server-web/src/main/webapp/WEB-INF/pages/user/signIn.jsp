@@ -41,6 +41,9 @@
                     <sec:authentication property="principal.username" var="username"/>
                     <span class="username">Welcome! <c:out value="${username}"/></span>
                 </li>
+                <li>
+                    <a href="${cp}/dashboard" class="colorGray size gotoDashboard">Go to Dashboard</a>
+                </li>
             </ul>
             </sec:authorize>
         </form:form>

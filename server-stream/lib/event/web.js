@@ -37,6 +37,7 @@ Web.prototype.addSocketEventListener = function(socket){
     this.socket = socket;
     this.pngEventListener();
     this.leftMouseEventListener();
+    this.rightMouseEventListener();
 };
 
 /**
@@ -70,6 +71,20 @@ Web.prototype.leftMouseEventListener = function(){
         $this.encoding.jpeg(cudaRender, socket);
     });
 
+};
+
+Web.prototype.rightMouseEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.WEB.RIGHT_CLICK, function(option){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+
+        cudaRender.rotationX = option.rotationX;
+        cudaRender.rotationY = option.rotationY;
+
+        $this.encoding.jpeg(cudaRender, socket);
+    });
 };
 
 module.exports.Web = Web;

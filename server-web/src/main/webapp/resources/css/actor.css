@@ -25,6 +25,7 @@
 .actorForm li>span.username{ width: 100%; text-align: left; color: #031a28; font-size: 75%; padding: 0 0 12px 0; display: block; text-indent: 20px; font-weight: bold;}
 .actorForm li.error{ font-size: 75%; color: #ffa563; text-align: left; padding: 8px 6% 0 6%; width: 88%; }
 
+.actorForm li>a.gotoDashboard{ font-size: 75%; padding-bottom: 12px; width: 100%; text-align: left; display: block; text-indent: 20px;}
 .actorForm .size{ font-size: 75%; }
 
 /**

@@ -5,11 +5,17 @@
 <script src="http://112.108.40.166:5000/socket.io/socket.io.js"></script>
 
 <script>
+    document.oncontextmenu = function(e){
+        var evt = new Object({ keyCode:93 });
+        if(event.preventDefault != undefined)
+            event.preventDefault();
+        if(event.stopPropagation != undefined)
+            event.stopPropagation();
+    }
 
     var relay = io.connect('http://112.108.40.166:5000',{ forceNew : true, reconnection : false });
-
     var count = 0;
-    var fps = 0;
+
     /**
      * send connect message to server
      */
@@ -72,32 +78,27 @@
                 ctx.drawImage(img, 0, 0, 512, 512, 0, 0, canvas.clientWidth, canvas.clientWidth);
             };
             img.src = url;
-
-            fps++;
         });
-
-        var fpsInterval = function(){
-            //console.log('Fps ['+fps+']')
-            fps = 0;
-        }
-
-        setInterval(fpsInterval, 1000);
-
 
         // ~ Touch
 
         var canvas = document.getElementById('volumeRenderingCanvas');
 
-        var touch = {
-            isOn : false,
-            beforeX : 0,
-            beforeY : 0
-        };
-
-        var mouse = {
+        var left = {
             isOn : false,
             beforeX : 0,
             beforeY : 0,
+            count : 0
+        };
+
+        var right = {
+            isOn : false,
+            beforeX : 0,
+            beforeY : 0,
+            count : 0
+        };
+
+        var wheel = {
             count : 0
         };
 
@@ -106,99 +107,79 @@
             rotationY : 0
         };
 
-        canvas.addEventListener('touchstart', function(event){
-            event.preventDefault();
-            var touches = event.changedTouches;
-
-            if(touches.length == 1){
-                touch.isOn = true;
-                touch.beforeX = touches[0].pageX;
-                touch.beforeY = touches[0].pageY;
-            }
-        });
-
-        canvas.addEventListener('touchmove', function(event){
-            event.preventDefault();
-            var touches = event.changedTouches;
-
-            if(touch.isOn){
-                option.rotationX += (touches[0].pageX - touch.beforeX)/10.0;
-                option.rotationY += (touches[0].pageY - touch.beforeY)/10.0;
-
-                touch.beforeX = touches[0].pageX;
-                touch.beforeY = touches[0].pageY;
-
-                socket.emit('touch', option);
-            }
-        });
-
-        canvas.addEventListener('touchend', function(event){
-            event.preventDefault();
-            touch.isOn = false;
-        });
-
-        canvas.addEventListener('touchcancel', function(event) {
-            event.preventDefault();
-            touch.isOn = false;
-        });
-
-        canvas.addEventListener('touchleave', function(event){
-            event.preventDefault();
-            touch.isOn = false;
-        });
-
 
         canvas.addEventListener('mousedown', function(event){
             event.preventDefault();
 
-            mouse.isOn = true;
-            mouse.beforeX = event.pageX;
-            mouse.beforeY = event.pageY;
-            mouse.count = 0;
+            switch(event.button){
+                case 0:
+                    left.isOn = true;
+                    left.beforeX = event.pageX;
+                    left.beforeY = event.pageY;
+                    left.count = 0;
+                    break;
+                case 1:
+
+                    break;
+                case 2:
+                    right.isOn = true;
+                    right.beforeX = event.pageX;
+                    right.beforeY = event.pageY;
+                    right.count = 0;
+                    break;
+            }
+
         });
 
         canvas.addEventListener('mousemove', function(event){
             event.preventDefault();
-            mouse.count++;
-            if(mouse.isOn && mouse.count%3 == 0){
-                option.rotationX += (event.pageX - mouse.beforeX)/3.0;
-                option.rotationY += (event.pageY - mouse.beforeY)/3.0;
+            left.count++;
+            right.count++;
 
-                mouse.beforeX = event.pageX;
-                mouse.beforeY = event.pageY;
+            switch(event.button){
+                case 0:
+                    if(left.isOn && left.count%3 == 0){
+                        option.rotationX += (event.pageX - left.beforeX)/3.0;
+                        option.rotationY += (event.pageY - left.beforeY)/3.0;
 
-                socket.emit('leftMouse', option);
+                        left.beforeX = event.pageX;
+                        left.beforeY = event.pageY;
+
+                        socket.emit('leftMouse', option);
+                    }
+                    break;
+                case 1:
+
+                    break;
+                case 2:
+                    if(right.isOn && right.count%3 == 0){
+                        option.rotationX += (event.pageX - right.beforeX)/3.0;
+                        option.rotationY += (event.pageY - right.beforeY)/3.0;
+
+                        right.beforeX = event.pageX;
+                        right.beforeY = event.pageY;
+
+                        socket.emit('rightMouse', option);
+                    }
+                    break;
             }
+
+
         });
 
         canvas.addEventListener('mouseup', function(event){
             event.preventDefault();
-            mouse.isOn = false;
-        });
+            switch(event.button){
+                case 0:
+                    left.isOn = false;
+                    break;
+                case 1:
 
-
-        var infinityFlag = false;
-        var infinityInterval = null;
-
-        var infinityFunction = function(){
-
-            option.rotationX += 1;
-            option.rotationY += 1;
-
-            socket.emit('leftMouse', option);
-
-        };
-
-        $('#infinityRotateEvent').on('click', function(){
-
-            if(infinityFlag){
-                clearInterval(infinityInterval);
-                infinityFlag = false;
-            }else{
-                infinityInterval= setInterval(infinityFunction, 1000/30);
-                infinityFlag = true;
+                    break;
+                case 2:
+                    right.isOn = false;
+                    break;
             }
-
         });
 
     };
