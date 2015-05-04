@@ -105,7 +105,11 @@ Web.prototype.wheelEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.WHEEL_SCALE, function(scaleOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.positionZ = scaleOption.positionZ;
-        $this.encoding.jpeg(cudaRender, socket);
+        if(scaleOption.isPng) {
+            $this.encoding.png(cudaRender, socket);
+        }else{
+            $this.encoding.jpeg(cudaRender, socket);
+        }
     });
 };
 

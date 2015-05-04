@@ -194,10 +194,27 @@
             }
         });
 
+        var wheelTimeout = undefined;
         var wheel = function (event){
+            scaleOption.isPng = false;
             scaleOption.positionZ += event.wheelDelta/1200;
             socket.emit('wheelScale', scaleOption);
+
+            if(wheelTimeout == undefined) {
+                wheelTimeout = setTimeout(wheelTimeFunc, 1000);
+            }else{
+                clearTimeout(wheelTimeout);
+                scaleOption.isPng = true;
+                wheelTimeout = setTimeout(wheelTimeFunc, 1000);
+            }
         };
+
+        var wheelTimeFunc = function(){
+            scaleOption.isPng = true;
+            socket.emit('wheelScale', scaleOption);
+            wheelTimeout = undefined;
+        };
+
         canvas.addEventListener('mousewheel', wheel, false);
         canvas.addEventListener('DOMMouseScroll', wheel, false);
 
@@ -222,7 +239,7 @@
             socket.emit('brightBtn', brightOption);
         });
 
-        window.onresize = function(event) {
+        window.onresize = function() {
             socket.emit('webPng');
         };
     };
