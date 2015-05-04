@@ -12,6 +12,7 @@ var EVENT_MESSAGE = {
     WEB : {
         LEFT_CLICK : 'leftMouse',
         RIGHT_CLICK : 'rightMouse',
+        WHEEL_SCALE : 'wheelScale',
         PNG : 'webPng'
     }
     

@@ -98,13 +98,13 @@
             count : 0
         };
 
-        var wheel = {
-            count : 0
-        };
-
         var option = {
             rotationX : 0,
             rotationY : 0
+        };
+
+        var scaleOption = {
+            positionZ : 3.0
         };
 
 
@@ -117,6 +117,7 @@
                     left.beforeX = event.pageX;
                     left.beforeY = event.pageY;
                     left.count = 0;
+                    console.log('left btn click');
                     break;
                 case 1:
 
@@ -126,6 +127,7 @@
                     right.beforeX = event.pageX;
                     right.beforeY = event.pageY;
                     right.count = 0;
+                    console.log('right btn click');
                     break;
             }
 
@@ -182,6 +184,12 @@
             }
         });
 
+        var wheel = function (event){
+            scaleOption.positionZ += event.wheelDelta/1200;
+            socket.emit('wheelScale', scaleOption);
+        };
+        canvas.addEventListener('mousewheel', wheel, false);
+        canvas.addEventListener('DOMMouseScroll', wheel, false);
     };
 
 </script>
