@@ -744,15 +744,15 @@ void initCuda(void *h_volume, cudaExtent volumeSize)
 	
 	for(int i=0; i<=tf_start; i++){    //alpha
 		 transferFunc[i].w = 0.0f;
-		 transferFunc[i].x = 0.0f;
-		 transferFunc[i].y = 0.0f;
-		 transferFunc[i].z = 0.0f;
+		 transferFunc[i].x = 1.0f;
+		 transferFunc[i].y = 0.3f;
+		 transferFunc[i].z = 0.3f;
 	}
 	for(int i=tf_start+1; i<=tf_middle1; i++){
 		transferFunc[i].w = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
-		transferFunc[i].x = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
-		transferFunc[i].y = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
-		transferFunc[i].z = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
+		transferFunc[i].x = 1.0 * ( ((1.0 - 1.0) / (tf_middle1-tf_start)) * ( i - tf_start) + 1.0);
+		transferFunc[i].y = 0.3 * ( ((1.0 - 0.3) / (tf_middle1-tf_start)) * ( i - tf_start) + 0.3);
+		transferFunc[i].z = 0.3 * ( ((1.0 - 0.3) / (tf_middle1-tf_start)) * ( i - tf_start) + 0.3);
 	}
 	for(int i=tf_middle1+1; i<=tf_middle2; i++){
 		transferFunc[i].w =1.0f;
@@ -762,15 +762,15 @@ void initCuda(void *h_volume, cudaExtent volumeSize)
 	}
 	for(int i=tf_middle2+1; i<=tf_end; i++){
 		transferFunc[i].w = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
-		transferFunc[i].x = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
-		transferFunc[i].y = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
-		transferFunc[i].z = (1.0 / (tf_end-tf_middle2)) * (tf_end -i);
+		transferFunc[i].x = 1.0 * ( ((1.0 - 1.0) / (tf_end-tf_middle2)) * (tf_end -i) + 1.0);
+		transferFunc[i].y = 0.3 * ( ((1.0 - 0.3) / (tf_end-tf_middle2)) * (tf_end -i) + 0.3);
+		transferFunc[i].z = 0.3 * ( ((1.0 - 0.3) / (tf_end-tf_middle2)) * (tf_end -i) + 0.3);
 	}
 	for(int i=tf_end+1; i<256; i++){
 	     transferFunc[i].w = 0.0f;
-		 transferFunc[i].x = 0.0f;
-		 transferFunc[i].y = 0.0f;
-		 transferFunc[i].z = 0.0f;
+		 transferFunc[i].x = 1.0f;
+		 transferFunc[i].y = 0.3f;
+		 transferFunc[i].z = 0.3f;
 	}
 	//-------------------------------------------------------------------
 	// create transfer function texture
