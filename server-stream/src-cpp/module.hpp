@@ -11,7 +11,9 @@ namespace NodeCuda {
     public:
       static void Initialize(Handle<Object> target);
       static Handle<Value> GetFunction(const Arguments& args);
+      static Handle<Value> DestroyTexRef(const Arguments& args);
       CUmodule m_module;
+      CUtexref m_cu_tf2Dref;
     protected:
       static Persistent<FunctionTemplate> constructor_template;
       static Handle<Value> VolumeTextureAlloc(const Arguments& args);

@@ -126,7 +126,8 @@ __global__ void TF2d_kernel(float4* TF2d_k, int TFSize)
 
 extern "C" {
 __global__ void render_kernel_volume(uint *d_output, 
-								  float *d_invViewMatrix, 
+								  float *d_invViewMatrix,
+								  float4* TF2d_k,
 								  unsigned int imageW,
 								  unsigned int imageH,
 								  float density,
@@ -175,7 +176,14 @@ __global__ void render_kernel_volume(uint *d_output,
 				float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5),  pos.z*0.5f+0.5f+(step.z*0.5));
 				//float4 col = tex1D(texture_float_1D, (sample-transferOffset));
 
-     			float4 col = tex3D(tex_TF2d, sample,sample_next,0);
+				float4 col=make_float4(0.0f);
+     			//float4 col = tex3D(tex_TF2d, sample,sample_next,0);
+
+     			col.w = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].w;
+     			col.x = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].x;
+     			col.y = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].y;
+     			col.z = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].z;
+
      			if(quality == 1){
      			
 					float3 nV = {0.0, 0.0, 0.0};

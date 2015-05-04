@@ -22,6 +22,7 @@ void Module::Initialize(Handle<Object> target) {
   // Module objects can only be created by load functions
   NODE_SET_METHOD(target, "moduleLoad", Module::Load);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "getFunction", Module::GetFunction);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "destroyTexRef", Module::DestroyTexRef);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memVolumeTextureAlloc", Module::VolumeTextureAlloc);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memOTFTextureAlloc", Module::OTFTextureAlloc);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memOTF2DTextureAlloc", Module::OTF2DTextureAlloc);
@@ -127,14 +128,16 @@ void Module::otf2DTableTextureLoad(char *TF2d, unsigned int otf_size, Module *pm
    cuMemcpy3D(&copyParam);
 
    CUtexref cu_tf2Dref;
-   cuModuleGetTexRef(&cu_tf2Dref, pmodule->m_module, "tex_TF2d");
-   cuTexRefSetArray(cu_tf2Dref, otf_2Darray, CU_TRSA_OVERRIDE_FORMAT);
-   cuTexRefSetAddressMode(cu_tf2Dref, 0, CU_TR_ADDRESS_MODE_BORDER);
-   cuTexRefSetAddressMode(cu_tf2Dref, 1, CU_TR_ADDRESS_MODE_BORDER);
-   cuTexRefSetAddressMode(cu_tf2Dref, 2, CU_TR_ADDRESS_MODE_BORDER);
-   cuTexRefSetFilterMode(cu_tf2Dref, CU_TR_FILTER_MODE_LINEAR);
-   cuTexRefSetFlags(cu_tf2Dref, CU_TRSF_NORMALIZED_COORDINATES);
-   cuTexRefSetFormat(cu_tf2Dref, CU_AD_FORMAT_FLOAT, 4);
+
+   cuTexRefCreate(&(pmodule->m_cu_tf2Dref));
+   cuModuleGetTexRef(&(pmodule->m_cu_tf2Dref), pmodule->m_module, "tex_TF2d");
+   cuTexRefSetArray((pmodule->m_cu_tf2Dref), otf_2Darray, CU_TRSA_OVERRIDE_FORMAT);
+   cuTexRefSetAddressMode((pmodule->m_cu_tf2Dref), 0, CU_TR_ADDRESS_MODE_BORDER);
+   cuTexRefSetAddressMode((pmodule->m_cu_tf2Dref), 1, CU_TR_ADDRESS_MODE_BORDER);
+   //cuTexRefSetAddressMode((pmodule->m_cu_tf2Dref), 2, CU_TR_ADDRESS_MODE_BORDER);
+   cuTexRefSetFilterMode((pmodule->m_cu_tf2Dref), CU_TR_FILTER_MODE_LINEAR);
+   cuTexRefSetFlags((pmodule->m_cu_tf2Dref), CU_TRSF_NORMALIZED_COORDINATES);
+   cuTexRefSetFormat((pmodule->m_cu_tf2Dref), CU_AD_FORMAT_FLOAT, 4);
 
 }
 void Module::otfTableTextureLoad(float4 *input_float_1D, unsigned int otf_size, Module *pmodule){
@@ -163,27 +166,39 @@ void Module::otfTableTextureLoad(float4 *input_float_1D, unsigned int otf_size, 
 float4 *Module::getOTFtable(unsigned int tf_start, unsigned int tf_middle1, unsigned int tf_middle2, unsigned int tf_end, unsigned int tf_size){
 
     float4 *otf_table= (float4 *)malloc(sizeof(float4)*tf_size);
-    memset(otf_table, 0, sizeof(float4)*tf_size);
+    float maximumColorR = 1.0f; float maximumColorG = 1.0f; float maximumColorB = 1.0f;
+    float minimumColorR = 1.0f; float minimumColorG = 0.3f; float minimumColorB = 0.3f;
 
+    for(int i=0; i<=tf_start; i++){
+	    otf_table[i].w = 0.0f;
+	    otf_table[i].x = minimumColorR;
+	    otf_table[i].y = minimumColorG;
+	    otf_table[i].z = minimumColorB;
+    }
 	for(int i=tf_start+1; i<=tf_middle1; i++){
-		otf_table[i].x = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
-		otf_table[i].y = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
-		otf_table[i].z = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
-		otf_table[i].w = (1.0f / ((float)tf_end-(float)tf_start)) * ( i - (float)tf_start);
+	    otf_table[i].w = (1.0 / (tf_middle1-tf_start)) * ( i - tf_start);
+        otf_table[i].x = minimumColorR * ( ((maximumColorR - minimumColorR) / (tf_middle1-tf_start)) * ( i - tf_start) + minimumColorR);
+        otf_table[i].y = minimumColorG * ( ((maximumColorG - minimumColorG) / (tf_middle1-tf_start)) * ( i - tf_start) + minimumColorG);
+        otf_table[i].z = minimumColorB * ( ((maximumColorB - minimumColorB) / (tf_middle1-tf_start)) * ( i - tf_start) + minimumColorB);
 	}
 	for(int i=tf_middle1+1; i<=tf_middle2; i++){
     	otf_table[i].w =1.0f;
-    	otf_table[i].x =1.0f;
-    	otf_table[i].y =1.0f;
-    	otf_table[i].z =1.0f;
+        otf_table[i].x =maximumColorR;
+        otf_table[i].y =maximumColorG;
+        otf_table[i].z =maximumColorB;
     }
     for(int i=tf_middle2+1; i<=tf_end; i++){
-    	otf_table[i].w = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
-    	otf_table[i].x = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
-    	otf_table[i].y = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
-    	otf_table[i].z = (1.0 / ((float)tf_end-(float)tf_middle2)) * ((float)tf_end -i);
+    	otf_table[i].w = (1.0 / (tf_end-tf_middle2)) * ( tf_end -i );
+        otf_table[i].x = minimumColorR * ( ((maximumColorR - minimumColorR) / (tf_end-tf_middle2)) * ( tf_end -i ) + minimumColorR);
+        otf_table[i].y = minimumColorG * ( ((maximumColorG - minimumColorG) / (tf_end-tf_middle2)) * ( tf_end -i ) + minimumColorG);
+        otf_table[i].z = minimumColorB * ( ((maximumColorB - minimumColorB) / (tf_end-tf_middle2)) * ( tf_end -i ) + minimumColorB);
     }
-
+    for(int i=tf_end+1; i<tf_size; i++){
+        otf_table[i].w = 0.0f;
+   		otf_table[i].x = minimumColorR;
+        otf_table[i].y = minimumColorG;
+        otf_table[i].z = minimumColorB;
+    }
     return otf_table;
 }
 Handle<Value> Module::VolumeTextureAlloc(const Arguments& args) {
@@ -236,7 +251,6 @@ Handle<Value> Module::OTF2DTextureAlloc(const Arguments& args) {
    unsigned int tf_size =  args[1]->Uint32Value();
 
    otf2DTableTextureLoad(TF2d, tf_size, pmodule);  //otf 생성.
-   //free(TF2d);
 
    return scope.Close(result);
 }
@@ -252,6 +266,17 @@ Handle<Value> Module::GetFunction(const Arguments& args) {
   result->Set(String::New("name"), args[0]);
   result->Set(String::New("error"), Integer::New(error));
 
+  return scope.Close(result);
+}
+Handle<Value> Module::DestroyTexRef(const Arguments& args) {
+
+  HandleScope scope;
+  Local<Object> result = constructor_template->InstanceTemplate()->NewInstance();
+  Module *pmodule = ObjectWrap::Unwrap<Module>(args.This());
+
+  CUresult error = cuTexRefDestroy(pmodule->m_cu_tf2Dref);
+
+  result->Set(String::New("error"), Integer::New(error));
   return scope.Close(result);
 }
 
