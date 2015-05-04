@@ -102,7 +102,8 @@
 
         var option = {
             rotationX : 0,
-            rotationY : 0
+            rotationY : 0,
+            isPng : false
         };
 
         var scaleOption = {
@@ -147,7 +148,7 @@
                     if(left.isOn && left.count%3 == 0){
                         option.rotationX += (event.pageX - left.beforeX)/3.0;
                         option.rotationY += (event.pageY - left.beforeY)/3.0;
-
+                        option.isPng = false;
                         left.beforeX = event.pageX;
                         left.beforeY = event.pageY;
 
@@ -161,6 +162,7 @@
                     if(right.isOn && right.count%3 == 0){
                         option.rotationX += (event.pageX - right.beforeX)/3.0;
                         option.rotationY += (event.pageY - right.beforeY)/3.0;
+                        option.isPng = false;
 
                         right.beforeX = event.pageX;
                         right.beforeY = event.pageY;
@@ -178,12 +180,16 @@
             switch(event.button){
                 case 0:
                     left.isOn = false;
+                    option.isPng = true;
+                    socket.emit('leftMouse', option);
                     break;
                 case 1:
 
                     break;
                 case 2:
                     right.isOn = false;
+                    option.isPng = true;
+                    socket.emit('rightMouse', option);
                     break;
             }
         });

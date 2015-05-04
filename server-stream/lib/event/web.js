@@ -71,7 +71,11 @@ Web.prototype.leftMouseEventListener = function(){
         cudaRender.rotationX = option.rotationX;
         cudaRender.rotationY = option.rotationY;
 
-        $this.encoding.jpeg(cudaRender, socket);
+        if(option.isPng) {
+            $this.encoding.png(cudaRender, socket);
+        }else{
+            $this.encoding.jpeg(cudaRender, socket);
+        }
     });
 
 };
@@ -86,7 +90,11 @@ Web.prototype.rightMouseEventListener = function(){
         cudaRender.rotationX = option.rotationX;
         cudaRender.rotationY = option.rotationY;
 
-        $this.encoding.jpeg(cudaRender, socket);
+        if(option.isPng) {
+            $this.encoding.png(cudaRender, socket);
+        }else{
+            $this.encoding.jpeg(cudaRender, socket);
+        }
     });
 };
 
