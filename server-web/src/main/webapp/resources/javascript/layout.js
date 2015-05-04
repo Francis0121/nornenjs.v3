@@ -132,6 +132,7 @@ LayoutFunction.prototype.expandEventListener = function(){
         $('.volumeRenderingOne>img').width(height).height(height);
         $('.volumeRenderingOne>canvas').attr('width', height).attr('height', height);
     }
+    socket.emit('webPng');
 };
 
 $(function(){

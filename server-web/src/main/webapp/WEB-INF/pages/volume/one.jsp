@@ -43,9 +43,11 @@
         relay.emit('getInfo');
     });
 
+    var socket;
+
     var bindSocket = function(info){
 
-        var socket = io.connect('http://'+info.ipAddress+':'+info.port);
+        socket = io.connect('http://'+info.ipAddress+':'+info.port);
 
         console.log(info);
 
@@ -196,12 +198,12 @@
         // ~ Btn Event
         document.getElementById('tinyScalePlusBtn').addEventListener('click', function(){
             scaleOption.positionZ -= 0.1;
-            socket.emit('wheelScale', scaleOption);
+            socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyScaleMinusBtn').addEventListener('click', function(){
             scaleOption.positionZ += 0.1;
-            socket.emit('wheelScale', scaleOption);
+            socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyBrightnessPlusBtn').addEventListener('click', function(){
@@ -213,6 +215,10 @@
             brightOption.brightness -= 0.1;
             socket.emit('brightBtn', brightOption);
         });
+
+        window.onresize = function(event) {
+            socket.emit('webPng');
+        };
     };
 
 </script>

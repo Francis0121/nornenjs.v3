@@ -39,6 +39,7 @@ Web.prototype.addSocketEventListener = function(socket){
     this.leftMouseEventListener();
     this.rightMouseEventListener();
     this.wheelEventListener();
+    this.sizeBtnEventListener();
     this.brightBtnEventListener();
 };
 
@@ -98,6 +99,17 @@ Web.prototype.wheelEventListener = function(){
         cudaRender.positionZ = scaleOption.positionZ;
         $this.encoding.jpeg(cudaRender, socket);
     });
+};
+
+Web.prototype.sizeBtnEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.WEB.SIZE_EVENT, function(scaleOption){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+        cudaRender.positionZ = scaleOption.positionZ;
+        $this.encoding.png(cudaRender, socket);
+    });
 
 };
 
@@ -108,7 +120,7 @@ Web.prototype.brightBtnEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.BRIGHT_EVENT, function(brightOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.brightness = brightOption.brightness;
-        $this.encoding.jpeg(cudaRender, socket);
+        $this.encoding.png(cudaRender, socket);
     });
 
 };
