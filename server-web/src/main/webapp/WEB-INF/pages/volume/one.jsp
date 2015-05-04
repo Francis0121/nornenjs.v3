@@ -197,7 +197,7 @@
         var wheelTimeout = undefined;
         var wheel = function (event){
             scaleOption.isPng = false;
-            scaleOption.positionZ += event.wheelDelta/1200;
+            scaleOption.positionZ += -(event.wheelDelta/1200);
             socket.emit('wheelScale', scaleOption);
 
             if(wheelTimeout == undefined) {
