@@ -107,6 +107,10 @@
             positionZ : 3.0
         };
 
+        var brightOption = {
+            brightness : 1.0
+        };
+
 
         canvas.addEventListener('mousedown', function(event){
             event.preventDefault();
@@ -117,7 +121,6 @@
                     left.beforeX = event.pageX;
                     left.beforeY = event.pageY;
                     left.count = 0;
-                    console.log('left btn click');
                     break;
                 case 1:
 
@@ -127,7 +130,6 @@
                     right.beforeX = event.pageX;
                     right.beforeY = event.pageY;
                     right.count = 0;
-                    console.log('right btn click');
                     break;
             }
 
@@ -190,6 +192,27 @@
         };
         canvas.addEventListener('mousewheel', wheel, false);
         canvas.addEventListener('DOMMouseScroll', wheel, false);
+
+        // ~ Btn Event
+        document.getElementById('tinyScalePlusBtn').addEventListener('click', function(){
+            scaleOption.positionZ -= 0.1;
+            socket.emit('wheelScale', scaleOption);
+        });
+
+        document.getElementById('tinyScaleMinusBtn').addEventListener('click', function(){
+            scaleOption.positionZ += 0.1;
+            socket.emit('wheelScale', scaleOption);
+        });
+
+        document.getElementById('tinyBrightnessPlusBtn').addEventListener('click', function(){
+            brightOption.brightness += 0.1;
+            socket.emit('brightBtn', brightOption);
+        });
+
+        document.getElementById('tinyBrightnessMinusBtn').addEventListener('click', function(){
+            brightOption.brightness -= 0.1;
+            socket.emit('brightBtn', brightOption);
+        });
     };
 
 </script>
@@ -224,11 +247,18 @@
                 <button type="button" id="renderingSizeBtn" class="renderingExpandBtn" title="Size Change">Expand</button>
                 <span>VOLUME</span>
             </div>
+            <div class="event">
+                <button type="button" id="tinyBrightnessPlusBtn">B+</button>
+                <button type="button" id="tinyBrightnessMinusBtn">B-</button>
+                <button type="button" id="tinyScalePlusBtn">S+</button>
+                <button type="button" id="tinyScaleMinusBtn">S-</button>
+            </div>
             <canvas width="300" height="300" id="volumeRenderingCanvas">
 
             </canvas>
             <%--<img src="${cp}/data/thumbnail/${thumbnails[0] eq null ? -1 : thumbnails[0]}"/>--%>
         </article>
+
         
         <article class="volumeRenderingOTF">
             

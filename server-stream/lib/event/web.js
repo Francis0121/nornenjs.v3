@@ -39,6 +39,7 @@ Web.prototype.addSocketEventListener = function(socket){
     this.leftMouseEventListener();
     this.rightMouseEventListener();
     this.wheelEventListener();
+    this.brightBtnEventListener();
 };
 
 /**
@@ -95,6 +96,18 @@ Web.prototype.wheelEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.WHEEL_SCALE, function(scaleOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.positionZ = scaleOption.positionZ;
+        $this.encoding.jpeg(cudaRender, socket);
+    });
+
+};
+
+Web.prototype.brightBtnEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.WEB.BRIGHT_EVENT, function(brightOption){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+        cudaRender.brightness = brightOption.brightness;
         $this.encoding.jpeg(cudaRender, socket);
     });
 
