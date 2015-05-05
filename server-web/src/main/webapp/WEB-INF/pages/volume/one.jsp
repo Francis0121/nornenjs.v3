@@ -301,7 +301,7 @@
             <svg height="250" width="500">
 
                 <!-- Top -->
-                <line x1="240" y1="50" x2="300" y2="50" style="stroke:rgb(243,157,65);stroke-width:3" id="otfTopLine"/>
+                <line x1="240" y1="50" x2="300" y2="50" style="stroke:rgb(243,157,65);stroke-width:10; cursor: pointer;" id="otfTopLine"/>
                 <!-- Left Line -->
                 <line x1="195" y1="150" x2="240" y2="50" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
                 <!-- Bottom -->

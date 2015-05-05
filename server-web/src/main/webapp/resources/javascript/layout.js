@@ -363,7 +363,7 @@ $(function(){
                 $('#otfLeftTopCircle').attr('cx', cxTop);
                 $('#otfLeftBottomCircle').attr('cx', cxBottom);
                 
-                $('#otfLeftDashLine').attr('x1', cxBottom);
+                $('#otfLeftDashLine').attr('x1', cxBottom);otfTopLine
                 $('#otfLeftDashLine').attr('x2', cxTop);
 
 
@@ -500,6 +500,74 @@ $(function(){
         rightBeforeX = event.pageX;
     });
 
+    // ~ TopLine
+    var isOtfTopLine = false;
+    var topLineBeforeX;
+
+    $('#otfTopLine').on('mousedown', function(event){
+        isOtfTopLine = true;
+        topLineBeforeX = event.pageX;
+    });
+
+    $('#otfTopLine').on('mousemove', function(event){
+        if(isOtfTopLine){
+            if(event.pageX >= topLineBeforeX){ // +
+                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
+                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+2;
+                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2;
+                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))+2;
+
+                $('#otfTopLine').attr('x1', cxLeftTop);
+                $('#otfTopLine').attr('x2', cxRightTop);
+
+                $('#otfLeftTopCircle').attr('cx', cxLeftTop);
+                $('#otfRightTopCircle').attr('cx', cxRightTop);
+                $('#otfLeftBottomCircle').attr('cx', cxLeftBottom);
+                $('#otfRightBottomCircle').attr('cx', cxRightBottom);
+
+                $('#otfLeftDashLine').attr('x1', cxLeftBottom)
+                $('#otfLeftDashLine').attr('x2', cxLeftTop);
+
+                $('#otfRightDashLine').attr('x2', cxRightBottom);
+                $('#otfRightDashLine').attr('x1', cxRightTop);
+
+                otfOption.transferStart = Math.round(cxLeftBottom/3);
+                otfOption.transferMiddle1 = Math.round(cxLeftTop/3);
+                otfOption.transferMiddle2 = Math.round(cxRightTop/3);
+                otfOption.transferEnd = Math.round(cxRightBottom/3);
+                otfOption.transferFlag = 1;
+                socket.emit('otfEvent', otfOption);
+            } else{ // -
+                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
+                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))-2;
+                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2;
+                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))-2;
+
+                $('#otfTopLine').attr('x1', cxLeftTop);
+                $('#otfTopLine').attr('x2', cxRightTop);
+
+                $('#otfLeftTopCircle').attr('cx', cxLeftTop);
+                $('#otfRightTopCircle').attr('cx', cxRightTop);
+                $('#otfLeftBottomCircle').attr('cx', cxLeftBottom);
+                $('#otfRightBottomCircle').attr('cx', cxRightBottom);
+
+                $('#otfLeftDashLine').attr('x1', cxLeftBottom)
+                $('#otfLeftDashLine').attr('x2', cxLeftTop);
+
+                $('#otfRightDashLine').attr('x2', cxRightBottom);
+                $('#otfRightDashLine').attr('x1', cxRightTop);
+
+                otfOption.transferStart = Math.round(cxLeftBottom/3);
+                otfOption.transferMiddle1 = Math.round(cxLeftTop/3);
+                otfOption.transferMiddle2 = Math.round(cxRightTop/3);
+                otfOption.transferEnd = Math.round(cxRightBottom/3);
+                otfOption.transferFlag = 1;
+                socket.emit('otfEvent', otfOption);
+            }
+        }
+        topLineBeforeX = event.pageX;
+    });
+
     
     $(window).on('mouseup', function(event){
         isLeftTopCircle = false;
@@ -509,6 +577,8 @@ $(function(){
         isRightTopCircle = false;
         isRightBottomCircle = false;
         isRightDashLine = false;
+
+        isOtfTopLine = false;
 
         otfOption.transferFlag = 2;
         socket.emit('otfEvent', otfOption);
