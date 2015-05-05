@@ -92,7 +92,9 @@ LayoutFunction.prototype.renderingPageResize = function(){
         $('#volumeRendering').width(width).height(height);
         $('#volumeRendering>img').width(height).height(height);
         $('#volumeRendering>canvas').attr('width', height).attr('height', height);
-        $('.volumeRenderingOTF').width(width);
+
+        $('.volumeRenderingOTF').width(width-20);
+        $('.volumeRenderingOTF>svg').attr('width', width-20);
     }
 };
 
@@ -107,7 +109,8 @@ LayoutFunction.prototype.expandEventListener = function(){
             width = windowWidth - navWidth - 4;
 
         $('.volumeRenderingMpr').hide();
-        $('.volumeRenderingOTF').show().width(width);
+        $('.volumeRenderingOTF').show().width(width-20);
+        $('.volumeRenderingOTF>svg').attr('width', width-20);
         
         $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(height);
         $('#volumeRendering>img').width(height).height(height);
@@ -273,6 +276,14 @@ $(function(){
     var isLeftBottomCircle = false;
     var isLeftDashLine = false;
     var leftBeforeX;
+
+    var otfOption = {
+        transferStart : 65,
+        transferMiddle1 : 80,
+        transferMiddle2 : 100,
+        transferEnd : 120
+    };
+
     
     $('#otfLeftTopCircle').on('mousedown',function(event){
         isLeftTopCircle = true;
@@ -287,18 +298,25 @@ $(function(){
                 circle.setAttribute('cx', cx);
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
+
+                otfOption.transferMiddle1 = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
                 circle.setAttribute('cx', cx);
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
+
+                otfOption.transferMiddle1 = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             }
         }
         leftBeforeX = event.pageX;
     });
 
     $('#otfLeftBottomCircle').on('mousedown',function(event){
-        isLeftBottomCircle = true;
+        isLeftBottomCircle = true;otfOption.transferStart = Math.round(cx/3);
+                socket.emit('otfL', otfOption)
         leftBeforeX = event.pageX;
     });
     
@@ -309,10 +327,16 @@ $(function(){
                 var cx = Number(circle.getAttribute('cx'))+2;
                 circle.setAttribute('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
+
+                otfOption.transferStart = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
                 circle.setAttribute('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
+
+                otfOption.transferStart = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             }
         }
         leftBeforeX = event.pageX;
@@ -336,6 +360,11 @@ $(function(){
                 
                 $('#otfLeftDashLine').attr('x1', cxBottom);
                 $('#otfLeftDashLine').attr('x2', cxTop);
+
+
+                otfOption.transferMiddle1 = Math.round(cxTop/3);
+                otfOption.transferStart = Math.round(cxBottom/3);
+                socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
                 var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2
@@ -346,6 +375,10 @@ $(function(){
 
                 $('#otfLeftDashLine').attr('x1', cxBottom);
                 $('#otfLeftDashLine').attr('x2', cxTop);
+
+                otfOption.transferMiddle1 = Math.round(cxTop/3);
+                otfOption.transferStart = Math.round(cxBottom/3);
+                socket.emit('otfEvent', otfOption);
             }
         }
         leftBeforeX = event.pageX;
@@ -371,11 +404,17 @@ $(function(){
                 circle.setAttribute('cx', cx);
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
+
+                otfOption.transferMiddle2 = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
                 circle.setAttribute('cx', cx);
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
+
+                otfOption.transferMiddle2 = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             }
         }
         beforeX = event.pageX;
@@ -393,10 +432,16 @@ $(function(){
                 var cx = Number(circle.getAttribute('cx'))+2;
                 circle.setAttribute('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
+
+                otfOption.transferEnd = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
                 circle.setAttribute('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
+
+                otfOption.transferEnd = Math.round(cx/3);
+                socket.emit('otfEvent', otfOption);
             }
         }
         beforeX = event.pageX;
@@ -420,6 +465,10 @@ $(function(){
 
                 $('#otfRightDashLine').attr('x2', cxBottom);
                 $('#otfRightDashLine').attr('x1', cxTop);
+
+                otfOption.transferMiddle2 = Math.round(cxTop/3);
+                otfOption.transferEnd = Math.round(cxBottom/3);
+                socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfRightTopCircle').attr('cx'))-2;
                 var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))-2
@@ -430,6 +479,9 @@ $(function(){
 
                 $('#otfRightDashLine').attr('x2', cxBottom);
                 $('#otfRightDashLine').attr('x1', cxTop);
+                otfOption.transferMiddle2 = Math.round(cxTop/3);
+                otfOption.transferEnd = Math.round(cxBottom/3);
+                socket.emit('otfEvent', otfOption);
             }
         }
         rightBeforeX = event.pageX;

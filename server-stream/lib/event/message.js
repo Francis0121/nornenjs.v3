@@ -15,7 +15,8 @@ var EVENT_MESSAGE = {
         WHEEL_SCALE : 'wheelScale',
         BRIGHT_EVENT : 'brightBtn',
         SIZE_EVENT : 'sizeBtn',
-        PNG : 'webPng'
+        PNG : 'webPng',
+        OTF_EVENT : 'otfEvent'
     }
     
 };

@@ -41,6 +41,7 @@ Web.prototype.addSocketEventListener = function(socket){
     this.wheelEventListener();
     this.sizeBtnEventListener();
     this.brightBtnEventListener();
+    this.otfEventListener();
 };
 
 /**
@@ -87,8 +88,8 @@ Web.prototype.rightMouseEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.RIGHT_CLICK, function(moveOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
-        cudaRender.rotationX = moveOption.rotationX;
-        cudaRender.rotationY = moveOption.rotationY;
+        cudaRender.positionX = moveOption.positionX;
+        cudaRender.positionY = moveOption.positionY;
 
         if(moveOption.isPng) {
             $this.encoding.png(cudaRender, socket);
@@ -134,7 +135,27 @@ Web.prototype.brightBtnEventListener = function(){
         cudaRender.brightness = brightOption.brightness;
         $this.encoding.png(cudaRender, socket);
     });
+};
+
+Web.prototype.otfEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.WEB.OTF_EVENT, function(otfOption){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+        console.log(otfOption);
+
+        //cudaRender.transferStart = otfOption.transferStart;
+        //cudaRender.transferMiddle1 = otfOption.transferMiddle1;
+        //cudaRender.transferMiddle2 = otfOption.transferMiddle2;
+        //cudaRender.transferEnd = otfOption.transferEnd;
+
+        //$this.encoding.jpeg(cudaRender, socket);
+    });
 
 };
+
+
+
 
 module.exports.Web = Web;

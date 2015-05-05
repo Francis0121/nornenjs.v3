@@ -107,8 +107,8 @@
         };
 
         var moveOption = {
-            rotationX : 0,
-            rotationY : 0,
+            positionX : 0,
+            positionY : 0,
             isPng : false
         };
 
@@ -166,8 +166,8 @@
                     break;
                 case 2:
                     if(right.isOn && right.count%3 == 0){
-                        moveOption.rotationX += (event.pageX - right.beforeX)/3.0;
-                        moveOption.rotationY += (event.pageY - right.beforeY)/3.0;
+                        moveOption.positionX += (event.pageX - right.beforeX)/50.0;
+                        moveOption.positionY -= (event.pageY - right.beforeY)/50.0;
                         moveOption.isPng = false;
 
                         right.beforeX = event.pageX;
@@ -286,7 +286,7 @@
                 <button type="button" id="tinyBrightnessPlusBtn">B+</button>
                 <button type="button" id="tinyBrightnessMinusBtn">B-</button>
                 <button type="button" id="tinyScalePlusBtn">S+</button>
-                <button type="button" id="tinyScaleMinusBtn">S-</button>
+                <button type="butto$('.volumeRenderingOTF>svg').attr('width', width);n" id="tinyScaleMinusBtn">S-</button>
             </div>
             <canvas width="300" height="300" id="volumeRenderingCanvas">
 
@@ -296,27 +296,27 @@
 
         
         <article class="volumeRenderingOTF">
-            
-            <svg height="210" width="500">
+
+            <svg height="250" width="500">
 
                 <!-- Top -->
-                <line x1="100" y1="20" x2="300" y2="20" style="stroke:rgb(243,157,65);stroke-width:3" id="otfTopLine"/>
+                <line x1="240" y1="50" x2="300" y2="50" style="stroke:rgb(243,157,65);stroke-width:3" id="otfTopLine"/>
                 <!-- Left Line -->
-                <line x1="50" y1="100" x2="100" y2="20" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
+                <line x1="195" y1="150" x2="240" y2="50" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
                 <!-- Bottom -->
-                <line x1="20" y1="100" x2="500" y2="100" style="stroke:rgb(243,157,65);stroke-width:3" id="otfBottomLine"/>
+                <line x1="0" y1="150" x2="768" y2="150" style="stroke:rgb(243,157,65);stroke-width:3" id="otfBottomLine"/>
                 <!-- Right Line -->
-                <line x1="300" y1="20" x2="350" y2="100" style="stroke:rgb(243,157,65);stroke-width:10" id="otfRightDashLine" class="otfDashLine"/>
+                <line x1="300" y1="50" x2="360" y2="150" style="stroke:rgb(243,157,65);stroke-width:10" id="otfRightDashLine" class="otfDashLine"/>
 
                 <!-- Left Top Circle-->
-                <circle cx="100" cy="20" r="10" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
+                <circle cx="240" cy="50" r="10" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
                 <!-- Left Bottom Circle -->
-                <circle cx="50" cy="100" r="10" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
+                <circle cx="195" cy="150" r="10" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
 
                 <!-- Right Top Circle-->
-                <circle cx="300" cy="20" r="10" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
+                <circle cx="300" cy="50" r="10" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
                 <!-- Right Bottom Circle -->
-                <circle cx="350" cy="100" r="10" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
+                <circle cx="360" cy="150" r="10" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
             </svg>
 
         </article>
