@@ -600,7 +600,7 @@ $(function(){
             isOtfTopLine = false;
 
             otfOption.transferFlag = 2;
-            otfOption.isPng = tru;
+            otfOption.isPng = true;
             socket.emit('otfEvent', otfOption);
         }
 

@@ -19,8 +19,9 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.nio.ByteBuffer;
 import java.net.URISyntaxException;
+import java.nio.ByteOrder;
 
 public class JniGLActivity extends Activity {
 
@@ -374,13 +375,27 @@ class TouchSurfaceView extends GLSurfaceView {
         
         Bitmap imgPanda;
         int[] pixels = new int[512*512];
-        
+        int[] pixels2 = new int[512*512];
+
         public void onDrawFrame(GL10 gl) {
             
             if(byteArray!=null) {
                 imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
-                mActivity.nativeSetTextureData(pixels, 512, 512);
+                byte[] rgba = new byte[512*512*4];
+                byte[] bgra = new byte[512*512*4];
+                rgba = this.int2byte(pixels);
+                for(int i = 0; i < 512*512*4; i += 4)
+                {
+                    bgra[i] = rgba[i ];
+                    bgra[i + 1] = rgba[i + 1];
+                    bgra[i + 2] = rgba[i+2];
+                    bgra[i + 3] = rgba[i + 3];
+                }
+
+                //this.convert(pixels);
+
+                mActivity.nativeSetTextureData(this.convert(bgra), 512, 512);
                 mActivity.draw++;
             }
             mActivity.nativeDrawIteration(0, 0);
@@ -393,6 +408,21 @@ class TouchSurfaceView extends GLSurfaceView {
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             Log.d("bmp", "onSurfaceCreated");
             mActivity.nativeInitGL();
+        }
+
+        public  byte[] int2byte(int[]src) {
+            int srcLength = src.length;
+            byte[]dst = new byte[srcLength << 2];
+
+            for (int i=0; i<srcLength; i++) {
+                int x = src[i];
+                int j = i << 2;
+                dst[j++] = (byte) (x & 0xff);
+                dst[j++] = (byte) ((x >> 8) & 0xff);
+                dst[j++] = (byte) ((x >> 16) & 0xff);
+                dst[j++] = (byte) ((x >> 24) & 0xff);
+            }
+            return dst;
         }
 
 

@@ -4,7 +4,7 @@
 
 #include <GLES/gl.h>
 #include <GLES/glext.h>
-
+#include <stdlib.h>
 void drawCube();
 
 float TOUCH_SCALE_FACTOR = 180.0f / 320;
@@ -101,25 +101,37 @@ void nativeInitGL(int w, int h)
 void initTextureData(int *data, int width, int height)
 {
 	glGenTextures(1, &g_textureName);
-
+//    int i;
+//     int *buf;
+//     buf = (int *)malloc((sizeof(int)*width*height)*4);
+//     for (i = 0; i < width*height*4; i+=4){
+//
+//     }
 	glBindTexture(GL_TEXTURE_2D, g_textureName);
 
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,  GL_UNSIGNED_BYTE, (void*)data);
+	//free(buf);
 }
-
 
 void setTextureData(int *data, int width, int height)
 {
+//     int i;
+//     int *buf;
+//     buf = (int *)malloc((sizeof(int)*width*height)*4);
+//     for (i = 0; i < width*height; i+=4){
+//
+//     }
 	glBindTexture(GL_TEXTURE_2D, g_textureName);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)data);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,  GL_UNSIGNED_BYTE, (void*)data);
+	//free(buf);
 }
 
 void nativeOnResize(int w, int h)
