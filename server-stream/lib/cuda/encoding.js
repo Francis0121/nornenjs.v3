@@ -46,7 +46,7 @@ Encoding.prototype.jpeg = function(cudaRender, socket){
     logger.debug('Make start finish frame jpeg compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
     var jpeg = new Jpeg(cudaRender.d_outputBuffer, 512, 512, 'rgba');
-    socket.emit('stream', jpeg.turboencodeSync());
+    socket.emit('stream', jpeg.encodeSync());
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
