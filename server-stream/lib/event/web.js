@@ -150,7 +150,11 @@ Web.prototype.otfEventListener = function(){
         cudaRender.transferEnd = otfOption.transferEnd;
         cudaRender.transferFlag = otfOption.transferFlag
 
-        $this.encoding.jpeg(cudaRender, socket);
+        if(otfOption.isPng) {
+            $this.encoding.png(cudaRender, socket);
+        }else{
+            $this.encoding.jpeg(cudaRender, socket);
+        }
     });
 
 };

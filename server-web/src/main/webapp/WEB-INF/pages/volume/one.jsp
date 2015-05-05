@@ -167,8 +167,8 @@
                     break;
                 case 2:
                     if(right.isOn && right.count%3 == 0){
-                        moveOption.positionX += (event.pageX - right.beforeX)/50.0;
-                        moveOption.positionY -= (event.pageY - right.beforeY)/50.0;
+                        moveOption.positionX += (event.pageX - right.beforeX)/150.0;
+                        moveOption.positionY -= (event.pageY - right.beforeY)/150.0;
                         moveOption.isPng = false;
 
                         right.beforeX = event.pageX;

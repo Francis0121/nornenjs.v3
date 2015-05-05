@@ -282,7 +282,8 @@ $(function(){
         transferMiddle1 : 80,
         transferMiddle2 : 100,
         transferEnd : 120,
-        transferFlag : 0
+        transferFlag : 0,
+        isPng :false
     };
 
     
@@ -302,6 +303,7 @@ $(function(){
 
                 otfOption.transferMiddle1 = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -311,6 +313,7 @@ $(function(){
 
                 otfOption.transferMiddle1 = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -333,6 +336,7 @@ $(function(){
 
                 otfOption.transferStart = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -341,6 +345,7 @@ $(function(){
 
                 otfOption.transferStart = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -370,6 +375,7 @@ $(function(){
                 otfOption.transferMiddle1 = Math.round(cxTop/3);
                 otfOption.transferStart = Math.round(cxBottom/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
@@ -385,6 +391,7 @@ $(function(){
                 otfOption.transferMiddle1 = Math.round(cxTop/3);
                 otfOption.transferStart = Math.round(cxBottom/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -414,6 +421,7 @@ $(function(){
 
                 otfOption.transferMiddle2 = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -423,6 +431,7 @@ $(function(){
 
                 otfOption.transferMiddle2 = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -444,6 +453,7 @@ $(function(){
 
                 otfOption.transferEnd = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -452,6 +462,7 @@ $(function(){
 
                 otfOption.transferEnd = Math.round(cx/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -480,6 +491,7 @@ $(function(){
                 otfOption.transferMiddle2 = Math.round(cxTop/3);
                 otfOption.transferEnd = Math.round(cxBottom/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfRightTopCircle').attr('cx'))-2;
@@ -494,6 +506,7 @@ $(function(){
                 otfOption.transferMiddle2 = Math.round(cxTop/3);
                 otfOption.transferEnd = Math.round(cxBottom/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -536,6 +549,7 @@ $(function(){
                 otfOption.transferMiddle2 = Math.round(cxRightTop/3);
                 otfOption.transferEnd = Math.round(cxRightBottom/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
@@ -562,6 +576,7 @@ $(function(){
                 otfOption.transferMiddle2 = Math.round(cxRightTop/3);
                 otfOption.transferEnd = Math.round(cxRightBottom/3);
                 otfOption.transferFlag = 1;
+                otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -570,18 +585,25 @@ $(function(){
 
     
     $(window).on('mouseup', function(event){
-        isLeftTopCircle = false;
-        isLeftBottomCircle = false;
-        isLeftDashLine = false;
+        if(isLeftTopCircle || isLeftBottomCircle || isLeftDashLine ||
+            isRightTopCircle || isRightBottomCircle || isRightDashLine ||
+                isOtfTopLine){
 
-        isRightTopCircle = false;
-        isRightBottomCircle = false;
-        isRightDashLine = false;
+            isLeftTopCircle = false;
+            isLeftBottomCircle = false;
+            isLeftDashLine = false;
 
-        isOtfTopLine = false;
+            isRightTopCircle = false;
+            isRightBottomCircle = false;
+            isRightDashLine = false;
 
-        otfOption.transferFlag = 2;
-        socket.emit('otfEvent', otfOption);
+            isOtfTopLine = false;
+
+            otfOption.transferFlag = 2;
+            otfOption.isPng = tru;
+            socket.emit('otfEvent', otfOption);
+        }
+
     })
     
 });
