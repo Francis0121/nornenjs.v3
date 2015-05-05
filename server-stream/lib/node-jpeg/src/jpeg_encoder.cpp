@@ -125,21 +125,21 @@ void compTest(tjhandle handle, unsigned char **jpeg,
 	
 	if(*jpeg && *dstSize>0) memset(*jpeg, 0, *dstSize);
 	tjBufSize(w, h, TJSAMP_GRAY);
-	int error_ =tjCompress2(handle, data, w, 0, h, TJPF_RGBA, jpeg, dstSize, TJSAMP_GRAY,
+	int error_ =tjCompress2(handle, data, w, 0, h, TJPF_RGBA, jpeg, dstSize, TJSAMP_444,
 			jpegQual, flags);
 	
-	writeJPEG(*jpeg, *dstSize);
+	//writeJPEG(*jpeg, *dstSize);
 }
 void
 JpegEncoder::encode_tj()
 {
     tjhandle chandle=NULL, dhandle=NULL;
     
-    tjBufSize(512, 512, TJSAMP_GRAY);
+    tjBufSize(512, 512, TJSAMP_444);
     jpeg=(unsigned char *)tjAlloc(jpeg_len);
     chandle=tjInitCompress();
     
-    compTest(chandle, &jpeg, &jpeg_len, width, height, TJPF_RGBA, TJSAMP_GRAY, quality, 2048, data);
+    compTest(chandle, &jpeg, &jpeg_len, width, height, TJPF_RGBA, TJSAMP_444, quality, 2048, data);
   
     tjDestroy(chandle);
   

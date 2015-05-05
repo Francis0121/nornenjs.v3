@@ -8,7 +8,7 @@ typedef unsigned char VolumeType;
 
 texture<VolumeType, 3, cudaReadModeNormalizedFloat> tex;    
 texture<float4,  1, cudaReadModeElementType> texture_float_1D;
-
+texture<float4, 3, cudaReadModeElementType> tex_TF2d;
 
 struct Ray
 {
@@ -70,11 +70,64 @@ __device__ uint rgbaFloatToInt(float4 rgba)
     rgba.w = __saturatef(rgba.w);
     return (uint(rgba.w*255)<<24) | (uint(rgba.z*255)<<16) | (uint(rgba.y*255)<<8) | uint(rgba.x*255);
 }
+extern "C" {
+__global__ void TF2d_kernel(float4* TF2d_k, int TFSize)
+	{
+		unsigned int x = blockIdx.x*blockDim.x + threadIdx.x;
+        unsigned int y = blockIdx.y*blockDim.y + threadIdx.y;
 
+        if ((x >= TFSize) || (y >= TFSize)) return;
+
+        float4 temp;
+        float4 result = {0.0};
+        float4 sum = {0.0f};
+
+        int nx, ny, diff;
+        if(x>y){
+        		diff = x-y;
+        		ny = x;
+        		nx = y;
+        }
+        else if(y>x){
+        		diff = y-x;
+        		nx = x;
+        		ny = y;
+        }
+        else{
+        		diff=1;
+        		nx = ny = x;
+        		sum.w = 0.0f;
+        }
+
+        for(int i=nx; i<ny; i++){
+        		temp = tex1D(texture_float_1D, i);
+
+        		temp.x *= temp.w;
+        		temp.y *= temp.w;
+        		temp.z *= temp.w;
+
+        		sum.x += temp.x;
+        		sum.y += temp.y;
+        		sum.z += temp.z;
+        		sum.w += temp.w;
+        }
+
+        result.x = sum.x / diff; //* (newAlpha/sum.w);
+        result.y = sum.y / diff; //* (newAlpha/sum.w);
+        result.z = sum.z / diff; //* (newAlpha/sum.w);
+        result.w = sum.w / diff;
+
+        TF2d_k[TFSize*y + x].x = result.x;
+        TF2d_k[TFSize*y + x].y = result.y;
+        TF2d_k[TFSize*y + x].z = result.z;
+        TF2d_k[TFSize*y + x].w = result.w;
+	}
+}
 
 extern "C" {
 __global__ void render_kernel_volume(uint *d_output, 
-								  float *d_invViewMatrix, 
+								  float *d_invViewMatrix,
+								  float4* TF2d_k,
 								  unsigned int imageW,
 								  unsigned int imageH,
 								  float density,
@@ -120,9 +173,17 @@ __global__ void render_kernel_volume(uint *d_output,
 		for (float i=0; i<maxSteps; i++){
 				
 				float sample = tex3D(tex,pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-				
-				float4 col = tex1D(texture_float_1D, (sample-transferOffset));
-     			
+				float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5),  pos.z*0.5f+0.5f+(step.z*0.5));
+				//float4 col = tex1D(texture_float_1D, (sample-transferOffset));
+
+				float4 col=make_float4(0.0f);
+     			//float4 col = tex3D(tex_TF2d, sample,sample_next,0);
+
+     			col.w = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].w;
+     			col.x = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].x;
+     			col.y = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].y;
+     			col.z = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].z;
+
      			if(quality == 1){
      			
 					float3 nV = {0.0, 0.0, 0.0};
