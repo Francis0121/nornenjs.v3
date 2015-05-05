@@ -125,7 +125,7 @@ void compTest(tjhandle handle, unsigned char **jpeg,
 	
 	if(*jpeg && *dstSize>0) memset(*jpeg, 0, *dstSize);
 	tjBufSize(w, h, TJSAMP_GRAY);
-	int error_ =tjCompress2(handle, data, w, 0, h, TJPF_RGBA, jpeg, dstSize, TJSAMP_444,
+	int error_ =tjCompress2(handle, data, w, 0, h, TJPF_BGRA, jpeg, dstSize, TJSAMP_444,
 			jpegQual, flags);
 	
 	//writeJPEG(*jpeg, *dstSize);

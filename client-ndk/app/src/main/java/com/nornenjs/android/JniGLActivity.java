@@ -19,9 +19,9 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.nio.ByteBuffer;
+
 import java.net.URISyntaxException;
-import java.nio.ByteOrder;
+
 
 public class JniGLActivity extends Activity {
 
@@ -118,7 +118,7 @@ public class JniGLActivity extends Activity {
                     beforeX = event.getX();
                     beforeY = event.getY();
 
-                    myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                    myEventListener.RotationEvent(rotationX, rotationY);
                     rotation++;
 
                 }
@@ -141,9 +141,8 @@ public class JniGLActivity extends Activity {
                             oldMidVectorX = newMidVectorX;
                             oldMidVectorY = newMidVectorY;
 
-                            myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                            myEventListener.TranslationEvent(translationX, translationY);
                             move++;
-
 
                     }
                     else{ // multi touch pinch zoom
@@ -157,7 +156,7 @@ public class JniGLActivity extends Activity {
                             if (div <= 0.2f) {
                                 div = 0.2f;
                             }
-                            myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                            myEventListener.PinchZoomEvent(div);
                             pinch++;
 
                         } else if (oldDist - newDist > 15) { // zoom out
@@ -168,7 +167,7 @@ public class JniGLActivity extends Activity {
                             if (div >= 10.0f) {
                                 div = 10.0f;
                             }
-                            myEventListener.onMyevent(rotationX, rotationY, translationX, translationY, div);
+                            myEventListener.PinchZoomEvent(div);
                             pinch++;
                         }
                     }
@@ -429,20 +428,42 @@ class TouchSurfaceView extends GLSurfaceView {
         }
 
         @Override
-        public void onMyevent(float rotationX, float rotationY,float translationX, float translationY ,float div) {
+        public void RotationEvent(float rotationX, float rotationY) {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("rotationX", rotationX);
                 jsonObject.put("rotationY", rotationY);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("error", "Make json object");
+            }
+
+            socket.emit("rotation", jsonObject);
+        }
+        @Override
+        public void TranslationEvent(float translationX, float translationY ) {
+            JSONObject jsonObject = new JSONObject();
+            try {
                 jsonObject.put("positionX", translationX);
                 jsonObject.put("positionY", translationY);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("error", "Make json object");
+            }
+
+            socket.emit("translation", jsonObject);
+        }
+        @Override
+        public void PinchZoomEvent(float div) {
+            JSONObject jsonObject = new JSONObject();
+            try {
                 jsonObject.put("positionZ", div);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e("error", "Make json object");
             }
 
-            socket.emit("touch", jsonObject);
+            socket.emit("pinchZoom", jsonObject);
         }
     }
     
