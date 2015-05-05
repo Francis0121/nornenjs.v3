@@ -65,13 +65,13 @@ Web.prototype.leftMouseEventListener = function(){
     var $this = this,
         socket = this.socket;
 
-    socket.on(EVENT_MESSAGE.WEB.LEFT_CLICK, function(option){
+    socket.on(EVENT_MESSAGE.WEB.LEFT_CLICK, function(rotationOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
-        cudaRender.rotationX = option.rotationX;
-        cudaRender.rotationY = option.rotationY;
+        cudaRender.rotationX = rotationOption.rotationX;
+        cudaRender.rotationY = rotationOption.rotationY;
 
-        if(option.isPng) {
+        if(rotationOption.isPng) {
             $this.encoding.png(cudaRender, socket);
         }else{
             $this.encoding.jpeg(cudaRender, socket);
@@ -84,13 +84,13 @@ Web.prototype.rightMouseEventListener = function(){
     var $this = this,
         socket = this.socket;
 
-    socket.on(EVENT_MESSAGE.WEB.RIGHT_CLICK, function(option){
+    socket.on(EVENT_MESSAGE.WEB.RIGHT_CLICK, function(moveOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
-        cudaRender.rotationX = option.rotationX;
-        cudaRender.rotationY = option.rotationY;
+        cudaRender.rotationX = moveOption.rotationX;
+        cudaRender.rotationY = moveOption.rotationY;
 
-        if(option.isPng) {
+        if(moveOption.isPng) {
             $this.encoding.png(cudaRender, socket);
         }else{
             $this.encoding.jpeg(cudaRender, socket);

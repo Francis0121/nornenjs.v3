@@ -100,7 +100,13 @@
             count : 0
         };
 
-        var option = {
+        var rotationOption = {
+            rotationX : 0,
+            rotationY : 0,
+            isPng : false
+        };
+
+        var moveOption = {
             rotationX : 0,
             rotationY : 0,
             isPng : false
@@ -146,13 +152,13 @@
             switch(event.button){
                 case 0:
                     if(left.isOn && left.count%3 == 0){
-                        option.rotationX += (event.pageX - left.beforeX)/3.0;
-                        option.rotationY += (event.pageY - left.beforeY)/3.0;
-                        option.isPng = false;
+                        rotationOption.rotationX += (event.pageX - left.beforeX)/3.0;
+                        rotationOption.rotationY += (event.pageY - left.beforeY)/3.0;
+                        rotationOption.isPng = false;
                         left.beforeX = event.pageX;
                         left.beforeY = event.pageY;
 
-                        socket.emit('leftMouse', option);
+                        socket.emit('leftMouse', rotationOption);
                     }
                     break;
                 case 1:
@@ -160,14 +166,14 @@
                     break;
                 case 2:
                     if(right.isOn && right.count%3 == 0){
-                        option.rotationX += (event.pageX - right.beforeX)/3.0;
-                        option.rotationY += (event.pageY - right.beforeY)/3.0;
-                        option.isPng = false;
+                        moveOption.rotationX += (event.pageX - right.beforeX)/3.0;
+                        moveOption.rotationY += (event.pageY - right.beforeY)/3.0;
+                        moveOption.isPng = false;
 
                         right.beforeX = event.pageX;
                         right.beforeY = event.pageY;
 
-                        socket.emit('rightMouse', option);
+                        socket.emit('rightMouse', moveOption);
                     }
                     break;
             }
@@ -180,16 +186,16 @@
             switch(event.button){
                 case 0:
                     left.isOn = false;
-                    option.isPng = true;
-                    socket.emit('leftMouse', option);
+                    rotationOption.isPng = true;
+                    socket.emit('leftMouse', rotationOption);
                     break;
                 case 1:
 
                     break;
                 case 2:
                     right.isOn = false;
-                    option.isPng = true;
-                    socket.emit('rightMouse', option);
+                    moveOption.isPng = true;
+                    socket.emit('rightMouse', moveOption);
                     break;
             }
         });
