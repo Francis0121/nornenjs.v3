@@ -385,21 +385,20 @@ class TouchSurfaceView extends GLSurfaceView {
 
                // int R, G, B,Y;
 
-                for (int y = 0; y < imgPanda.getHeight(); y++)
-                    for (int x = 0; x < imgPanda.getWidth(); x++)
-                    {
-                        int index = y * imgPanda.getWidth() + x;
-                        int A = (pixels[index] >> 24) & 0xff;
-                        int R = (pixels[index] >> 0) & 0xff;     //bitwise shifting
-                        int G = (pixels[index] >> 8) & 0xff;
-                        int B = (pixels[index] >> 16) & 0xff;
-
-                        //R,G.B - Red, Green, Blue
-                        //to restore the values after RGB modification, use //next statement
-                        pixels[index] = 0xff000000 | (A << 24) | (R << 16) | (G << 8) | B;
-                    }
-
-
+//                for (int y = 0; y < imgPanda.getHeight(); y++){
+//                    for (int x = 0; x < imgPanda.getWidth(); x++)
+//                    {
+//                        int index = y * imgPanda.getWidth() + x;
+//                        int A = (pixels[index] >> 24) & 0xff;
+//                        int R = (pixels[index] >> 0) & 0xff;     //bitwise shifting
+//                        int G = (pixels[index] >> 8) & 0xff;
+//                        int B = (pixels[index] >> 16) & 0xff;
+//
+//                        //R,G.B - Red, Green, Blue
+//                        //to restore the values after RGB modification, use //next statement
+//                        pixels[index] = 0xff000000 | (A << 24) | (R << 16) | (G << 8) | B;
+//                    }
+//                }
 
                 //this.convert(pixels);
 
@@ -417,22 +416,6 @@ class TouchSurfaceView extends GLSurfaceView {
             Log.d("bmp", "onSurfaceCreated");
             mActivity.nativeInitGL();
         }
-
-        public  byte[] int2byte(int[]src) {
-            int srcLength = src.length;
-            byte[]dst = new byte[srcLength << 2];
-
-            for (int i=0; i<srcLength; i++) {
-                int x = src[i];
-                int j = i << 2;
-                dst[j++] = (byte) ((x >>> 0) & 0xff);
-                dst[j++] = (byte) ((x >>> 8) & 0xff);
-                dst[j++] = (byte) ((x >>> 16) & 0xff);
-                dst[j++] = (byte) ((x >>> 24) & 0xff);
-            }
-            return dst;
-        }
-
 
         public int[] convert(byte buf[]) {
             int intArr[] = new int[buf.length / 4];
