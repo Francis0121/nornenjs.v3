@@ -375,27 +375,35 @@ class TouchSurfaceView extends GLSurfaceView {
         
         Bitmap imgPanda;
         int[] pixels = new int[512*512];
-        int[] pixels2 = new int[512*512];
+        //int[] pixels2 = new int[512*512];
 
         public void onDrawFrame(GL10 gl) {
             
             if(byteArray!=null) {
                 imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
-                byte[] rgba = new byte[512*512*4];
-                byte[] bgra = new byte[512*512*4];
-                rgba = this.int2byte(pixels);
-                for(int i = 0; i < 512*512*4; i += 4)
-                {
-                    bgra[i] = rgba[i ];
-                    bgra[i + 1] = rgba[i + 1];
-                    bgra[i + 2] = rgba[i+2];
-                    bgra[i + 3] = rgba[i + 3];
-                }
+
+               // int R, G, B,Y;
+
+                for (int y = 0; y < imgPanda.getHeight(); y++)
+                    for (int x = 0; x < imgPanda.getWidth(); x++)
+                    {
+                        int index = y * imgPanda.getWidth() + x;
+                        int A = (pixels[index] >> 24) & 0xff;
+                        int R = (pixels[index] >> 0) & 0xff;     //bitwise shifting
+                        int G = (pixels[index] >> 8) & 0xff;
+                        int B = (pixels[index] >> 16) & 0xff;
+
+                        //R,G.B - Red, Green, Blue
+                        //to restore the values after RGB modification, use //next statement
+                        pixels[index] = 0xff000000 | (A << 24) | (R << 16) | (G << 8) | B;
+                    }
+
+
 
                 //this.convert(pixels);
 
-                mActivity.nativeSetTextureData(this.convert(bgra), 512, 512);
+                mActivity.nativeSetTextureData(pixels, 512, 512);
                 mActivity.draw++;
             }
             mActivity.nativeDrawIteration(0, 0);
@@ -417,10 +425,10 @@ class TouchSurfaceView extends GLSurfaceView {
             for (int i=0; i<srcLength; i++) {
                 int x = src[i];
                 int j = i << 2;
-                dst[j++] = (byte) (x & 0xff);
-                dst[j++] = (byte) ((x >> 8) & 0xff);
-                dst[j++] = (byte) ((x >> 16) & 0xff);
-                dst[j++] = (byte) ((x >> 24) & 0xff);
+                dst[j++] = (byte) ((x >>> 0) & 0xff);
+                dst[j++] = (byte) ((x >>> 8) & 0xff);
+                dst[j++] = (byte) ((x >>> 16) & 0xff);
+                dst[j++] = (byte) ((x >>> 24) & 0xff);
             }
             return dst;
         }
