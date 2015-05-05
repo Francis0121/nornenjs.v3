@@ -281,7 +281,8 @@ $(function(){
         transferStart : 65,
         transferMiddle1 : 80,
         transferMiddle2 : 100,
-        transferEnd : 120
+        transferEnd : 120,
+        transferFlag : 0
     };
 
     
@@ -300,6 +301,7 @@ $(function(){
                 $('#otfLeftDashLine').attr('x2', cx);
 
                 otfOption.transferMiddle1 = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -308,6 +310,7 @@ $(function(){
                 $('#otfLeftDashLine').attr('x2', cx);
 
                 otfOption.transferMiddle1 = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -329,6 +332,7 @@ $(function(){
                 $('#otfLeftDashLine').attr('x1', cx);
 
                 otfOption.transferStart = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -336,6 +340,7 @@ $(function(){
                 $('#otfLeftDashLine').attr('x1', cx);
 
                 otfOption.transferStart = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -364,6 +369,7 @@ $(function(){
 
                 otfOption.transferMiddle1 = Math.round(cxTop/3);
                 otfOption.transferStart = Math.round(cxBottom/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
@@ -378,6 +384,7 @@ $(function(){
 
                 otfOption.transferMiddle1 = Math.round(cxTop/3);
                 otfOption.transferStart = Math.round(cxBottom/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -406,6 +413,7 @@ $(function(){
                 $('#otfRightDashLine').attr('x1', cx);
 
                 otfOption.transferMiddle2 = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -414,6 +422,7 @@ $(function(){
                 $('#otfRightDashLine').attr('x1', cx);
 
                 otfOption.transferMiddle2 = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -434,6 +443,7 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cx);
 
                 otfOption.transferEnd = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -441,6 +451,7 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cx);
 
                 otfOption.transferEnd = Math.round(cx/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -468,6 +479,7 @@ $(function(){
 
                 otfOption.transferMiddle2 = Math.round(cxTop/3);
                 otfOption.transferEnd = Math.round(cxBottom/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfRightTopCircle').attr('cx'))-2;
@@ -481,6 +493,7 @@ $(function(){
                 $('#otfRightDashLine').attr('x1', cxTop);
                 otfOption.transferMiddle2 = Math.round(cxTop/3);
                 otfOption.transferEnd = Math.round(cxBottom/3);
+                otfOption.transferFlag = 1;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -496,6 +509,9 @@ $(function(){
         isRightTopCircle = false;
         isRightBottomCircle = false;
         isRightDashLine = false;
+
+        otfOption.transferFlag = 2;
+        socket.emit('otfEvent', otfOption);
     })
     
 });

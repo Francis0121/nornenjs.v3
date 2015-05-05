@@ -143,14 +143,14 @@ Web.prototype.otfEventListener = function(){
 
     socket.on(EVENT_MESSAGE.WEB.OTF_EVENT, function(otfOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        console.log(otfOption);
 
-        //cudaRender.transferStart = otfOption.transferStart;
-        //cudaRender.transferMiddle1 = otfOption.transferMiddle1;
-        //cudaRender.transferMiddle2 = otfOption.transferMiddle2;
-        //cudaRender.transferEnd = otfOption.transferEnd;
+        cudaRender.transferStart = otfOption.transferStart;
+        cudaRender.transferMiddle1 = otfOption.transferMiddle1;
+        cudaRender.transferMiddle2 = otfOption.transferMiddle2;
+        cudaRender.transferEnd = otfOption.transferEnd;
+        cudaRender.transferFlag = otfOption.transferFlag
 
-        //$this.encoding.jpeg(cudaRender, socket);
+        $this.encoding.jpeg(cudaRender, socket);
     });
 
 };

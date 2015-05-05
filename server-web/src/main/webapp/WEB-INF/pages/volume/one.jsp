@@ -2,7 +2,7 @@
 <%@ include file="../../layout/header.jspf" %>
 <%@ include file="../../layout/nav.jspf" %>
 
-<script src="http://112.108.40.19:5000/socket.io/socket.io.js"></script>
+<script src="http://112.108.40.166:5000/socket.io/socket.io.js"></script>
 
 <script>
     document.oncontextmenu = function(e){
@@ -118,7 +118,7 @@
         };
 
         var brightOption = {
-            brightness : 1.0
+            brightness : 2.0
         };
 
 

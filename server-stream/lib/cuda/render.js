@@ -50,7 +50,7 @@ var vec3 = require('./mat/vec3');
         transferMiddle2: 100,
         transferEnd: 120,
         transferSize : 256,
-        transferFlag : 1,
+        transferFlag : 2,
         mprType:1,
         quality:2,
 
@@ -96,8 +96,12 @@ var vec3 = require('./mat/vec3');
         },
         start : function(){
 
-            if(this.transferFlag == 1){
+            if(this.transferFlag == 1 || this.transferFlag == 2){
+                if(this.transferFlag == 2){
+                    this.transferFlag = 0;
+                }
                 // OTF TextureBinding
+                logger.debug('TEXTRURE##############################');
                 var error = this.cuModule.memOTFTextureAlloc(this.transferStart, this.transferMiddle1,this.transferMiddle2, this.transferEnd);
                 logger.debug('[INFO_CUDA] _cuModule.memOTFTextureAlloc', error);
                 this.make2Dtable();
@@ -251,7 +255,12 @@ var vec3 = require('./mat/vec3');
 
         end : function(){
             this.d_output.free();
-            this.d_tf2Dtable.free();
+            if(this.transferFlag == 1){
+                this.d_tf2Dtable.free();
+                logger.debug('FREE!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            }else{
+                logger.debug('NOTFREE@@@@@@@@@@@@@@@@@@');
+            }
             this.d_invViewMatrix.free();
         }
     };
