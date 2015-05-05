@@ -101,7 +101,6 @@ var vec3 = require('./mat/vec3');
                     this.transferFlag = 0;
                 }
                 // OTF TextureBinding
-                logger.debug('TEXTRURE##############################');
                 var error = this.cuModule.memOTFTextureAlloc(this.transferStart, this.transferMiddle1,this.transferMiddle2, this.transferEnd);
                 logger.debug('[INFO_CUDA] _cuModule.memOTFTextureAlloc', error);
                 this.make2Dtable();
@@ -257,9 +256,6 @@ var vec3 = require('./mat/vec3');
             this.d_output.free();
             if(this.transferFlag == 1){
                 this.d_tf2Dtable.free();
-                logger.debug('FREE!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-            }else{
-                logger.debug('NOTFREE@@@@@@@@@@@@@@@@@@');
             }
             this.d_invViewMatrix.free();
         }
