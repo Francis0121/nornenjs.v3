@@ -297,46 +297,26 @@
         
         <article class="volumeRenderingOTF">
             
-            <script>
-                var isTopCircle = false;
-                var beforeX;
-                
-                function onMouseDown(evt) {
-                    var circle = evt.target;
-                    isTopCircle = true;
-                    beforeX = evt.pageX;
-                }
-
-                function onMouseMove(evt) {
-                    var circle = evt.target;
-                    if(isTopCircle){
-                        console.log(isTopCircle);
-                        if(evt.pageX > beforeX){ // + 
-                            circle.setAttribute('cx', circle.getAttribute('cx')+10);
-                        } else{ // -
-                            circle.setAttribute('cx', circle.getAttribute('cx')-10);
-                        }
-                    }
-                }
-                
-                function onMouseUp(evt){
-                    var circle = evt.target;
-                    isTopCircle = false;
-                }
-                
-            </script>
-            
             <svg height="210" width="500">
+
                 <!-- Top -->
-                <line x1="100" y1="20" x2="500" y2="20" style="stroke:rgb(243,157,65);stroke-width:3" id="otfTopLine"/>
-                <!-- Line -->
-                <line x1="50" y1="100" x2="100" y2="20" style="stroke:rgb(243,157,65);stroke-width:10" id="otfDashLine" class="otfDashLine"/>
+                <line x1="100" y1="20" x2="300" y2="20" style="stroke:rgb(243,157,65);stroke-width:3" id="otfTopLine"/>
+                <!-- Left Line -->
+                <line x1="50" y1="100" x2="100" y2="20" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
                 <!-- Bottom -->
                 <line x1="20" y1="100" x2="500" y2="100" style="stroke:rgb(243,157,65);stroke-width:3" id="otfBottomLine"/>
-                <!-- Top Circle-->
-                <circle cx="100" cy="20" r="10" fill="rgb(224,72,54)" id="otfTopCircle" class="otfCircle"/>
-                <!-- Bottom Circle -->
-                <circle cx="50" cy="100" r="10" fill="rgb(224,72,54)" id="otfBottomCircle" class="otfCircle"/>
+                <!-- Right Line -->
+                <line x1="300" y1="20" x2="350" y2="100" style="stroke:rgb(243,157,65);stroke-width:10" id="otfRightDashLine" class="otfDashLine"/>
+
+                <!-- Left Top Circle-->
+                <circle cx="100" cy="20" r="10" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
+                <!-- Left Bottom Circle -->
+                <circle cx="50" cy="100" r="10" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
+
+                <!-- Right Top Circle-->
+                <circle cx="300" cy="20" r="10" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
+                <!-- Right Bottom Circle -->
+                <circle cx="350" cy="100" r="10" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
             </svg>
 
         </article>

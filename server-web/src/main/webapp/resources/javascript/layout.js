@@ -266,92 +266,184 @@ $(function(){
         layoutFunction.expandEventListener();
     });
 
-    var isTopCircle = false;
-    var isBottomCircle = false;
-    var isDashLine = false;
-    var beforeX;
+
+    // ~ Left OTF EVENT
+
+    var isLeftTopCircle = false;
+    var isLeftBottomCircle = false;
+    var isLeftDashLine = false;
+    var leftBeforeX;
     
-    $('#otfTopCircle').on('mousedown',function(event){
-        isTopCircle = true;
-        beforeX = event.pageX;
+    $('#otfLeftTopCircle').on('mousedown',function(event){
+        isLeftTopCircle = true;
+        leftBeforeX = event.pageX;
     });
     
-    $('#otfTopCircle').on('mousemove',function(event){
+    $('#otfLeftTopCircle').on('mousemove',function(event){
         var circle = event.target;
-        if(isTopCircle){
-            if(event.pageX >= beforeX){ // +
+        if(isLeftTopCircle){
+            if(event.pageX >= leftBeforeX){ // +
                 var cx = Number(circle.getAttribute('cx'))+2;
                 circle.setAttribute('cx', cx);
                 $('#otfTopLine').attr('x1', cx);
-                $('#otfDashLine').attr('x2', cx);
+                $('#otfLeftDashLine').attr('x2', cx);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
                 circle.setAttribute('cx', cx);
                 $('#otfTopLine').attr('x1', cx);
-                $('#otfDashLine').attr('x2', cx);
+                $('#otfLeftDashLine').attr('x2', cx);
             }
         }
-        beforeX = event.pageX;
+        leftBeforeX = event.pageX;
     });
 
-    $('#otfBottomCircle').on('mousedown',function(event){
-        isBottomCircle = true;
-        beforeX = event.pageX;
+    $('#otfLeftBottomCircle').on('mousedown',function(event){
+        isLeftBottomCircle = true;
+        leftBeforeX = event.pageX;
     });
     
-    $('#otfBottomCircle').on('mousemove',function(event){
+    $('#otfLeftBottomCircle').on('mousemove',function(event){
         var circle = event.target;
-        if(isBottomCircle){
-            if(event.pageX >= beforeX){ // +
+        if(isLeftBottomCircle){
+            if(event.pageX >= leftBeforeX){ // +
                 var cx = Number(circle.getAttribute('cx'))+2;
                 circle.setAttribute('cx', cx);
-                $('#otfDashLine').attr('x1', cx);
+                $('#otfLeftDashLine').attr('x1', cx);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
                 circle.setAttribute('cx', cx);
-                $('#otfDashLine').attr('x1', cx);
+                $('#otfLeftDashLine').attr('x1', cx);
             }
         }
-        beforeX = event.pageX;
+        leftBeforeX = event.pageX;
     });
 
-    $('#otfDashLine').on('mousedown',function(event){
-        isDashLine = true;
-        beforeX = event.pageX;
+    $('#otfLeftDashLine').on('mousedown',function(event){
+        isLeftDashLine = true;
+        leftBeforeX = event.pageX;
     });
 
-    $('#otfDashLine').on('mousemove',function(event){
+    $('#otfLeftDashLine').on('mousemove',function(event){
 
-        if(isDashLine){
-            if(event.pageX >= beforeX){ // +
-                var cxTop = Number($('#otfTopCircle').attr('cx'))+2;
-                var cxBottom = Number($('#otfBottomCircle').attr('cx'))+2
+        if(isLeftDashLine){
+            if(event.pageX >= leftBeforeX){ // +
+                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
+                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2
 
                 $('#otfTopLine').attr('x1', cxTop);
-                $('#otfTopCircle').attr('cx', cxTop);
-                $('#otfBottomCircle').attr('cx', cxBottom);
+                $('#otfLeftTopCircle').attr('cx', cxTop);
+                $('#otfLeftBottomCircle').attr('cx', cxBottom);
                 
-                $('#otfDashLine').attr('x1', cxBottom);
-                $('#otfDashLine').attr('x2', cxTop);
+                $('#otfLeftDashLine').attr('x1', cxBottom);
+                $('#otfLeftDashLine').attr('x2', cxTop);
             } else{ // -
-                var cxTop = Number($('#otfTopCircle').attr('cx'))-2;
-                var cxBottom = Number($('#otfBottomCircle').attr('cx'))-2
+                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
+                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2
 
                 $('#otfTopLine').attr('x1', cxTop);
-                $('#otfTopCircle').attr('cx', cxTop);
-                $('#otfBottomCircle').attr('cx', cxBottom);
+                $('#otfLeftTopCircle').attr('cx', cxTop);
+                $('#otfLeftBottomCircle').attr('cx', cxBottom);
 
-                $('#otfDashLine').attr('x1', cxBottom);
-                $('#otfDashLine').attr('x2', cxTop);
+                $('#otfLeftDashLine').attr('x1', cxBottom);
+                $('#otfLeftDashLine').attr('x2', cxTop);
+            }
+        }
+        leftBeforeX = event.pageX;
+    });
+
+    // ~ RightEvent
+
+    var isRightTopCircle = false;
+    var isRightBottomCircle = false;
+    var isRightDashLine = false;
+    var rightBeforeX;
+
+    $('#otfRightTopCircle').on('mousedown',function(event){
+        isRightTopCircle = true;
+        rightBeforeX = event.pageX;
+    });
+
+    $('#otfRightTopCircle').on('mousemove',function(event){
+        var circle = event.target;
+        if(isRightTopCircle){
+            if(event.pageX >= beforeX){ // +
+                var cx = Number(circle.getAttribute('cx'))+2;
+                circle.setAttribute('cx', cx);
+                $('#otfTopLine').attr('x2', cx);
+                $('#otfRightDashLine').attr('x1', cx);
+            } else{ // -
+                var cx = Number(circle.getAttribute('cx'))-2;
+                circle.setAttribute('cx', cx);
+                $('#otfTopLine').attr('x2', cx);
+                $('#otfRightDashLine').attr('x1', cx);
             }
         }
         beforeX = event.pageX;
     });
+
+    $('#otfRightBottomCircle').on('mousedown',function(event){
+        isRightBottomCircle = true;
+        rightBeforeX = event.pageX;
+    });
+
+    $('#otfRightBottomCircle').on('mousemove',function(event){
+        var circle = event.target;
+        if(isRightBottomCircle){
+            if(event.pageX >= beforeX){ // +
+                var cx = Number(circle.getAttribute('cx'))+2;
+                circle.setAttribute('cx', cx);
+                $('#otfRightDashLine').attr('x2', cx);
+            } else{ // -
+                var cx = Number(circle.getAttribute('cx'))-2;
+                circle.setAttribute('cx', cx);
+                $('#otfRightDashLine').attr('x2', cx);
+            }
+        }
+        beforeX = event.pageX;
+    });
+
+    $('#otfRightDashLine').on('mousedown',function(event){
+        isRightDashLine = true;
+        rightBeforeX = event.pageX;
+    });
+
+    $('#otfRightDashLine').on('mousemove',function(event){
+
+        if(isRightDashLine){
+            if(event.pageX >= rightBeforeX){ // +
+                var cxTop = Number($('#otfRightTopCircle').attr('cx'))+2;
+                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))+2
+
+                $('#otfTopLine').attr('x2', cxTop);
+                $('#otfRightTopCircle').attr('cx', cxTop);
+                $('#otfRightBottomCircle').attr('cx', cxBottom);
+
+                $('#otfRightDashLine').attr('x2', cxBottom);
+                $('#otfRightDashLine').attr('x1', cxTop);
+            } else{ // -
+                var cxTop = Number($('#otfRightTopCircle').attr('cx'))-2;
+                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))-2
+
+                $('#otfTopLine').attr('x2', cxTop);
+                $('#otfRightTopCircle').attr('cx', cxTop);
+                $('#otfRightBottomCircle').attr('cx', cxBottom);
+
+                $('#otfRightDashLine').attr('x2', cxBottom);
+                $('#otfRightDashLine').attr('x1', cxTop);
+            }
+        }
+        rightBeforeX = event.pageX;
+    });
+
     
     $(window).on('mouseup', function(event){
-        isTopCircle = false;
-        isBottomCircle = false;
-        isDashLine = false;
+        isLeftTopCircle = false;
+        isLeftBottomCircle = false;
+        isLeftDashLine = false;
+
+        isRightTopCircle = false;
+        isRightBottomCircle = false;
+        isRightDashLine = false;
     })
     
 });
