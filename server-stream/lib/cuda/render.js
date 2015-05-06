@@ -132,9 +132,10 @@ var vec3 = require('./mat/vec3');
 
                     vec = vec3.fromValues(0.0, 1.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (- 90) * 3.14159265 / 180.0), vec);
-                    //logger.debug('[INFO_CUDA] _cuModule.memTextureAlloc~~~~~~~~~~~~~~~~~~', this.positionX);
-                    vec = vec3.fromValues(-this.positionX, this.positionY, this.positionZ);
-                    mat4.translate(model_matrix, model_matrix, vec)
+
+                    vec = vec3.fromValues(0, 0, this.positionZ);
+                    mat4.translate(model_matrix, model_matrix, vec);
+
                 }else if(this.mprType == ENUMS.MPR_TYPE.Y){
                     vec = vec3.fromValues(-1.0, 0.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (270.0 ) * 3.14159265 / 180.0), vec);
@@ -142,8 +143,9 @@ var vec3 = require('./mat/vec3');
                     vec = vec3.fromValues(0.0, 1.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (0.0 ) * 3.14159265 / 180.0), vec);
 
-                    vec = vec3.fromValues(-this.positionX, this.positionY, this.positionZ);
-                    mat4.translate(model_matrix, model_matrix, vec)
+                    vec = vec3.fromValues(0, 0, this.positionZ);
+                    mat4.translate(model_matrix, model_matrix, vec);
+
                 }else if(this.mprType == ENUMS.MPR_TYPE.Z) {
                     vec = vec3.fromValues(-1.0, 0.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (180 ) * 3.14159265 / 180.0), vec);
@@ -151,8 +153,8 @@ var vec3 = require('./mat/vec3');
                     vec = vec3.fromValues(0.0, 1.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (0.0 ) * 3.14159265 / 180.0), vec);
 
-                    vec = vec3.fromValues(-this.positionX, this.positionY, this.positionZ);
-                    mat4.translate(model_matrix, model_matrix, vec)
+                    vec = vec3.fromValues(0, 0, this.positionZ);
+                    mat4.translate(model_matrix, model_matrix, vec);
                 }
             }else{
                 vec = vec3.fromValues(-1.0, 0.0, 0.0);
@@ -224,13 +226,7 @@ var vec3 = require('./mat/vec3');
                         value: this.imageHeight
                     },{
                         type: 'Float32',
-                        value: this.density
-                    },{
-                        type: 'Float32',
                         value: this.brightness
-                    },{
-                        type: 'Float32',
-                        value: this.transferOffset
                     },{
                         type: 'Float32',
                         value: this.transferScaleX

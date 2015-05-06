@@ -87,15 +87,15 @@
                     renderImgUrl = url;
                     break;
                 case 1:
-                    canvas = document.getElementById('volumeMprX');
+                    canvas = document.getElementById('volumeMprXCanvas');
                     mprXImgUrl = url;
                     break;
                 case 2:
-                    canvas = document.getElementById('volumeMprY');
+                    canvas = document.getElementById('volumeMprYCanvas');
                     mprYImgUrl = url;
                     break;
                 case 3:
-                    canvas = document.getElementById('volumeMprZ');
+                    canvas = document.getElementById('volumeMprZCanvas');
                     mprZImgUrl = url;
                     break;
             }
@@ -287,6 +287,55 @@
             socket.emit('webPng', { type : 0});
         };
 
+        var transferScaleXOption = {
+            transferScaleX : 0.5,
+            type : 1,
+            isPng : false
+        };
+
+        document.getElementById('tinyMprXMinusBtn').addEventListener('click', function(){
+            transferScaleXOption.transferScaleX -= 0.01;
+            socket.emit('transferScaleXEvent', transferScaleXOption);
+        });
+
+        document.getElementById('tinyMprXPlusBtn').addEventListener('click', function(){
+            transferScaleXOption.transferScaleX += 0.01;
+            socket.emit('transferScaleXEvent', transferScaleXOption);
+        });
+
+
+        var transferScaleYOption = {
+            transferScaleY : 0.5,
+            type : 2,
+            isPng : false
+        };
+
+        document.getElementById('tinyMprYMinusBtn').addEventListener('click', function(){
+            transferScaleYOption.transferScaleY -= 0.01;
+            socket.emit('transferScaleYEvent', transferScaleYOption);
+        });
+
+        document.getElementById('tinyMprYPlusBtn').addEventListener('click', function(){
+            transferScaleYOption.transferScaleY += 0.01;
+            socket.emit('transferScaleYEvent', transferScaleYOption);
+        });
+
+        var transferScaleZOption = {
+            transferScaleZ : 0.5,
+            type : 3,
+            isPng : false
+        };
+
+        document.getElementById('tinyMprZMinusBtn').addEventListener('click', function(){
+            transferScaleZOption.transferScaleZ -= 0.01;
+            socket.emit('transferScaleZEvent', transferScaleZOption);
+        });
+
+        document.getElementById('tinyMprZPlusBtn').addEventListener('click', function(){
+            transferScaleZOption.transferScaleZ += 0.01;
+            socket.emit('transferScaleZEvent', transferScaleZOption);
+        });
+
     };
 
 </script>
@@ -299,7 +348,10 @@
             <div class="title">
                 <span>MPR-X</span>
             </div>
-            <%--<img src="${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}"/>--%>
+            <div class="event" style="position: relative;">
+                <button type="button" id="tinyMprXPlusBtn">B+</button>
+                <button type="button" id="tinyMprXMinusBtn">B-</button>
+            </div>
             <canvas id="volumeMprXCanvas">
 
             </canvas>
@@ -309,7 +361,10 @@
             <div class="title">
                 <span>MPR-Y</span>
             </div>
-            <%--<img src="${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}"/>--%>
+            <div class="event">
+                <button type="button" id="tinyMprYPlusBtn">B+</button>
+                <button type="button" id="tinyMprYMinusBtn">B-</button>
+            </div>
             <canvas id="volumeMprYCanvas">
 
             </canvas>
@@ -319,7 +374,10 @@
             <div class="title">
                 <span>MPR-Z</span>
             </div>
-            <%--<img src="${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}"/>--%>
+            <div class="event" style="position: relative;">
+                <button type="button" id="tinyMprZPlusBtn">B+</button>
+                <button type="button" id="tinyMprZMinusBtn">B-</button>
+            </div>
             <canvas id="volumeMprZCanvas">
 
             </canvas>
@@ -334,7 +392,7 @@
                 <button type="button" id="tinyBrightnessPlusBtn">B+</button>
                 <button type="button" id="tinyBrightnessMinusBtn">B-</button>
                 <button type="button" id="tinyScalePlusBtn">S+</button>
-                <button type="butto$('.volumeRenderingOTF>svg').attr('width', width);n" id="tinyScaleMinusBtn">S-</button>
+                <button type="button" id="tinyScaleMinusBtn">S-</button>
             </div>
             <canvas id="volumeRenderingCanvas">
 

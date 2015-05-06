@@ -130,9 +130,7 @@ __global__ void render_kernel_volume(uint *d_output,
 								  float4* TF2d_k,
 								  unsigned int imageW,
 								  unsigned int imageH,
-								  float density,
 								  float brightness,
-								  float transferOffset,
 								  float transferScaleX,
 								  float transferScaleY,
 								  float transferScaleZ,
@@ -239,16 +237,15 @@ __global__ void render_kernel_volume(uint *d_output,
 }
 extern "C" {
 __global__ void render_kernel_MIP(uint *d_output, 
-								  float *d_invViewMatrix, 
+								  float *d_invViewMatrix,
+								  float4* TF2d_k,
 								  unsigned int imageW,
 								  unsigned int imageH,
-								  float density,
 								  float brightness,
-								  float transferOffset,
 								  float transferScaleX,
 								  float transferScaleY,
 								  float transferScaleZ,
-                                  unsigned int quality)
+								  unsigned int quality)
 {
 	
 		const int maxSteps = 500;
@@ -303,16 +300,15 @@ __global__ void render_kernel_MIP(uint *d_output,
 }
 extern "C" {
 __global__ void render_kernel_MPR(uint *d_output,
-								  float *d_invViewMatrix, 
+								  float *d_invViewMatrix,
+								  float4* TF2d_k,
 								  unsigned int imageW,
 								  unsigned int imageH,
-								  float density,
 								  float brightness,
-								  float transferOffset,
 								  float transferScaleX,
 								  float transferScaleY,
 								  float transferScaleZ,
-                                  unsigned int quality)
+								  unsigned int quality)
 	{
 		const int maxSteps = 500;
 		const float tstep = 0.01f;

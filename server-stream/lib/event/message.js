@@ -16,7 +16,10 @@ var EVENT_MESSAGE = {
         BRIGHT_EVENT : 'brightBtn',
         SIZE_EVENT : 'sizeBtn',
         PNG : 'webPng',
-        OTF_EVENT : 'otfEvent'
+        OTF_EVENT : 'otfEvent',
+        TRANSFER_SCALE_X_EVENT : 'transferScaleXEvent',
+        TRANSFER_SCALE_Y_EVENT : 'transferScaleYEvent',
+        TRANSFER_SCALE_Z_EVENT : 'transferScaleZEvent'
     }
     
 };
