@@ -24,8 +24,16 @@ var sys = require('sys')
 var exec = require('child_process').exec;
 var redis = require('redis');
 
-function puts(error, stdout, stderr) { sys.puts(stdout) }
-exec("sudo mount 112.108.40.14:/storage /storage", puts);
+
+exec("sudo mount 112.108.40.14:/storage /storage", function(error, stdout, stderr){
+    if (!error) {
+        // print the output
+        //sys.puts(stdout);
+    } else {
+        // handle error
+    }
+});
+
 /**
  * Create constructor
  *
