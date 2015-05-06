@@ -348,39 +348,45 @@
             <div class="title">
                 <span>MPR-X</span>
             </div>
-            <div class="event" style="position: relative;">
-                <button type="button" id="tinyMprXPlusBtn">B+</button>
-                <button type="button" id="tinyMprXMinusBtn">B-</button>
-            </div>
             <canvas id="volumeMprXCanvas">
 
             </canvas>
+            <div class="event">
+                <div class="eventPartition">
+                    <button type="button" id="tinyMprXPlusBtn">B+</button>
+                    <button type="button" id="tinyMprXMinusBtn">B-</button>
+                </div>
+            </div>
         </article>
 
         <article class="volumeRenderingOne volumeRenderingMpr" id="volumeMprY">
             <div class="title">
                 <span>MPR-Y</span>
             </div>
-            <div class="event">
-                <button type="button" id="tinyMprYPlusBtn">B+</button>
-                <button type="button" id="tinyMprYMinusBtn">B-</button>
-            </div>
             <canvas id="volumeMprYCanvas">
 
             </canvas>
+            <div class="event">
+                <div class="eventPartition">
+                    <button type="button" id="tinyMprYPlusBtn">B+</button>
+                    <button type="button" id="tinyMprYMinusBtn">B-</button>
+                </div>
+            </div>
         </article>
 
         <article class="volumeRenderingOne volumeRenderingMpr" id="volumeMprZ">
             <div class="title">
                 <span>MPR-Z</span>
             </div>
-            <div class="event" style="position: relative;">
-                <button type="button" id="tinyMprZPlusBtn">B+</button>
-                <button type="button" id="tinyMprZMinusBtn">B-</button>
-            </div>
             <canvas id="volumeMprZCanvas">
 
             </canvas>
+            <div class="event">
+                <div class="eventPartition">
+                    <button type="button" id="tinyMprZPlusBtn">B+</button>
+                    <button type="button" id="tinyMprZMinusBtn">B-</button>
+                </div>
+            </div>
         </article>
         
         <article class="volumeRenderingOne" id="volumeRendering">
@@ -388,15 +394,17 @@
                 <button type="button" id="renderingSizeBtn" class="renderingExpandBtn" title="Size Change">Expand</button>
                 <span>VOLUME</span>
             </div>
-            <div class="event">
-                <button type="button" id="tinyBrightnessPlusBtn">B+</button>
-                <button type="button" id="tinyBrightnessMinusBtn">B-</button>
-                <button type="button" id="tinyScalePlusBtn">S+</button>
-                <button type="button" id="tinyScaleMinusBtn">S-</button>
-            </div>
             <canvas id="volumeRenderingCanvas">
 
             </canvas>
+            <div class="event">
+                <div class="eventPartition">
+                    <button type="button" id="tinyBrightnessPlusBtn">B+</button>
+                    <button type="button" id="tinyBrightnessMinusBtn">B-</button>
+                    <button type="button" id="tinyScalePlusBtn">S+</button>
+                    <button type="button" id="tinyScaleMinusBtn">S-</button>
+                </div>
+            </div>
         </article>
 
         
