@@ -350,11 +350,13 @@
         document.getElementById('volumeBtn').addEventListener('click', function(){
             renderingType = 1;
             socket.emit('webPng', { type : 0, renderingType : renderingType});
+            layoutFunction.typeChangeEventListener();
         });
 
         document.getElementById('mipBtn').addEventListener('click', function(){
             renderingType = 2;
             socket.emit('webPng', { type : 0, renderingType : renderingType});
+            layoutFunction.typeChangeEventListener();
         });
 
     };
