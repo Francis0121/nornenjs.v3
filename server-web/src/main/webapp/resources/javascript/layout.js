@@ -79,8 +79,31 @@ LayoutFunction.prototype.renderingPageResize = function(){
             width = (windowWidth - navWidth) / 2 - 3;
 
         $('.volumeRenderingOne').width(width).height(height);
-        $('.volumeRenderingOne>img').width(height).height(height);
         $('.volumeRenderingOne>canvas').attr('width', height).attr('height', height);
+
+        var mprXCanvas = document.getElementById('volumeMprXCanvas');
+        var mprXCtx = mprXCanvas.getContext('2d');
+        var mprXImg = new Image(512, 512);
+        mprXImg.onload = function(){
+            mprXCtx.drawImage(mprXImg, 0, 0, 512, 512, 0, 0, mprXCanvas.clientWidth, mprXCanvas.clientWidth);
+        };
+        mprXImg.src = mprXImgUrl;
+
+        var mprYCanvas = document.getElementById('volumeMprYCanvas');
+        var mprYCtx = mprYCanvas.getContext('2d');
+        var mprYImg = new Image(512, 512);
+        mprYImg.onload = function(){
+            mprYCtx.drawImage(mprYImg, 0, 0, 512, 512, 0, 0, mprYCanvas.clientWidth, mprYCanvas.clientWidth);
+        };
+        mprYImg.src = mprYImgUrl;
+
+        var mprZCanvas = document.getElementById('volumeMprZCanvas');
+        var mprZCtx = mprZCanvas.getContext('2d');
+        var mprZImg = new Image(512, 512);
+        mprZImg.onload = function(){
+            mprZCtx.drawImage(mprZImg, 0, 0, 512, 512, 0, 0, mprZCanvas.clientWidth, mprZCanvas.clientWidth);
+        };
+        mprZImg.src = mprZImgUrl;
     }else{
         var windowHeight = $(window).height(),
             height = windowHeight - 250;
@@ -90,7 +113,6 @@ LayoutFunction.prototype.renderingPageResize = function(){
             width = windowWidth - navWidth - 4;
 
         $('#volumeRendering').width(width).height(height);
-        $('#volumeRendering>img').width(height).height(height);
         $('#volumeRendering>canvas').attr('width', height).attr('height', height);
 
         $('.volumeRenderingOTF').width(width-20);
@@ -113,7 +135,6 @@ LayoutFunction.prototype.expandEventListener = function(){
         $('.volumeRenderingOTF>svg').attr('width', width-20);
         
         $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(height);
-        $('#volumeRendering>img').width(height).height(height);
         $('#volumeRendering>canvas').attr('width', height).attr('height', height);
         $('#renderingSizeBtn').removeClass('renderingExpandBtn').addClass('renderingReduceBtn');
 
@@ -132,10 +153,33 @@ LayoutFunction.prototype.expandEventListener = function(){
         $('#renderingSizeBtn').addClass('renderingExpandBtn').removeClass('renderingReduceBtn');
         
         $('.volumeRenderingOne').width(width).height(height);
-        $('.volumeRenderingOne>img').width(height).height(height);
         $('.volumeRenderingOne>canvas').attr('width', height).attr('height', height);
+
+        var mprXCanvas = document.getElementById('volumeMprXCanvas');
+        var mprXCtx = mprXCanvas.getContext('2d');
+        var mprXImg = new Image(512, 512);
+        mprXImg.onload = function(){
+            mprXCtx.drawImage(mprXImg, 0, 0, 512, 512, 0, 0, mprXCanvas.clientWidth, mprXCanvas.clientWidth);
+        };
+        mprXImg.src = mprXImgUrl;
+
+        var mprYCanvas = document.getElementById('volumeMprYCanvas');
+        var mprYCtx = mprYCanvas.getContext('2d');
+        var mprYImg = new Image(512, 512);
+        mprYImg.onload = function(){
+            mprYCtx.drawImage(mprYImg, 0, 0, 512, 512, 0, 0, mprYCanvas.clientWidth, mprYCanvas.clientWidth);
+        };
+        mprYImg.src = mprYImgUrl;
+
+        var mprZCanvas = document.getElementById('volumeMprZCanvas');
+        var mprZCtx = mprZCanvas.getContext('2d');
+        var mprZImg = new Image(512, 512);
+        mprZImg.onload = function(){
+            mprZCtx.drawImage(mprZImg, 0, 0, 512, 512, 0, 0, mprZCanvas.clientWidth, mprZCanvas.clientWidth);
+        };
+        mprZImg.src = mprZImgUrl;
     }
-    socket.emit('webPng');
+    socket.emit('webPng', {type : 0});
 };
 
 $(function(){
@@ -283,7 +327,8 @@ $(function(){
         transferMiddle2 : 100,
         transferEnd : 120,
         transferFlag : 0,
-        isPng :false
+        isPng : false,
+        type : 0
     };
 
     

@@ -38,7 +38,7 @@ Encoding.prototype.thumbnail = function(cudaRender, savePath){
  * @param socket
  *  socket.io object
  */
-Encoding.prototype.jpeg = function(cudaRender, socket){
+Encoding.prototype.jpeg = function(cudaRender, socket, type){
     var hrStart = process.hrtime();
 
     cudaRender.start();
@@ -46,7 +46,7 @@ Encoding.prototype.jpeg = function(cudaRender, socket){
     logger.debug('Make start finish frame jpeg compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
     var jpeg = new Jpeg(cudaRender.d_outputBuffer, 512, 512, 'rgba');
-    socket.emit('stream', jpeg.turboencodeSync());
+    socket.emit('stream', { data : jpeg.turboencodeSync(), type : type});
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
@@ -60,7 +60,7 @@ Encoding.prototype.jpeg = function(cudaRender, socket){
  * @param socket
  *  socket.io object
  */
-Encoding.prototype.png = function(cudaRender, socket){
+Encoding.prototype.png = function(cudaRender, socket, type){
     var hrStart = process.hrtime();
 
     cudaRender.start();
@@ -68,7 +68,7 @@ Encoding.prototype.png = function(cudaRender, socket){
     logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
     var png = new Png(cudaRender.d_outputBuffer, 512, 512, 'rgba');
-    socket.emit('stream', png.encodeSync());
+    socket.emit('stream', { data : png.encodeSync(), type : type} );
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);

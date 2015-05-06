@@ -54,7 +54,7 @@ Web.prototype.pngEventListener = function(){
 
     socket.on(EVENT_MESSAGE.WEB.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        $this.encoding.png(cudaRender, socket);
+        $this.encoding.png(cudaRender, socket, option.type);
     });
 };
 
@@ -73,9 +73,9 @@ Web.prototype.leftMouseEventListener = function(){
         cudaRender.rotationY = rotationOption.rotationY;
 
         if(rotationOption.isPng) {
-            $this.encoding.png(cudaRender, socket);
+            $this.encoding.png(cudaRender, socket, rotationOption.type);
         }else{
-            $this.encoding.jpeg(cudaRender, socket);
+            $this.encoding.jpeg(cudaRender, socket, rotationOption.type);
         }
     });
 
@@ -92,9 +92,9 @@ Web.prototype.rightMouseEventListener = function(){
         cudaRender.positionY = moveOption.positionY;
 
         if(moveOption.isPng) {
-            $this.encoding.png(cudaRender, socket);
+            $this.encoding.png(cudaRender, socket, moveOption.type);
         }else{
-            $this.encoding.jpeg(cudaRender, socket);
+            $this.encoding.jpeg(cudaRender, socket, moveOption.type);
         }
     });
 };
@@ -107,9 +107,9 @@ Web.prototype.wheelEventListener = function(){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.positionZ = scaleOption.positionZ;
         if(scaleOption.isPng) {
-            $this.encoding.png(cudaRender, socket);
+            $this.encoding.png(cudaRender, socket, scaleOption.type);
         }else{
-            $this.encoding.jpeg(cudaRender, socket);
+            $this.encoding.jpeg(cudaRender, socket, scaleOption.type);
         }
     });
 };
@@ -121,7 +121,7 @@ Web.prototype.sizeBtnEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.SIZE_EVENT, function(scaleOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.positionZ = scaleOption.positionZ;
-        $this.encoding.png(cudaRender, socket);
+        $this.encoding.png(cudaRender, socket, scaleOption.type);
     });
 
 };
@@ -133,7 +133,7 @@ Web.prototype.brightBtnEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.BRIGHT_EVENT, function(brightOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.brightness = brightOption.brightness;
-        $this.encoding.png(cudaRender, socket);
+        $this.encoding.png(cudaRender, socket, brightOption.type);
     });
 };
 
@@ -151,9 +151,9 @@ Web.prototype.otfEventListener = function(){
         cudaRender.transferFlag = otfOption.transferFlag
 
         if(otfOption.isPng) {
-            $this.encoding.png(cudaRender, socket);
+            $this.encoding.png(cudaRender, socket, otfOption.type);
         }else{
-            $this.encoding.jpeg(cudaRender, socket);
+            $this.encoding.jpeg(cudaRender, socket, otfOption.type);
         }
     });
 

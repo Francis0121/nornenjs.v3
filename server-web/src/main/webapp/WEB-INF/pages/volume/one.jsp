@@ -44,6 +44,11 @@
         relay.emit('getInfo');
     });
 
+    // ~ Mpr video streaming
+    var renderImgUrl = '${cp}/data/thumbnail/${thumbnails[0] eq null ? -1 : thumbnails[0]}';
+    var mprXImgUrl = '${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}';
+    var mprYImgUrl = '${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}';
+    var mprZImgUrl = '${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}';
     var socket;
 
     var bindSocket = function(info){
@@ -63,17 +68,37 @@
         socket.emit('init', init);
 
         socket.on('loadCudaMemory', function(){
-            socket.emit('webPng');
+            socket.emit('webPng', { type : 0 } );
         });
 
         /**
          * Socket stream data
          */
-        socket.on('stream', function(imageBlob){
+        socket.on('stream', function(image){
+            var imageBlob = image.data;
+            var type = image.type;
 
             var blob = new Blob( [ imageBlob ], { type: 'image/jpeg' } );
             var url = (window.URL || window.webkitURL).createObjectURL(blob);
-            var canvas = document.getElementById('volumeRenderingCanvas');
+            var canvas;
+            switch(type){
+                case 0:
+                    canvas = document.getElementById('volumeRenderingCanvas');
+                    renderImgUrl = url;
+                    break;
+                case 1:
+                    canvas = document.getElementById('volumeMprX');
+                    mprXImgUrl = url;
+                    break;
+                case 2:
+                    canvas = document.getElementById('volumeMprY');
+                    mprYImgUrl = url;
+                    break;
+                case 3:
+                    canvas = document.getElementById('volumeMprZ');
+                    mprZImgUrl = url;
+                    break;
+            }
             var ctx = canvas.getContext('2d');
 
             var img = new Image(512, 512);
@@ -85,44 +110,56 @@
 
         // ~ Touch
 
-        var canvas = document.getElementById('volumeRenderingCanvas');
+        var renderingCanvas = document.getElementById('volumeRenderingCanvas');
+        var renderingCtx = renderingCanvas.getContext('2d');
+        var renderingImg = new Image(512, 512);
+        renderingImg.onload = function(){
+            renderingCtx.drawImage(renderingImg, 0, 0, 512, 512, 0, 0, renderingCanvas.clientWidth, renderingCanvas.clientWidth);
+        };
+        renderingImg.src = renderImgUrl;
 
         var left = {
             isOn : false,
             beforeX : 0,
             beforeY : 0,
-            count : 0
+            count : 0,
+            type : 0
         };
 
         var right = {
             isOn : false,
             beforeX : 0,
             beforeY : 0,
-            count : 0
+            count : 0,
+            type : 0
         };
 
         var rotationOption = {
             rotationX : 0,
             rotationY : 0,
-            isPng : false
+            isPng : false,
+            type : 0
         };
 
         var moveOption = {
             positionX : 0,
             positionY : 0,
-            isPng : false
+            isPng : false,
+            type : 0
         };
 
         var scaleOption = {
-            positionZ : 3.0
+            positionZ : 3.0,
+            type : 0
         };
 
         var brightOption = {
-            brightness : 2.0
+            brightness : 2.0,
+            type : 0
         };
 
 
-        canvas.addEventListener('mousedown', function(event){
+        renderingCanvas.addEventListener('mousedown', function(event){
             event.preventDefault();
 
             switch(event.button){
@@ -145,7 +182,7 @@
 
         });
 
-        canvas.addEventListener('mousemove', function(event){
+        renderingCanvas.addEventListener('mousemove', function(event){
             event.preventDefault();
             left.count++;
             right.count++;
@@ -182,7 +219,7 @@
 
         });
 
-        canvas.addEventListener('mouseup', function(event){
+        renderingCanvas.addEventListener('mouseup', function(event){
             event.preventDefault();
             switch(event.button){
                 case 0:
@@ -222,8 +259,8 @@
             wheelTimeout = undefined;
         };
 
-        canvas.addEventListener('mousewheel', wheel, false);
-        canvas.addEventListener('DOMMouseScroll', wheel, false);
+        renderingCanvas.addEventListener('mousewheel', wheel, false);
+        renderingCanvas.addEventListener('DOMMouseScroll', wheel, false);
 
         // ~ Btn Event
         document.getElementById('tinyScalePlusBtn').addEventListener('click', function(){
@@ -247,8 +284,9 @@
         });
 
         window.onresize = function() {
-            socket.emit('webPng');
+            socket.emit('webPng', { type : 0});
         };
+
     };
 
 </script>
@@ -261,21 +299,30 @@
             <div class="title">
                 <span>MPR-X</span>
             </div>
-            <img src="${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}"/>
+            <%--<img src="${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}"/>--%>
+            <canvas id="volumeMprXCanvas">
+
+            </canvas>
         </article>
 
         <article class="volumeRenderingOne volumeRenderingMpr" id="volumeMprY">
             <div class="title">
                 <span>MPR-Y</span>
             </div>
-            <img src="${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}"/>
+            <%--<img src="${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}"/>--%>
+            <canvas id="volumeMprYCanvas">
+
+            </canvas>
         </article>
 
         <article class="volumeRenderingOne volumeRenderingMpr" id="volumeMprZ">
             <div class="title">
                 <span>MPR-Z</span>
             </div>
-            <img src="${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}"/>
+            <%--<img src="${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}"/>--%>
+            <canvas id="volumeMprZCanvas">
+
+            </canvas>
         </article>
         
         <article class="volumeRenderingOne" id="volumeRendering">
@@ -289,10 +336,9 @@
                 <button type="button" id="tinyScalePlusBtn">S+</button>
                 <button type="butto$('.volumeRenderingOTF>svg').attr('width', width);n" id="tinyScaleMinusBtn">S-</button>
             </div>
-            <canvas width="300" height="300" id="volumeRenderingCanvas">
+            <canvas id="volumeRenderingCanvas">
 
             </canvas>
-            <%--<img src="${cp}/data/thumbnail/${thumbnails[0] eq null ? -1 : thumbnails[0]}"/>--%>
         </article>
 
         

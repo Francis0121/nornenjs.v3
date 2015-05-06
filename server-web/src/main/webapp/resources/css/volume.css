@@ -67,7 +67,7 @@
 /**
 * Volume Rendering page
 */
-.volumeRenderingOne{ background: #000; float: left; text-align: center;}
+.volumeRenderingOne{ background: #000; float: left; text-align: center; }
 .volumeRenderingOne:nth-child(1){ border-top: 2px solid #ccc; border-left: 2px solid #ccc; border-bottom: 1px solid #ccc; border-right: 1px solid #ccc; }
 .volumeRenderingOne:nth-child(2){ border-top: 2px solid #ccc; border-left: 1px solid #ccc; border-bottom: 1px solid #ccc; border-right: 2px solid #ccc; }
 .volumeRenderingOne:nth-child(3){ border-top: 1px solid #ccc; border-left: 2px solid #ccc; border-bottom: 2px solid #ccc; border-right: 1px solid #ccc; }

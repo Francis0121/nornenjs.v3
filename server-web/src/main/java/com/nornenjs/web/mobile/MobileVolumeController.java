@@ -34,7 +34,7 @@ public class MobileVolumeController {
                                         @PathVariable("username") String username){
         Map<String, Object> response = new HashMap<String, Object>();
         if(actorService.selectUsernameExist(username)) {
-            response.put("actorInfo", null);
+            response.put("volumes", null);
             return response;
         }
         logger.debug(volumeFilter.toString());
@@ -51,7 +51,7 @@ public class MobileVolumeController {
                                 @PathVariable Integer volumePn){
         Map<String, Object> response = new HashMap<String, Object>();
         if(actorService.selectUsernameExist(username)) {
-            response.put("actorInfo", null);
+            response.put("volume", null);
             return response;
         }
         response.putAll(volumeService.selectVolumeInformation(volumePn));
