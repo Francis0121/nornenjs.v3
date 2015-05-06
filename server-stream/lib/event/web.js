@@ -55,7 +55,7 @@ Web.prototype.pngEventListener = function(){
 
     socket.on(EVENT_MESSAGE.WEB.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        cudaRender.type = ENUMS.RENDERING_TYPE.VOLUME;
+        cudaRender.type = option.renderingType;
         $this.encoding.png(cudaRender, socket, option.type);
     });
 };
@@ -71,7 +71,7 @@ Web.prototype.leftMouseEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.LEFT_CLICK, function(rotationOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
-        cudaRender.type = ENUMS.RENDERING_TYPE.VOLUME;
+        cudaRender.type = rotationOption.renderingType;
         cudaRender.rotationX = rotationOption.rotationX;
         cudaRender.rotationY = rotationOption.rotationY;
 
@@ -91,7 +91,7 @@ Web.prototype.rightMouseEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.RIGHT_CLICK, function(moveOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
-        cudaRender.type = ENUMS.RENDERING_TYPE.VOLUME;
+        cudaRender.type = moveOption.renderingType;
         cudaRender.positionX = moveOption.positionX;
         cudaRender.positionY = moveOption.positionY;
 
@@ -110,7 +110,7 @@ Web.prototype.wheelEventListener = function(){
     socket.on(EVENT_MESSAGE.WEB.WHEEL_SCALE, function(scaleOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
-        cudaRender.type = ENUMS.RENDERING_TYPE.VOLUME;
+        cudaRender.type = scaleOption.renderingType;
         cudaRender.positionZ = scaleOption.positionZ;
 
         if(scaleOption.isPng) {
@@ -127,7 +127,7 @@ Web.prototype.sizeBtnEventListener = function(){
 
     socket.on(EVENT_MESSAGE.WEB.SIZE_EVENT, function(scaleOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        cudaRender.type = ENUMS.RENDERING_TYPE.VOLUME;
+        cudaRender.type = scaleOption.renderingType;
         cudaRender.positionZ = scaleOption.positionZ;
         $this.encoding.png(cudaRender, socket, scaleOption.type);
     });
@@ -140,7 +140,7 @@ Web.prototype.brightBtnEventListener = function(){
 
     socket.on(EVENT_MESSAGE.WEB.BRIGHT_EVENT, function(brightOption){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        cudaRender.type = ENUMS.RENDERING_TYPE.VOLUME;
+        cudaRender.type = brightOption.renderingType;
         cudaRender.brightness = brightOption.brightness;
         $this.encoding.png(cudaRender, socket, brightOption.type);
     });

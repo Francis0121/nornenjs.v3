@@ -179,7 +179,7 @@ LayoutFunction.prototype.expandEventListener = function(){
         };
         mprZImg.src = mprZImgUrl;
     }
-    socket.emit('webPng', {type : 0});
+    socket.emit('webPng', {type : 0, renderingType : renderingType});
 };
 
 $(function(){
@@ -349,6 +349,7 @@ $(function(){
                 otfOption.transferMiddle1 = Math.round(cx/3);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number(circle.getAttribute('cx'))-2;
@@ -359,6 +360,7 @@ $(function(){
                 otfOption.transferMiddle1 = Math.round(cx/3);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -367,7 +369,6 @@ $(function(){
 
     $('#otfLeftBottomCircle').on('mousedown',function(event){
         isLeftBottomCircle = true;otfOption.transferStart = Math.round(cx/3);
-                socket.emit('otfL', otfOption)
         leftBeforeX = event.pageX;
     });
     

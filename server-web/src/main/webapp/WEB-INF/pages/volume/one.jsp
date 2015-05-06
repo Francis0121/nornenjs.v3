@@ -50,12 +50,13 @@
     var mprYImgUrl = '${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}';
     var mprZImgUrl = '${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}';
     var socket;
+    var renderingType = 1;
 
     var bindSocket = function(info){
 
         socket = io.connect('http://'+info.ipAddress+':'+info.port);
 
-        console.log(info);
+
 
         var init = {
             savePath : '<c:out value="${data.savePath}"/>',
@@ -68,7 +69,7 @@
         socket.emit('init', init);
 
         socket.on('loadCudaMemory', function(){
-            socket.emit('webPng', { type : 0 } );
+            socket.emit('webPng', { type : 0, renderingType : renderingType} );
         });
 
         /**
@@ -193,9 +194,10 @@
                         rotationOption.rotationX += (event.pageX - left.beforeX)/3.0;
                         rotationOption.rotationY += (event.pageY - left.beforeY)/3.0;
                         rotationOption.isPng = false;
+                        rotationOption.renderingType = renderingType;
+
                         left.beforeX = event.pageX;
                         left.beforeY = event.pageY;
-
                         socket.emit('leftMouse', rotationOption);
                     }
                     break;
@@ -207,6 +209,7 @@
                         moveOption.positionX += (event.pageX - right.beforeX)/150.0;
                         moveOption.positionY -= (event.pageY - right.beforeY)/150.0;
                         moveOption.isPng = false;
+                        moveOption.renderingType = renderingType;
 
                         right.beforeX = event.pageX;
                         right.beforeY = event.pageY;
@@ -225,6 +228,7 @@
                 case 0:
                     left.isOn = false;
                     rotationOption.isPng = true;
+                    rotationOption.renderingType = renderingType;
                     socket.emit('leftMouse', rotationOption);
                     break;
                 case 1:
@@ -233,6 +237,7 @@
                 case 2:
                     right.isOn = false;
                     moveOption.isPng = true;
+                    moveOption.renderingType = renderingType;
                     socket.emit('rightMouse', moveOption);
                     break;
             }
@@ -242,6 +247,7 @@
         var wheel = function (event){
             scaleOption.isPng = false;
             scaleOption.positionZ += -(event.wheelDelta/1200);
+            scaleOption.renderingType = renderingType;
             socket.emit('wheelScale', scaleOption);
 
             if(wheelTimeout == undefined) {
@@ -255,6 +261,7 @@
 
         var wheelTimeFunc = function(){
             scaleOption.isPng = true;
+            scaleOption.renderingType = renderingType;
             socket.emit('wheelScale', scaleOption);
             wheelTimeout = undefined;
         };
@@ -265,21 +272,25 @@
         // ~ Btn Event
         document.getElementById('tinyScalePlusBtn').addEventListener('click', function(){
             scaleOption.positionZ -= 0.1;
+            scaleOption.renderingType = renderingType;
             socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyScaleMinusBtn').addEventListener('click', function(){
             scaleOption.positionZ += 0.1;
+            scaleOption.renderingType = renderingType;
             socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyBrightnessPlusBtn').addEventListener('click', function(){
             brightOption.brightness += 0.1;
+            brightOption.renderingType = renderingType;
             socket.emit('brightBtn', brightOption);
         });
 
         document.getElementById('tinyBrightnessMinusBtn').addEventListener('click', function(){
             brightOption.brightness -= 0.1;
+            brightOption.renderingType = renderingType;
             socket.emit('brightBtn', brightOption);
         });
 
@@ -334,6 +345,16 @@
         document.getElementById('tinyMprZPlusBtn').addEventListener('click', function(){
             transferScaleZOption.transferScaleZ += 0.01;
             socket.emit('transferScaleZEvent', transferScaleZOption);
+        });
+
+        document.getElementById('volumeBtn').addEventListener('click', function(){
+            renderingType = 1;
+            socket.emit('webPng', { type : 0, renderingType : renderingType});
+        });
+
+        document.getElementById('mipBtn').addEventListener('click', function(){
+            renderingType = 2;
+            socket.emit('webPng', { type : 0, renderingType : renderingType});
         });
 
     };
@@ -403,6 +424,8 @@
                     <button type="button" id="tinyBrightnessMinusBtn">B-</button>
                     <button type="button" id="tinyScalePlusBtn">S+</button>
                     <button type="button" id="tinyScaleMinusBtn">S-</button>
+                    <button type="button" id="volumeBtn">V</button>
+                    <button type="button" id="mipBtn">M</button>
                 </div>
             </div>
         </article>
