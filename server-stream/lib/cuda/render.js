@@ -2,8 +2,14 @@ var logger = require('./../logger');
 var ENUMS = require('./../enums');
 var Buffer = require('buffer').Buffer;
 var cu = require('./load');
+var fs = require('fs');
+var constants = require('constants');
 var mat4 = require('./mat/mat4');
 var vec3 = require('./mat/vec3');
+function iDivUp(a, b) {
+
+    return (a % b != 0) ? (a >> 5 + 1) : (a >> 5);
+}
 
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
@@ -54,12 +60,13 @@ var vec3 = require('./mat/vec3');
         mprType:1,
         quality:2,
 
-
         d_output : undefined,
         d_tf2Dtable : undefined,
         d_tf2DtableBuffer : undefined,
         d_invViewMatrix : undefined,
         d_outputBuffer : undefined,
+        blockSizeX : 32,
+        blockSizeY : 32,
 
         init : function(){
             // ~ VolumeLoad & VolumeTexture Binding
@@ -80,7 +87,7 @@ var vec3 = require('./mat/vec3');
             logger.debug('[INFO_CUDA_TF] cuFunction', cuFunction);
 
             var error = cu.launch(
-                cuFunction, [16, 16, 1], [16, 16, 1],
+                cuFunction, [iDivUp(this.transferSize,this.blockSizeX), iDivUp(this.transferSize, this.blockSizeY), 1], [this.blockSizeX, this.blockSizeY, 1],
                 [
                     {
                         type: 'DevicePtr',
@@ -120,13 +127,11 @@ var vec3 = require('./mat/vec3');
             this.render();
 
         },
-
         makeViewVector : function(){
             var vec;
             var model_matrix = mat4.create();
             if(this.type == ENUMS.RENDERING_TYPE.MPR ) {
                 if (this.mprType == ENUMS.MPR_TYPE.X) {
-
                     vec = vec3.fromValues(-1.0, 0.0, 0.0);
                     mat4.rotate(model_matrix, model_matrix, ( (270.0) * 3.14159265 / 180.0), vec);
 
@@ -205,7 +210,7 @@ var vec3 = require('./mat/vec3');
 
             //cuLaunchKernel
             var error = cu.launch(
-                cuFunction, [32, 32, 1], [16, 16, 1],
+                cuFunction, [iDivUp(this.imageWidth,this.blockSizeX), iDivUp(this.imageHeight, this.blockSizeY), 1], [this.blockSizeX, this.blockSizeY, 1],
                 [
                     {
                         type: 'DevicePtr',
@@ -224,13 +229,7 @@ var vec3 = require('./mat/vec3');
                         value: this.imageHeight
                     },{
                         type: 'Float32',
-                        value: this.density
-                    },{
-                        type: 'Float32',
                         value: this.brightness
-                    },{
-                        type: 'Float32',
-                        value: this.transferOffset
                     },{
                         type: 'Float32',
                         value: this.transferScaleX

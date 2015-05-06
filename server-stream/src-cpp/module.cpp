@@ -97,47 +97,44 @@ void Module::volumeTextureLoad(unsigned int width, unsigned int height, unsigned
 
    free(h_data);
 }
-void Module::otf2DTableTextureLoad(char *TF2d, unsigned int otf_size, Module *pmodule){
+void Module::otf2DTableTextureLoad(char *TF2d, unsigned int width, unsigned int height, unsigned int depth, Module *pmodule){
 
-   size_t size = otf_size * otf_size * sizeof(float4);
+      size_t size = width * height *depth * sizeof(unsigned char);
 
-   CUarray otf_2Darray;
-   CUDA_ARRAY3D_DESCRIPTOR desc_tf;
-   desc_tf.Format = CU_AD_FORMAT_FLOAT;
-   desc_tf.NumChannels = 4;
-   desc_tf.Width = otf_size;
-   desc_tf.Height = otf_size;
-   desc_tf.Depth = 1;
-   desc_tf.Flags=0;
+      CUarray cu_array;
+      CUDA_ARRAY3D_DESCRIPTOR desc;
+      desc.Format = CU_AD_FORMAT_UNSIGNED_INT8;
+      desc.NumChannels = 1;
+      desc.Width = width;
+      desc.Height = height;
+      desc.Depth = depth;
+      desc.Flags=0;
 
-   cuArray3DCreate(&otf_2Darray, &desc_tf);
+      cuArray3DCreate(&cu_array, &desc);
 
-   CUDA_MEMCPY3D copyParam;
-   memset(&copyParam, 0, sizeof(copyParam));
-   copyParam.srcMemoryType = CU_MEMORYTYPE_HOST;
-   copyParam.srcHost = TF2d;
-   copyParam.srcPitch = otf_size * sizeof(float4);
-   copyParam.srcHeight = otf_size;
-   copyParam.dstMemoryType = CU_MEMORYTYPE_ARRAY;
-   copyParam.dstArray = otf_2Darray;
-   copyParam.dstHeight= otf_size;
-   copyParam.WidthInBytes = otf_size * sizeof(float4);
-   copyParam.Height = otf_size;
-   copyParam.Depth = 1;
+      CUDA_MEMCPY3D copyParam;
+      memset(&copyParam, 0, sizeof(copyParam));
+      copyParam.srcMemoryType = CU_MEMORYTYPE_HOST;
+      copyParam.srcHost = TF2d;
+      copyParam.srcPitch = width * sizeof(unsigned char);
+      copyParam.srcHeight = height;
+      copyParam.dstMemoryType = CU_MEMORYTYPE_ARRAY;
+      copyParam.dstArray = cu_array;
+      copyParam.dstHeight=height;
+      copyParam.WidthInBytes = width * sizeof(unsigned char);
+      copyParam.Height = height;
+      copyParam.Depth = depth;
 
-   cuMemcpy3D(&copyParam);
+      cuMemcpy3D(&copyParam);
 
-   CUtexref cu_tf2Dref;
-
-   cuTexRefCreate(&(pmodule->m_cu_tf2Dref));
-   cuModuleGetTexRef(&(pmodule->m_cu_tf2Dref), pmodule->m_module, "tex_TF2d");
-   cuTexRefSetArray((pmodule->m_cu_tf2Dref), otf_2Darray, CU_TRSA_OVERRIDE_FORMAT);
-   cuTexRefSetAddressMode((pmodule->m_cu_tf2Dref), 0, CU_TR_ADDRESS_MODE_BORDER);
-   cuTexRefSetAddressMode((pmodule->m_cu_tf2Dref), 1, CU_TR_ADDRESS_MODE_BORDER);
-   //cuTexRefSetAddressMode((pmodule->m_cu_tf2Dref), 2, CU_TR_ADDRESS_MODE_BORDER);
-   cuTexRefSetFilterMode((pmodule->m_cu_tf2Dref), CU_TR_FILTER_MODE_LINEAR);
-   cuTexRefSetFlags((pmodule->m_cu_tf2Dref), CU_TRSF_NORMALIZED_COORDINATES);
-   cuTexRefSetFormat((pmodule->m_cu_tf2Dref), CU_AD_FORMAT_FLOAT, 4);
+      CUtexref cu_texref;
+      cuModuleGetTexRef(&cu_texref, pmodule->m_module, "tex_block");
+      cuTexRefSetArray(cu_texref, cu_array, CU_TRSA_OVERRIDE_FORMAT);
+      cuTexRefSetAddressMode(cu_texref, 0, CU_TR_ADDRESS_MODE_BORDER);
+      cuTexRefSetAddressMode(cu_texref, 1, CU_TR_ADDRESS_MODE_BORDER);
+      cuTexRefSetFilterMode(cu_texref, CU_TR_FILTER_MODE_LINEAR);
+      cuTexRefSetFlags(cu_texref, CU_TRSF_NORMALIZED_COORDINATES);
+      cuTexRefSetFormat(cu_texref, CU_AD_FORMAT_UNSIGNED_INT8, 1);
 
 }
 void Module::otfTableTextureLoad(float4 *input_float_1D, unsigned int otf_size, Module *pmodule){
@@ -248,9 +245,12 @@ Handle<Value> Module::OTF2DTextureAlloc(const Arguments& args) {
    /*OTF binding*/
    Local<Object> buf = args[0]->ToObject();
    char *TF2d = Buffer::Data(buf);
-   unsigned int tf_size =  args[1]->Uint32Value();
 
-   otf2DTableTextureLoad(TF2d, tf_size, pmodule);  //otf 생성.
+   unsigned int block_width =  args[1]->Uint32Value();
+   unsigned int block_height =  args[2]->Uint32Value();
+   unsigned int block_depth =  args[3]->Uint32Value();
+
+   otf2DTableTextureLoad(TF2d, block_width,block_height,block_depth, pmodule);  //otf 생성.
 
    return scope.Close(result);
 }
