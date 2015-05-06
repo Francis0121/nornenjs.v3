@@ -51,7 +51,8 @@ Android.prototype.pngEventListener = function(){
 
     socket.on(EVENT_MESSAGE.ANDROID.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        $this.encoding.png(cudaRender, socket);
+        //$this.encoding.Androidpng(cudaRender, socket);
+        $this.encoding.Androidjpeg(cudaRender, socket);
     });
 };
 
@@ -69,7 +70,7 @@ Android.prototype.rotationtouchEventListener = function(){
         cudaRender.rotationX = option.rotationX;
         cudaRender.rotationY = option.rotationY;
 
-        $this.encoding.jpeg(cudaRender, socket);
+        $this.encoding.Androidjpeg(cudaRender, socket);
     });
 
 };
@@ -83,7 +84,7 @@ Android.prototype.translationtouchEventListener = function(){
         cudaRender.positionX = option.positionX;
         cudaRender.positionY = option.positionY;
 
-        $this.encoding.jpeg(cudaRender, socket);
+        $this.encoding.Androidjpeg(cudaRender, socket);
     });
 
 };
@@ -96,7 +97,7 @@ Android.prototype.pinchzoomtouchEventListener = function(){
 
         cudaRender.positionZ = option.positionZ;
 
-        $this.encoding.jpeg(cudaRender, socket);
+        $this.encoding.Androidjpeg(cudaRender, socket);
     });
 
 };

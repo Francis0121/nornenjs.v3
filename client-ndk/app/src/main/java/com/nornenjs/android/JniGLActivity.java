@@ -25,9 +25,9 @@ import java.net.URISyntaxException;
 
 public class JniGLActivity extends Activity {
 
+    int mode = NONE;
     static final int NONE = 0;
     static final int DRAG = 1;
-    int mode = NONE;
 
     float oldDist = 1.0f;
     float newDist = 1.0f;
@@ -53,6 +53,10 @@ public class JniGLActivity extends Activity {
     public Integer rotation = 0;
     public Integer move = 0;
 
+    public boolean rotationPng = false;
+    public boolean translationPng = false;
+    public boolean pinchzoomPng = false;
+
     private MyEventListener myEventListener;
 
     public void setMyEventListener(MyEventListener myEventListener) {
@@ -70,9 +74,7 @@ public class JniGLActivity extends Activity {
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
-
     }
-
 
     @Override
     protected void onResume() {
@@ -103,14 +105,13 @@ public class JniGLActivity extends Activity {
 
                     beforeX = event.getX();  //posX1
                     beforeY = event.getY();  //posY1
-
                     mode = DRAG;
                 }
                 break;
 
             case MotionEvent.ACTION_MOVE :
 
-                if(mode == DRAG && event.getPointerCount() == 1 ) {  //one finger DRAG
+                if(mode == DRAG && event.getPointerCount() == 1 ) {
 
                     rotationX += (event.getX() - beforeX) / 10.0;
                     rotationY += (event.getY() - beforeY) / 10.0;
@@ -132,7 +133,7 @@ public class JniGLActivity extends Activity {
 
                             newDist = spacing(event);
 
-                            newMidVectorX= midPoint(newVectorX1,newVectorX2);
+                            newMidVectorX= midPoint(newVectorX1, newVectorX2);
                             newMidVectorY= midPoint(newVectorY1,newVectorY2);
 
                             translationX += (newMidVectorX - oldMidVectorX) / 250.0;
@@ -141,6 +142,7 @@ public class JniGLActivity extends Activity {
                             oldMidVectorX = newMidVectorX;
                             oldMidVectorY = newMidVectorY;
 
+                            translationPng = false;
                             myEventListener.TranslationEvent(translationX, translationY);
                             move++;
 
@@ -156,6 +158,7 @@ public class JniGLActivity extends Activity {
                             if (div <= 0.2f) {
                                 div = 0.2f;
                             }
+                            pinchzoomPng = false;
                             myEventListener.PinchZoomEvent(div);
                             pinch++;
 
@@ -167,6 +170,7 @@ public class JniGLActivity extends Activity {
                             if (div >= 10.0f) {
                                 div = 10.0f;
                             }
+                            pinchzoomPng = false;
                             myEventListener.PinchZoomEvent(div);
                             pinch++;
                         }
@@ -290,15 +294,15 @@ class TouchSurfaceView extends GLSurfaceView {
                 socket = IO.socket("http://"+ipAddress+":"+port);
 
                 JSONObject json = new JSONObject();
-                json.put("savePath", "/storage/data/33011c05-b375-458f-9681-c4f627f4b169");
-                json.put("width", "256");
-                json.put("height", "256");
-                json.put("depth", "200");
+//                json.put("savePath", "/storage/data/33011c05-b375-458f-9681-c4f627f4b169");
+//                json.put("width", "256");
+//                json.put("height", "256");
+//                json.put("depth", "200");
 
-//                json.put("savePath", "/storage/data/478485a6-8b7b-4921-be98-06da53d9da1a");
-//                json.put("width", "512");
-//                json.put("height", "512");
-//                json.put("depth", "300");
+                json.put("savePath", "/storage/data/478485a6-8b7b-4921-be98-06da53d9da1a");
+                json.put("width", "512");
+                json.put("height", "512");
+                json.put("depth", "300");
 
                 socket.emit("join", deviceNumber);
                 socket.emit("init", json);
@@ -433,6 +437,7 @@ class TouchSurfaceView extends GLSurfaceView {
             try {
                 jsonObject.put("rotationX", rotationX);
                 jsonObject.put("rotationY", rotationY);
+
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e("error", "Make json object");
@@ -441,11 +446,12 @@ class TouchSurfaceView extends GLSurfaceView {
             socket.emit("rotation", jsonObject);
         }
         @Override
-        public void TranslationEvent(float translationX, float translationY ) {
+        public void TranslationEvent(float translationX, float translationY) {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("positionX", translationX);
                 jsonObject.put("positionY", translationY);
+
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e("error", "Make json object");
@@ -458,6 +464,7 @@ class TouchSurfaceView extends GLSurfaceView {
             JSONObject jsonObject = new JSONObject();
             try {
                 jsonObject.put("positionZ", div);
+
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e("error", "Make json object");
