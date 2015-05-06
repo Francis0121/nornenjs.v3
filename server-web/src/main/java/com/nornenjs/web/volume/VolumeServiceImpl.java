@@ -1,17 +1,26 @@
 package com.nornenjs.web.volume;
 
+import com.nornenjs.web.data.Data;
+import com.nornenjs.web.data.DataService;
 import com.nornenjs.web.util.Pagination;
+import com.nornenjs.web.volume.thumbnail.Thumbnail;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Francis on 2015-04-24.
  */
 @Service
 public class VolumeServiceImpl extends SqlSessionDaoSupport implements VolumeService{
+
+    @Autowired
+    private DataService dataService;
     
     @Override
     public Volume selectOne(Integer pn) {
@@ -52,6 +61,20 @@ public class VolumeServiceImpl extends SqlSessionDaoSupport implements VolumeSer
     @Override
     public Integer selectMaxVolume() {
         return getSqlSession().selectOne("volume.selectMaxVolume");
+    }
+
+    @Override
+    public Map<String, Object> selectVolumeInformation(Integer volumePn) {
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        Volume volume = selectOne(volumePn);
+        Data data = dataService.selectOne(volume.getVolumeDataPn());
+        List<Integer> thumbnails = dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn()));
+
+        result.put("volume", volume);
+        result.put("data", data);
+        result.put("thumbnails", thumbnails);
+        return result;
     }
 
     @Override

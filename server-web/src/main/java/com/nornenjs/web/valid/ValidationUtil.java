@@ -1,4 +1,4 @@
-package com.nornenjs.web.util;
+package com.nornenjs.web.valid;
 
 /**
  * Created by Francis on 2015-04-29.

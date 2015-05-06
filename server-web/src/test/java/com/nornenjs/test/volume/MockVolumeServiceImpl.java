@@ -6,6 +6,7 @@ import com.nornenjs.web.volume.VolumeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Francis on 2015-04-24.
@@ -20,6 +21,11 @@ public class MockVolumeServiceImpl implements VolumeService{
 
     @Override
     public Integer selectMaxVolume() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> selectVolumeInformation(Integer volumePn) {
         return null;
     }
 

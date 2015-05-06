@@ -1,9 +1,7 @@
 package com.nornenjs.web.controller;
 
-import com.nornenjs.web.data.Data;
 import com.nornenjs.web.data.DataService;
-import com.nornenjs.web.util.Publisher;
-import com.nornenjs.web.util.ValidationUtil;
+import com.nornenjs.web.valid.ValidationUtil;
 import com.nornenjs.web.volume.Volume;
 import com.nornenjs.web.volume.VolumeFilter;
 import com.nornenjs.web.volume.VolumeService;
@@ -42,9 +40,6 @@ public class VolumeController {
     @Autowired
     private DataService dataService;
 
-    @Autowired
-    private Publisher publisher;
-
     @RequestMapping(method = RequestMethod.GET)
     public String maxVolumeRenderingPage(){
         Integer maxVolumePn = volumeService.selectMaxVolume();
@@ -53,21 +48,13 @@ public class VolumeController {
     
     @RequestMapping(value = "/{volumePn}", method = RequestMethod.GET)
     public String renderingPage(Model model, @PathVariable Integer volumePn){
-        Volume volume = volumeService.selectOne(volumePn);
-        Data data = dataService.selectOne(volume.getVolumeDataPn());
-        model.addAttribute("volume", volume);
-        model.addAttribute("data", data);
-        model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
+        model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
         return "volume/one";
     }
     
     @RequestMapping(value = "/page/{volumePn}", method = RequestMethod.GET)
     public String volumeUpadatePage(Model model, @PathVariable Integer volumePn){
-        Volume volume = volumeService.selectOne(volumePn);
-        Data data = dataService.selectOne(volume.getVolumeDataPn());
-        model.addAttribute("volume", volume);
-        model.addAttribute("data", data);
-        model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
+        model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
         return "volume/update";
     }
 
@@ -76,8 +63,7 @@ public class VolumeController {
                                    @ModelAttribute Volume volume, BindingResult result) {
         new VolumeValidator().validate(volume, result);
         if(result.hasErrors()){
-            model.addAttribute("data", volumeService.selectOne(volume.getVolumeDataPn()));
-            model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
+            model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
             return "volume/update";
         }else {
             volumeService.update(volume);
