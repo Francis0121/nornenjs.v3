@@ -5,7 +5,9 @@
 var EVENT_MESSAGE = {
 
     ANDROID : {
-        TOUCH : 'touch',
+        ROTATION : 'rotation',
+        TRANSLATION : 'translation',
+        PINCHZOOM : 'pinchZoom',
         PNG : 'androidPng'
     },
     

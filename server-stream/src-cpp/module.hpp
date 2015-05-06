@@ -29,7 +29,7 @@ namespace NodeCuda {
       static Handle<Value> New(const Arguments& args);
       static void volumeTextureLoad(unsigned int width, unsigned int height, unsigned int depth, char * filename, Module *pmodule);
       static void otfTableTextureLoad(float4 *input_float_1D, unsigned int otf_size, Module *pmodule);
-      static void otf2DTableTextureLoad(char *TF2d, unsigned int otf_size, Module *pmodule);
+      static void otf2DTableTextureLoad(char *TF2d, unsigned int width, unsigned int height, unsigned int depth, Module *pmodule);
       static float4 * getOTFtable(unsigned int tf_start, unsigned int tf_middle1, unsigned int tf_middle2, unsigned int tf_end, unsigned int tf_size);
 
 

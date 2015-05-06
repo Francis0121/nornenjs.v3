@@ -35,7 +35,9 @@ Android.prototype.addSocketEventListener = function(socket){
     }
 
     this.socket = socket;
-    this.touchEventListener();
+    this.rotationtouchEventListener();
+    this.translationtouchEventListener();
+    this.pinchzoomtouchEventListener();
     this.pngEventListener();
 };
 
@@ -49,7 +51,8 @@ Android.prototype.pngEventListener = function(){
 
     socket.on(EVENT_MESSAGE.ANDROID.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        $this.encoding.png(cudaRender, socket);
+        //$this.encoding.Androidpng(cudaRender, socket);
+        $this.encoding.Androidjpeg(cudaRender, socket);
     });
 };
 
@@ -57,20 +60,44 @@ Android.prototype.pngEventListener = function(){
  * Touch Event Handler
  * @param socket
  */
-Android.prototype.touchEventListener = function(){
+Android.prototype.rotationtouchEventListener = function(){
     var $this = this,
         socket = this.socket;
 
-    socket.on(EVENT_MESSAGE.ANDROID.TOUCH, function(option){
+    socket.on(EVENT_MESSAGE.ANDROID.ROTATION, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
         cudaRender.rotationX = option.rotationX;
         cudaRender.rotationY = option.rotationY;
+
+        $this.encoding.Androidjpeg(cudaRender, socket);
+    });
+
+};
+Android.prototype.translationtouchEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.ANDROID.TRANSLATION, function(option){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+
         cudaRender.positionX = option.positionX;
         cudaRender.positionY = option.positionY;
+
+        $this.encoding.Androidjpeg(cudaRender, socket);
+    });
+
+};
+Android.prototype.pinchzoomtouchEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.ANDROID.PINCHZOOM, function(option){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+
         cudaRender.positionZ = option.positionZ;
 
-        $this.encoding.jpeg(cudaRender, socket);
+        $this.encoding.Androidjpeg(cudaRender, socket);
     });
 
 };
