@@ -45,7 +45,7 @@ Encoding.prototype.Androidjpeg = function(cudaRender, socket){
     logger.debug('Make start finish frame jpeg compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
     var jpeg = new Jpeg(cudaRender.d_outputBuffer, 512, 512, 'bgra');
-    socket.emit('stream', jpeg.encodeSync());
+    socket.emit('stream', jpeg.turboencodeSync());
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
@@ -84,13 +84,14 @@ Encoding.prototype.Androidpng = function(cudaRender, socket){
  */
 Encoding.prototype.jpeg = function(cudaRender, socket, type){
     var hrStart = process.hrtime();
-
+    cudaRender.imageWidth = 256;
+    cudaRender.imageHeight = 256;
     cudaRender.start();
     var hrCuda = process.hrtime(hrStart);
     logger.debug('Make start finish frame jpeg compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
-    var jpeg = new Jpeg(cudaRender.d_outputBuffer, 512, 512, 'rgba');
-    socket.emit('stream', { data : jpeg.turboencodeSync(), type : type});
+    var jpeg = new Jpeg(cudaRender.d_outputBuffer, cudaRender.imageWidth, cudaRender.imageHeight , 'rgba');
+    socket.emit('stream', { data : jpeg.turboencodeSync(), type : type, width : cudaRender.imageWidth, height : cudaRender.imageWidth});
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
@@ -106,13 +107,14 @@ Encoding.prototype.jpeg = function(cudaRender, socket, type){
  */
 Encoding.prototype.png = function(cudaRender, socket, type){
     var hrStart = process.hrtime();
-
+    cudaRender.imageWidth = 512;
+    cudaRender.imageHeight = 512;
     cudaRender.start();
     var hrCuda = process.hrtime(hrStart);
     logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
-    var png = new Png(cudaRender.d_outputBuffer, 512, 512, 'rgba');
-    socket.emit('stream', { data : png.encodeSync(), type : type} );
+    var png = new Png(cudaRender.d_outputBuffer, cudaRender.imageWidth, cudaRender.imageHeight, 'rgba');
+    socket.emit('stream', { data : png.encodeSync(), type : type, width : cudaRender.imageWidth, height : cudaRender.imageWidth } );
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
