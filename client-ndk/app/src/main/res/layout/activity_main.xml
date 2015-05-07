@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#33485c"
+                tools:context="com.nornenjs.android.MainActivity">
+    <LinearLayout
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/subtitle"
+            android:paddingBottom="18dp"
+            android:layout_centerHorizontal="true">
+        <TextView
+                android:id="@+id/title1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:text="Nornen"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/title1"
+                android:textColor="#fcc86d"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                android:text="js"/>
+    </LinearLayout>
+    <TextView
+            android:id="@+id/subtitle"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:text="Volume Rendering System"/>
+
+    <TextView
+            android:layout_below="@+id/subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="245dp"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            android:text="\u0040Copyright. NornenjsTeam. All right reserved"/>
+
+</RelativeLayout>
