@@ -5,6 +5,7 @@ package com.nornenjs.android;
  */
 
 import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -59,22 +60,6 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         public TextView date2;
     }
 
-    // create a new ImageView for each item referenced by the Adapter
-//    public View getView(int position, View convertView, ViewGroup parent) {
-//        ImageView imageView;
-//        if (convertView == null) {
-//            imageView = new ImageView(mContext);
-//            //imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
-//            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-//            imageView.setPadding(8, 8, 8, 8);
-//        } else {
-//            imageView = (ImageView) convertView;
-//        }
-//
-//        imageView.setImageResource(mThumbIds[position]);
-//        return imageView;
-//    }
-
 
     //@Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -124,9 +109,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
 
     public void onClick(View v) {
-        Log.d("imageview","pressed");
-        volumelist_Page = new VolumeList();
-        volumelist_Page.openPreview();
-
+        Intent intent = new Intent(activity, PreviewActivity.class);
+        activity.startActivity(intent);
     }
 }

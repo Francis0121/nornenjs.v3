@@ -13,7 +13,7 @@
               android:fontFamily="sans-serif-thin"
               android:padding="15dp"
               android:textColor="@android:color/white"
-              android:textSize="18sp" />
+              android:textSize="19sp" />
 
     <FrameLayout
             android:id="@+id/previewFragment"

@@ -48,16 +48,6 @@ public class VolumeList extends Activity {
                     }
                 });
 
-//        imagelist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                imagelist.setVisibility(View.INVISIBLE);
-//                FragmentManager fm = getFragmentManager();
-//                FragmentTransaction fragmentTransaction = fm.beginTransaction();
-//                fragmentTransaction.replace(R.id.previewFragment, preview);
-//                fragmentTransaction.commit();
-//            }
-//        });
     }
 
 
@@ -116,14 +106,4 @@ public class VolumeList extends Activity {
         listFlag.add(R.drawable.head);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        //super.onBackPressed();
-//        //if(gridView.is)
-//        imagelist.setVisibility(View.VISIBLE);
-//        FragmentManager fm = getFragmentManager();
-//        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-//        fragmentTransaction.remove(preview);
-//        fragmentTransaction.commit();
-//    }
 }

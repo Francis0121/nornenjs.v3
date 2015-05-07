@@ -64,7 +64,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         throw new Error('IsRoot type is "Boolean" type');
     }
 
-    this.REDIS_PATH = '/home/russa/redis-3.0.0/src/redis-server';
+    this.REDIS_PATH = '/home/hyok/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
     this.redisProcess = undefined;
