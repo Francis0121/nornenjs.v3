@@ -9,7 +9,7 @@ import android.os.Message;
 
 
 public class MainActivity extends Activity {
-    String username,userpasswd;
+    String username;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,8 +17,7 @@ public class MainActivity extends Activity {
 
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         //SharedPreferences.Editor prefEdit = pref.edit();
-        username = pref.getString("username","");
-        userpasswd = pref.getString("userpasswd","");
+        username = pref.getString("username", "");
 
         Loading();
     }
@@ -30,15 +29,16 @@ public class MainActivity extends Activity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 Intent intent;
-                intent = new Intent(MainActivity.this, LoginActivity.class);
-//                if(username == null || userpasswd.length() == 0)//user정보가 없는 경우
-//                {
-//                    intent = new Intent(MainActivity.this, LoginActivity.class);
-//                }
-//                else//user정보가 있는 경우
-//                {
-//                    intent = new Intent(MainActivity.this, VolumeList.class);
-//                }
+                //intent = new Intent(MainActivity.this, LoginActivity.class);
+
+                if(username == null || username.equals(""))//user정보가 없는 경우
+                {
+                    intent = new Intent(MainActivity.this, LoginActivity.class);
+                }
+                else//user정보가 있는 경우
+                {
+                    intent = new Intent(MainActivity.this, VolumeList.class);
+                }
                 startActivity(intent);
                 finish();
             }

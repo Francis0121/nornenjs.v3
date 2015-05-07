@@ -2,6 +2,8 @@ package com.nornenjs.android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -9,15 +11,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
+import com.nornenjs.android.dto.ResponseVolume;
+import com.nornenjs.android.dto.Volume;
+import com.nornenjs.android.dto.VolumeFilter;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class VolumeList extends Activity {
 
+    private static String TAG="VolumeList";
+
+
+    private VolumeFilter volumeFilter;
+
     private ImageAdapter mAdapter;
-    private ArrayList<String> listCountry;
-    private ArrayList<Integer> listFlag;
+    private List<String> titles;
+    private List<Integer> thumbnails;
+    private List<Integer> pns;
 
     private ListView imagelist;
 
@@ -28,17 +45,87 @@ public class VolumeList extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_volume_list);
 
-        prepareList();
+        SharedPreferences pref = getSharedPreferences("userInfo", 0);
+        volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
-        mAdapter = new ImageAdapter(this,listCountry, listFlag);
+        titles = new ArrayList<String>();
+        thumbnails = new ArrayList<Integer>();
+        pns = new ArrayList<Integer>();
 
-        // Set custom adapter to gridview
-        imagelist = (ListView) findViewById(R.id.imagelist);
-        imagelist.setAdapter(mAdapter);
+        new PostVolumeTask().execute();
 
 
-        mPoppyViewHelper = new PoppyViewHelper(this);
-        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.imagelist, R.layout.poppyview, new AbsListView.OnScrollListener() {
+    }
+
+
+
+    private class PostVolumeTask extends AsyncTask<Void, Void, ResponseVolume> {
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+
+        }
+
+        @Override
+        protected ResponseVolume doInBackground(Void... params) {
+
+            try {
+                // The URL for making the POST request
+                final String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/list";
+
+
+                // Create a new RestTemplate instance
+                RestTemplate restTemplate = new RestTemplate();
+
+                // Make the network request, posting the message, expecting a String in response from the server
+                ResponseEntity<ResponseVolume> response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
+
+                // Return the response body to display to the user
+                return response.getBody();
+
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ResponseVolume responseVolume) {
+            super.onPostExecute(responseVolume);
+
+            List<Volume> volumes = responseVolume.getVolumes();
+            Log.d(TAG,volumes.toString());
+
+            Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
+            Log.d(TAG, volumeFilterMap.toString());
+            if(volumes == null)
+            {//통신이 안된 경우
+                //Toast.makeText(톧ㅅ녀ㅣ시ㅏ!나!ㅅ니시나사니시나사니시나사니시나ㅏthis, );
+                Log.d(TAG, "통신이 안된 경우");
+            }
+            else
+            {
+                for(Volume volume : volumes)
+                {
+                    Log.d(TAG, volume.toString());
+                    titles.add(volume.getTitle() + volume.getInputDate());
+                    thumbnails.add(R.drawable.head);
+                    pns.add(volume.getPn());
+                }
+
+                mAdapter = new ImageAdapter(VolumeList.this ,titles, thumbnails, pns);
+
+                // Set custom adapter to gridview
+                imagelist = (ListView) findViewById(R.id.imagelist);
+                imagelist.setAdapter(mAdapter);
+
+
+                mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
+                View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.imagelist, R.layout.poppyview, new AbsListView.OnScrollListener() {
                     public void onScrollStateChanged(AbsListView view, int scrollState) {
 
                     }
@@ -48,62 +135,10 @@ public class VolumeList extends Activity {
                     }
                 });
 
-    }
+            }
+        }
 
 
-    public void openPreview()
-    {
-        Log.d("preview","before create intent");
-        //Intent intent = new Intent(VolumeList.this, PreView.class);
-        Log.d("preview","before startActivity");
-        //startActivity(intent);
-    }
-
-    public void prepareList()
-    {
-        // 톨신으로 받으면 동적으로 넣어주면 됨.
-        listCountry = new ArrayList<String>();
-
-        listCountry.add("환자1");
-        listCountry.add("환자2");
-        listCountry.add("환자3");
-        listCountry.add("환자4");
-        listCountry.add("환자5");
-        listCountry.add("환자6");
-        listCountry.add("환자7");
-        listCountry.add("환자8");
-        listCountry.add("환자9");
-        listCountry.add("환자10");
-        listCountry.add("환자11");
-        listCountry.add("환자12");
-        listCountry.add("환자13");
-        listCountry.add("환자14");
-        listCountry.add("환자15");
-        listCountry.add("환자16");
-        listCountry.add("환자17");
-        listCountry.add("환자18");
-        listCountry.add("환자19");
-
-        listFlag = new ArrayList<Integer>();
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
-        listFlag.add(R.drawable.head);
     }
 
 }

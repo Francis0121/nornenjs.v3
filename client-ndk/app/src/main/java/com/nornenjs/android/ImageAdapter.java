@@ -16,33 +16,45 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
+
+    private static final String TAG = "ImageAdapter";
+
 //    private Context mContext;
 
-    private ArrayList<String> listImage;
-    private ArrayList<Integer> listFlag;
-    private Activity activity;
+    private List<String> titles;
+    private List<Integer> thumbnails;
+    private List<Integer> pns;
+    private Map<Integer, Integer> pnMap;
 
+    private Activity activity;
     private VolumeList volumelist_Page;
+
 //    // Constructor
 //    public ImageAdapter(Context c) {
 //        mContext = c;
 //    }
-    public ImageAdapter(Activity activity,ArrayList<String> listImage, ArrayList<Integer> listFlag) {
+
+    public ImageAdapter(Activity activity, List<String> titles, List<Integer> thumbnails, List<Integer> pns) {
         super();
-        this.listImage = listImage;
-        this.listFlag = listFlag;
+        this.titles = titles;
+        this.thumbnails = thumbnails;
+        this.pns = pns;
         this.activity = activity;
+        this.pnMap = new HashMap<Integer, Integer>();
     }
 
     public int getCount() {
-        return listImage.size();
+        return titles.size();
 //        return mThumbIds.length;
     }
 
     public Object getItem(int position) {
-        return listImage.get(position);
+        return titles.get(position);
         //return null;
     }
 
@@ -91,11 +103,17 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view = (ViewHolder) convertView.getTag();
         }
 
-        view.metadata.setText(listImage.get(position));
-        view.imgViewFlag.setImageResource(listFlag.get(position));
+        view.metadata.setText(titles.get(position));
+        view.imgViewFlag.setImageResource(thumbnails.get(position));
+        view.imgViewFlag.setTag(pns.get(position));
 
-        view.metadata2.setText(listImage.get(position));
-        view.imgViewFlag2.setImageResource(listFlag.get(position));
+        view.metadata2.setText(titles.get(position));
+        view.imgViewFlag2.setImageResource(thumbnails.get(position));
+        view.imgViewFlag2.setTag(pns.get(position));
+
+        Log.d(TAG, "" + view.imgViewFlag);
+        Log.d(TAG, "" + view.imgViewFlag.getId());
+        //pnMap.put(view.imgViewFlag.getId(), pns.get(position));
 
         convertView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -109,7 +127,12 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
 
     public void onClick(View v) {
+
+        Log.d("onClick", "click image id : " + v.getTag());
+ //       Log.d("ImageAdapter", "GET PN ID "+pnMap.get(v.getId()));
         Intent intent = new Intent(activity, PreviewActivity.class);
+        intent.putExtra("pns", Integer.parseInt(""+v.getTag()));
         activity.startActivity(intent);
+        activity.finish();
     }
 }

@@ -50,7 +50,8 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         });
 
         // TODO : Enter key block
-        // TODO : text 창이 커짐--> 글씨 사이즈 줄이면 안그럴거임.
+        // TODO : text 창이 커짐--> 글씨 사이즈 줄이면 안그럴거임.ㅋㅋㅋㅋ너무작앜ㅋㅋㅋㅋ
+        // TODO : passwd 안보이게 하
 
     }
 

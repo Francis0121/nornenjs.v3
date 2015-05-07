@@ -33,7 +33,7 @@ public class MobileVolumeController {
     public Map<String, Object> listPage(@RequestBody VolumeFilter volumeFilter,
                                         @PathVariable("username") String username){
         Map<String, Object> response = new HashMap<String, Object>();
-        if(actorService.selectUsernameExist(username)) {
+        if(!actorService.selectUsernameExist(username)) {
             response.put("volumes", null);
             return response;
         }
@@ -42,6 +42,7 @@ public class MobileVolumeController {
 
         List<Volume> volumes = volumeService.selectList(volumeFilter);
         response.put("volumes", volumes);
+        response.put("volumeFilter", volumeFilter);
         logger.debug(volumes.toString());
         return response;
     }
@@ -50,7 +51,7 @@ public class MobileVolumeController {
     public Map<String, Object> renderingPage(@PathVariable("username") String username,
                                 @PathVariable Integer volumePn){
         Map<String, Object> response = new HashMap<String, Object>();
-        if(actorService.selectUsernameExist(username)) {
+        if(!actorService.selectUsernameExist(username)) {
             response.put("volume", null);
             return response;
         }
