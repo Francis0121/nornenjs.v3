@@ -30,15 +30,15 @@ public class MainActivity extends Activity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 Intent intent;
-
-                if(username == null || userpasswd.length() == 0)//user정보가 없는 경우
-                {
-                    intent = new Intent(MainActivity.this, LoginActivity.class);
-                }
-                else//user정보가 있는 경우
-                {
-                    intent = new Intent(MainActivity.this, VolumeList.class);
-                }
+                intent = new Intent(MainActivity.this, LoginActivity.class);
+//                if(username == null || userpasswd.length() == 0)//user정보가 없는 경우
+//                {
+//                    intent = new Intent(MainActivity.this, LoginActivity.class);
+//                }
+//                else//user정보가 있는 경우
+//                {
+//                    intent = new Intent(MainActivity.this, VolumeList.class);
+//                }
                 startActivity(intent);
                 finish();
             }

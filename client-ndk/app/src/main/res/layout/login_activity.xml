@@ -63,6 +63,18 @@
                 android:hint="username"
                 android:textColor="@android:color/darker_gray"
                 android:ems="10"/>
+        
+        <TextView
+                android:id="@+id/alertID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:padding="5dp"
+                android:textColor="#e04836"
+                android:visibility="gone"
+                android:textSize="7sp"
+                />
+
         <EditText
                 android:id="@+id/userpasswd"
                 android:layout_width="wrap_content"
@@ -73,6 +85,19 @@
                 android:hint="password"
                 android:textColor="@android:color/darker_gray"
                 android:ems="10"/>
+
+        <TextView
+                android:id="@+id/alertPasswd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:padding="5dp"
+                android:textColor="#e04836"
+                android:textSize="7sp"
+                android:layout_gravity="center_horizontal"
+                android:visibility="gone"
+                />
+
         <Button
                 android:id="@+id/send"
                 android:layout_width="match_parent"
