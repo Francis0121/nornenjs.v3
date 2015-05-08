@@ -102,9 +102,9 @@
             }
             var ctx = canvas.getContext('2d');
 
-            var img = new Image(512, 512);
+            var img = new Image(image.width, image.height);
             img.onload = function(){
-                ctx.drawImage(img, 0, 0, 512, 512, 0, 0, canvas.clientWidth, canvas.clientWidth);
+                ctx.drawImage(img, 0, 0, image.width, image.height, 0, 0, canvas.clientWidth, canvas.clientWidth);
             };
             img.src = url;
         });

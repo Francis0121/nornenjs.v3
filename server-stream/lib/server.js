@@ -85,7 +85,9 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         client.flushall(function (error, reply){
             logger.info('Redis "Flushall command"', reply);
             client.quit();
+
         });
+
 
         this.addDevice();
 

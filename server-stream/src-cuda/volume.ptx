@@ -4,7 +4,7 @@
 	// nvopencc 4.1 built on 2014-03-13
 
 	//-----------------------------------------------------------
-	// Compiling /tmp/tmpxft_000027c6_00000000-9_volume.cpp3.i (/tmp/ccBI#.lZk3l5)
+	// Compiling /tmp/tmpxft_00001afa_00000000-9_volume.cpp3.i (/tmp/ccBI#.CTjXEL)
 	//-----------------------------------------------------------
 
 	//-----------------------------------------------------------
@@ -17,7 +17,7 @@
 	//-----------------------------------------------------------
 
 	.file	1	"<command-line>"
-	.file	2	"/tmp/tmpxft_000027c6_00000000-8_volume.cudafe2.gpu"
+	.file	2	"/tmp/tmpxft_00001afa_00000000-8_volume.cudafe2.gpu"
 	.file	3	"volume.cu"
 	.file	4	"/usr/lib/gcc/i686-linux-gnu/4.6/include/stddef.h"
 	.file	5	"/usr/local/cuda/bin/..//include/crt/device_runtime.h"
@@ -659,7 +659,7 @@ $Lt_2_7682:
 	mov.f32 	%f180, %f179;
 	tex.3d.v4.u32.f32 {%r61,%r62,%r63,%r64},[tex,{%f175,%f176,%f178,%f180}];
 	mov.s32 	%r65, %r61;
-	.loc	35	900	0
+	.loc	35	896	0
 	mov.s32 	%r66, %r50;
 	mov.b32 	%f181, %r66;
 	mov.s32 	%r67, %r55;
@@ -694,11 +694,11 @@ $Lt_2_7682:
 	mad.rn.f64 	%fd27, %fd25, %fd26, %fd24;
 	cvt.rn.f32.f64 	%f202, %fd27;
 	mul.f32 	%f143, %f202, %f143;
-	.loc	35	901	0
+	.loc	35	897	0
 	mul.f32 	%f144, %f202, %f144;
-	.loc	35	902	0
+	.loc	35	898	0
 	mul.f32 	%f145, %f202, %f145;
-	.loc	35	903	0
+	.loc	35	899	0
 	mul.f32 	%f146, %f202, %f146;
 $Lt_2_7938:
 	.loc	3	250	0
@@ -726,13 +726,13 @@ $Lt_2_7938:
 	.loc	3	261	0
 	setp.lt.f32 	%p7, %f96, %f100;
 	@%p7 bra 	$Lt_2_8706;
-	.loc	35	355	0
+	.loc	35	351	0
 	mov.f32 	%f206, 0f3f000000;   	// 0.5
 	mad.f32 	%f101, %f105, %f206, %f101;
-	.loc	35	356	0
+	.loc	35	352	0
 	mov.f32 	%f207, 0f3f000000;   	// 0.5
 	mad.f32 	%f102, %f107, %f207, %f102;
-	.loc	35	357	0
+	.loc	35	353	0
 	mov.f32 	%f208, 0f3f000000;   	// 0.5
 	mad.f32 	%f103, %f109, %f208, %f103;
 	.loc	3	208	0
@@ -743,12 +743,12 @@ $Lt_2_7938:
 	@%p8 bra 	$Lt_2_7682;
 $Lt_2_8706:
 $Lt_2_258:
-	.loc	35	900	0
+	.loc	35	896	0
 	ld.param.f32 	%f211, [__cudaparm_render_kernel_volume_brightness];
 	mul.f32 	%f114, %f211, %f114;
-	.loc	35	901	0
+	.loc	35	897	0
 	mul.f32 	%f113, %f211, %f113;
-	.loc	35	902	0
+	.loc	35	898	0
 	mul.f32 	%f112, %f211, %f112;
 	.loc	3	268	0
 	cvt.sat.f32.f32 	%f212, %f114;
@@ -992,13 +992,13 @@ $Lt_3_6658:
 	.loc	3	321	0
 	setp.lt.f32 	%p5, %f96, %f100;
 	@%p5 bra 	$Lt_3_258;
-	.loc	35	355	0
+	.loc	35	351	0
 	mov.f32 	%f127, 0f3f000000;   	// 0.5
 	mad.f32 	%f101, %f105, %f127, %f101;
-	.loc	35	356	0
+	.loc	35	352	0
 	mov.f32 	%f128, 0f3f000000;   	// 0.5
 	mad.f32 	%f102, %f107, %f128, %f102;
-	.loc	35	357	0
+	.loc	35	353	0
 	mov.f32 	%f129, 0f3f000000;   	// 0.5
 	mad.f32 	%f103, %f109, %f129, %f103;
 	.loc	3	313	0
