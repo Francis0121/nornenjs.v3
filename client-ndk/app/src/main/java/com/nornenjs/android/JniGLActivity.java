@@ -292,6 +292,8 @@ class TouchSurfaceView extends GLSurfaceView {
         private Socket relay;
         private Socket socket;
 
+
+
         public void bindSocket(String ipAddress, String port, String deviceNumber){
             try {
                 socket = IO.socket("http://"+ipAddress+":"+port);
@@ -325,8 +327,6 @@ class TouchSurfaceView extends GLSurfaceView {
 
                         Log.d("ByteBuffer", info.toString());
 
-                        width = null;
-                        height = null;
                         try {
                             byteArray = (byte[]) info.get("data");
                             width = (Integer) info.get("width");
@@ -350,6 +350,7 @@ class TouchSurfaceView extends GLSurfaceView {
         }
 
         public CubeRenderer(JniGLActivity activity) {
+
             mActivity = activity;
             Log.d("socket", "connection");
             // ~ socket connection
@@ -403,11 +404,11 @@ class TouchSurfaceView extends GLSurfaceView {
 
             if(byteArray!=null) {
 
-                Log.d("ByteBuffer", ""+width+" "+ height+ " " + byteArray.length);
+                Log.d("ByteBuffer", ""+width.intValue()+" "+ height.intValue()+ " " + byteArray.length);
                 imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                imgPanda.getPixels(pixels, 0, 256, 0, 0, 256, 256);
+                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
 
-                mActivity.nativeSetTextureData(pixels, 256, 256);
+                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
                 mActivity.draw++;
             }
             mActivity.nativeDrawIteration(0, 0);
