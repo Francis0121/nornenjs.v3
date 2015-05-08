@@ -17,12 +17,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Francis on 2015-04-26.
@@ -77,12 +76,26 @@ public class VolumeController {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
         volumeFilter.setUsername(username);
-        
+
         List<Volume> volumes = volumeService.selectList(volumeFilter);
         model.addAttribute("volumes", volumes);
         return "volume/list";
     }
-    
+
+    @ResponseBody
+    @RequestMapping(value = "/list/json", method = RequestMethod.POST)
+    public Map<String, Object> listAjax(@RequestBody VolumeFilter volumeFilter){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = user.getUsername();
+        volumeFilter.setUsername(username);
+
+        List<Volume> volumes = volumeService.selectList(volumeFilter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("volumes", volumes);
+        map.put("volumeFilter", volumeFilter);
+        return map;
+    }
+
     @RequestMapping(value = "/upload", method = RequestMethod.GET)
     public String uploadPage(Model model){
         model.addAttribute("volume", new Volume());

@@ -1,6 +1,37 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ include file="../../layout/header.jspf" %>
 <%@ include file="../../layout/nav.jspf" %>
+<c:set var="pagination" value="${volumeFilter.pagination }"/>
+<script type="text/javascript">
+    /* <![CDATA[ */
+    var numPagesPerScreen = <c:out value='${pagination.numPagesPerScreen}'/>;
+    var page = <c:out value='${pagination.currentPage}'/>;
+    var numPages = <c:out value='${pagination.numPages}'/>;
+    function goToNextPages() {
+        goToPage(Math.min(numPages, page + numPagesPerScreen));
+    }
+    function goToPage(page) {
+        console.log('Page',page);
+
+        var url = contextPath + '/volume/list/json'
+        var volumeFilter = {
+
+        };
+        $.postJSON(url, volumeFilter, function(data){
+            console.log('Data', data);
+        });
+
+//        var input = document.getElementById('page');
+//        input.value = page;
+//
+//        var form = document.forms['volumeFilter'];
+//        form.submit();
+    }
+    function goToPreviousPages() {
+        goToPage(Math.max(1, page - numPagesPerScreen));
+    }
+    /* ]]> */
+</script>
 
 <section class="layoutContentSectionWrap">
     
