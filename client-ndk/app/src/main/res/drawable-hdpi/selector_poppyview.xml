@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:exitFadeDuration="@android:integer/config_mediumAnimTime">
+
+
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                    android:angle="-90"
+                    android:startColor="#33485c"
+                    android:endColor="#d8dde3"
+                    android:centerColor="#33485c"
+                    android:centerY="0.95"
+                    />
+
+        </shape>
+    </item>
+
+</selector>
+

@@ -1,6 +1,7 @@
 package com.nornenjs.android;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.FloatMath;
@@ -60,6 +61,9 @@ public class JniGLActivity extends Activity {
 
     private MyEventListener myEventListener;
 
+    public int volumeWidth, volumeHeight, volumeDepth;
+    public String volumeSavePath;
+
     public void setMyEventListener(MyEventListener myEventListener) {
         this.myEventListener = myEventListener;
     }
@@ -67,6 +71,12 @@ public class JniGLActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        volumeWidth=  intent.getIntExtra("width",512);
+        volumeHeight = intent.getIntExtra("height",512);
+        volumeDepth = intent.getIntExtra("depth",200);
+        volumeSavePath = intent.getStringExtra("savePath");
 
         String host = getString(R.string.host);
         setContentView(R.layout.activity_jni_gl);
@@ -299,15 +309,11 @@ class TouchSurfaceView extends GLSurfaceView {
                 socket = IO.socket("http://"+ipAddress+":"+port);
 
                 JSONObject json = new JSONObject();
-                json.put("savePath", "/storage/data/33011c05-b375-458f-9681-c4f627f4b169");
-                json.put("width", "256");
-                json.put("height", "256");
-                json.put("depth", "200");
 
-//                json.put("savePath", "/storage/data/478485a6-8b7b-4921-be98-06da53d9da1a");
-//                json.put("width", "512");
-//                json.put("height", "512");
-//                json.put("depth", "300");
+                json.put("savePath", mActivity.volumeSavePath);
+                json.put("width", mActivity.volumeWidth);
+                json.put("height", mActivity.volumeHeight);
+                json.put("depth", mActivity.volumeDepth);
 
                 socket.emit("join", deviceNumber);
                 socket.emit("init", json);

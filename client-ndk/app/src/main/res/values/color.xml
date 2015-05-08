@@ -1,0 +1,19 @@
+<resources>
+
+    <color name="pressed1">#cdd0d4</color>
+    <color name="pressed2">#bfc3c7</color>
+
+    <color name="focused1">#cdd0d4</color>
+    <color name="focused2">#bfc3c7</color>
+
+    <color name="default1">#ffffff</color>
+    <color name="default2">#ffffff</color>
+
+    <color name="stroke">#00000000</color>
+
+    <color name="selector_poppyview_pressed">#33485c</color>
+    <color name="selector_poppyview_default">#33485c</color>
+
+    <color name="selector_button_pressed">#33485c</color>
+    <color name="selector_button_default">#33485c</color>
+</resources>
