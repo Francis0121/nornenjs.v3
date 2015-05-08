@@ -1,25 +1,21 @@
 package com.nornenjs.android;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.Toast;
 import com.nornenjs.android.dto.ResponseVolume;
 import com.nornenjs.android.dto.Volume;
 import com.nornenjs.android.dto.VolumeFilter;
+import com.nornenjs.android.dynamicview.PoppyViewHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 

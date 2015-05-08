@@ -16,15 +16,15 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_jni_gl" >
+        </activity>
+        <activity
+                android:name=".JniGLActivity"
+                android:label="@string/title_activity_jni_gl" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-                android:name=".JniGLActivity"
-                android:label="@string/title_activity_jni_gl" >
         </activity>
         <activity
                 android:name=".LoginActivity"
