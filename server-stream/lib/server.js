@@ -5,13 +5,10 @@
 // ~ Import module (Me)
 var ENUMS = require('./enums');
 var logger = require('./logger');
-var sqlite = require('./sql/default');
 var util = require('./util');
 
 var CudaRender = require('./cuda/render').CudaRender;
 var cu = require('./cuda/load');
-//var cuDevice = cu.Device(0);
-//var cuCtx = new cu.Ctx(0, cuDevice);
 
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
@@ -20,19 +17,12 @@ var Web = require('./event/web').Web;
 var path = require('path');
 var HashMap = require('hashmap').HashMap;
 var socketIo = require('socket.io');
-var sys = require('sys')
 var exec = require('child_process').exec;
 var redis = require('redis');
 
-
-exec("sudo mount 112.108.40.14:/storage /storage", function(error, stdout, stderr){
-    if (!error) {
-        // print the output
-        //sys.puts(stdout);
-    } else {
-        // handle error
-    }
-});
+// Not running sudo mount
+//exec("sudo mount 112.108.40.14:/storage /storage", function(error, stdout, stderr){
+//});
 
 /**
  * Create constructor
@@ -51,7 +41,6 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.MAX_CONNECTION_CLIENT = 4;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
-    this.CUDA_DATA_PATH = path.join(__dirname, './data/');
 
     this.io = socketIo.listen(server);
     this.cudaRenderMap = new HashMap();
@@ -64,7 +53,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         throw new Error('IsRoot type is "Boolean" type');
     }
 
-    this.REDIS_PATH = '/home/hyok/redis-3.0.0/src/redis-server';
+    this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
     this.redisProcess = undefined;
@@ -73,9 +62,21 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 
     if(isMaster){
         // ~ Master Relay server. Exec redis server and connect redis.
+        // ~
+        var $this = this;
         this.redisProcess = exec(this.REDIS_PATH, function (error) {
-            if (error !== null) {
-                throw new Error(error);
+            if (error != null) {
+                exec('killall redis-server', function(killallError){
+                    if(killallError != null) {
+                        throw new Error(killallError);
+                    }else{
+                        $this.redisProcess = exec($this.REDIS_PATH, function(reError){
+                            if(reError != null){
+                                throw new Error(reError);
+                            }
+                        });
+                    }
+                });
             }
         });
 
@@ -87,7 +88,6 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
             client.quit();
 
         });
-
 
         this.addDevice();
 
@@ -137,11 +137,7 @@ NornenjsServer.prototype.addDevice = function(callback) {
     for (var i = 0; i < cu.deviceCount; i++) {
         logger.info('[Init] Cuda context initialize in constructor DeviceNumber', i);
         this.cuCtxs.push(new cu.Ctx(0, cu.Device(i)));
-        //logger.info('[ctx name]',this.cuCtxs[i]);
-
     }
-   // logger.info('[ctx confirm - 0]',this.cuCtxs[0]);
-   // logger.info('[ctx confirm - 1]',this.cuCtxs[1]);
 };
 
 /**
@@ -212,11 +208,11 @@ NornenjsServer.prototype.getDeviceKey = function(callback){
  */
 NornenjsServer.prototype.publish = function(){
 
-    console.log('[REDIS]               PUBLISH START');
+    logger.info('[REDIS]               PUBLISH START');
     var client = redis.createClient(this.REDIS_PORT, this.ipAddress, {});
     client.publish('streamOut', util.getIpAddress());
     client.quit();
-    console.log('[REDIS]               PUBLISH END');
+    logger.info('[REDIS]               PUBLISH END');
 
 };
 
@@ -292,7 +288,7 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
                 var connSocketId = undefined;
                 while(typeof connSocketId === 'undefined' && clientQueue.length !== 0){
                     connSocketId = clientQueue.shift();
-                    console.log(connSocketId, typeof socket.server.eio.clients[connSocketId]);
+
                     if(typeof socket.server.eio.clients[connSocketId] === 'undefined'){
                         connSocketId = undefined;
                     }

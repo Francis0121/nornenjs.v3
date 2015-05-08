@@ -3,8 +3,6 @@ var logger = require('../lib/logger');
 var ENUMS = require('../lib/enums');
 
 var http = require('http'),
-    url = require('url'),
-    fs = require('fs'),
     path = require('path'),
     os = require('os');
 
@@ -21,31 +19,7 @@ for (var k in interfaces) {
 
 var HTTP_PORT = 5000;
 
-var server = http.createServer(function (request, response) {
-
-    var reqUrl = url.parse(request.url, true);
-
-    fs.readFile(path.join(__dirname, './index.html'), function(err, data){
-        if(err){
-            response.writeHead(404, {'Content-type' : 'text/plain'});
-            response.end('404 Not Found\n');
-            throw err;
-        }
-
-        var volumePrimaryPn = reqUrl.pathname.replace('/', '');
-        if(volumePrimaryPn === '' || (volumePrimaryPn != 1 && volumePrimaryPn != 2)){
-            volumePrimaryPn = 1;
-        }
-
-        var html = data.toString()
-            .replace(/\$\{volumePrimaryPn\}/gi, volumePrimaryPn)
-            .replace(/\$\{ipAddress\}/gi, ipAddress);
-
-        response.writeHead(200, {'Content-type' : 'text/html'});
-        response.end(html);
-    });
-
-}).listen(HTTP_PORT);
+var server = http.createServer().listen(HTTP_PORT);
 
 // ~ Create nornenjs server
 var NornenjsServer = require('../lib/server').NornenjsServer;
@@ -74,7 +48,6 @@ var connection = mysql.createConnection({
     database : 'nornenjs'
 });
 
-
 const redisHost = '127.0.0.1';
 const redisPort = 6379;
 var redis = require('redis');
@@ -84,8 +57,8 @@ redisClient.auth('');
 redisClient.on('error', function(err) {
     console.log('Error In Redis Server', err);
 });
-redisClient.subscribe('thumbnail');
 
+redisClient.subscribe('thumbnail');
 redisClient.on('message', function(channel, message) {
     var map = JSON.parse(message);
 
