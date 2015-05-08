@@ -86,5 +86,9 @@
 		<error-code>500</error-code>
 		<location>/WEB-INF/error/500.jsp</location>
 	</error-page>
-	
+
+	<session-config>
+		<session-timeout>360</session-timeout>
+	</session-config>
+
 </web-app>
