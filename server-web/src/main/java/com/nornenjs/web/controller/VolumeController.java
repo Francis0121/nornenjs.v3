@@ -85,6 +85,7 @@ public class VolumeController {
     @ResponseBody
     @RequestMapping(value = "/list/json", method = RequestMethod.POST)
     public Map<String, Object> listAjax(@RequestBody VolumeFilter volumeFilter){
+        logger.debug(volumeFilter.toString());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
         volumeFilter.setUsername(username);

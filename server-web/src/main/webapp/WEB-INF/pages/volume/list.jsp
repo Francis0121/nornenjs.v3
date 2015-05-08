@@ -4,31 +4,69 @@
 <c:set var="pagination" value="${volumeFilter.pagination }"/>
 <script type="text/javascript">
     /* <![CDATA[ */
-    var numPagesPerScreen = <c:out value='${pagination.numPagesPerScreen}'/>;
-    var page = <c:out value='${pagination.currentPage}'/>;
+    var currentPage = <c:out value='${pagination.currentPage}'/>;
     var numPages = <c:out value='${pagination.numPages}'/>;
+
     function goToNextPages() {
-        goToPage(Math.min(numPages, page + numPagesPerScreen));
+        if(currentPage == numPages){
+            return;
+        }
+        goToPage(Math.min(numPages, currentPage + 1));
     }
+
     function goToPage(page) {
+
+        var form = document.forms['volumeFilter'];
+        console.log('Form', form);
         console.log('Page',page);
 
         var url = contextPath + '/volume/list/json'
         var volumeFilter = {
-
+            page : page,
+            username : form.username.value,
+            title : form.title.value,
+            from : form.from.value,
+            to : form.to.value
         };
+
         $.postJSON(url, volumeFilter, function(data){
-            console.log('Data', data);
+            var volumes = data.volumes;
+
+            currentPage+=1;
+
+            var list = $('.volumeListArticle>.list');
+            var html = '';
+            for(var i=0; i<volumes.length; i++){
+                var volume = volumes[i];
+                html+='<li class="one" data-pn="'+volume.pn+'">';
+                html+='<figure>';
+                html+=' <ul class="volumeListSlider">';
+                for(var j=0; j<volume.thumbnailPnList.length; j++){
+                    var thumbnailPn = volume.thumbnailPnList[j];
+                    html+=' <li><img src="'+contextPath+'/data/thumbnail/'+thumbnailPn+'"/></li>';
+                }
+                html+=' </ul>';
+
+                html+=' <figcaption>';
+                html+='     <a href="'+contextPath+'/volume/'+volume.pn+'" class="name">'+volume.title+'</a> <a href="'+contextPath+'/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a><br/>';
+                html+='     <span class="number">'+volume.width+' x '+volume.height+' x '+volume.depth+'</span> <span class="date">'+volume.inputDate+'</span>';
+                html+=' </figcaption>';
+                html+='</figure>';
+                html+='</li>';
+            }
+            list.append(html);
+
+            volumeListSlider.reloadSlider();
+//            volumeListSlider = $('.volumeListSlider').bxSlider({
+//                'pager' : false
+//            });
+//
+//            $('.volumeListSlider').css({
+//                'max-height' : $('.volumeListSlider>li>img').height(),
+//                'border-top' : 0
+//            });
         });
 
-//        var input = document.getElementById('page');
-//        input.value = page;
-//
-//        var form = document.forms['volumeFilter'];
-//        form.submit();
-    }
-    function goToPreviousPages() {
-        goToPage(Math.max(1, page - numPagesPerScreen));
     }
     /* ]]> */
 </script>
@@ -73,7 +111,7 @@
                         
                         <figcaption>
                             <a href="${cp}/volume/${volume.pn}" class="name"><c:out value="${volume.title}"/></a> <a href="${cp}/volume/page/${volume.pn}" class="volumeUpdateBtn">수정</a><br/>
-                            <span class="number"><c:out value="${volume.width}"/> x <c:out value="${volume.height}"/> x <c:out value="${volume.depth}"/></span> <span class="date">[ 2015.04.26 ]</span>
+                            <span class="number"><c:out value="${volume.width}"/> x <c:out value="${volume.height}"/> x <c:out value="${volume.depth}"/></span> <span class="date"><c:out value="${volume.inputDate}"/></span>
                         </figcaption>
                     </figure>
                 </li>

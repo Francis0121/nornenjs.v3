@@ -235,7 +235,7 @@ LayoutFunction.prototype.expandEventListener = function(){
 };
 
 var layoutFunction = new LayoutFunction();
-
+var volumeListSlider;
 $(function(){
     
     if(layoutFunction.isSignInFull) {
@@ -293,7 +293,7 @@ $(function(){
         }
     });
 
-    var volumeListSlider = $('.volumeListSlider').bxSlider({
+    volumeListSlider = $('.volumeListSlider').bxSlider({
         'pager' : false
     });
 
