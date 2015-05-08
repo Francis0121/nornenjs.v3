@@ -156,31 +156,31 @@ void drawCube()
 {
 
 	int one = 1;
-    static short vertices[] = {
+    short vertices[] = {
                 -2.0f	, 2.0f	, 0.0f, // 0, Left Top
                  2.0f	, 2.0f	, 0.0f,	// 1, Right Top
                  2.0f	, -2.0f	, 0.0f,	// 2, Right Bottom
                 -2.0f	, -2.0f	, 0.0f	// 3, Left Bottom
     };
 
-    static float colors[] = {
+    float colors[] = {
                   1,    1,    1,  1,
                   1,    1,    1,  1,
                   1,    1,    1,  1,
                   1,    1,    1,  1
           };
 
-    static unsigned short indices[] = {
+    unsigned short indices[] = {
                   0, 1, 2,
                   0, 2, 3
     };
-    static float texture[] = {
+    float texture[] = {
     	    		//Mapping coordinates for the vertices
     	    		0.0f, 0.0f,
     	    		1.0f, 0.0f,
     	    		1.0f, 1.0f,
     	    		0.0f, 1.0f,
-    	    };
+    };
 
     glFrontFace(GL_CW);
     glEnable(GL_TEXTURE_2D);

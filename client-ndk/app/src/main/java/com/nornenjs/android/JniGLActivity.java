@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.Map;
 
 
 public class JniGLActivity extends Activity {
@@ -286,6 +287,8 @@ class TouchSurfaceView extends GLSurfaceView {
 
         private JniGLActivity mActivity;
         private byte[] byteArray;
+        private Integer width;
+        private Integer height;
         private Socket relay;
         private Socket socket;
 
@@ -294,15 +297,15 @@ class TouchSurfaceView extends GLSurfaceView {
                 socket = IO.socket("http://"+ipAddress+":"+port);
 
                 JSONObject json = new JSONObject();
-//                json.put("savePath", "/storage/data/33011c05-b375-458f-9681-c4f627f4b169");
-//                json.put("width", "256");
-//                json.put("height", "256");
-//                json.put("depth", "200");
+                json.put("savePath", "/storage/data/33011c05-b375-458f-9681-c4f627f4b169");
+                json.put("width", "256");
+                json.put("height", "256");
+                json.put("depth", "200");
 
-                json.put("savePath", "/storage/data/478485a6-8b7b-4921-be98-06da53d9da1a");
-                json.put("width", "512");
-                json.put("height", "512");
-                json.put("depth", "300");
+//                json.put("savePath", "/storage/data/478485a6-8b7b-4921-be98-06da53d9da1a");
+//                json.put("width", "512");
+//                json.put("height", "512");
+//                json.put("depth", "300");
 
                 socket.emit("join", deviceNumber);
                 socket.emit("init", json);
@@ -317,7 +320,23 @@ class TouchSurfaceView extends GLSurfaceView {
                 socket.on("stream", new Emitter.Listener() { //112.108.40.166
                     @Override
                     public void call(Object... args) {
-                        byteArray = (byte[]) args[0];
+
+                        JSONObject info = (JSONObject) args[0];
+
+                        Log.d("ByteBuffer", info.toString());
+
+                        width = null;
+                        height = null;
+                        try {
+                            byteArray = (byte[]) info.get("data");
+                            width = (Integer) info.get("width");
+                            height = (Integer) info.get("height");
+                            //Log.d("ByteBuffer", ""+width+" "+ height+ " " + byteArray.length);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.e("ByteBuffer", e.getMessage(),e);
+                        }
+
                         mActivity.count++;
                     }
                 });
@@ -377,35 +396,18 @@ class TouchSurfaceView extends GLSurfaceView {
         }
         
         Bitmap imgPanda;
-        int[] pixels = new int[512*512];
+        int[] pixels = new int[256*256];
         //int[] pixels2 = new int[512*512];
 
         public void onDrawFrame(GL10 gl) {
-            
+
             if(byteArray!=null) {
+
+                Log.d("ByteBuffer", ""+width+" "+ height+ " " + byteArray.length);
                 imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
+                imgPanda.getPixels(pixels, 0, 256, 0, 0, 256, 256);
 
-               // int R, G, B,Y;
-
-//                for (int y = 0; y < imgPanda.getHeight(); y++){
-//                    for (int x = 0; x < imgPanda.getWidth(); x++)
-//                    {
-//                        int index = y * imgPanda.getWidth() + x;
-//                        int A = (pixels[index] >> 24) & 0xff;
-//                        int R = (pixels[index] >> 0) & 0xff;     //bitwise shifting
-//                        int G = (pixels[index] >> 8) & 0xff;
-//                        int B = (pixels[index] >> 16) & 0xff;
-//
-//                        //R,G.B - Red, Green, Blue
-//                        //to restore the values after RGB modification, use //next statement
-//                        pixels[index] = 0xff000000 | (A << 24) | (R << 16) | (G << 8) | B;
-//                    }
-//                }
-
-                //this.convert(pixels);
-
-                mActivity.nativeSetTextureData(pixels, 512, 512);
+                mActivity.nativeSetTextureData(pixels, 256, 256);
                 mActivity.draw++;
             }
             mActivity.nativeDrawIteration(0, 0);

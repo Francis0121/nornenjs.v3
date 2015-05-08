@@ -39,13 +39,14 @@ Encoding.prototype.thumbnail = function(cudaRender, savePath){
  */
 Encoding.prototype.Androidjpeg = function(cudaRender, socket){
     var hrStart = process.hrtime();
-
+    cudaRender.imageWidth = 256;
+    cudaRender.imageHeight = 256;
     cudaRender.start();
     var hrCuda = process.hrtime(hrStart);
     logger.debug('Make start finish frame jpeg compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
-    var jpeg = new Jpeg(cudaRender.d_outputBuffer, 512, 512, 'bgra');
-    socket.emit('stream', jpeg.turboencodeSync());
+    var jpeg = new Jpeg(cudaRender.d_outputBuffer, cudaRender.imageWidth, cudaRender.imageHeight, 'bgra');
+    socket.emit('stream',  { data : jpeg.turboencodeSync(), width : cudaRender.imageWidth, height : cudaRender.imageWidth});
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
@@ -61,13 +62,15 @@ Encoding.prototype.Androidjpeg = function(cudaRender, socket){
  */
 Encoding.prototype.Androidpng = function(cudaRender, socket){
     var hrStart = process.hrtime();
-
+    cudaRender.imageWidth = 512;
+    cudaRender.imageHeight = 512;
     cudaRender.start();
     var hrCuda = process.hrtime(hrStart);
     logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrCuda[1]/1000000);
 
-    var png = new Png(cudaRender.d_outputBuffer, 512, 512, 'bgra');
-    socket.emit('stream', png.encodeSync());
+    var png = new Png(cudaRender.d_outputBuffer,  cudaRender.imageWidth, cudaRender.imageHeight, 'bgra');
+    //socket.emit('stream', png.encodeSync());
+    socket.emit('stream',  { data : png.encodeSync(), width : cudaRender.imageWidth, height : cudaRender.imageWidth});
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
