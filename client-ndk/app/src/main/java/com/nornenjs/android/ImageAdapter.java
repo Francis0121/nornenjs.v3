@@ -133,6 +133,5 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         Intent intent = new Intent(activity, PreviewActivity.class);
         intent.putExtra("pns", Integer.parseInt(""+v.getTag()));
         activity.startActivity(intent);
-        activity.finish();
     }
 }

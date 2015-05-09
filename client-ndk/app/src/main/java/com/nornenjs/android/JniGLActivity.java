@@ -310,10 +310,15 @@ class TouchSurfaceView extends GLSurfaceView {
 
                 JSONObject json = new JSONObject();
 
-                json.put("savePath", mActivity.volumeSavePath);
-                json.put("width", mActivity.volumeWidth);
-                json.put("height", mActivity.volumeHeight);
-                json.put("depth", mActivity.volumeDepth);
+//                json.put("savePath", mActivity.volumeSavePath);
+//                json.put("width", mActivity.volumeWidth);
+//                json.put("height", mActivity.volumeHeight);
+//                json.put("depth", mActivity.volumeDepth);
+
+                json.put("savePath", "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8");
+                json.put("width", 256);
+                json.put("height", 256);
+                json.put("depth", 225);
 
                 socket.emit("join", deviceNumber);
                 socket.emit("init", json);
@@ -410,8 +415,17 @@ class TouchSurfaceView extends GLSurfaceView {
 
             if(byteArray!=null) {
 
-                Log.d("ByteBuffer", ""+width.intValue()+" "+ height.intValue()+ " " + byteArray.length);
+                //Log.d("ByteBuffer", ""+width.intValue()+" "+ height.intValue()+ " " + byteArray.length);
+                //BitmapFactory.Options options = new BitmapFactory.Options();
+                if(imgPanda != null)
+                {
+                    //Log.d("ByteBuffer", "free bitmap");
+                    imgPanda.recycle();
+                    imgPanda = null;
+                }
+
                 imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
                 imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
 
                 mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());

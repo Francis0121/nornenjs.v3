@@ -70,22 +70,19 @@ public class PoppyViewHelper {
 		return createPoppyViewOnListView(editViewId,listViewId, poppyViewResId, null);
 	}
 
-	private void setPoppyViewOnView(View Editview, View Listview) {
-		LayoutParams lp = Editview.getLayoutParams();
-		ViewParent parent = Editview.getParent();
+	private void setPoppyViewOnView(View view) {
+		LayoutParams lp = view.getLayoutParams();
+		ViewParent parent = view.getParent();
 		ViewGroup group = (ViewGroup)parent;
-		int index = group.indexOfChild(Editview);
+		int index = group.indexOfChild(view);
 
 		final FrameLayout newContainer = new FrameLayout(mActivity);//FrameLayout
-		//newContainer.setLayoutDirection(View.LAYOUT_DIRECTION_INHERIT);
 
-		group.removeView(Editview);
-		group.removeView(Listview);
+		group.removeView(view);
 
 		group.addView(newContainer, index, lp);
 
-		newContainer.addView(Listview);
-		newContainer.addView(Editview);
+		newContainer.addView(view);
 
 		final FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.gravity = mPoppyViewPosition == PoppyViewPosition.BOTTOM ? Gravity.BOTTOM : Gravity.TOP;
@@ -163,8 +160,7 @@ public class PoppyViewHelper {
 	// for ListView
 
 	private void initPoppyViewOnListView(EditText editView, ListView listView, final OnScrollListener onScrollListener) {
-		setPoppyViewOnView(editView, listView);
-		//setPoppyViewOnView(listView);
+		setPoppyViewOnView(editView);
 		listView.setOnScrollListener(new OnScrollListener() {
 
 			int mScrollPosition;
