@@ -151,7 +151,11 @@ Web.prototype.brightBtnEventListener = function(){
         cudaRender.brightness = brightOption.brightness;
         cudaRender.positionZ = $this.positionZ;
 
-        $this.encoding.png(cudaRender, socket, brightOption.type);
+        if(brightOption.isPng) {
+            $this.encoding.png(cudaRender, socket, brightOption.type);
+        }else{
+            $this.encoding.jpeg(cudaRender, socket, brightOption.type);
+        }
     });
 };
 

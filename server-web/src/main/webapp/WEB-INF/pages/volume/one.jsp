@@ -155,6 +155,7 @@
         };
 
         var brightOption = {
+            isPng : false,
             brightness : 2.0,
             type : 0
         };
@@ -283,12 +284,14 @@
         });
 
         document.getElementById('tinyBrightnessPlusBtn').addEventListener('click', function(){
+            brightOption.isPng = false;
             brightOption.brightness += 0.1;
             brightOption.renderingType = renderingType;
             socket.emit('brightBtn', brightOption);
         });
 
         document.getElementById('tinyBrightnessMinusBtn').addEventListener('click', function(){
+            brightOption.isPng = false;
             brightOption.brightness -= 0.1;
             brightOption.renderingType = renderingType;
             socket.emit('brightBtn', brightOption);
@@ -372,7 +375,7 @@
                 range: 'min',
                 min: 0,
                 max: 100,
-                value: 60,
+                value: 50,
                 slide: function( event, ui ) {
                     var type = $(this).attr('data-type');
 
@@ -415,10 +418,20 @@
                 orientation: 'vertical',
                 range: 'min',
                 min: 0,
-                max: 100,
-                value: 60,
+                max: 400,
+                value: 200,
                 slide: function( event, ui ) {
                     console.log( ui.value );
+                    brightOption.isPng = false;
+                    brightOption.brightness = ui.value/100;
+                    brightOption.renderingType = renderingType;
+                    socket.emit('brightBtn', brightOption);
+                },
+                stop : function( event, ui ){
+                    brightOption.isPng = true;
+                    brightOption.brightness = ui.value/100;
+                    brightOption.renderingType = renderingType;
+                    socket.emit('brightBtn', brightOption);
                 }
             });
         });
