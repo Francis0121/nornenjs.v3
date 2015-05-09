@@ -601,10 +601,10 @@ $(function(){
 
         if(isOtfTopLine){
             if(event.pageX >= beforeX){ // +
-                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
-                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+2;
-                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2;
-                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))+2;
+                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))+1;
+                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+1;
+                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+1;
+                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))+1;
                 if(cxRightBottom > 768){
                     return;
                 }
@@ -631,10 +631,10 @@ $(function(){
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
-                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))-2;
-                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2;
-                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))-2;
+                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))-1;
+                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))-1;
+                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))-1;
+                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))-1;
                 if(cxLeftBottom < 0){
                     return;
                 }
