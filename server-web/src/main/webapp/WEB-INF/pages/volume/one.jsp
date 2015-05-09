@@ -365,7 +365,7 @@
 
 <section class="layoutContentSectionWrap">
 
-    <section class="layoutContentSection">
+    <section class="layoutContentSection" style="margin-left: 40px;">
         
         <article class="volumeRenderingOne volumeRenderingMpr" id="volumeMprX">
             <div class="title">
