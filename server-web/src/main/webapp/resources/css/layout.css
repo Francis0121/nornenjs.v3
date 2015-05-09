@@ -22,11 +22,11 @@ body{ background: #34495e; overflow-y: hidden; height: 100%;}
 */
 .navigation{ width: 200px; height: 100%; position: fixed; background: #34495e; z-index: 10;}
 
-.navigation .navigationWrap{ width: 100%; height: 40px; border-bottom: 1px solid #5d6d7e; }
+.navigation .navigationWrap{ width: 100%; height: 40px; border-bottom: 1px solid #5d6d7e; background: #5696bc;}
 .navigation .navigationWrap>li:nth-child(1){float:left; width: 40px; height: 40px; }
-.navigation .navigationWrap>li:nth-child(1)>button{width: 40px; height: 40px; display: block; cursor: pointer; background: #5d6d7e; text-indent: -9999px; border: 0px; padding: 0; margin: 0;}
+.navigation .navigationWrap>li:nth-child(1)>button{width: 40px; height: 40px; display: block; cursor: pointer; text-indent: -9999px; border: 0px; padding: 0; margin: 0;}
 .navigation .navigationWrap>li:nth-child(2){float:left; width: 160px; height: 40px; line-height: 40px; }
-.navigation .navigationWrap>li:nth-child(2)>span{font-size: 75%; color: #fff; font-weight: bold; margin-left: 10px;}
+.navigation .navigationWrap>li:nth-child(2)>span{font-size: 75%; color: #fff; font-weight: bold; }
 
 .navigation header{ padding: 20px; width: 160px;}
 .navigation header h1{ font-size: 81.25%; font-weight: bold; color: #fff; padding: 5px 0; }
@@ -35,22 +35,21 @@ body{ background: #34495e; overflow-y: hidden; height: 100%;}
 .navigation .menu{ width: 200px; margin: 2px 0;}
 .navigation .menu>li{ width: 100%; }
 .navigation .menu>li.title{ border-top: 1px solid #5d6d7e; border-bottom: 1px solid #5d6d7e;}
-.navigation .menu>li.title>a{ font-size: 75%; color: #fff; width: 160px; padding: 12px 20px; display: block; letter-spacing: .6px; }
-.navigation .menu>li.title>a:hover{ color: #eb7636; background: #0d1620;}
-.navigation .menu>li.title>a.active{ color: #eb7636; background: #0d1620;}
+.navigation .menu>li.title>a{ font-size: 75%; color: #fff; width: 160px; padding: 13px 20px; display: block; letter-spacing: .6px; text-indent: 20px; background-color: #1c3b50;}
+.navigation .menu>li.title>a:hover{ color: #fff ; background-color: #0d1620;}
+.navigation .menu>li.title>a.active{ color: #fff; background-color: #0d1620;}
 
 .navigation .menu .submenu{ width: 100%; display: none;}
 .navigation .menu .submenu>li{width: 100%;}
-.navigation .submenu>li a{ width: 160px; padding: 15px 20px; display: block; color: #fff; font-size: 75%; font-weight: 100; background: url("../image/icon/dashboard.png") no-repeat 17px 12px; text-indent: 22px;}
-.navigation .submenu>li a:hover{ color: #f39d41; background: url("../image/icon/dashboard-hover.png") no-repeat 17px 12px #143042;}
-.navigation .submenu>li a.active{ color: #f39d41; background: url("../image/icon/dashboard-hover.png") no-repeat 17px 12px #143042; }
-
+.navigation .submenu>li a{ width: 160px; padding: 14px 20px; display: block; color: #fff; font-size: 75%; font-weight: 100; text-indent: 22px;}
+.navigation .submenu>li a:hover{ color: #f39d41; background-color: #143042;}
+.navigation .submenu>li a.active{ color: #f39d41; background-color: #143042;}
 
 .navigationSmall{ width: 40px; height: 100%; position: fixed; background: #34495e; z-index: 10;}
 
-.navigationSmall .navigationWrap{ width: 100%; height: 40px; border-bottom: 1px solid #5d6d7e; }
+.navigationSmall .navigationWrap{ width: 100%; height: 40px; border-bottom: 1px solid #5d6d7e; background: #5696bc;}
 .navigationSmall .navigationWrap>li:nth-child(1){float:left; width: 40px; height: 40px; }
-.navigationSmall .navigationWrap>li:nth-child(1)>button{width: 40px; height: 40px; display: block; cursor: pointer; background: #5d6d7e; text-indent: -9999px; border: 0px; padding: 0; margin: 0;}
+.navigationSmall .navigationWrap>li:nth-child(1)>button{width: 40px; height: 40px; display: block; cursor: pointer; text-indent: -9999px; border: 0px; padding: 0; margin: 0;}
 .navigationSmall .navigationWrap>li:nth-child(2){ display: none; }
 
 .navigationSmall header{ display: none;}
@@ -58,15 +57,51 @@ body{ background: #34495e; overflow-y: hidden; height: 100%;}
 .navigationSmall .menu{ width: 40px; margin: 2px 0;}
 .navigationSmall .menu>li{ width: 100%; }
 .navigationSmall .menu>li.title{ border-top: 1px solid #5d6d7e; border-bottom: 1px solid #5d6d7e;}
-.navigationSmall .menu>li.title>a{ text-indent:-9999px; color: #fff; width: 40px; padding: 12px 0; display: block; letter-spacing: .6px; }
-.navigationSmall .menu>li.title>a:hover{ color: #eb7636; background: #0d1620;}
-.navigationSmall .menu>li.title>a.active{ color: #eb7636; background: #0d1620;}
+.navigationSmall .menu>li.title>a{ text-indent:-9999px; color: #fff; width: 40px; padding: 12px 0; display: block; letter-spacing: .6px;background-color: #1c3b50; }
+.navigationSmall .menu>li.title>a:hover{ color: #eb7636; background-color: #0d1620;}
+.navigationSmall .menu>li.title>a.active{ color: #eb7636; background-color: #0d1620;}
 
 .navigationSmall .menu .submenu{ width: 100%; display: none;}
 .navigationSmall .menu .submenu>li{width: 100%;}
-.navigationSmall .submenu>li a{ width: 40px; padding: 15px 0; display: block; color: #fff; font-size: 75%; font-weight: 100; background: url("../image/icon/dashboard.png") no-repeat 10px 12px; text-indent: -9999px;}
-.navigationSmall .submenu>li a:hover{ color: #f39d41; background: url("../image/icon/dashboard-hover.png") no-repeat 10px 12px #143042;}
-.navigationSmall .submenu>li a.active{ color: #f39d41; background: url("../image/icon/dashboard-hover.png") no-repeat 10px 12px #143042; }
+.navigationSmall .submenu>li a{ width: 40px; padding: 14px 0; display: block; color: #fff; font-size: 75%; font-weight: 100; text-indent: -9999px;}
+.navigationSmall .submenu>li a:hover{ color: #f39d41; background-color:#143042;}
+.navigationSmall .submenu>li a.active{ color: #f39d41; background-color: #143042; }
+
+.titleUserIcon{ background: url("../image/icon/icons.png") no-repeat 0px -760px;}
+
+.titleVolumeIcon{ background: url("../image/icon/icons.png") no-repeat 0px -720px;}
+
+.menuIcon{ background: url("../image/icon/icons.png") no-repeat 0px 0px; }
+.menuIcon:hover{ background-position: 0px -0px; }
+.menuIconActive{ background-position: 0px -0px; }
+
+.dashboardIcon{ background: url("../image/icon/icons.png") no-repeat 0px -80px; }
+.dashboardIcon:hover{ background-position: 0px -440px; }
+.dashboardIconActive{ background-position: 0px -440px; }
+
+.infoIcon{ background: url("../image/icon/icons.png") no-repeat 0px -40px; }
+.infoIcon:hover{ background-position: 0px -400px; }
+.infoIconActive{ background-position: 0px -400px; }
+
+.settingIcon{ background: url("../image/icon/icons.png") no-repeat 0px -200px; }
+.settingIcon:hover{ background-position: 0px -560px; }
+.settingIconActive{ background-position: 0px -560px; }
+
+.logOutIcon{ background: url("../image/icon/icons.png") no-repeat 0px -160px; }
+.logOutIcon:hover{ background-position: 0px -520px; }
+.logOutIconActive{ background-position: 0px -520px; }
+
+.docListIcon{ background: url("../image/icon/icons.png") no-repeat 0px -240px; }
+.docListIcon:hover{ background-position: 0px -600px; }
+.docListIconActive{ background-position: 0px -600px; }
+
+.docUploadIcon{ background: url("../image/icon/icons.png") no-repeat 0px -280px; }
+.docUploadIcon:hover{ background-position: 0px -640px; }
+.docUploadIconActive{ background-position: 0px -640px; }
+
+.docRenderIcon{ background: url("../image/icon/icons.png") no-repeat 0px -320px; }
+.docRenderIcon:hover{ background-position: 0px -680px; }
+.docRenderIconActive{ background-position: 0px -680px; }
 
 /**
 * Common layout section
