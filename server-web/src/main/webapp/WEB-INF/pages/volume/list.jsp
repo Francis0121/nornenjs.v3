@@ -11,60 +11,61 @@
         if(currentPage == numPages){
             return;
         }
-        goToPage(Math.min(numPages, currentPage + 1));
+        goToPage(Math.min(numPages, currentPage));
     }
 
     function goToPage(page) {
         var form = document.forms['volumeFilter'];
         var url = contextPath + '/volume/list/json'
         var volumeFilter = {
-            page : page,
+            page : page+1,
             username : form.username.value,
             title : form.title.value,
             from : form.from.value,
             to : form.to.value
         };
 
-        console.log('currentPage',currentPage);
-
-
         $.postJSON(url, volumeFilter, function(data){
             var volumes = data.volumes;
-            console.log('volumes',volumes.length);
-
+            var volumeFilter = data.volumeFilter;
+            numPages = volumeFilter.pagination.numPages;
             currentPage+=1;
-
-            var list = $('.volumeListArticle>.list');
-            var html = '';
-            for(var i=0; i<volumes.length; i++){
-                var volume = volumes[i];
-                html+='<li class="one" data-pn="'+volume.pn+'">';
-                html+='<figure>';
-                html+=' <div class="thumbnailSlider" id="slider_'+volume.pn+'">';
-                html+='     <a href="#" class="control_next" data-pn="'+volume.pn+'">&gt;</a>';
-                html+='     <a href="#" class="control_prev" data-pn="'+volume.pn+'">&lt;</a>';
-                html+='     <ul>';
-                for(var j=0; j<volume.thumbnailPnList.length; j++){
-                    var thumbnailPn = volume.thumbnailPnList[j];
-                    html+='     <li><img src="'+contextPath+'/data/thumbnail/'+thumbnailPn+'"/></li>';
-                }
-                html+='     </ul>';
-                html+=' </div>'
-
-                html+=' <figcaption>';
-                html+='     <a href="'+contextPath+'/volume/'+volume.pn+'" class="name">'+volume.title+'</a> <a href="'+contextPath+'/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a><br/>';
-                html+='     <span class="number">'+volume.width+' x '+volume.height+' x '+volume.depth+'</span> <span class="date">'+volume.inputDate+'</span>';
-                html+=' </figcaption>';
-                html+='</figure>';
-                html+='</li>';
-            }
-            list.append(html);
-
-            sliderEventListener();
+            makeSliderList(volumes);
         });
-
     }
     /* ]]> */
+
+    function makeSliderList(volumes){
+        var list = $('.volumeListArticle>.list');
+        var html = '';
+        for(var i=0; i<volumes.length; i++){
+            var volume = volumes[i];
+            html+='<li class="one" data-pn="'+volume.pn+'">';
+            html+='<figure>';
+            html+=' <div class="thumbnailSlider" id="slider_'+volume.pn+'">';
+            html+='     <a href="#" class="control_next" data-pn="'+volume.pn+'">&gt;</a>';
+            html+='     <a href="#" class="control_prev" data-pn="'+volume.pn+'">&lt;</a>';
+            html+='     <ul>';
+            html+='         <li><img src="'+contextPath+'/data/thumbnail/'+volume.thumbnailPnList[3]+'"/></li>';
+            for(var j=0; j<volume.thumbnailPnList.length-1; j++){
+                var thumbnailPn = volume.thumbnailPnList[j];
+                html+='     <li><img src="'+contextPath+'/data/thumbnail/'+thumbnailPn+'"/></li>';
+            }
+            html+='     </ul>';
+            html+=' </div>'
+
+            html+=' <figcaption>';
+            html+='     <a href="'+contextPath+'/volume/'+volume.pn+'" class="name">'+volume.title+'</a> <a href="'+contextPath+'/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a><br/>';
+            html+='     <span class="number">'+volume.width+' x '+volume.height+' x '+volume.depth+'</span> <span class="date">'+volume.inputDate+'</span>';
+            html+=' </figcaption>';
+            html+='</figure>';
+            html+='</li>';
+        }
+        list.append(html);
+
+        sliderEventListener();
+
+    }
 
     var slider = {
         width : null,
@@ -73,7 +74,7 @@
         ulWidth : null
     }
 
-    jQuery(document).ready(function ($) {
+    $(function(){
 
         slider.width = $('.thumbnailSlider ul li').width();
         slider.height = $('.thumbnailSlider ul li').height();
@@ -81,6 +82,12 @@
         slider.ulWidth = slider.count * slider.width;
 
         sliderEventListener();
+
+        $('#volumeFilterBtn').on('click', function(){
+            $('.volumeListArticle>.list').html('');
+            currentPage = 0;
+            goToPage(currentPage);
+        });
     });
 
     function sliderEventListener(){
@@ -98,6 +105,7 @@
             var volumePn = $(this).attr('data-pn');
             moveRight(volumePn);
         });
+
     };
 
 
@@ -210,6 +218,9 @@
                 <li>
                     <form:input path="to" readonly="true" cssClass="date"/>
                 </li>
+                <li>
+                    <button type="button" id="volumeFilterBtn" class="orangeButton">조회</button>
+                </li>
             </ul>
             
         </form:form>
@@ -224,7 +235,8 @@
                             <a href="#" class="control_next" data-pn="<c:out value="${volume.pn}"/>">&gt;</a>
                             <a href="#" class="control_prev" data-pn="<c:out value="${volume.pn}"/>">&lt;</a>
                             <ul>
-                                <c:forEach items="${volume.thumbnailPnList}" var="thumbnailPn" varStatus="loop">
+                                <li><img src="${cp}/data/thumbnail/${volume.thumbnailPnList[3]}" /></li>
+                                <c:forEach items="${volume.thumbnailPnList}" var="thumbnailPn" varStatus="loop" end="2">
                                     <li><img src="${cp}/data/thumbnail/${thumbnailPn}" /></li>
                                 </c:forEach>
                             </ul>
