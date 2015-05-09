@@ -305,11 +305,13 @@
         };
 
         document.getElementById('tinyMprXMinusBtn').addEventListener('click', function(){
+            transferScaleXOption.isPng = false;
             transferScaleXOption.transferScaleX -= 0.01;
             socket.emit('transferScaleXEvent', transferScaleXOption);
         });
 
         document.getElementById('tinyMprXPlusBtn').addEventListener('click', function(){
+            transferScaleXOption.isPng = false;
             transferScaleXOption.transferScaleX += 0.01;
             socket.emit('transferScaleXEvent', transferScaleXOption);
         });
@@ -322,11 +324,13 @@
         };
 
         document.getElementById('tinyMprYMinusBtn').addEventListener('click', function(){
+            transferScaleYOption.isPng = false;
             transferScaleYOption.transferScaleY -= 0.01;
             socket.emit('transferScaleYEvent', transferScaleYOption);
         });
 
         document.getElementById('tinyMprYPlusBtn').addEventListener('click', function(){
+            transferScaleYOption.isPng = false;
             transferScaleYOption.transferScaleY += 0.01;
             socket.emit('transferScaleYEvent', transferScaleYOption);
         });
@@ -338,11 +342,13 @@
         };
 
         document.getElementById('tinyMprZMinusBtn').addEventListener('click', function(){
+            transferScaleZOption.isPng = false;
             transferScaleZOption.transferScaleZ -= 0.01;
             socket.emit('transferScaleZEvent', transferScaleZOption);
         });
 
         document.getElementById('tinyMprZPlusBtn').addEventListener('click', function(){
+            transferScaleZOption.isPng = false;
             transferScaleZOption.transferScaleZ += 0.01;
             socket.emit('transferScaleZEvent', transferScaleZOption);
         });
@@ -359,7 +365,67 @@
             layoutFunction.typeChangeEventListener();
         });
 
+
+        $(function() {
+            $( '.sliderVerticalMPR' ).slider({
+                orientation: 'vertical',
+                range: 'min',
+                min: 0,
+                max: 100,
+                value: 60,
+                slide: function( event, ui ) {
+                    var type = $(this).attr('data-type');
+
+                    if(type == 'x'){
+                        transferScaleXOption.isPng = false;
+                        transferScaleXOption.transferScaleX = ui.value/100;
+                        socket.emit('transferScaleXEvent', transferScaleXOption);
+                    }else if(type == 'y'){
+                        transferScaleYOption.isPng = false;
+                        transferScaleYOption.transferScaleY = ui.value/100;
+                        socket.emit('transferScaleYEvent', transferScaleYOption);
+                    }else if(type == 'z'){
+                        transferScaleZOption.isPng = false;
+                        transferScaleZOption.transferScaleZ = ui.value/100;
+                        socket.emit('transferScaleZEvent', transferScaleZOption);
+                    }
+                },
+                stop : function(event, ui) {
+                    var type = $(this).attr('data-type');
+                    if(type == 'x') {
+                        transferScaleXOption.isPng = true;
+                        transferScaleXOption.transferScaleX = ui.value/100;
+                        socket.emit('transferScaleXEvent', transferScaleXOption);
+                        transferScaleXOption.isPng = false;
+                    }else if(type == 'y'){
+                        transferScaleYOption.isPng = true;
+                        transferScaleYOption.transferScaleY = ui.value/100;
+                        socket.emit('transferScaleYEvent', transferScaleYOption);
+                        transferScaleYOption.isPng = false;
+                    }else if(type == 'z'){
+                        transferScaleZOption.isPng = true;
+                        transferScaleZOption.transferScaleZ = ui.value/100;
+                        socket.emit('transferScaleZEvent', transferScaleZOption);
+                        transferScaleZOption.isPng = false;
+                    }
+                }
+            });
+
+            $( '#sliderVerticalBrightness' ).slider({
+                orientation: 'vertical',
+                range: 'min',
+                min: 0,
+                max: 100,
+                value: 60,
+                slide: function( event, ui ) {
+                    console.log( ui.value );
+                }
+            });
+        });
+
     };
+
+
 
 </script>
 
@@ -379,6 +445,7 @@
                     <button type="button" id="tinyMprXPlusBtn">B+</button>
                     <button type="button" id="tinyMprXMinusBtn">B-</button>
                 </div>
+               <div class="sliderVerticalMPR" style="height:200px;" data-type="x"></div>
             </div>
         </article>
 
@@ -394,6 +461,7 @@
                     <button type="button" id="tinyMprYPlusBtn">B+</button>
                     <button type="button" id="tinyMprYMinusBtn">B-</button>
                 </div>
+                <div class="sliderVerticalMPR" style="height:200px;" data-type="y"></div>
             </div>
         </article>
 
@@ -409,6 +477,7 @@
                     <button type="button" id="tinyMprZPlusBtn">B+</button>
                     <button type="button" id="tinyMprZMinusBtn">B-</button>
                 </div>
+                <div class="sliderVerticalMPR" style="height:200px;" data-type="z"></div>
             </div>
         </article>
         
@@ -429,6 +498,7 @@
                     <button type="button" id="volumeBtn">V</button>
                     <button type="button" id="mipBtn">M</button>
                 </div>
+                <div id="sliderVerticalBrightness" style="height:200px;"></div>
             </div>
         </article>
 
