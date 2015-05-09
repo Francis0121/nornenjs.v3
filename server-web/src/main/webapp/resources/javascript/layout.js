@@ -371,10 +371,17 @@ $(function(){
 
     // ~ Left OTF EVENT
 
+    var beforeX;
+
     var isLeftTopCircle = false;
     var isLeftBottomCircle = false;
     var isLeftDashLine = false;
-    var leftBeforeX;
+
+    var isRightTopCircle = false;
+    var isRightBottomCircle = false;
+    var isRightDashLine = false;
+
+    var isOtfTopLine = false;
 
     var otfOption = {
         transferStart : 65,
@@ -386,18 +393,15 @@ $(function(){
         type : 0
     };
 
-    
-    $('#otfLeftTopCircle').on('mousedown',function(event){
-        isLeftTopCircle = true;
-        leftBeforeX = event.pageX;
-    });
-    
-    $('#otfLeftTopCircle').on('mousemove',function(event){
-        var circle = event.target;
+    $(window).on('mousemove', function(event){
+
         if(isLeftTopCircle){
-            if(event.pageX >= leftBeforeX){ // +
-                var cx = Number(circle.getAttribute('cx'))+2;
-                circle.setAttribute('cx', cx);
+            if(event.pageX >= beforeX){ // +
+                var cx = Number($('#otfLeftTopCircle').attr('cx'))+1;
+                if(cx > $('#otfRightTopCircle').attr('cx')){
+                    return;
+                }
+                $('#otfLeftTopCircle').attr('cx', cx);
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
 
@@ -407,8 +411,11 @@ $(function(){
 
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cx = Number(circle.getAttribute('cx'))-2;
-                circle.setAttribute('cx', cx);
+                var cx = Number($('#otfLeftTopCircle').attr('cx'))-1;
+                if(cx < $('#otfLeftBottomCircle').attr('cx')){
+                    return;
+                }
+                $('#otfLeftTopCircle').attr('cx', cx);
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
 
@@ -419,20 +426,15 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             }
         }
-        leftBeforeX = event.pageX;
-    });
 
-    $('#otfLeftBottomCircle').on('mousedown',function(event){
-        isLeftBottomCircle = true;otfOption.transferStart = Math.round(cx/3);
-        leftBeforeX = event.pageX;
-    });
-    
-    $('#otfLeftBottomCircle').on('mousemove',function(event){
-        var circle = event.target;
         if(isLeftBottomCircle){
-            if(event.pageX >= leftBeforeX){ // +
-                var cx = Number(circle.getAttribute('cx'))+2;
-                circle.setAttribute('cx', cx);
+            if(event.pageX >= beforeX){ // +
+                var cx = Number($('#otfLeftBottomCircle').attr('cx'))+1;
+                if(cx > $('#otfLeftTopCircle').attr('cx')){
+                    return;
+                }
+
+                $('#otfLeftBottomCircle').attr('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
 
                 otfOption.transferStart = Math.round(cx/3);
@@ -440,8 +442,12 @@ $(function(){
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cx = Number(circle.getAttribute('cx'))-2;
-                circle.setAttribute('cx', cx);
+                var cx = Number($('#otfLeftBottomCircle').attr('cx'))-1;
+                if(cx < 0){
+                    return;
+                }
+
+                $('#otfLeftBottomCircle').attr('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
 
                 otfOption.transferStart = Math.round(cx/3);
@@ -450,28 +456,21 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             }
         }
-        leftBeforeX = event.pageX;
-    });
-
-    $('#otfLeftDashLine').on('mousedown',function(event){
-        isLeftDashLine = true;
-        leftBeforeX = event.pageX;
-    });
-
-    $('#otfLeftDashLine').on('mousemove',function(event){
 
         if(isLeftDashLine){
-            if(event.pageX >= leftBeforeX){ // +
-                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
-                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2
+            if(event.pageX >= beforeX){ // +
+                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))+1;
+                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))+1
+                if(cxTop > $('#otfRightTopCircle').attr('cx')){
+                    return;
+                }
 
                 $('#otfTopLine').attr('x1', cxTop);
                 $('#otfLeftTopCircle').attr('cx', cxTop);
                 $('#otfLeftBottomCircle').attr('cx', cxBottom);
-                
+
                 $('#otfLeftDashLine').attr('x1', cxBottom);otfTopLine
                 $('#otfLeftDashLine').attr('x2', cxTop);
-
 
                 otfOption.transferMiddle1 = Math.round(cxTop/3);
                 otfOption.transferStart = Math.round(cxBottom/3);
@@ -479,8 +478,11 @@ $(function(){
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
-                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2
+                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-1;
+                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))-1;
+                if(cxBottom < 0){
+                    return;
+                }
 
                 $('#otfTopLine').attr('x1', cxTop);
                 $('#otfLeftTopCircle').attr('cx', cxTop);
@@ -496,27 +498,14 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             }
         }
-        leftBeforeX = event.pageX;
-    });
 
-    // ~ RightEvent
-
-    var isRightTopCircle = false;
-    var isRightBottomCircle = false;
-    var isRightDashLine = false;
-    var rightBeforeX;
-
-    $('#otfRightTopCircle').on('mousedown',function(event){
-        isRightTopCircle = true;
-        rightBeforeX = event.pageX;
-    });
-
-    $('#otfRightTopCircle').on('mousemove',function(event){
-        var circle = event.target;
         if(isRightTopCircle){
             if(event.pageX >= beforeX){ // +
-                var cx = Number(circle.getAttribute('cx'))+2;
-                circle.setAttribute('cx', cx);
+                var cx = Number($('#otfRightTopCircle').attr('cx'))+1;
+                if(cx > $('#otfRightBottomCircle').attr('cx')){
+                    return;
+                }
+                $('#otfRightTopCircle').attr('cx', cx);
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
 
@@ -525,8 +514,11 @@ $(function(){
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cx = Number(circle.getAttribute('cx'))-2;
-                circle.setAttribute('cx', cx);
+                var cx = Number($('#otfRightTopCircle').attr('cx'))-1;
+                if(cx < $('#otfLeftTopCircle').attr('cx')){
+                    return;
+                }
+                $('#otfRightTopCircle').attr('cx', cx);
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
 
@@ -536,20 +528,15 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             }
         }
-        beforeX = event.pageX;
-    });
 
-    $('#otfRightBottomCircle').on('mousedown',function(event){
-        isRightBottomCircle = true;
-        rightBeforeX = event.pageX;
-    });
-
-    $('#otfRightBottomCircle').on('mousemove',function(event){
-        var circle = event.target;
         if(isRightBottomCircle){
             if(event.pageX >= beforeX){ // +
-                var cx = Number(circle.getAttribute('cx'))+2;
-                circle.setAttribute('cx', cx);
+                var cx = Number($('#otfRightBottomCircle').attr('cx'))+1;
+                if(cx > 768){
+                    return;
+                }
+
+                $('#otfRightBottomCircle').attr('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
 
                 otfOption.transferEnd = Math.round(cx/3);
@@ -557,8 +544,11 @@ $(function(){
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cx = Number(circle.getAttribute('cx'))-2;
-                circle.setAttribute('cx', cx);
+                var cx = Number($('#otfRightBottomCircle').attr('cx'))-1;
+                if(cx < $('#otfRightTopCircle').attr('cx')){
+                    return;
+                }
+                $('#otfRightBottomCircle').attr('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
 
                 otfOption.transferEnd = Math.round(cx/3);
@@ -567,20 +557,14 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             }
         }
-        beforeX = event.pageX;
-    });
-
-    $('#otfRightDashLine').on('mousedown',function(event){
-        isRightDashLine = true;
-        rightBeforeX = event.pageX;
-    });
-
-    $('#otfRightDashLine').on('mousemove',function(event){
 
         if(isRightDashLine){
-            if(event.pageX >= rightBeforeX){ // +
-                var cxTop = Number($('#otfRightTopCircle').attr('cx'))+2;
-                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))+2
+            if(event.pageX >= beforeX){ // +
+                var cxTop = Number($('#otfRightTopCircle').attr('cx'))+1;
+                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))+1;
+                if(cxBottom > 768){
+                    return;
+                }
 
                 $('#otfTopLine').attr('x2', cxTop);
                 $('#otfRightTopCircle').attr('cx', cxTop);
@@ -595,8 +579,11 @@ $(function(){
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cxTop = Number($('#otfRightTopCircle').attr('cx'))-2;
-                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))-2
+                var cxTop = Number($('#otfRightTopCircle').attr('cx'))-1;
+                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))-1;
+                if(cxTop < $('#otfLeftTopCircle').attr('cx')){
+                    return;
+                }
 
                 $('#otfTopLine').attr('x2', cxTop);
                 $('#otfRightTopCircle').attr('cx', cxTop);
@@ -611,25 +598,16 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             }
         }
-        rightBeforeX = event.pageX;
-    });
 
-    // ~ TopLine
-    var isOtfTopLine = false;
-    var topLineBeforeX;
-
-    $('#otfTopLine').on('mousedown', function(event){
-        isOtfTopLine = true;
-        topLineBeforeX = event.pageX;
-    });
-
-    $('#otfTopLine').on('mousemove', function(event){
         if(isOtfTopLine){
-            if(event.pageX >= topLineBeforeX){ // +
+            if(event.pageX >= beforeX){ // +
                 var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
                 var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+2;
                 var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2;
                 var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))+2;
+                if(cxRightBottom > 768){
+                    return;
+                }
 
                 $('#otfTopLine').attr('x1', cxLeftTop);
                 $('#otfTopLine').attr('x2', cxRightTop);
@@ -657,6 +635,9 @@ $(function(){
                 var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))-2;
                 var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2;
                 var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))-2;
+                if(cxLeftBottom < 0){
+                    return;
+                }
 
                 $('#otfTopLine').attr('x1', cxLeftTop);
                 $('#otfTopLine').attr('x2', cxRightTop);
@@ -681,14 +662,15 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             }
         }
-        topLineBeforeX = event.pageX;
+
+        beforeX = event.pageX;
     });
 
-    
+
     $(window).on('mouseup', function(event){
         if(isLeftTopCircle || isLeftBottomCircle || isLeftDashLine ||
             isRightTopCircle || isRightBottomCircle || isRightDashLine ||
-                isOtfTopLine){
+            isOtfTopLine){
 
             isLeftTopCircle = false;
             isLeftBottomCircle = false;
@@ -704,7 +686,51 @@ $(function(){
             otfOption.isPng = true;
             socket.emit('otfEvent', otfOption);
         }
+    });
 
-    })
+
+    $('#otfLeftTopCircle').on('mousedown',function(event){
+        isLeftTopCircle = true;
+        beforeX = event.pageX;
+    });
+
+    $('#otfLeftBottomCircle').on('mousedown',function(event){
+        isLeftBottomCircle = true;
+        otfOption.transferStart = Math.round(cx/3);
+        beforeX = event.pageX;
+    });
+
+    $('#otfLeftDashLine').on('mousedown',function(event){
+        isLeftDashLine = true;
+        beforeX = event.pageX;
+    });
+
+    // ~ RightEvent
+
+    $('#otfRightTopCircle').on('mousedown',function(event){
+        isRightTopCircle = true;
+        beforeX = event.pageX;
+    });
+
+
+    $('#otfRightBottomCircle').on('mousedown',function(event){
+        isRightBottomCircle = true;
+        beforeX = event.pageX;
+    });
+
+
+    $('#otfRightDashLine').on('mousedown',function(event){
+        isRightDashLine = true;
+        beforeX = event.pageX;
+    });
+
+    // ~ TopLine
+
+    $('#otfTopLine').on('mousedown', function(event){
+        isOtfTopLine = true;
+        beforeX = event.pageX;
+    });
+
     
+
 });
