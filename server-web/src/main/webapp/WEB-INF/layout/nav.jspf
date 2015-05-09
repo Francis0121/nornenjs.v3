@@ -1,27 +1,36 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<nav class="navigation">
-  
+<nav class="navigation" id="navigation">
+
+    <ul class="navigationWrap">
+        <li>
+            <button id="navigationBtn">MENU</button>
+        </li>
+        <li>
+            <span><sec:authentication property="principal.username"/></span>
+        </li>
+    </ul>
+
     <header>
         <a href="#"><h1>Nornen<span class="colorOrange">js</span></h1></a>
         <h2>Volume Rendering System</h2>
     </header>
-  
+
     <ul class="menu">
         <li class="title">
-            <a href="#">MYPAGE</a>
+            <a href="#" ${fn:contains(rp, '/dashboard') or fn:contains(rp, '/myInfo') or fn:contains(rp, '/setting') ? 'class="active"' : ''}>MYPAGE</a>
         </li>
         <li>
-            <ul class="submenu">
+            <ul class="submenu" ${fn:contains(rp, '/dashboard') or fn:contains(rp, '/myInfo') or fn:contains(rp, '/setting') ? 'style="display:block;"' : ''}>
                 <li>
-                    <a href="/dashboard" class="dashboard">Dash Board</a>
+                    <a href="/dashboard" class="dashboard ${fn:contains(rp, '/dashboard') ? 'active' : ''}">Dash Board</a>
                 </li>
                 <li>
                     <sec:authentication property="principal.username" var="username"/>
-                    <a href="/myInfo/<c:out value="${username}"/>">My Info</a>
+                    <a href="/myInfo/<c:out value="${username}"/>" class="${fn:contains(rp, '/myInfo/') ? 'active' : ''}">My Info</a>
                 </li>
                 <li>
-                    <a href="/setting">Setting</a>
+                    <a href="/setting" class="${fn:contains(rp, '/setting') ? 'active' : ''}">Setting</a>
                 </li>
                 <li>
                     <a href="/signOut">Log Out</a>
@@ -32,40 +41,40 @@
   
     <ul class="menu">
         <li class="title">
-            <a href="#">VOLUME</a>
+            <a href="#" ${fn:contains(rp, '/volume') ? 'class="active"' : ''}>VOLUME</a>
         </li>
         <li>
-            <ul class="submenu">
+            <ul class="submenu" ${fn:contains(rp, '/volume') ? 'style="display:block;"' : ''}>
                 <li>
-                    <a href="${cp}/volume/list">List</a>
+                    <a href="${cp}/volume/list" class="${fn:contains(rp, '/volume/list') ? 'active' : ''}">List</a>
                 </li>
                 <li>
-                    <a href="${cp}/volume/upload">Upload</a>
+                    <a href="${cp}/volume/upload" class="${fn:contains(rp, '/volume/upload') ? 'active' : ''}">Upload</a>
                 </li>
                 <li>
-                    <a href="${cp}/volume">Rendering</a>
-                </li>
-            </ul>
-        </li>
-        
-    </ul>
-  
-    <ul class="menu">
-        <li class="title">
-            <a href="#">HELP</a>
-        </li>
-        <li>
-            <ul class="submenu">
-                <li>
-                    <a href="#">List Page</a>
-                </li>
-                <li>
-                    <a href="#">Upload Page</a>
-                </li>
-                <li>
-                    <a href="#">Rendering Page</a>
+                    <a href="${cp}/volume" class="${fn:contains(rp, '/volume/pn/') ? 'active' : ''}">Rendering</a>
                 </li>
             </ul>
         </li>
     </ul>
+
+    <!-- TODO Help page -->
+    <%--<ul class="menu">--%>
+        <%--<li class="title">--%>
+            <%--<a href="#">HELP</a>--%>
+        <%--</li>--%>
+        <%--<li>--%>
+            <%--<ul class="submenu">--%>
+                <%--<li>--%>
+                    <%--<a href="#">List Page</a>--%>
+                <%--</li>--%>
+                <%--<li>--%>
+                    <%--<a href="#">Upload Page</a>--%>
+                <%--</li>--%>
+                <%--<li>--%>
+                    <%--<a href="#">Rendering Page</a>--%>
+                <%--</li>--%>
+            <%--</ul>--%>
+        <%--</li>--%>
+    <%--</ul>--%>
 </nav>

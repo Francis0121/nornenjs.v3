@@ -42,10 +42,10 @@ public class VolumeController {
     @RequestMapping(method = RequestMethod.GET)
     public String maxVolumeRenderingPage(){
         Integer maxVolumePn = volumeService.selectMaxVolume();
-        return "redirect:/volume/"+maxVolumePn;
+        return "redirect:/volume/pn/"+maxVolumePn;
     }
     
-    @RequestMapping(value = "/{volumePn}", method = RequestMethod.GET)
+    @RequestMapping(value = "/pn/{volumePn}", method = RequestMethod.GET)
     public String renderingPage(Model model, @PathVariable Integer volumePn){
         model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
         return "volume/one";

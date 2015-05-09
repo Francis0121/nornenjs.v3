@@ -55,7 +55,7 @@
             html+=' </div>'
 
             html+=' <figcaption>';
-            html+='     <a href="'+contextPath+'/volume/'+volume.pn+'" class="name">'+volume.title+'</a> <a href="'+contextPath+'/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a><br/>';
+            html+='     <a href="'+contextPath+'/volume/pn/'+volume.pn+'" class="name">'+volume.title+'</a> <a href="'+contextPath+'/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a><br/>';
             html+='     <span class="number">'+volume.width+' x '+volume.height+' x '+volume.depth+'</span> <span class="date">'+volume.inputDate+'</span>';
             html+=' </figcaption>';
             html+='</figure>';
@@ -255,7 +255,7 @@
                         </div>
                         
                         <figcaption>
-                            <a href="${cp}/volume/${volume.pn}" class="name"><c:out value="${volume.title}"/></a> <a href="${cp}/volume/page/${volume.pn}" class="volumeUpdateBtn">수정</a><br/>
+                            <a href="${cp}/volume/pn/${volume.pn}" class="name"><c:out value="${volume.title}"/></a> <a href="${cp}/volume/page/${volume.pn}" class="volumeUpdateBtn">수정</a><br/>
                             <span class="number"><c:out value="${volume.width}"/> x <c:out value="${volume.height}"/> x <c:out value="${volume.depth}"/></span> <span class="date"><c:out value="${volume.inputDate}"/></span>
                         </figcaption>
                     </figure>

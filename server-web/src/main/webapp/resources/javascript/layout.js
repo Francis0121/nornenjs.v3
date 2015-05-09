@@ -50,7 +50,7 @@ LayoutFunction.prototype.forgotResize = function(){
 };
 
 LayoutFunction.prototype.isNavigation = function(){
-    return $('.navigation').html() != undefined;
+    return $('#navigation').html() != undefined;
 };
 
 LayoutFunction.prototype.menuEventListener = function(){
@@ -75,7 +75,7 @@ LayoutFunction.prototype.renderingPageResize = function(){
             height = windowHeight / 2 - 3;
 
         var windowWidth = $(window).width(),
-            navWidth = $('.navigation').width(),
+            navWidth = $('#navigation').width(),
             width = (windowWidth - navWidth) / 2 - 3;
 
         $('.volumeRenderingOne').width(width).height(height);
@@ -109,7 +109,7 @@ LayoutFunction.prototype.renderingPageResize = function(){
             height = windowHeight - 250;
 
         var windowWidth = $(window).width(),
-            navWidth = $('.navigation').width(),
+            navWidth = $('#navigation').width(),
             width = windowWidth - navWidth - 4;
 
         $('#volumeRendering').width(width).height(height);
@@ -130,7 +130,7 @@ LayoutFunction.prototype.typeChangeEventListener = function(){
             height = windowHeight - 250;
 
         var windowWidth = $(window).width(),
-            navWidth = $('.navigation').width(),
+            navWidth = $('#navigation').width(),
             width = windowWidth - navWidth - 4;
 
         $('.volumeRenderingMpr').hide();
@@ -144,7 +144,7 @@ LayoutFunction.prototype.typeChangeEventListener = function(){
         var windowHeight = $(window).height();
 
         var windowWidth = $(window).width(),
-            navWidth = $('.navigation').width(),
+            navWidth = $('#navigation').width(),
             width = windowWidth - navWidth - 4;
 
         $('.volumeRenderingMpr').hide();
@@ -165,7 +165,7 @@ LayoutFunction.prototype.expandEventListener = function(){
                 height = windowHeight - 250;
 
             var windowWidth = $(window).width(),
-                navWidth = $('.navigation').width(),
+                navWidth = $('#navigation').width(),
                 width = windowWidth - navWidth - 4;
 
             $('.volumeRenderingMpr').hide();
@@ -179,7 +179,7 @@ LayoutFunction.prototype.expandEventListener = function(){
             var windowHeight = $(window).height();
 
             var windowWidth = $(window).width(),
-                navWidth = $('.navigation').width(),
+                navWidth = $('#navigation').width(),
                 width = windowWidth - navWidth - 4;
 
             $('.volumeRenderingMpr').hide();
@@ -196,7 +196,7 @@ LayoutFunction.prototype.expandEventListener = function(){
             height = windowHeight/2-3;
 
         var windowWidth = $(window).width(),
-            navWidth = $('.navigation').width(),
+            navWidth = $('#navigation').width(),
             width = (windowWidth - navWidth)/2 - 3;
         
         $('.volumeRenderingMpr').show();
@@ -237,6 +237,20 @@ LayoutFunction.prototype.expandEventListener = function(){
 var layoutFunction = new LayoutFunction();
 
 $(function(){
+
+    $('#navigationBtn').on('click', function(){
+        if($('#navigation').hasClass('navigation')){
+            $('#navigation').addClass('navigationSmall').removeClass('navigation');
+            $('.layoutContentSection').css({ 'margin-left': '40px'});
+        }else{
+            $('#navigation').addClass('navigation').removeClass('navigationSmall');
+            $('.layoutContentSection').css({ 'margin-left': '200px'});
+        }
+        layoutFunction.renderingPageResize();
+        if(socket != null){
+            socket.emit('webPng', {type : 0, renderingType : renderingType});
+        }
+    });
     
     if(layoutFunction.isSignInFull) {
         layoutFunction.signInResize();
