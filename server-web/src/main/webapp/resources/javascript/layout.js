@@ -235,7 +235,7 @@ LayoutFunction.prototype.expandEventListener = function(){
 };
 
 var layoutFunction = new LayoutFunction();
-var volumeListSlider;
+
 $(function(){
     
     if(layoutFunction.isSignInFull) {
@@ -291,15 +291,6 @@ $(function(){
         },
         onSelect : function(){
         }
-    });
-
-    volumeListSlider = $('.volumeListSlider').bxSlider({
-        'pager' : false
-    });
-
-    $('.volumeListSlider').css({
-        'max-height' : $('.volumeListSlider>li>img').height(),
-        'border-top' : 0
     });
 
     $('.layoutContentSection').scroll( function() {
