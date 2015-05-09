@@ -272,18 +272,21 @@
 
         // ~ Btn Event
         document.getElementById('tinyScalePlusBtn').addEventListener('click', function(){
+            // TODO ~ Scale 한계값지정
             scaleOption.positionZ -= 0.1;
             scaleOption.renderingType = renderingType;
             socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyScaleMinusBtn').addEventListener('click', function(){
+            // TODO ~ Scale 한계값지정
             scaleOption.positionZ += 0.1;
             scaleOption.renderingType = renderingType;
             socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyBrightnessPlusBtn').addEventListener('click', function(){
+            // TODO ~ 밝기 한계값지정
             brightOption.isPng = false;
             brightOption.brightness += 0.1;
             brightOption.renderingType = renderingType;
@@ -291,6 +294,7 @@
         });
 
         document.getElementById('tinyBrightnessMinusBtn').addEventListener('click', function(){
+            // TODO ~ 밝기 한계값지정
             brightOption.isPng = false;
             brightOption.brightness -= 0.1;
             brightOption.renderingType = renderingType;
@@ -308,12 +312,20 @@
         };
 
         document.getElementById('tinyMprXMinusBtn').addEventListener('click', function(){
+            if(transferScaleXOption.transferScaleX <= 0.0){
+                transferScaleXOption.transferScaleX = 0;
+                return;
+            }
             transferScaleXOption.isPng = false;
             transferScaleXOption.transferScaleX -= 0.01;
             socket.emit('transferScaleXEvent', transferScaleXOption);
         });
 
         document.getElementById('tinyMprXPlusBtn').addEventListener('click', function(){
+            if(transferScaleXOption.transferScaleX >= 1.0){
+                transferScaleXOption.transferScaleX = 1.0;
+                return;
+            }
             transferScaleXOption.isPng = false;
             transferScaleXOption.transferScaleX += 0.01;
             socket.emit('transferScaleXEvent', transferScaleXOption);
@@ -327,12 +339,19 @@
         };
 
         document.getElementById('tinyMprYMinusBtn').addEventListener('click', function(){
+            if(transferScaleYOption.transferScaleY <= 0.0){
+                transferScaleYOption.transferScaleY = 0;
+                return;
+            }
             transferScaleYOption.isPng = false;
             transferScaleYOption.transferScaleY -= 0.01;
             socket.emit('transferScaleYEvent', transferScaleYOption);
         });
 
         document.getElementById('tinyMprYPlusBtn').addEventListener('click', function(){
+            if(transferScaleYOption.transferScaleY == 1.0){
+                return;
+            }
             transferScaleYOption.isPng = false;
             transferScaleYOption.transferScaleY += 0.01;
             socket.emit('transferScaleYEvent', transferScaleYOption);
@@ -345,12 +364,18 @@
         };
 
         document.getElementById('tinyMprZMinusBtn').addEventListener('click', function(){
+            if(transferScaleZOption.transferScaleZ == 0.0){
+                return;
+            }
             transferScaleZOption.isPng = false;
             transferScaleZOption.transferScaleZ -= 0.01;
             socket.emit('transferScaleZEvent', transferScaleZOption);
         });
 
         document.getElementById('tinyMprZPlusBtn').addEventListener('click', function(){
+            if(transferScaleZOption.transferScaleZ == 1.0){
+                return;
+            }
             transferScaleZOption.isPng = false;
             transferScaleZOption.transferScaleZ += 0.01;
             socket.emit('transferScaleZEvent', transferScaleZOption);
