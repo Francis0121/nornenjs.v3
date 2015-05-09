@@ -43,8 +43,8 @@
             html+='<li class="one" data-pn="'+volume.pn+'">';
             html+='<figure>';
             html+=' <div class="thumbnailSlider" id="slider_'+volume.pn+'">';
-            html+='     <a href="#" class="control_next" data-pn="'+volume.pn+'">&gt;</a>';
-            html+='     <a href="#" class="control_prev" data-pn="'+volume.pn+'">&lt;</a>';
+            html+='     <a href="#" class="sliderControl controlNext" data-pn="'+volume.pn+'">&gt;</a>';
+            html+='     <a href="#" class="sliderControl controlPrev" data-pn="'+volume.pn+'">&lt;</a>';
             html+='     <ul>';
             html+='         <li><img src="'+contextPath+'/data/thumbnail/'+volume.thumbnailPnList[3]+'"/></li>';
             for(var j=0; j<volume.thumbnailPnList.length-1; j++){
@@ -96,14 +96,22 @@
 
         $('.thumbnailSlider ul').css({ width: slider.ulWidth, marginLeft: -slider.width });
 
-        $('a.control_prev').off('click').on('click', function () {
+        $('a.controlPrev').off('click').on('click', function () {
             var volumePn = $(this).attr('data-pn');
             moveLeft(volumePn);
         });
 
-        $('a.control_next').off('click').on('click', function () {
+        $('a.controlNext').off('click').on('click', function () {
             var volumePn = $(this).attr('data-pn');
             moveRight(volumePn);
+        });
+
+        $('.thumbnailSlider').off('mouseover').on('mouseover', function(){
+            $(this).find('a.sliderControl').show();
+        });
+
+        $('.thumbnailSlider').off('mouseout').on('mouseout', function(){
+            $(this).find('a.sliderControl').hide();
         });
 
     };
@@ -163,7 +171,7 @@
         width: 100%;
     }
 
-    a.control_prev, a.control_next {
+    a.controlPrev, a.controlNext {
         position: absolute;
         top: 40%;
         z-index: 999;
@@ -180,18 +188,22 @@
         cursor: pointer;
     }
 
-    a.control_prev:hover, a.control_next:hover {
+    a.controlPrev:hover, a.controlNext:hover {
         opacity: 1;
         -webkit-transition: all 0.2s ease;
     }
 
-    a.control_prev {
+    a.controlPrev {
         border-radius: 0 2px 2px 0;
     }
 
-    a.control_next {
+    a.controlNext {
         right: 0;
         border-radius: 2px 0 0 2px;
+    }
+
+    a.sliderControl{
+        display: none;
     }
 
 </style>
@@ -232,8 +244,8 @@
                 <li class="one" data-pn="<c:out value="${volume.pn}"/>">
                     <figure>
                         <div class="thumbnailSlider" id="slider_<c:out value="${volume.pn}"/>">
-                            <a href="#" class="control_next" data-pn="<c:out value="${volume.pn}"/>">&gt;</a>
-                            <a href="#" class="control_prev" data-pn="<c:out value="${volume.pn}"/>">&lt;</a>
+                            <a href="#" class="sliderControl controlNext" data-pn="<c:out value="${volume.pn}"/>">&gt;</a>
+                            <a href="#" class="sliderControl controlPrev" data-pn="<c:out value="${volume.pn}"/>">&lt;</a>
                             <ul>
                                 <li><img src="${cp}/data/thumbnail/${volume.thumbnailPnList[3]}" /></li>
                                 <c:forEach items="${volume.thumbnailPnList}" var="thumbnailPn" varStatus="loop" end="2">
