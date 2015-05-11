@@ -621,26 +621,26 @@
         
         <article class="volumeRenderingOTF" id="volumeRenderingOTF">
 
-            <svg height="250" width="800">
+            <svg height="250" width="753">
 
                 <!-- Top -->
-                <line x1="240" y1="50" x2="300" y2="50" style="stroke:rgb(243,157,65);stroke-width:10; cursor: pointer;" id="otfTopLine"/>
+                <line x1="160" y1="50" x2="200" y2="50" style="stroke:rgb(243,157,65);stroke-width:10; cursor: pointer;" id="otfTopLine"/>
                 <!-- Left Line -->
-                <line x1="195" y1="150" x2="240" y2="50" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
+                <line x1="130" y1="150" x2="160" y2="50" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
                 <!-- Bottom -->
-                <line x1="9" y1="150" x2="759" y2="150" style="stroke:rgb(243,157,65);stroke-width:3" id="otfBottomLine"/>
+                <line x1="12" y1="150" x2="498" y2="150" style="stroke:rgb(243,157,65);stroke-width:10" id="otfBottomLine"/>
                 <!-- Right Line -->
-                <line x1="300" y1="50" x2="360" y2="150" style="stroke:rgb(243,157,65);stroke-width:10" id="otfRightDashLine" class="otfDashLine"/>
+                <line x1="200" y1="50" x2="240" y2="150" style="stroke:rgb(243,157,65);stroke-width:10" id="otfRightDashLine" class="otfDashLine"/>
 
                 <!-- Left Top Circle-->
-                <circle cx="240" cy="50" r="10" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
+                <circle cx="160" cy="50" r="10" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
                 <!-- Left Bottom Circle -->
-                <circle cx="195" cy="150" r="10" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
+                <circle cx="130" cy="150" r="10" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
 
                 <!-- Right Top Circle-->
-                <circle cx="300" cy="50" r="10" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
+                <circle cx="200" cy="50" r="10" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
                 <!-- Right Bottom Circle -->
-                <circle cx="360" cy="150" r="10" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
+                <circle cx="240" cy="150" r="10" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
             </svg>
 
         </article>

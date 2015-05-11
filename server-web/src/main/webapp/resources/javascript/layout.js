@@ -339,8 +339,9 @@ $(function(){
         type : 0
     };
 
-    var OTF_MAX_VALUE = 755;
+    var OTF_MAX_VALUE = 498;
     var OTF_MIN_VALUE = 12;
+    var OTF_MUL_VALUE = 2;
 
     $(window).on('mousemove', function(event){
 
@@ -354,7 +355,7 @@ $(function(){
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
 
-                otfOption.transferMiddle1 = Math.round(cx/3);
+                otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
 
@@ -368,7 +369,7 @@ $(function(){
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
 
-                otfOption.transferMiddle1 = Math.round(cx/3);
+                otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
 
@@ -386,7 +387,7 @@ $(function(){
                 $('#otfLeftBottomCircle').attr('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
 
-                otfOption.transferStart = Math.round(cx/3);
+                otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -399,7 +400,7 @@ $(function(){
                 $('#otfLeftBottomCircle').attr('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
 
-                otfOption.transferStart = Math.round(cx/3);
+                otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -408,8 +409,8 @@ $(function(){
 
         if(isLeftDashLine){
             if(event.pageX >= beforeX){ // +
-                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))+1;
-                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))+1
+                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
+                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2;
                 if(cxTop > $('#otfRightTopCircle').attr('cx')){
                     return;
                 }
@@ -421,14 +422,14 @@ $(function(){
                 $('#otfLeftDashLine').attr('x1', cxBottom);otfTopLine
                 $('#otfLeftDashLine').attr('x2', cxTop);
 
-                otfOption.transferMiddle1 = Math.round(cxTop/3);
-                otfOption.transferStart = Math.round(cxBottom/3);
+                otfOption.transferMiddle1 = Math.round(cxTop/OTF_MUL_VALUE);
+                otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-1;
-                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))-1;
+                var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
+                var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2;
                 if(cxBottom < OTF_MIN_VALUE){
                     return;
                 }
@@ -440,8 +441,8 @@ $(function(){
                 $('#otfLeftDashLine').attr('x1', cxBottom);
                 $('#otfLeftDashLine').attr('x2', cxTop);
 
-                otfOption.transferMiddle1 = Math.round(cxTop/3);
-                otfOption.transferStart = Math.round(cxBottom/3);
+                otfOption.transferMiddle1 = Math.round(cxTop/OTF_MUL_VALUE);
+                otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -458,7 +459,7 @@ $(function(){
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
 
-                otfOption.transferMiddle2 = Math.round(cx/3);
+                otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -471,7 +472,7 @@ $(function(){
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
 
-                otfOption.transferMiddle2 = Math.round(cx/3);
+                otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -488,7 +489,7 @@ $(function(){
                 $('#otfRightBottomCircle').attr('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
 
-                otfOption.transferEnd = Math.round(cx/3);
+                otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -500,7 +501,7 @@ $(function(){
                 $('#otfRightBottomCircle').attr('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
 
-                otfOption.transferEnd = Math.round(cx/3);
+                otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -509,8 +510,8 @@ $(function(){
 
         if(isRightDashLine){
             if(event.pageX >= beforeX){ // +
-                var cxTop = Number($('#otfRightTopCircle').attr('cx'))+1;
-                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))+1;
+                var cxTop = Number($('#otfRightTopCircle').attr('cx'))+2;
+                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))+2;
                 if(cxBottom > OTF_MAX_VALUE){
                     return;
                 }
@@ -522,14 +523,14 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cxBottom);
                 $('#otfRightDashLine').attr('x1', cxTop);
 
-                otfOption.transferMiddle2 = Math.round(cxTop/3);
-                otfOption.transferEnd = Math.round(cxBottom/3);
+                otfOption.transferMiddle2 = Math.round(cxTop/OTF_MUL_VALUE);
+                otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cxTop = Number($('#otfRightTopCircle').attr('cx'))-1;
-                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))-1;
+                var cxTop = Number($('#otfRightTopCircle').attr('cx'))-2;
+                var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))-2;
                 if(cxTop < $('#otfLeftTopCircle').attr('cx')){
                     return;
                 }
@@ -540,8 +541,8 @@ $(function(){
 
                 $('#otfRightDashLine').attr('x2', cxBottom);
                 $('#otfRightDashLine').attr('x1', cxTop);
-                otfOption.transferMiddle2 = Math.round(cxTop/3);
-                otfOption.transferEnd = Math.round(cxBottom/3);
+                otfOption.transferMiddle2 = Math.round(cxTop/OTF_MUL_VALUE);
+                otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -550,10 +551,10 @@ $(function(){
 
         if(isOtfTopLine){
             if(event.pageX >= beforeX){ // +
-                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))+1;
-                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+1;
-                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+1;
-                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))+1;
+                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
+                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+2;
+                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2;
+                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))+2;
                 if(cxRightBottom > OTF_MAX_VALUE){
                     return;
                 }
@@ -572,18 +573,18 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cxRightBottom);
                 $('#otfRightDashLine').attr('x1', cxRightTop);
 
-                otfOption.transferStart = Math.round(cxLeftBottom/3);
-                otfOption.transferMiddle1 = Math.round(cxLeftTop/3);
-                otfOption.transferMiddle2 = Math.round(cxRightTop/3);
-                otfOption.transferEnd = Math.round(cxRightBottom/3);
+                otfOption.transferStart = Math.round(cxLeftBottom/OTF_MUL_VALUE);
+                otfOption.transferMiddle1 = Math.round(cxLeftTop/OTF_MUL_VALUE);
+                otfOption.transferMiddle2 = Math.round(cxRightTop/OTF_MUL_VALUE);
+                otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
-                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))-1;
-                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))-1;
-                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))-1;
-                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))-1;
+                var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
+                var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))-2;
+                var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))-2;
+                var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))-2;
                 if(cxLeftBottom < OTF_MIN_VALUE){
                     return;
                 }
@@ -602,10 +603,10 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cxRightBottom);
                 $('#otfRightDashLine').attr('x1', cxRightTop);
 
-                otfOption.transferStart = Math.round(cxLeftBottom/3);
-                otfOption.transferMiddle1 = Math.round(cxLeftTop/3);
-                otfOption.transferMiddle2 = Math.round(cxRightTop/3);
-                otfOption.transferEnd = Math.round(cxRightBottom/3);
+                otfOption.transferStart = Math.round(cxLeftBottom/OTF_MUL_VALUE);
+                otfOption.transferMiddle1 = Math.round(cxLeftTop/OTF_MUL_VALUE);
+                otfOption.transferMiddle2 = Math.round(cxRightTop/OTF_MUL_VALUE);
+                otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE);
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -645,7 +646,6 @@ $(function(){
 
     $('#otfLeftBottomCircle').on('mousedown',function(event){
         isLeftBottomCircle = true;
-        otfOption.transferStart = Math.round(cx/3);
         beforeX = event.pageX;
     });
 
