@@ -417,14 +417,35 @@
 
         document.getElementById('volumeBtn').addEventListener('click', function(){
             renderingType = 1;
+            $('#mipBtn').addClass('mipBtnNoneActive').removeClass('mipBtnActive');
+            $('#volumeBtn').addClass('volumeBtnActive').removeClass('volumeBtnNoneActive');
             socket.emit('webPng', { type : 0, renderingType : renderingType});
             layoutFunction.typeChangeEventListener();
         });
 
         document.getElementById('mipBtn').addEventListener('click', function(){
             renderingType = 2;
+            $('#mipBtn').addClass('mipBtnActive').removeClass('mipBtnNoneActive');
+            $('#volumeBtn').addClass('volumeBtnNoneActive').removeClass('volumeBtnActive');
             socket.emit('webPng', { type : 0, renderingType : renderingType});
             layoutFunction.typeChangeEventListener();
+        });
+
+        document.getElementById('otfBtn').addEventListener('click', function(){
+            if($('#otfBtn').hasClass('otfBtnActive')){
+                $('#otfBtn').addClass('otfBtnNoneActive').removeClass('otfBtnActive');
+            }else {
+                $('#otfBtn').addClass('otfBtnActive').removeClass('otfBtnNoneActive');
+            }
+        });
+
+        document.getElementById('qualityBtn').addEventListener('click', function(){
+            if($('#qualityBtn').hasClass('qualityBtnActive')){
+                $('#qualityBtn').addClass('qualityBtnNoneActive').removeClass('qualityBtnActive');
+            }else {
+                $('#qualityBtn').addClass('qualityBtnActive').removeClass('qualityBtnNoneActive');
+            }
+            //socket.emit('webPng', { type : 0, renderingType : renderingType});
         });
 
 
@@ -525,12 +546,11 @@
             <canvas id="volumeMprXCanvas">
 
             </canvas>
-            <div class="event">
-                <div class="eventPartition">
-                    <button type="button" id="tinyMprXPlusBtn">B+</button>
-                    <button type="button" id="tinyMprXMinusBtn">B-</button>
-                </div>
-               <div class="sliderVerticalMPR" id="sliderVerticalMPRX" style="height:200px;"></div>
+
+            <div class="sliderWrap">
+                <button type="button" id="tinyMprXPlusBtn" class="mprPlus volumeRenderIcon">B+</button>
+                <div class="sliderVerticalMPR" id="sliderVerticalMPRX"></div>
+                <button type="button" id="tinyMprXMinusBtn" class="mprMinus volumeRenderIcon">B-</button>
             </div>
         </article>
 
@@ -541,12 +561,10 @@
             <canvas id="volumeMprYCanvas">
 
             </canvas>
-            <div class="event">
-                <div class="eventPartition">
-                    <button type="button" id="tinyMprYPlusBtn">B+</button>
-                    <button type="button" id="tinyMprYMinusBtn">B-</button>
-                </div>
-                <div class="sliderVerticalMPR" id="sliderVerticalMPRY" style="height:200px;"></div>
+            <div class="sliderWrap">
+                <button type="button" id="tinyMprYPlusBtn" class="mprPlus volumeRenderIcon">B+</button>
+                <div class="sliderVerticalMPR" id="sliderVerticalMPRY"></div>
+                <button type="button" id="tinyMprYMinusBtn" class="mprMinus volumeRenderIcon">B-</button>
             </div>
         </article>
 
@@ -557,12 +575,11 @@
             <canvas id="volumeMprZCanvas">
 
             </canvas>
-            <div class="event">
-                <div class="eventPartition">
-                    <button type="button" id="tinyMprZPlusBtn">B+</button>
-                    <button type="button" id="tinyMprZMinusBtn">B-</button>
-                </div>
-                <div class="sliderVerticalMPR" id="sliderVerticalMPRZ" style="height:200px;"></div>
+
+            <div class="sliderWrap">
+                <button type="button" id="tinyMprZPlusBtn" class="mprPlus volumeRenderIcon">B+</button>
+                <div class="sliderVerticalMPR" id="sliderVerticalMPRZ"></div>
+                <button type="button" id="tinyMprZMinusBtn" class="mprMinus volumeRenderIcon">B-</button>
             </div>
         </article>
         
@@ -571,19 +588,21 @@
                 <button type="button" id="renderingSizeBtn" class="renderingExpandBtn" title="Size Change">Expand</button>
                 <span>VOLUME</span>
             </div>
+            <div class="activeBtnWrap">
+                <button type="button" id="volumeBtn" class="volumeRenderIcon volumeBtnActive">V</button>
+                <button type="button" id="mipBtn" class="volumeRenderIcon mipBtnNoneActive">M</button>
+                <button type="button" id="qualityBtn" class="volumeRenderIcon qualityBtnNoneActive">V</button>
+                <button type="button" id="otfBtn" class="volumeRenderIcon otfBtnNoneActive">M</button>
+                <button type="button" id="tinyScalePlusBtn" class="mprPlus volumeRenderIcon">S+</button>
+                <button type="button" id="tinyScaleMinusBtn" class="mprMinus volumeRenderIcon">S-</button>
+            </div>
             <canvas id="volumeRenderingCanvas">
 
             </canvas>
-            <div class="event">
-                <div class="eventPartition">
-                    <button type="button" id="tinyBrightnessPlusBtn">B+</button>
-                    <button type="button" id="tinyBrightnessMinusBtn">B-</button>
-                    <button type="button" id="tinyScalePlusBtn">S+</button>
-                    <button type="button" id="tinyScaleMinusBtn">S-</button>
-                    <button type="button" id="volumeBtn">V</button>
-                    <button type="button" id="mipBtn">M</button>
-                </div>
-                <div id="sliderVerticalBrightness" style="height:200px;"></div>
+            <div class="sliderWrap">
+                <button type="button" id="tinyBrightnessPlusBtn" class="brightPlus volumeRenderIcon">B+</button>
+                <div class="sliderVerticalBright" id="sliderVerticalBrightness"></div>
+                <button type="button" id="tinyBrightnessMinusBtn" class="brightMinus volumeRenderIcon">B-</button>
             </div>
         </article>
 

@@ -75,9 +75,33 @@
 .layoutContentSection .title>span{ display: block; padding: 8px 10px; float: left; border-bottom: 1px solid #808080; border-right: 1px solid #808080;}
 .layoutContentSection img{ z-index: 10;}
 
-.layoutContentSection .event{ position: relative; color: #fff; font-size: 75%; z-index: 1; right: 2px; width: 70px; float: right;}
-.layoutContentSection .event button{ float: right;}
-.layoutContentSection .event .eventPartition{ position: absolute;}
+.layoutContentSection .sliderWrap{ position: relative; z-index: 1; width: 40px; float: right; right: 5px; top: 5px; bottom: 5px;}
+.layoutContentSection .volumeRenderIcon{ border: 0px; width: 40px; height: 40px; background: url("../image/icon/btnIcon.png") no-repeat 0px 0px; text-indent: -9999px;}
+.mprPlus{ background-position: 0px -40px !important;}
+.mprMinus{ background-position: -40px -40px !important;}
+.sliderVerticalMPR{ margin: 0 auto;}
+.sliderVerticalBright{ margin: 0 auto;}
+.brightPlus{ background-position: -40px 0px !important;}
+.brightMinus{ background-position: 0px 0px !important;}
+.volumeBtnActive{ background-position: -80px -80px !important; }
+.volumeBtnNoneActive{ background-position: -120px -80px !important;}
+.volumeBtnNoneActive:hover{  background-position: -80px -80px !important;}
+
+.mipBtnActive{ background-position: -80px -40px !important; }
+.mipBtnNoneActive{ background-position: -120px -40px !important; }
+.mipBtnNoneActive:hover{ background-position: -80px -40px !important; }
+
+.qualityBtnActive{ background-position: 0px -80px !important;}
+.qualityBtnNoneActive{ background-position: -40px -80px !important;}
+.qualityBtnNoneActive:hover{background-position: 0px -80px !important; }
+
+.otfBtnActive{ background-position: -80px 0px !important;}
+.otfBtnNoneActive{background-position: -120px 0px !important;}
+.otfBtnNoneActive:hover{background-position: -80px 0px !important;}
+
+.layoutContentSection .activeBtnWrap{ position: relative; z-index: 1; width: 80px; float: left; top: 35px; left: 5px;}
+.layoutContentSection .activeBtnWrap>button{ float: left; margin-bottom: 4px;}
+
 
 .renderingExpandBtn{ background: #000 url("../image/icon/expand.png") no-repeat 5px 5px; width: 20px; height: 20px; padding: 15px; margin: 0; text-indent: 9999px; border-top: 0px; border-left: 0px; float: left;}
 .renderingReduceBtn{ background: #000 url("../image/icon/reduce.png") no-repeat 5px 5px; width: 20px; height: 20px; padding: 15px; margin: 0; text-indent: 9999px; border-top: 0px; border-left: 0px; float: left;}

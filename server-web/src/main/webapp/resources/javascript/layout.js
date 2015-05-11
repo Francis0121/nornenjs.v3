@@ -80,6 +80,8 @@ LayoutFunction.prototype.renderingPageResize = function(){
 
         $('.volumeRenderingOne').width(width).height(height);
         $('.volumeRenderingOne>canvas').attr('width', height).attr('height', height);
+        $('.sliderVerticalMPR').css({ height : height-90});
+        $('.sliderVerticalBright').css({ height: height-90});
 
         var mprXCanvas = document.getElementById('volumeMprXCanvas');
         var mprXCtx = mprXCanvas.getContext('2d');
