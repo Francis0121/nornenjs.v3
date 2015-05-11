@@ -55,9 +55,6 @@ public class JniGLActivity extends Activity {
     public Integer rotation = 0;
     public Integer move = 0;
 
-    public boolean rotationPng = false;
-    public boolean translationPng = false;
-    public boolean pinchzoomPng = false;
 
     private MyEventListener myEventListener;
 
@@ -130,6 +127,7 @@ public class JniGLActivity extends Activity {
                     beforeX = event.getX();
                     beforeY = event.getY();
 
+
                     myEventListener.RotationEvent(rotationX, rotationY);
                     rotation++;
 
@@ -153,7 +151,8 @@ public class JniGLActivity extends Activity {
                             oldMidVectorX = newMidVectorX;
                             oldMidVectorY = newMidVectorY;
 
-                            translationPng = false;
+                            //translationPng = false;
+
                             myEventListener.TranslationEvent(translationX, translationY);
                             move++;
 
@@ -169,7 +168,7 @@ public class JniGLActivity extends Activity {
                             if (div <= 0.2f) {
                                 div = 0.2f;
                             }
-                            pinchzoomPng = false;
+
                             myEventListener.PinchZoomEvent(div);
                             pinch++;
 
@@ -181,7 +180,7 @@ public class JniGLActivity extends Activity {
                             if (div >= 10.0f) {
                                 div = 10.0f;
                             }
-                            pinchzoomPng = false;
+
                             myEventListener.PinchZoomEvent(div);
                             pinch++;
                         }
@@ -193,6 +192,7 @@ public class JniGLActivity extends Activity {
                 mode = NONE;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
+
                 mode = NONE;
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -331,7 +331,7 @@ class TouchSurfaceView extends GLSurfaceView {
 
                         JSONObject info = (JSONObject) args[0];
 
-                        Log.d("ByteBuffer", info.toString());
+                        //Log.d("ByteBuffer", info.toString());
 
                         try {
                             byteArray = (byte[]) info.get("data");
@@ -398,10 +398,10 @@ class TouchSurfaceView extends GLSurfaceView {
             });
 
             relay.connect();
-            
+
             mActivity.setMyEventListener(this);
         }
-        
+
         Bitmap imgPanda;
         int[] pixels = new int[256*256];
         //int[] pixels2 = new int[512*512];
@@ -410,7 +410,7 @@ class TouchSurfaceView extends GLSurfaceView {
 
             if(byteArray!=null) {
 
-                Log.d("ByteBuffer", ""+width.intValue()+" "+ height.intValue()+ " " + byteArray.length);
+
                 imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
 

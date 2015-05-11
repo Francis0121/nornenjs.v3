@@ -1,3 +1,3 @@
-set solib-search-path /home/hyok/v3.nornenjs/client-ndk/app/src/main/obj/local/armeabi
-source /home/hyok/android-ndk-r10d/prebuilt/common/gdb/common.setup
-directory /home/hyok/android-ndk-r10d/platforms/android-8/arch-arm/usr/include /home/hyok/android-ndk-r10d/sources/cxx-stl/system/include /home/hyok/v3.nornenjs/client-ndk/app/src/main/jni
+set solib-search-path /home/russa/git/nornenjs_v3/client-ndk/app/src/main/obj/local/armeabi
+source /home/russa/android-ndk/prebuilt/common/gdb/common.setup
+directory /home/russa/android-ndk/platforms/android-8/arch-arm/usr/include /home/russa/android-ndk/sources/cxx-stl/system/include /home/russa/git/nornenjs_v3/client-ndk/app/src/main/jni

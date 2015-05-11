@@ -2,7 +2,7 @@
 <%@ include file="../../layout/header.jspf" %>
 <%@ include file="../../layout/nav.jspf" %>
 
-<script src="http://112.108.40.164:5000/socket.io/socket.io.js"></script>
+<script src="http://112.108.40.19:5000/socket.io/socket.io.js"></script>
 
 <script>
     document.oncontextmenu = function(e){
@@ -13,7 +13,7 @@
             event.stopPropagation();
     }
 
-    var relay = io.connect('http://112.108.40.164:5000',{ forceNew : true, reconnection : false });
+    var relay = io.connect('http://112.108.40.19:5000',{ forceNew : true, reconnection : false });
 
     var count = 0;
 
