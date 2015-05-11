@@ -543,7 +543,7 @@
             <div class="title">
                 <span>MPR-X</span>
             </div>
-            <canvas id="volumeMprXCanvas">
+            <canvas id="volumeMprXCanvas" class="">
 
             </canvas>
 
@@ -558,7 +558,7 @@
             <div class="title">
                 <span>MPR-Y</span>
             </div>
-            <canvas id="volumeMprYCanvas">
+            <canvas id="volumeMprYCanvas" class="socketCanvas">
 
             </canvas>
             <div class="sliderWrap">
@@ -572,7 +572,7 @@
             <div class="title">
                 <span>MPR-Z</span>
             </div>
-            <canvas id="volumeMprZCanvas">
+            <canvas id="volumeMprZCanvas" class="socketCanvas">
 
             </canvas>
 
@@ -587,16 +587,19 @@
             <div class="title">
                 <button type="button" id="renderingSizeBtn" class="renderingExpandBtn" title="Size Change">Expand</button>
                 <span>VOLUME</span>
+
+                <div class="activeBtnWrap">
+                    <button type="button" id="volumeBtn" class="volumeRenderIcon volumeBtnActive">V</button>
+                    <button type="button" id="mipBtn" class="volumeRenderIcon mipBtnNoneActive">M</button>
+                    <button type="button" id="qualityBtn" class="volumeRenderIcon qualityBtnNoneActive">V</button>
+                    <button type="button" id="otfBtn" class="volumeRenderIcon otfBtnNoneActive">M</button>
+                    <button type="button" id="tinyScalePlusBtn" class="mprPlus volumeRenderIcon">S+</button>
+                    <button type="button" id="tinyScaleMinusBtn" class="mprMinus volumeRenderIcon">S-</button>
+                </div>
+
             </div>
-            <div class="activeBtnWrap">
-                <button type="button" id="volumeBtn" class="volumeRenderIcon volumeBtnActive">V</button>
-                <button type="button" id="mipBtn" class="volumeRenderIcon mipBtnNoneActive">M</button>
-                <button type="button" id="qualityBtn" class="volumeRenderIcon qualityBtnNoneActive">V</button>
-                <button type="button" id="otfBtn" class="volumeRenderIcon otfBtnNoneActive">M</button>
-                <button type="button" id="tinyScalePlusBtn" class="mprPlus volumeRenderIcon">S+</button>
-                <button type="button" id="tinyScaleMinusBtn" class="mprMinus volumeRenderIcon">S-</button>
-            </div>
-            <canvas id="volumeRenderingCanvas">
+
+            <canvas id="volumeRenderingCanvas" class="socketCanvas">
 
             </canvas>
             <div class="sliderWrap">
