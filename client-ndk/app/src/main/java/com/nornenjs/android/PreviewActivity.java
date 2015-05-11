@@ -2,6 +2,7 @@ package com.nornenjs.android;
 
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,9 +11,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.ViewGroup;
+import android.widget.*;
 import com.nornenjs.android.dto.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -26,7 +28,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 
 import java.net.URL;
-import java.util.List;
+import java.util.*;
 
 
 public class PreviewActivity extends Activity {
@@ -38,35 +40,15 @@ public class PreviewActivity extends Activity {
 
     Volume volumes;
     Data datas;
-    List<ImageView> thumbnails;
+    List<Bitmap> thumbnails;
+    GridView gridview;
+    ThumbAdapter thumbAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preview);
 
-        thumbnails.add((ImageView) findViewById(R.id.thumbnail1));
-        thumbnails.add((ImageView) findViewById(R.id.thumbnail2));
-        thumbnails.add((ImageView) findViewById(R.id.thumbnail3));
-        thumbnails.add((ImageView) findViewById(R.id.thumbnail4));
-//        click = (Button)findViewById(R.id.clickBtn);
-//        click.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent;
-//                intent = new Intent(PreviewActivity.this, JniGLActivity.class);
-//
-//                intent.putExtra("width", volumes.getWidth());
-//                intent.putExtra("height", volumes.getHeight());
-//                intent.putExtra("depth", volumes.getDepth());
-//
-//                intent.putExtra("savePath", datas.getSavePath());
-//
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
         Intent intent = getIntent();
         pns = intent.getIntExtra("pns",-1);
         if(pns != -1)
@@ -77,10 +59,30 @@ public class PreviewActivity extends Activity {
             Log.d(TAG, "pns us -1");
         }
 
+        thumbnails = new ArrayList<Bitmap>();
+
+
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
+
+        thumbAdapter = new ThumbAdapter(thumbnails, PreviewActivity.this);
+        gridview = (GridView) findViewById(R.id.previewlist);
+        gridview.setAdapter(thumbAdapter);
+
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "go to JNIActivity");
+
+                Intent intent = new Intent(PreviewActivity.this, JniGLActivity.class);
+                startActivity(intent);
+            }
+        });
         new PostVolumeImageTask().execute();
+
+        Log.d(TAG, "thumbnails sie : " + thumbnails.size());
+
     }
 
     private class PostVolumeImageTask extends AsyncTask<Void, Void, ResponseVolumeInfo> {
@@ -124,7 +126,10 @@ public class PreviewActivity extends Activity {
             List<Integer> thumbnails = responseVolume.getThumbnails();
             Log.d(TAG, "thumbnails : " + thumbnails.toString());
 
-            new GetThumbnails().execute("92");
+            new GetThumbnails().execute("" + thumbnails.get(0), "0");
+            new GetThumbnails().execute("" + thumbnails.get(1), "1");
+            new GetThumbnails().execute("" + thumbnails.get(2), "2");
+            new GetThumbnails().execute("" + thumbnails.get(3), "3");
 
             //image.setImageBitmap(getImageFromURL("http://localhost:10000/data/thumbnail/" + thumbnails.get(0)));
             Log.d(TAG, "after excute()");
@@ -139,35 +144,53 @@ public class PreviewActivity extends Activity {
             }
             else
             {
-
+                //????여기 뭐였지???
 
             }
         }
 
     }
 
-
-    private class GetThumbnails extends AsyncTask<String, Void, byte[]>{
+    private class GetThumbnails extends AsyncTask<String, Void, Bitmap>{
+        int index;
         @Override
-        protected byte[] doInBackground(String... params) {
+        protected Bitmap doInBackground(String... params) {
 
             Log.d(TAG, "params0 : " + params[0]);
-            byte[] data = downloadImage(getString(R.string.tomcat) + "/data/thumbnail/" + params[0]);
+            index = Integer.parseInt(params[1]);
+            Bitmap data = downloadImage(getString(R.string.tomcat) + "/data/thumbnail/" + params[0]);
 
             return data;
 
         }
 
         @Override
-        protected void onPostExecute(byte[] bytes) {
-            Bitmap img = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            thumbnails.get(0).setImageBitmap(img);
+        protected void onPostExecute(Bitmap bytes) {
+            //Bitmap img = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            //thumbnails.get(0).setImageBitmap(img);
+            if(bytes != null)//thumbnails.get(index).setImageBitmap(bytes);//image1.setImageBitmap(bytes);
+            {
+                Log.d(TAG, "add bitmap");
+                thumbnails.add(bytes);//image1.setImageBitmap(bytes);
+            }
+            else
+                Log.d(TAG, "bitmap is null");
+
+           //
+            if(index == 3) {
+                Log.d(TAG, "notifyDataSetChanged.....thumbsize : " + thumbnails.size());
+                thumbAdapter.notifyDataSetChanged();
+
+            }
         }
     }
 
-    public byte[] downloadImage(String imgName) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public Bitmap downloadImage(String imgName) {
+        Log.d(TAG, "URI : " + imgName);
+        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Bitmap bitmap = null;
         try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             HttpURLConnection con = (HttpURLConnection) ( new URL(imgName)).openConnection();
             con.setDoInput(true);
 
@@ -175,20 +198,18 @@ public class PreviewActivity extends Activity {
             con.connect();
 
             int responseCode = con.getResponseCode();
+            Log.d(TAG, "responseCode : " + responseCode);
+            Log.d(TAG, "getContentLength : " + con.getContentLength());
 
             InputStream is = con.getInputStream();
-            byte[] b = new byte[1024];
-
-            while ( is.read(b) != -1)
-                baos.write(b);
+            bitmap = BitmapFactory.decodeStream(is);
 
             con.disconnect();
         }
         catch(Throwable t) {
             t.printStackTrace();
         }
-
-        return baos.toByteArray();
+        return bitmap;
     }
 
 }

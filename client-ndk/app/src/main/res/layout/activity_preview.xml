@@ -5,26 +5,16 @@
                 android:background="@android:color/white"
                 tools:context="com.nornenjs.android.PreviewActivity">
 
-    <ImageView
-            android:id="@+id/thumbnail1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    <ImageView
-            android:id="@+id/thumbnail2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/thumbnail1"/>
-    <ImageView
-            android:id="@+id/thumbnail3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/thumbnail2"/>
 
-    <ImageView
-            android:id="@+id/thumbnail4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/thumbnail3"/>
+    <GridView
+            android:id="@+id/previewlist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:numColumns="1"
+            android:stretchMode="columnWidth"
+            >
+
+    </GridView>
 
 
 </RelativeLayout>

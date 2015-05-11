@@ -6,6 +6,7 @@ package com.nornenjs.android;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,7 +28,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 //    private Context mContext;
 
     private List<String> titles;
-    private List<Integer> thumbnails;
+    private List<Bitmap> thumbnails;
     private List<Integer> pns;
     private Map<Integer, Integer> pnMap;
 
@@ -39,7 +40,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 //        mContext = c;
 //    }
 
-    public ImageAdapter(Activity activity, List<String> titles, List<Integer> thumbnails, List<Integer> pns) {
+    public ImageAdapter(Activity activity, List<Bitmap> thumbnails, List<String> titles, List<Integer> pns) {
         super();
         this.titles = titles;
         this.thumbnails = thumbnails;
@@ -49,13 +50,13 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
     }
 
     public int getCount() {
-        return titles.size();
-//        return mThumbIds.length;
+        return thumbnails.size();
+        //return titles.size();
     }
 
     public Object getItem(int position) {
-        return titles.get(position);
-        //return null;
+        return thumbnails.get(position);
+        //return titles.get(position);
     }
 
     public long getItemId(int position) {
@@ -78,7 +79,6 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         // TODO Auto-generated method stub
         ViewHolder view;
         LayoutInflater inflator = activity.getLayoutInflater();
-
         if(convertView==null)
         {
             view = new ViewHolder();
@@ -104,15 +104,18 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         }
 
         view.metadata.setText(titles.get(position));
-        view.imgViewFlag.setImageResource(thumbnails.get(position));
+        //view.imgViewFlag.setImageResource(thumbnails.get(position));
+        view.imgViewFlag.setImageBitmap(thumbnails.get(position));
+
         view.imgViewFlag.setTag(pns.get(position));
 
         view.metadata2.setText(titles.get(position));
-        view.imgViewFlag2.setImageResource(thumbnails.get(position));
+        //view.imgViewFlag2.setImageResource(thumbnails.get(position));
+        view.imgViewFlag2.setImageBitmap(thumbnails.get(position));
         view.imgViewFlag2.setTag(pns.get(position));
 
-        Log.d(TAG, "" + view.imgViewFlag);
-        Log.d(TAG, "" + view.imgViewFlag.getId());
+        //Log.d(TAG, "" + view.imgViewFlag);
+        Log.d(TAG, "ImageView.getId : " + view.imgViewFlag.getId());
         //pnMap.put(view.imgViewFlag.getId(), pns.get(position));
 
         convertView.setOnTouchListener(new View.OnTouchListener() {
@@ -134,4 +137,5 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         intent.putExtra("pns", Integer.parseInt(""+v.getTag()));
         activity.startActivity(intent);
     }
+
 }

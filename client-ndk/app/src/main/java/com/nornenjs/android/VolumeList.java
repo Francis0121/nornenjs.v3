@@ -2,11 +2,15 @@ package com.nornenjs.android;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.Adapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import com.nornenjs.android.dto.ResponseVolume;
 import com.nornenjs.android.dto.Volume;
@@ -15,6 +19,10 @@ import com.nornenjs.android.dynamicview.PoppyViewHelper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +37,15 @@ public class VolumeList extends Activity {
 
     private ImageAdapter mAdapter;
     private List<String> titles;
-    private List<Integer> thumbnails;
+    //private List<Integer> thumbnails;
+    private List<Bitmap> thumbnails;
     private List<Integer> pns;
 
     private ListView imagelist;
 
     private PoppyViewHelper mPoppyViewHelper;
 
+    private int maxSize;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +55,24 @@ public class VolumeList extends Activity {
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
         titles = new ArrayList<String>();
-        thumbnails = new ArrayList<Integer>();
+        thumbnails = new ArrayList<Bitmap>();
         pns = new ArrayList<Integer>();
 
-        new PostVolumeTask().execute();
+//        thumbnails.add((ImageView) findViewById(R.id.imageView1));
+//        thumbnails.add((ImageView) findViewById(R.id.imageView2));
 
+        //new PostVolumeTask().execute();
+
+        Log.d(TAG, "thumbnails size : " + thumbnails.size());
+        Log.d(TAG, "titles size : " + +titles.size());
+
+        mAdapter = new ImageAdapter(VolumeList.this , thumbnails, titles, pns);
+
+        // Set custom adapter to gridview
+        imagelist = (ListView) findViewById(R.id.imagelist);
+        imagelist.setAdapter(mAdapter);
+
+        new PostVolumeTask().execute();
 
     }
 
@@ -92,10 +115,15 @@ public class VolumeList extends Activity {
         @Override
         protected void onPostExecute(ResponseVolume responseVolume) {
             super.onPostExecute(responseVolume);
-
-            List<Volume> volumes = responseVolume.getVolumes();
-            Log.d(TAG,volumes.toString());
-
+            List<Volume> volumes;
+            if (responseVolume == null) {
+                volumes = null;
+                Log.d(TAG, "volumes is null");
+            }else {
+                volumes = responseVolume.getVolumes();
+                Log.d(TAG, volumes.toString());
+            }
+            maxSize = volumes.size();
             Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
             Log.d(TAG, volumeFilterMap.toString());
             if(volumes == null)
@@ -109,16 +137,13 @@ public class VolumeList extends Activity {
                 {
                     Log.d(TAG, volume.toString());
                     titles.add(volume.getTitle() + volume.getInputDate());
-                    thumbnails.add(R.drawable.head);
+                    //thumbnails.add(R.drawable.head);
+                    Log.d(TAG, "volume.getThumbnailPnList().get(0) : " + volume.getThumbnailPnList().get(0));
+                    //thumbnails.add(R.drawable.head);
+                    new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0));
                     pns.add(volume.getPn());
+                    Log.d(TAG, "where am i?");
                 }
-
-                mAdapter = new ImageAdapter(VolumeList.this ,titles, thumbnails, pns);
-
-                // Set custom adapter to gridview
-                imagelist = (ListView) findViewById(R.id.imagelist);
-                imagelist.setAdapter(mAdapter);
-
 
                 mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
                 View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.imagelist, R.layout.poppyview, new AbsListView.OnScrollListener() {
@@ -135,6 +160,60 @@ public class VolumeList extends Activity {
         }
 
 
+    }
+    int count = 0;
+    private class GetThumbnail extends AsyncTask<String, Void, Bitmap>{
+        int index;
+        @Override
+        protected Bitmap doInBackground(String... params) {
+
+            Log.d("one Image", "In doInBackground params0 : " + params[0]);
+            Bitmap data = downloadImage(getString(R.string.tomcat) + "/data/thumbnail/" + params[0]);
+            Log.d("one Image", "after downloadImage(): ");
+            return data;
+
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bytes) {
+            if(bytes != null)//thumbnails.get(index).setImageBitmap(bytes);//image1.setImageBitmap(bytes);
+                thumbnails.add(bytes);//image1.setImageBitmap(bytes);
+            else
+                Log.d("one Image", "bitmap is null");
+
+            if(count >= maxSize-1) {
+                mAdapter.notifyDataSetChanged();
+                count = 0;
+            }
+            count++;
+        }
+    }
+
+    public Bitmap downloadImage(String imgName) {
+        Log.d("one Image", "URI : " + imgName);
+        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Bitmap bitmap = null;
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            HttpURLConnection con = (HttpURLConnection) ( new URL(imgName)).openConnection();
+            con.setDoInput(true);
+
+            con.setRequestProperty("Accept-Encoding", "identity");
+            con.connect();
+
+            int responseCode = con.getResponseCode();
+            Log.d("one Image", "responseCode : " + responseCode);
+            Log.d("one Image", "getContentLength : " + con.getContentLength());
+
+            InputStream is = con.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+
+            con.disconnect();
+        }
+        catch(Throwable t) {
+            t.printStackTrace();
+        }
+        return bitmap;
     }
 
 }
