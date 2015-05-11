@@ -45,7 +45,6 @@ public class VolumeList extends Activity {
 
     private PoppyViewHelper mPoppyViewHelper;
 
-    private int maxSize;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +122,6 @@ public class VolumeList extends Activity {
                 volumes = responseVolume.getVolumes();
                 Log.d(TAG, volumes.toString());
             }
-            maxSize = volumes.size();
             Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
             Log.d(TAG, volumeFilterMap.toString());
             if(volumes == null)
@@ -161,7 +159,6 @@ public class VolumeList extends Activity {
 
 
     }
-    int count = 0;
     private class GetThumbnail extends AsyncTask<String, Void, Bitmap>{
         int index;
         @Override
@@ -181,11 +178,7 @@ public class VolumeList extends Activity {
             else
                 Log.d("one Image", "bitmap is null");
 
-            if(count >= maxSize-1) {
-                mAdapter.notifyDataSetChanged();
-                count = 0;
-            }
-            count++;
+            mAdapter.notifyDataSetChanged();
         }
     }
 

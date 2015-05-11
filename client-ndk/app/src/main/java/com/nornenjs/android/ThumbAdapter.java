@@ -60,7 +60,6 @@ public class ThumbAdapter extends BaseAdapter{
 
         convertView = inflator.inflate(R.layout.activity_thumb_row, null);
 
-        //convertView.setLayoutParams(new GridView.LayoutParams(convertView.getLayoutParams().width,convertView.getLayoutParams().height));
         view.thumbnailText = (TextView) convertView.findViewById(R.id.thumbText);
         view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumbImg);
 

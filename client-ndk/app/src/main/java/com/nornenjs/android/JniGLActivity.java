@@ -27,6 +27,7 @@ import java.util.Map;
 
 public class JniGLActivity extends Activity {
 
+    static final String TAG = "JniGLActivity";
     int mode = NONE;
     static final int NONE = 0;
     static final int DRAG = 1;
@@ -62,7 +63,7 @@ public class JniGLActivity extends Activity {
     private MyEventListener myEventListener;
 
     public int volumeWidth, volumeHeight, volumeDepth;
-    public String volumeSavePath;
+    public String volumeSavePath = "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8";//일단 상수 박아줌
 
     public void setMyEventListener(MyEventListener myEventListener) {
         this.myEventListener = myEventListener;
@@ -73,11 +74,12 @@ public class JniGLActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        volumeWidth=  intent.getIntExtra("width",512);
-        volumeHeight = intent.getIntExtra("height",512);
-        volumeDepth = intent.getIntExtra("depth",200);
-        volumeSavePath = intent.getStringExtra("savePath");
+        volumeWidth=  intent.getIntExtra("width",256);
+        volumeHeight = intent.getIntExtra("height",256);
+        volumeDepth = intent.getIntExtra("depth", 255);
+        volumeSavePath = intent.getStringExtra("savepath");
 
+        Log.d(TAG, "JNIActivity : " + volumeWidth + ", " + volumeHeight + ", " + volumeDepth + ", " + volumeSavePath);
         String host = getString(R.string.host);
         setContentView(R.layout.activity_jni_gl);
         mGLSurfaceView = new TouchSurfaceView(this, host);
@@ -309,16 +311,16 @@ class TouchSurfaceView extends GLSurfaceView {
                 socket = IO.socket("http://"+ipAddress+":"+port);
 
                 JSONObject json = new JSONObject();
+                Log.d("SurfaceView", "from intent "  + mActivity.volumeWidth + ", " + mActivity.volumeHeight + ", " + mActivity.volumeDepth + ", " + mActivity.volumeSavePath);
+                json.put("savePath", mActivity.volumeSavePath);
+                json.put("width", mActivity.volumeWidth);
+                json.put("height", mActivity.volumeHeight);
+                json.put("depth", mActivity.volumeDepth);
 
-//                json.put("savePath", mActivity.volumeSavePath);
-//                json.put("width", mActivity.volumeWidth);
-//                json.put("height", mActivity.volumeHeight);
-//                json.put("depth", mActivity.volumeDepth);
-
-                json.put("savePath", "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8");
-                json.put("width", 256);
-                json.put("height", 256);
-                json.put("depth", 225);
+//                json.put("savePath", "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8");
+//                json.put("width", 256);
+//                json.put("height", 256);
+//                json.put("depth", 225);
 
                 socket.emit("join", deviceNumber);
                 socket.emit("init", json);

@@ -44,6 +44,8 @@ public class PreviewActivity extends Activity {
     GridView gridview;
     ThumbAdapter thumbAdapter;
 
+    int width, height, depth;
+    String savepath = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,6 +78,10 @@ public class PreviewActivity extends Activity {
                 Log.d(TAG, "go to JNIActivity");
 
                 Intent intent = new Intent(PreviewActivity.this, JniGLActivity.class);
+                intent.putExtra("width", width);
+                intent.putExtra("height", height);
+                intent.putExtra("depth", depth);
+                intent.putExtra("savepath", savepath);
                 startActivity(intent);
             }
         });
@@ -126,6 +132,11 @@ public class PreviewActivity extends Activity {
             List<Integer> thumbnails = responseVolume.getThumbnails();
             Log.d(TAG, "thumbnails : " + thumbnails.toString());
 
+            width = responseVolume.getVolume().getWidth();
+            height = responseVolume.getVolume().getHeight();
+            depth = responseVolume.getVolume().getDepth();
+            savepath = responseVolume.getData().getSavePath();
+
             new GetThumbnails().execute("" + thumbnails.get(0), "0");
             new GetThumbnails().execute("" + thumbnails.get(1), "1");
             new GetThumbnails().execute("" + thumbnails.get(2), "2");
@@ -166,8 +177,6 @@ public class PreviewActivity extends Activity {
 
         @Override
         protected void onPostExecute(Bitmap bytes) {
-            //Bitmap img = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            //thumbnails.get(0).setImageBitmap(img);
             if(bytes != null)//thumbnails.get(index).setImageBitmap(bytes);//image1.setImageBitmap(bytes);
             {
                 Log.d(TAG, "add bitmap");
@@ -177,17 +186,16 @@ public class PreviewActivity extends Activity {
                 Log.d(TAG, "bitmap is null");
 
            //
-            if(index == 3) {
-                Log.d(TAG, "notifyDataSetChanged.....thumbsize : " + thumbnails.size());
-                thumbAdapter.notifyDataSetChanged();
-
-            }
+            thumbAdapter.notifyDataSetChanged();
+//            if(index == 3) {
+//                Log.d(TAG, "notifyDataSetChanged.....thumbsize : " + thumbnails.size());
+//                thumbAdapter.notifyDataSetChanged();
+//            }
         }
     }
 
     public Bitmap downloadImage(String imgName) {
         Log.d(TAG, "URI : " + imgName);
-        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Bitmap bitmap = null;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
