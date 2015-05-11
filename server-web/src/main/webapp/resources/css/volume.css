@@ -22,8 +22,8 @@
 .volumeListArticle .list{ width: 100%; }
 .volumeListArticle .list .one{ width: 25%; float: left;}
 
-.volumeListArticle figure{ width: 86%; float: left; padding: 10px 7%;}
-.volumeListArticle figcaption{ width: 100%; border-left: 8px solid #ccc; border-right: 8px solid #ccc; padding: 5px 0 10px 0; margin: 0 0 12px 0; background: #ccc;}
+.volumeListArticle figure{ width: 86%; float: left; padding: 10px 7%; }
+.volumeListArticle figcaption{ width: 284px; border-left: 8px solid #ccc; border-right: 8px solid #ccc; padding: 5px 0 10px 0; margin: 0 0 12px 0; background: #ccc;}
 .volumeListArticle figcaption span{ font-size: 75%; line-height: 1.2;}
 .volumeListArticle figcaption a.name{ font-weight: bold; font-size: 75%; color: #000;}
 .volumeListArticle figcaption span.number{ margin-right: 5px; }
