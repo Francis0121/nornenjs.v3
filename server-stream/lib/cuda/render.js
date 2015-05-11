@@ -59,7 +59,7 @@ function iDivUp(a, b) {
         transferSize : 256,
         transferFlag : 2,
         mprType:1,
-        quality:2,
+        quality:1,
 
         d_output : undefined,
         d_tf2Dtable : undefined,

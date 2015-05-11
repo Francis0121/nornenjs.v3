@@ -2,7 +2,7 @@
 <%@ include file="../../layout/header.jspf" %>
 <%@ include file="../../layout/nav.jspf" %>
 
-<script src="http://112.108.40.19:5000/socket.io/socket.io.js"></script>
+<script src="http://112.108.40.166:5000/socket.io/socket.io.js"></script>
 
 <script>
     document.oncontextmenu = function(e){
@@ -13,7 +13,7 @@
             event.stopPropagation();
     }
 
-    var relay = io.connect('http://112.108.40.19:5000',{ forceNew : true, reconnection : false });
+    var relay = io.connect('http://112.108.40.166:5000',{ forceNew : true, reconnection : false });
 
     var count = 0;
 
@@ -29,7 +29,6 @@
         //console.log(info, typeof info);
         if(!info.conn){
             console.log('Connection User is full');
-            return;
         }else{
             relay.disconnect();
             bindSocket(info);
@@ -525,7 +524,7 @@
                 orientation: 'vertical',
                 range: 'min',
                 min: 0,
-                max: 400,
+                max: 1200,
                 value: 200,
                 slide: function( event, ui ) {
                     console.log( ui.value );
