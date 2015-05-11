@@ -438,17 +438,18 @@
 
             if($('#otfBtn').hasClass('otfBtnActive')){
                 $('#otfBtn').addClass('otfBtnNoneActive').removeClass('otfBtnActive');
-                $('#volumeRenderingOTF').hide();
+                $('#volumeRenderingOTF').dialog('close');
             }
         });
 
         document.getElementById('otfBtn').addEventListener('click', function(){
             if($('#otfBtn').hasClass('otfBtnActive')){
                 $('#otfBtn').addClass('otfBtnNoneActive').removeClass('otfBtnActive');
-                $('#volumeRenderingOTF').hide();
+                $('#volumeRenderingOTF').dialog('close');
             }else {
                 $('#otfBtn').addClass('otfBtnActive').removeClass('otfBtnNoneActive');
-                $('#volumeRenderingOTF').show();
+                $('#volumeRenderingOTF').dialog('open');
+                layoutFunction.otfDialogEventListener();
             }
         });
 
@@ -540,6 +541,19 @@
                     socket.emit('brightBtn', brightOption);
                 }
             });
+
+            $('#volumeRenderingOTF').dialog({
+                autoOpen: false,
+                resizable : false,
+                width : 350,
+                position: { at: "left bottom"},
+                close: function( event, ui ) {
+                    if($('#otfBtn').hasClass('otfBtnActive')){
+                        $('#otfBtn').addClass('otfBtnNoneActive').removeClass('otfBtnActive');
+                        $('#volumeRenderingOTF').dialog('close');
+                    }
+                }
+            });
         });
 
     };
@@ -624,31 +638,31 @@
         </article>
 
         
-        <article class="volumeRenderingOTF" id="volumeRenderingOTF">
+        <div class="volumeRenderingOTF" id="volumeRenderingOTF" title="OTF Table">
 
-            <svg height="250" width="753">
+            <svg height="150" width="275">
 
                 <!-- Top -->
-                <line x1="160" y1="50" x2="200" y2="50" style="stroke:rgb(243,157,65);stroke-width:10; cursor: pointer;" id="otfTopLine"/>
+                <line x1="90" y1="40" x2="110" y2="40" style="stroke:rgb(243,157,65);stroke-width:6; cursor: pointer;" id="otfTopLine"/>
                 <!-- Left Line -->
-                <line x1="130" y1="150" x2="160" y2="50" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
+                <line x1="75" y1="110" x2="90" y2="40" style="stroke:rgb(243,157,65);stroke-width:6; " id="otfLeftDashLine" class="otfDashLine"/>
                 <!-- Bottom -->
-                <line x1="12" y1="150" x2="498" y2="150" style="stroke:rgb(243,157,65);stroke-width:10" id="otfBottomLine"/>
+                <line x1="13" y1="110" x2="265" y2="110" style="stroke:rgb(243,157,65);stroke-width:6; " id="otfBottomLine"/>
                 <!-- Right Line -->
-                <line x1="200" y1="50" x2="240" y2="150" style="stroke:rgb(243,157,65);stroke-width:10" id="otfRightDashLine" class="otfDashLine"/>
+                <line x1="110" y1="40" x2="130" y2="110" style="stroke:rgb(243,157,65);stroke-width:6; " id="otfRightDashLine" class="otfDashLine"/>
 
                 <!-- Left Top Circle-->
-                <circle cx="160" cy="50" r="10" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
+                <circle cx="90" cy="40" r="6" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
                 <!-- Left Bottom Circle -->
-                <circle cx="130" cy="150" r="10" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
+                <circle cx="75" cy="110" r="6" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
 
                 <!-- Right Top Circle-->
-                <circle cx="200" cy="50" r="10" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
+                <circle cx="110" cy="40" r="6" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
                 <!-- Right Bottom Circle -->
-                <circle cx="240" cy="150" r="10" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
+                <circle cx="130" cy="110" r="6" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
             </svg>
 
-        </article>
+        </div>
         
     </section>
     

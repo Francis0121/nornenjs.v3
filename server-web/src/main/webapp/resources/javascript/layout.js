@@ -123,7 +123,6 @@ LayoutFunction.prototype.typeChangeEventListener = function(){
         width = windowWidth - navWidth - 4;
 
     $('.volumeRenderingMpr').hide();
-    $('.volumeRenderingOTF').hide();
 
     $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(windowHeight);
     $('#volumeRendering>canvas').attr('width', windowHeight).attr('height', windowHeight);
@@ -146,7 +145,7 @@ LayoutFunction.prototype.expandEventListener = function(){
             width = (windowWidth - navWidth)/2 - 3;
         
         $('.volumeRenderingMpr').show();
-        $('.volumeRenderingOTF').hide();
+
         $('#volumeRendering').addClass('volumeRenderingOne').removeClass('volumeRenderingBig');
         $('#renderingSizeBtn').addClass('renderingExpandBtn').removeClass('renderingReduceBtn');
         
@@ -314,7 +313,9 @@ $(function(){
         layoutFunction.expandEventListener();
     });
 
+});
 
+LayoutFunction.prototype.otfDialogEventListener = function(){
     // ~ Left OTF EVENT
 
     var beforeX;
@@ -339,11 +340,12 @@ $(function(){
         type : 0
     };
 
-    var OTF_MAX_VALUE = 498;
-    var OTF_MIN_VALUE = 12;
-    var OTF_MUL_VALUE = 2;
+    var OTF_MAX_VALUE = 262;
+    var OTF_MIN_VALUE = 13;
+    var OTF_MUL_VALUE = 1;
+    var OTF_OFFSET_VALUE = 10;
 
-    $(window).on('mousemove', function(event){
+    $(window).off('mousemove').on('mousemove', function(event){
 
         if(isLeftTopCircle){
             if(event.pageX >= beforeX){ // +
@@ -355,7 +357,7 @@ $(function(){
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
 
-                otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
 
@@ -369,7 +371,7 @@ $(function(){
                 $('#otfTopLine').attr('x1', cx);
                 $('#otfLeftDashLine').attr('x2', cx);
 
-                otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
 
@@ -387,7 +389,7 @@ $(function(){
                 $('#otfLeftBottomCircle').attr('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
 
-                otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -400,7 +402,7 @@ $(function(){
                 $('#otfLeftBottomCircle').attr('cx', cx);
                 $('#otfLeftDashLine').attr('x1', cx);
 
-                otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -422,8 +424,8 @@ $(function(){
                 $('#otfLeftDashLine').attr('x1', cxBottom);otfTopLine
                 $('#otfLeftDashLine').attr('x2', cxTop);
 
-                otfOption.transferMiddle1 = Math.round(cxTop/OTF_MUL_VALUE);
-                otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE);
+                otfOption.transferMiddle1 = Math.round(cxTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -441,8 +443,8 @@ $(function(){
                 $('#otfLeftDashLine').attr('x1', cxBottom);
                 $('#otfLeftDashLine').attr('x2', cxTop);
 
-                otfOption.transferMiddle1 = Math.round(cxTop/OTF_MUL_VALUE);
-                otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE);
+                otfOption.transferMiddle1 = Math.round(cxTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -459,7 +461,7 @@ $(function(){
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
 
-                otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -472,7 +474,7 @@ $(function(){
                 $('#otfTopLine').attr('x2', cx);
                 $('#otfRightDashLine').attr('x1', cx);
 
-                otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -489,7 +491,7 @@ $(function(){
                 $('#otfRightBottomCircle').attr('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
 
-                otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -501,7 +503,7 @@ $(function(){
                 $('#otfRightBottomCircle').attr('cx', cx);
                 $('#otfRightDashLine').attr('x2', cx);
 
-                otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE);
+                otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -523,8 +525,8 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cxBottom);
                 $('#otfRightDashLine').attr('x1', cxTop);
 
-                otfOption.transferMiddle2 = Math.round(cxTop/OTF_MUL_VALUE);
-                otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE);
+                otfOption.transferMiddle2 = Math.round(cxTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -541,8 +543,8 @@ $(function(){
 
                 $('#otfRightDashLine').attr('x2', cxBottom);
                 $('#otfRightDashLine').attr('x1', cxTop);
-                otfOption.transferMiddle2 = Math.round(cxTop/OTF_MUL_VALUE);
-                otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE);
+                otfOption.transferMiddle2 = Math.round(cxTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -573,10 +575,10 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cxRightBottom);
                 $('#otfRightDashLine').attr('x1', cxRightTop);
 
-                otfOption.transferStart = Math.round(cxLeftBottom/OTF_MUL_VALUE);
-                otfOption.transferMiddle1 = Math.round(cxLeftTop/OTF_MUL_VALUE);
-                otfOption.transferMiddle2 = Math.round(cxRightTop/OTF_MUL_VALUE);
-                otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE);
+                otfOption.transferStart = Math.round(cxLeftBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferMiddle1 = Math.round(cxLeftTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferMiddle2 = Math.round(cxRightTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -603,10 +605,10 @@ $(function(){
                 $('#otfRightDashLine').attr('x2', cxRightBottom);
                 $('#otfRightDashLine').attr('x1', cxRightTop);
 
-                otfOption.transferStart = Math.round(cxLeftBottom/OTF_MUL_VALUE);
-                otfOption.transferMiddle1 = Math.round(cxLeftTop/OTF_MUL_VALUE);
-                otfOption.transferMiddle2 = Math.round(cxRightTop/OTF_MUL_VALUE);
-                otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE);
+                otfOption.transferStart = Math.round(cxLeftBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferMiddle1 = Math.round(cxLeftTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferMiddle2 = Math.round(cxRightTop/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
+                otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
                 socket.emit('otfEvent', otfOption);
@@ -617,7 +619,7 @@ $(function(){
     });
 
 
-    $(window).on('mouseup', function(event){
+    $(window).off('mouseup').on('mouseup', function(event){
         if(isLeftTopCircle || isLeftBottomCircle || isLeftDashLine ||
             isRightTopCircle || isRightBottomCircle || isRightDashLine ||
             isOtfTopLine){
@@ -639,47 +641,44 @@ $(function(){
     });
 
 
-    $('#otfLeftTopCircle').on('mousedown',function(event){
+    $('#otfLeftTopCircle').off('mousedown').on('mousedown',function(event){
         isLeftTopCircle = true;
         beforeX = event.pageX;
     });
 
-    $('#otfLeftBottomCircle').on('mousedown',function(event){
+    $('#otfLeftBottomCircle').off('mousedown').on('mousedown',function(event){
         isLeftBottomCircle = true;
         beforeX = event.pageX;
     });
 
-    $('#otfLeftDashLine').on('mousedown',function(event){
+    $('#otfLeftDashLine').off('mousedown').on('mousedown',function(event){
         isLeftDashLine = true;
         beforeX = event.pageX;
     });
 
     // ~ RightEvent
 
-    $('#otfRightTopCircle').on('mousedown',function(event){
+    $('#otfRightTopCircle').off('mousedown').on('mousedown',function(event){
         isRightTopCircle = true;
         beforeX = event.pageX;
     });
 
 
-    $('#otfRightBottomCircle').on('mousedown',function(event){
+    $('#otfRightBottomCircle').off('mousedown').on('mousedown',function(event){
         isRightBottomCircle = true;
         beforeX = event.pageX;
     });
 
 
-    $('#otfRightDashLine').on('mousedown',function(event){
+    $('#otfRightDashLine').off('mousedown').on('mousedown',function(event){
         isRightDashLine = true;
         beforeX = event.pageX;
     });
 
     // ~ TopLine
 
-    $('#otfTopLine').on('mousedown', function(event){
+    $('#otfTopLine').off('mousedown').on('mousedown', function(event){
         isOtfTopLine = true;
         beforeX = event.pageX;
     });
-
-    
-
-});
+};
