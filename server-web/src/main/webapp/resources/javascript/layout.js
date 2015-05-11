@@ -116,70 +116,25 @@ LayoutFunction.prototype.typeChangeEventListener = function(){
         return;
     }
 
-    if(renderingType == 1) {
-        var windowHeight = $(window).height(),
-            height = windowHeight - 250;
+    var windowHeight = $(window).height()-4;
 
-        var windowWidth = $(window).width(),
-            navWidth = $('#navigation').width(),
-            width = windowWidth - navWidth - 4;
+    var windowWidth = $(window).width(),
+        navWidth = $('#navigation').width(),
+        width = windowWidth - navWidth - 4;
 
-        $('.volumeRenderingMpr').hide();
-        $('.volumeRenderingOTF').show().width(width - 20);
-        $('.volumeRenderingOTF>svg').attr('width', width - 20);
+    $('.volumeRenderingMpr').hide();
+    $('.volumeRenderingOTF').hide();
 
-        $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(height);
-        $('#volumeRendering>canvas').attr('width', height).attr('height', height);
-        $('#renderingSizeBtn').removeClass('renderingExpandBtn').addClass('renderingReduceBtn');
-    }else{
-        var windowHeight = $(window).height();
-
-        var windowWidth = $(window).width(),
-            navWidth = $('#navigation').width(),
-            width = windowWidth - navWidth - 4;
-
-        $('.volumeRenderingMpr').hide();
-        $('.volumeRenderingOTF').hide();
-
-        $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(windowHeight);
-        $('#volumeRendering>canvas').attr('width', windowHeight).attr('height', windowHeight);
-        $('#renderingSizeBtn').removeClass('renderingExpandBtn').addClass('renderingReduceBtn');
-    }
+    $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(windowHeight);
+    $('#volumeRendering>canvas').attr('width', windowHeight).attr('height', windowHeight);
+    $('#renderingSizeBtn').removeClass('renderingExpandBtn').addClass('renderingReduceBtn');
 };
 
 LayoutFunction.prototype.expandEventListener = function(){
     if(this.isRenderingBig) {
         this.isRenderingBig = false;
 
-        if(renderingType == 1) {
-            var windowHeight = $(window).height(),
-                height = windowHeight - 250;
-
-            var windowWidth = $(window).width(),
-                navWidth = $('#navigation').width(),
-                width = windowWidth - navWidth - 4;
-
-            $('.volumeRenderingMpr').hide();
-            $('.volumeRenderingOTF').show().width(width - 20);
-            $('.volumeRenderingOTF>svg').attr('width', width - 20);
-
-            $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(height);
-            $('#volumeRendering>canvas').attr('width', height).attr('height', height);
-            $('#renderingSizeBtn').removeClass('renderingExpandBtn').addClass('renderingReduceBtn');
-        }else{
-            var windowHeight = $(window).height();
-
-            var windowWidth = $(window).width(),
-                navWidth = $('#navigation').width(),
-                width = windowWidth - navWidth - 4;
-
-            $('.volumeRenderingMpr').hide();
-            $('.volumeRenderingOTF').hide();
-
-            $('#volumeRendering').removeClass('volumeRenderingOne').addClass('volumeRenderingBig').width(width).height(windowHeight);
-            $('#volumeRendering>canvas').attr('width', windowHeight).attr('height', windowHeight);
-            $('#renderingSizeBtn').removeClass('renderingExpandBtn').addClass('renderingReduceBtn');
-        }
+        this.typeChangeEventListener();
 
     }else{
         this.isRenderingBig = true;
