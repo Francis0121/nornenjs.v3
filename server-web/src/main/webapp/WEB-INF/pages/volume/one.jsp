@@ -435,6 +435,11 @@
 
             $('#otfBtn').hide();
             $('#qualityBtn').hide();
+
+            if($('#otfBtn').hasClass('otfBtnActive')){
+                $('#otfBtn').addClass('otfBtnNoneActive').removeClass('otfBtnActive');
+                $('#volumeRenderingOTF').hide();
+            }
         });
 
         document.getElementById('otfBtn').addEventListener('click', function(){
