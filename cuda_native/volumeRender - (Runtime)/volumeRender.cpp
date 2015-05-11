@@ -80,9 +80,9 @@ const char *sReference[] =
 
 const char *sSDKsample = "CUDA 3D Volume Render";
 
-const char *volumeFilename = "abdomen1.den";
-cudaExtent volumeSize = make_cudaExtent(512, 512, 300);
-cudaExtent volumeSize_block = make_cudaExtent(512/4, 512/4, 300/4);
+const char *volumeFilename = "Bighead.den";
+cudaExtent volumeSize = make_cudaExtent(256, 256, 225);
+cudaExtent volumeSize_block = make_cudaExtent(256/4, 256/4, 225/4);
 typedef unsigned char VolumeType;
 
 //char *volumeFilename = "mrt16_angio.raw";
@@ -595,7 +595,7 @@ void *loadRawFile(char *filename, size_t size)
     void *data = malloc(size);
     size_t read = fread(data, 1, size, fp);
     fclose(fp);
-
+	
     printf("Read '%s', %d bytes\n", filename, read);
 
     return data;

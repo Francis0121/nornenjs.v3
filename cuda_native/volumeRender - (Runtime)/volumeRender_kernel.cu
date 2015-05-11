@@ -172,6 +172,7 @@ d_render(uint *d_output, uint imageW, uint imageH,
     float u = (x / (float) imageW)*2.0f-1.0f;
     float v = (y / (float) imageH)*2.0f-1.0f;
 
+		
     // calculate eye ray in world space
     Ray eyeRay;
     eyeRay.o = make_float3(mul(c_invViewMatrix, make_float4(0.0f, 0.0f, 0.0f, 1.0f)));
@@ -193,13 +194,15 @@ d_render(uint *d_output, uint imageW, uint imageH,
     float t = tnear;
     float3 pos = eyeRay.o + eyeRay.d * tnear;
     float3 step = eyeRay.d*tstep;
+	
 	float max = 0.0f; 
+	float3 lV = eyeRay.d;
     for (float i=0; i<maxSteps; i++)
     {
         // read from 3D texture
         // remap position to [0, 1] coordinates
 
-	    //float block_den = tex3D(tex_block, (pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f))*65535;
+	    float block_den = (tex3D(tex_block, (pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f)));
 		//float3 advanced = {0.0f,0.0f.0.0f};
 		//uint density = __float2uint_rn(block_den*256);
 		/*temp.w = block_den;
@@ -209,73 +212,46 @@ d_render(uint *d_output, uint imageW, uint imageH,
 		uint density =  ((unsigned int)(temp.w*255)<<24) | ((unsigned int)(temp.z*255)<<16) | ((unsigned int)(temp.y*255)<<8) | (unsigned int)(temp.x*255);*/
 	   //	if(block_den >= max) 
        //				max = block_den;*/
-	   //if((int)block_den < 65) { //빈공간 도약 - PALLET_START~PALLET_END까지만 그리기 때문에
-		  // int3 nowPos= {(pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f)};
-		  // int3 advpos;
-		  // do{
-				//pos += (step*0.5);
+	   float3 advanced  = {0.0f, 0.0f, 0.0f};
+	   if(block_den < 65/254) { //빈공간 도약 - PALLET_START~PALLET_END까지만 그리기 때문에
 			
-		  // }
-		
-	    //
-	 //   }
-		//else{
+	   }
+	   else{
 			float sample = tex3D(tex, pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
 			float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5),  pos.z*0.5f+0.5f+(step.z*0.5));
-	       // float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f+(step.z*0.5));
-			
+	   
 			// lookup in transfer function texture
 			//float4 col = tex1D(transferTex, sample);
 			float4 col = tex3D(tex_TF2d, sample,sample_next,0);
-			
-			//float4 col = tex1D(transferTex, (sample-transferOffset)*transferScale);
-			//float4 col={0.0};
-			//float diff;
-			//if(sample<=sample_next){
-				// diff=sample_next-sample;
-				// float4 col= (tex1D(transferTex1, (sample_next-transferOffset)*transferScale) - tex1D(transferTex1, (sample-transferOffset)*transferScale)) / diff;
-				
-			//}
-			//else if(sample>sample_next){
-			//	diff=sample-sample_next;
-			///	col= (tex1D(transferTex1, (sample-transferOffset)*transferScale) - tex1D(transferTex1, (sample_next-transferOffset)*transferScale)) / diff;
-			//}
-			//float4 col = tex3D(transferTex1,sample,sample_next,0);
+		
 
+			float3 nV = {0.0, 0.0, 0.0};
+		
+			float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+			float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
 
-			//float3 nV = {0.0, 0.0, 0.0};
-			//float3 lV = {0.0, 0.0, 0.0};
+			float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
+			float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
 
-			//lV.x = eyeRay.d.x;
-			//lV.y = eyeRay.d.y;
-			//lV.z = eyeRay.d.z;
-			//
-			//float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-			//float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+			float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
+			float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
 
-			//float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
-			//float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
+			nV.x = (x_plus - x_minus)/2.0f;
+			nV.y = (y_plus - y_minus)/2.0f;
+			nV.z = (z_plus - z_minus)/2.0f;
 
-			//float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
-			//float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
+			//nV = cudaNormalize(nV);
+			float NL =dot(nV,lV);
 
-			//nV.x = (x_plus - x_minus)/2.0f;
-			//nV.y = (y_plus - y_minus)/2.0f;
-			//nV.z = (z_plus - z_minus)/2.0f;
+			if(NL < 0.0f) NL = 0.0f;
+			float localShading = 0.3 + 0.7*NL;
+			col*=localShading;
 
-			////nV = cudaNormalize(nV);
-
-			//float NL = 0.0f;
-			//NL = lV.x*nV.x + lV.y*nV.y + lV.z*nV.z;
-
-			//if(NL < 0.0f) NL = 0.0f;
-			//float localShading = 0.2 + 0.8*NL;
-			//
-			//col*=localShading;
 			// pre-multiply alpha
 			col.x *= col.w;
 			col.y *= col.w;
 			col.z *= col.w;
+
 			// "over" operator for front-to-back blending
 			sum = sum + col*(1.0f - sum.w);
 
@@ -288,7 +264,7 @@ d_render(uint *d_output, uint imageW, uint imageH,
 			if (t > tfar) break;
 
 			pos += (step*0.5);
-		//}
+		}
 	}
 	/*sum.x = max;
 	sum.y = max;
@@ -325,10 +301,19 @@ void* make_blockVolume(void* image, cudaExtent blockSize, cudaExtent volumeSize)
 	makeBlock_kernel<<<Dg, Db>>>(image_p, dest_p, blockSize, volumeSize);
 
 	cudaMemcpy(dest, dest_p, bsize, cudaMemcpyDeviceToHost);
-	/*for(int i=0; i<64*64*47; i++)
+	int max =0;
+	int min =1000000;
+	for(int i=0; i<64*64*47; i++)
 	{
-		printf("%d\n",dest[i]);
-	}*/
+		if(dest[i]>max){
+			max =dest[i];
+		}
+		if(dest[i]<min){
+			min =dest[i];
+		}
+		
+	}
+	printf("min %d  max %d \n",min,max);
 	cudaFree(image_p);
 	cudaFree(dest_p);
 
