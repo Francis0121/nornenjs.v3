@@ -339,6 +339,9 @@ $(function(){
         type : 0
     };
 
+    var OTF_MAX_VALUE = 755;
+    var OTF_MIN_VALUE = 12;
+
     $(window).on('mousemove', function(event){
 
         if(isLeftTopCircle){
@@ -389,7 +392,7 @@ $(function(){
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number($('#otfLeftBottomCircle').attr('cx'))-1;
-                if(cx < 0){
+                if(cx < OTF_MIN_VALUE){
                     return;
                 }
 
@@ -426,7 +429,7 @@ $(function(){
             } else{ // -
                 var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-1;
                 var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))-1;
-                if(cxBottom < 0){
+                if(cxBottom < OTF_MIN_VALUE){
                     return;
                 }
 
@@ -478,7 +481,7 @@ $(function(){
         if(isRightBottomCircle){
             if(event.pageX >= beforeX){ // +
                 var cx = Number($('#otfRightBottomCircle').attr('cx'))+1;
-                if(cx > 768){
+                if(cx > OTF_MAX_VALUE){
                     return;
                 }
 
@@ -508,7 +511,7 @@ $(function(){
             if(event.pageX >= beforeX){ // +
                 var cxTop = Number($('#otfRightTopCircle').attr('cx'))+1;
                 var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))+1;
-                if(cxBottom > 768){
+                if(cxBottom > OTF_MAX_VALUE){
                     return;
                 }
 
@@ -551,7 +554,7 @@ $(function(){
                 var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+1;
                 var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+1;
                 var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))+1;
-                if(cxRightBottom > 768){
+                if(cxRightBottom > OTF_MAX_VALUE){
                     return;
                 }
 
@@ -581,7 +584,7 @@ $(function(){
                 var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))-1;
                 var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))-1;
                 var cxRightBottom = Number($('#otfRightBottomCircle').attr('cx'))-1;
-                if(cxLeftBottom < 0){
+                if(cxLeftBottom < OTF_MIN_VALUE){
                     return;
                 }
 

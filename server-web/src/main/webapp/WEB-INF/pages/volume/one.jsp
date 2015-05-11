@@ -440,8 +440,10 @@
         document.getElementById('otfBtn').addEventListener('click', function(){
             if($('#otfBtn').hasClass('otfBtnActive')){
                 $('#otfBtn').addClass('otfBtnNoneActive').removeClass('otfBtnActive');
+                $('#volumeRenderingOTF').hide();
             }else {
                 $('#otfBtn').addClass('otfBtnActive').removeClass('otfBtnNoneActive');
+                $('#volumeRenderingOTF').show();
             }
         });
 
@@ -617,16 +619,16 @@
         </article>
 
         
-        <article class="volumeRenderingOTF">
+        <article class="volumeRenderingOTF" id="volumeRenderingOTF">
 
-            <svg height="250" width="500">
+            <svg height="250" width="800">
 
                 <!-- Top -->
                 <line x1="240" y1="50" x2="300" y2="50" style="stroke:rgb(243,157,65);stroke-width:10; cursor: pointer;" id="otfTopLine"/>
                 <!-- Left Line -->
                 <line x1="195" y1="150" x2="240" y2="50" style="stroke:rgb(243,157,65);stroke-width:10" id="otfLeftDashLine" class="otfDashLine"/>
                 <!-- Bottom -->
-                <line x1="0" y1="150" x2="768" y2="150" style="stroke:rgb(243,157,65);stroke-width:3" id="otfBottomLine"/>
+                <line x1="9" y1="150" x2="759" y2="150" style="stroke:rgb(243,157,65);stroke-width:3" id="otfBottomLine"/>
                 <!-- Right Line -->
                 <line x1="300" y1="50" x2="360" y2="150" style="stroke:rgb(243,157,65);stroke-width:10" id="otfRightDashLine" class="otfDashLine"/>
 
