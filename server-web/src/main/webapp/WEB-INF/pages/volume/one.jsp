@@ -327,7 +327,7 @@
         });
 
         window.onresize = function() {
-            socket.emit('webPng', { type : 0});
+            socket.emit('webPng', { type : 0, renderingType : renderingType });
         };
 
         var transferScaleXOption = {
@@ -421,6 +421,9 @@
             $('#volumeBtn').addClass('volumeBtnActive').removeClass('volumeBtnNoneActive');
             socket.emit('webPng', { type : 0, renderingType : renderingType});
             layoutFunction.typeChangeEventListener();
+
+            $('#otfBtn').show();
+            $('#qualityBtn').show();
         });
 
         document.getElementById('mipBtn').addEventListener('click', function(){
@@ -429,6 +432,9 @@
             $('#volumeBtn').addClass('volumeBtnNoneActive').removeClass('volumeBtnActive');
             socket.emit('webPng', { type : 0, renderingType : renderingType});
             layoutFunction.typeChangeEventListener();
+
+            $('#otfBtn').hide();
+            $('#qualityBtn').hide();
         });
 
         document.getElementById('otfBtn').addEventListener('click', function(){
@@ -584,6 +590,7 @@
         </article>
         
         <article class="volumeRenderingOne" id="volumeRendering">
+
             <div class="title">
                 <button type="button" id="renderingSizeBtn" class="renderingExpandBtn" title="Size Change">Expand</button>
                 <span>VOLUME</span>

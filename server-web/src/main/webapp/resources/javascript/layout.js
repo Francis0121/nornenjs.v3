@@ -107,18 +107,7 @@ LayoutFunction.prototype.renderingPageResize = function(){
         };
         mprZImg.src = mprZImgUrl;
     }else{
-        var windowHeight = $(window).height(),
-            height = windowHeight - 250;
-
-        var windowWidth = $(window).width(),
-            navWidth = $('#navigation').width(),
-            width = windowWidth - navWidth - 4;
-
-        $('#volumeRendering').width(width).height(height);
-        $('#volumeRendering>canvas').attr('width', height).attr('height', height);
-
-        $('.volumeRenderingOTF').width(width-20);
-        $('.volumeRenderingOTF>svg').attr('width', width-20);
+        this.typeChangeEventListener();
     }
 };
 
