@@ -246,17 +246,28 @@
 
         var wheelTimeout = undefined;
         var wheel = function (event){
+            console.log(scaleOption.positionZ);
+            if(scaleOption.positionZ > 6.0){
+                scaleOption.positionZ = 6.0;
+                return;
+            }
+
+            if(scaleOption.positionZ < 0.0){
+                scaleOption.positionZ = 0.0;
+                return;
+            }
+
             scaleOption.isPng = false;
             scaleOption.positionZ += -(event.wheelDelta/1200);
             scaleOption.renderingType = renderingType;
             socket.emit('wheelScale', scaleOption);
 
             if(wheelTimeout == undefined) {
-                wheelTimeout = setTimeout(wheelTimeFunc, 1000);
+                wheelTimeout = setTimeout(wheelTimeFunc, 500);
             }else{
                 clearTimeout(wheelTimeout);
                 scaleOption.isPng = true;
-                wheelTimeout = setTimeout(wheelTimeFunc, 1000);
+                wheelTimeout = setTimeout(wheelTimeFunc, 500);
             }
         };
 
@@ -272,32 +283,46 @@
 
         // ~ Btn Event
         document.getElementById('tinyScalePlusBtn').addEventListener('click', function(){
-            // TODO ~ Scale 한계값지정
+            if(scaleOption.positionZ <= 0.0){
+                scaleOption.positionZ = 0.0;
+                return;
+            }
             scaleOption.positionZ -= 0.1;
             scaleOption.renderingType = renderingType;
             socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyScaleMinusBtn').addEventListener('click', function(){
-            // TODO ~ Scale 한계값지정
+            if(scaleOption.positionZ >= 6.0){
+                scaleOption.positionZ = 6.0;
+                return;
+            }
             scaleOption.positionZ += 0.1;
             scaleOption.renderingType = renderingType;
             socket.emit('sizeBtn', scaleOption);
         });
 
         document.getElementById('tinyBrightnessPlusBtn').addEventListener('click', function(){
-            // TODO ~ 밝기 한계값지정
-            brightOption.isPng = false;
+            if(brightOption.brightness >= 4.0){
+                brightOption.brightness = 4.0;
+                return;
+            }
+            brightOption.isPng = true;
             brightOption.brightness += 0.1;
             brightOption.renderingType = renderingType;
+            $('#sliderVerticalBrightness').slider('value', brightOption.brightness*100);
             socket.emit('brightBtn', brightOption);
         });
 
         document.getElementById('tinyBrightnessMinusBtn').addEventListener('click', function(){
-            // TODO ~ 밝기 한계값지정
-            brightOption.isPng = false;
+            if(brightOption.brightness <= 0.0){
+                brightOption.brightness = 0.0;
+                return;
+            }
+            brightOption.isPng = true;
             brightOption.brightness -= 0.1;
             brightOption.renderingType = renderingType;
+            $('#sliderVerticalBrightness').slider('value', brightOption.brightness*100);
             socket.emit('brightBtn', brightOption);
         });
 
@@ -313,11 +338,12 @@
 
         document.getElementById('tinyMprXMinusBtn').addEventListener('click', function(){
             if(transferScaleXOption.transferScaleX <= 0.0){
-                transferScaleXOption.transferScaleX = 0;
+                transferScaleXOption.transferScaleX = 0.0;
                 return;
             }
-            transferScaleXOption.isPng = false;
+            transferScaleXOption.isPng = true;
             transferScaleXOption.transferScaleX -= 0.01;
+            $('#sliderVerticalMPRX').slider('value', transferScaleXOption.transferScaleX*100);
             socket.emit('transferScaleXEvent', transferScaleXOption);
         });
 
@@ -326,8 +352,9 @@
                 transferScaleXOption.transferScaleX = 1.0;
                 return;
             }
-            transferScaleXOption.isPng = false;
+            transferScaleXOption.isPng = true;
             transferScaleXOption.transferScaleX += 0.01;
+            $('#sliderVerticalMPRX').slider('value', transferScaleXOption.transferScaleX*100);
             socket.emit('transferScaleXEvent', transferScaleXOption);
         });
 
@@ -340,20 +367,23 @@
 
         document.getElementById('tinyMprYMinusBtn').addEventListener('click', function(){
             if(transferScaleYOption.transferScaleY <= 0.0){
-                transferScaleYOption.transferScaleY = 0;
+                transferScaleYOption.transferScaleY = 0.0;
                 return;
             }
-            transferScaleYOption.isPng = false;
+            transferScaleYOption.isPng = true;
             transferScaleYOption.transferScaleY -= 0.01;
+            $('#sliderVerticalMPRY').slider('value', transferScaleYOption.transferScaleY*100);
             socket.emit('transferScaleYEvent', transferScaleYOption);
         });
 
         document.getElementById('tinyMprYPlusBtn').addEventListener('click', function(){
-            if(transferScaleYOption.transferScaleY == 1.0){
+            if(transferScaleYOption.transferScaleY >= 1.0){
+                transferScaleYOption.transferScaleY = 1.0;
                 return;
             }
-            transferScaleYOption.isPng = false;
+            transferScaleYOption.isPng = true;
             transferScaleYOption.transferScaleY += 0.01;
+            $('#sliderVerticalMPRY').slider('value', transferScaleYOption.transferScaleY*100);
             socket.emit('transferScaleYEvent', transferScaleYOption);
         });
 
@@ -364,20 +394,24 @@
         };
 
         document.getElementById('tinyMprZMinusBtn').addEventListener('click', function(){
-            if(transferScaleZOption.transferScaleZ == 0.0){
+            if(transferScaleZOption.transferScaleZ <= 0.0){
+                transferScaleZOption.transferScaleZ = 0.0;
                 return;
             }
-            transferScaleZOption.isPng = false;
+            transferScaleZOption.isPng = true;
             transferScaleZOption.transferScaleZ -= 0.01;
+            $('#sliderVerticalMPRZ').slider('value', transferScaleZOption.transferScaleZ*100);
             socket.emit('transferScaleZEvent', transferScaleZOption);
         });
 
         document.getElementById('tinyMprZPlusBtn').addEventListener('click', function(){
-            if(transferScaleZOption.transferScaleZ == 1.0){
+            if(transferScaleZOption.transferScaleZ >= 1.0){
+                transferScaleZOption.transferScaleZ = 1.0;
                 return;
             }
-            transferScaleZOption.isPng = false;
+            transferScaleZOption.isPng = true;
             transferScaleZOption.transferScaleZ += 0.01;
+            $('#sliderVerticalMPRZ').slider('value', transferScaleZOption.transferScaleZ*100);
             socket.emit('transferScaleZEvent', transferScaleZOption);
         });
 
@@ -395,47 +429,60 @@
 
 
         $(function() {
-            $( '.sliderVerticalMPR' ).slider({
+            $( '#sliderVerticalMPRX' ).slider({
                 orientation: 'vertical',
                 range: 'min',
                 min: 0,
                 max: 100,
                 value: 50,
                 slide: function( event, ui ) {
-                    var type = $(this).attr('data-type');
-
-                    if(type == 'x'){
-                        transferScaleXOption.isPng = false;
-                        transferScaleXOption.transferScaleX = ui.value/100;
-                        socket.emit('transferScaleXEvent', transferScaleXOption);
-                    }else if(type == 'y'){
-                        transferScaleYOption.isPng = false;
-                        transferScaleYOption.transferScaleY = ui.value/100;
-                        socket.emit('transferScaleYEvent', transferScaleYOption);
-                    }else if(type == 'z'){
-                        transferScaleZOption.isPng = false;
-                        transferScaleZOption.transferScaleZ = ui.value/100;
-                        socket.emit('transferScaleZEvent', transferScaleZOption);
-                    }
+                    transferScaleXOption.isPng = false;
+                    transferScaleXOption.transferScaleX = ui.value/100;
+                    socket.emit('transferScaleXEvent', transferScaleXOption);
                 },
                 stop : function(event, ui) {
-                    var type = $(this).attr('data-type');
-                    if(type == 'x') {
-                        transferScaleXOption.isPng = true;
-                        transferScaleXOption.transferScaleX = ui.value/100;
-                        socket.emit('transferScaleXEvent', transferScaleXOption);
-                        transferScaleXOption.isPng = false;
-                    }else if(type == 'y'){
-                        transferScaleYOption.isPng = true;
-                        transferScaleYOption.transferScaleY = ui.value/100;
-                        socket.emit('transferScaleYEvent', transferScaleYOption);
-                        transferScaleYOption.isPng = false;
-                    }else if(type == 'z'){
-                        transferScaleZOption.isPng = true;
-                        transferScaleZOption.transferScaleZ = ui.value/100;
-                        socket.emit('transferScaleZEvent', transferScaleZOption);
-                        transferScaleZOption.isPng = false;
-                    }
+                    transferScaleXOption.isPng = true;
+                    transferScaleXOption.transferScaleX = ui.value/100;
+                    socket.emit('transferScaleXEvent', transferScaleXOption);
+                    transferScaleXOption.isPng = false;
+                }
+            });
+
+            $( '#sliderVerticalMPRY' ).slider({
+                orientation: 'vertical',
+                range: 'min',
+                min: 0,
+                max: 100,
+                value: 50,
+                slide: function( event, ui ) {
+                    transferScaleYOption.isPng = false;
+                    transferScaleYOption.transferScaleY = ui.value/100;
+                    socket.emit('transferScaleYEvent', transferScaleYOption);
+                },
+                stop : function(event, ui) {
+                    transferScaleYOption.isPng = true;
+                    transferScaleYOption.transferScaleY = ui.value/100;
+                    socket.emit('transferScaleYEvent', transferScaleYOption);
+                    transferScaleYOption.isPng = false;
+                }
+            });
+
+            $( '#sliderVerticalMPRZ' ).slider({
+                orientation: 'vertical',
+                range: 'min',
+                min: 0,
+                max: 100,
+                value: 50,
+                slide: function( event, ui ) {
+                    transferScaleZOption.isPng = false;
+                    transferScaleZOption.transferScaleZ = ui.value/100;
+                    socket.emit('transferScaleZEvent', transferScaleZOption);
+                },
+                stop : function(event, ui) {
+                    transferScaleZOption.isPng = true;
+                    transferScaleZOption.transferScaleZ = ui.value/100;
+                    socket.emit('transferScaleZEvent', transferScaleZOption);
+                    transferScaleZOption.isPng = false;
                 }
             });
 
@@ -483,7 +530,7 @@
                     <button type="button" id="tinyMprXPlusBtn">B+</button>
                     <button type="button" id="tinyMprXMinusBtn">B-</button>
                 </div>
-               <div class="sliderVerticalMPR" style="height:200px;" data-type="x"></div>
+               <div class="sliderVerticalMPR" id="sliderVerticalMPRX" style="height:200px;"></div>
             </div>
         </article>
 
@@ -499,7 +546,7 @@
                     <button type="button" id="tinyMprYPlusBtn">B+</button>
                     <button type="button" id="tinyMprYMinusBtn">B-</button>
                 </div>
-                <div class="sliderVerticalMPR" style="height:200px;" data-type="y"></div>
+                <div class="sliderVerticalMPR" id="sliderVerticalMPRY" style="height:200px;"></div>
             </div>
         </article>
 
@@ -515,7 +562,7 @@
                     <button type="button" id="tinyMprZPlusBtn">B+</button>
                     <button type="button" id="tinyMprZMinusBtn">B-</button>
                 </div>
-                <div class="sliderVerticalMPR" style="height:200px;" data-type="z"></div>
+                <div class="sliderVerticalMPR" id="sliderVerticalMPRZ" style="height:200px;"></div>
             </div>
         </article>
         

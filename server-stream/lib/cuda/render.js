@@ -37,6 +37,7 @@ function iDivUp(a, b) {
     CudaRender.prototype = {
         constructor:CudaRender,
 
+        recordPositionZ : 3.0,
         //Option
         imageWidth : 512,
         imageHeight : 512,
