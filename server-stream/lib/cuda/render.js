@@ -66,16 +66,82 @@ function iDivUp(a, b) {
         d_tf2DtableBuffer : undefined,
         d_invViewMatrix : undefined,
         d_outputBuffer : undefined,
+
+        h_volume : undefined,
+        d_volume : undefined,
+        d_blockvolume : undefined,
+        d_blockBUffer : undefined,
+
         blockSizeX : 32,
         blockSizeY : 32,
+
+        blockVolumeX : undefined,
+        blockVolumeY : undefined,
+        blockVolumeZ : undefined,
 
         init : function(){
             // ~ VolumeLoad & VolumeTexture Binding
             var error = this.cuModule.memVolumeTextureAlloc(this.textureFilePath, this.volumewidth,this.volumeheight, this.volumedepth);
-            logger.debug('[INFO_CUDA] _cuModule.memTextureAlloc', error);
+            this.makeBlockvolume();
 
         },
+        makeBlockvolume : function(){
 
+            this.h_volume = fs.readFileSync(this.textureFilePath);
+            this.d_volume = cu.memAlloc(this.volumewidth * this.volumeheight * this.volumedepth);
+
+            var error = this.d_volume.copyHtoD(this.h_volume);
+
+            this.blockVolumeX= Math.ceil(this.volumewidth/4);
+            this.blockVolumeY= Math.ceil(this.volumeheight/4);
+            this.blockVolumeZ= Math.ceil(this.volumedepth/4);
+
+            this.d_blockvolume = cu.memAlloc(this.blockVolumeX * this.blockVolumeY * this.blockVolumeZ);
+            var error = this.d_blockvolume.memSet(this.blockVolumeX * this.blockVolumeY * this.blockVolumeZ);
+
+            var _cuModule = this.cuModule;
+            var cuFunction = _cuModule.getFunction('block_volume');
+
+            var error = cu.launch(
+                cuFunction, [iDivUp(this.blockVolumeX,32), iDivUp(this.blockVolumeY, 32), 1], [32, 32, 1],
+                [
+                    {
+                        type: 'DevicePtr',
+                        value: this.d_volume.devicePtr
+                    },{
+                        type: 'DevicePtr',
+                        value: this.d_blockvolume.devicePtr
+                    },{
+                        type: 'Uint32',
+                        value: this.volumewidth
+                    },{
+                        type: 'Uint32',
+                        value: this.volumeheight
+                    },{
+                        type: 'Uint32',
+                        value: this.volumedepth
+                    },{
+                        type: 'Uint32',
+                        value: this.blockVolumeX
+                    },{
+                        type: 'Uint32',
+                        value: this.blockVolumeY
+                    },{
+                        type: 'Uint32',
+                        value: this.blockVolumeZ
+                    }
+                ]
+            );
+            this.d_blockBUffer = new Buffer(this.blockVolumeX * this.blockVolumeY * this.blockVolumeZ );
+            this.d_blockvolume.copyDtoH(this.d_blockBUffer, false);
+
+            _cuModule.memBlockTextureAlloc(this.d_blockBUffer, this.blockVolumeX , this.blockVolumeY, this.blockVolumeZ);
+
+            this.d_volume.free();
+            this.d_blockvolume.free();
+
+
+        },
         make2Dtable :function(){
 
             this.d_tf2Dtable = cu.memAlloc(this.transferSize * this.transferSize * 4 * 4);
@@ -243,9 +309,12 @@ function iDivUp(a, b) {
                     },{
                         type: 'Float32',
                         value: this.transferScaleZ
-                    },{
+                    }, {
                         type: 'Uint32',
                         value: this.quality
+                    },{
+                        type: 'Uint32',
+                        value: this.transferStart
                     }
                 ]
             );

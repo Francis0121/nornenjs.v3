@@ -7,6 +7,7 @@ typedef unsigned char uchar;
 typedef unsigned char VolumeType;
 
 texture<VolumeType, 3, cudaReadModeNormalizedFloat> tex;
+texture<VolumeType, 3, cudaReadModeNormalizedFloat> tex_block;
 texture<float4,  1, cudaReadModeElementType> texture_float_1D;
 
 struct Ray
@@ -171,8 +172,8 @@ __global__ void render_kernel_volume(uint *d_output,
 								     float transferScaleX,
 								     float transferScaleY,
 								     float transferScaleZ,
-								     unsigned int quality
-								 ){
+								     unsigned int quality,
+								     unsigned int alpha_start){
 	
 		const int maxSteps = 500;
 		const float tstep = 0.01f;
@@ -204,64 +205,89 @@ __global__ void render_kernel_volume(uint *d_output,
 		float t = tnear;
 		float3 pos = eyeRay.o + eyeRay.d * tnear;
 		float3 step = eyeRay.d*tstep;
-	 
+	 	float3 lV = eyeRay.d;
 		for (float i=0; i<maxSteps; i++){
+				if(quality == 1){
 
-				float sample = tex3D(tex,pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-				float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5),  pos.z*0.5f+0.5f+(step.z*0.5));
+					float block_den = (tex3D(tex_block, (pos.x*0.5f+0.5f), (pos.y*0.5f+0.5f), (pos.z*0.5f+0.5f)));
+					if(block_den < (alpha_start/255)) { //빈공간 도약 - PALLET_START~PALLET_END까지만 그리기 때문에
 
-				float4 col=make_float4(0.0f);
+					}
+					else{
+						float sample = tex3D(tex,pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+						float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5),  pos.z*0.5f+0.5f+(step.z*0.5));
 
-     			col.w = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].w;
-     			col.x = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].x;
-     			col.y = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].y;
-     			col.z = TF2d_k[(256*(int)(sample*256)) + (int)sample_next*256].z;
+						float4 col=make_float4(0.0f);
 
-     			if(quality == 1){
-     			
-					float3 nV = {0.0, 0.0, 0.0};
-					float3 lV = {0.0, 0.0, 0.0};
-	
-					lV.x = eyeRay.d.x;
-					lV.y = eyeRay.d.y;
-					lV.z = eyeRay.d.z;
-	
-					float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-					float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
-	
-					float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
-					float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
-	
-					float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
-					float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
-	
-					nV.x = (x_plus - x_minus)/2.0f;
-					nV.y = (y_plus - y_minus)/2.0f;
-					nV.z = (z_plus - z_minus)/2.0f;
+						col.w = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].w;
+						col.x = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].x;
+						col.y = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].y;
+						col.z = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].z;
 
-					float NL = 0.0f;
-					NL = lV.x*nV.x + lV.y*nV.y + lV.z*nV.z;
-	
-					if(NL < 0.0f) NL = 0.0f;
-					float localShading = 0.2 + 0.8*NL;
-	
-					col *= localShading;
-     			}
-				col.x *= col.w;
-				col.y *= col.w;
-				col.z *= col.w;
-				
-				sum = sum + col*(1.0f - sum.w);
-     
-				if (sum.w > opacityThreshold)
-					break;
-					
-				t += (tstep*0.5);
+						float3 nV = {0.0, 0.0, 0.0};
 
-				if (t > tfar) break;
+						float x_plus = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+						float x_minus = tex3D(tex,pos.x*0.5f+0.5-(step.x*0.5), pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
 
-				pos += (step*0.5);
+						float y_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f +(step.y*0.5), pos.z*0.5f+0.5f);
+						float y_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f-(step.y*0.5),pos.z*0.5f+0.5f);
 
+						float z_plus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f+(step.z*0.5));
+						float z_minus = tex3D(tex, pos.x*0.5f+0.5, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f-(step.z*0.5));
+
+						nV.x = (x_plus - x_minus)/2.0f;
+						nV.y = (y_plus - y_minus)/2.0f;
+						nV.z = (z_plus - z_minus)/2.0f;
+
+						float NL =dot(nV,lV);
+
+						if(NL < 0.0f) NL = 0.0f;
+						float localShading = 0.3 + 0.7*NL;
+
+						col *= localShading;
+
+						col.x *= col.w;
+						col.y *= col.w;
+						col.z *= col.w;
+
+						sum = sum + col*(1.0f - sum.w);
+
+						if (sum.w > opacityThreshold)
+							break;
+
+						t += (tstep*0.5);
+
+						if (t > tfar) break;
+
+						pos += (step*0.5);
+					}
+				}else{
+
+            			float sample = tex3D(tex,pos.x*0.5f+0.5f, pos.y*0.5f+0.5f, pos.z*0.5f+0.5f);
+            			float sample_next = tex3D(tex, pos.x*0.5f+0.5+(step.x*0.5), pos.y*0.5f+0.5f +(step.y*0.5),  pos.z*0.5f+0.5f+(step.z*0.5));
+
+            			float4 col=make_float4(0.0f);
+
+            			col.w = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].w;
+            			col.x = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].x;
+            			col.y = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].y;
+            			col.z = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].z;
+
+						col.x *= col.w;
+            			col.y *= col.w;
+            			col.z *= col.w;
+
+            			sum = sum + col*(1.0f - sum.w);
+
+            			if (sum.w > opacityThreshold)
+            				break;
+
+            			t += (tstep*0.5);
+
+            			if (t > tfar) break;
+
+            			pos += (step*0.5);
+				}
 		}
 		sum *= brightness;
 		sum.w=0.0;
@@ -278,7 +304,8 @@ __global__ void render_kernel_MIP(uint *d_output,
 								  float transferScaleX,
 								  float transferScaleY,
 								  float transferScaleZ,
-								  unsigned int quality){
+								  unsigned int quality,
+                                  float alpha_start){
 	
 		const int maxSteps = 500;
 		const float tstep = 0.01f;
@@ -340,7 +367,8 @@ __global__ void render_kernel_MPR(uint *d_output,
 								  float transferScaleX,
 								  float transferScaleY,
 								  float transferScaleZ,
-								  unsigned int quality){
+								  unsigned int quality,
+								  float alpha_start){
 		const int maxSteps = 500;
 		const float tstep = 0.01f;
 		const float opacityThreshold = 0.95f;
