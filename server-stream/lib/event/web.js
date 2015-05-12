@@ -57,6 +57,7 @@ Web.prototype.pngEventListener = function(){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.type = option.renderingType;
         cudaRender.positionZ = cudaRender.recordPositionZ;
+        cudaRender.quality = option.quality;
         $this.encoding.png(cudaRender, socket, option.type);
     });
 };
@@ -76,6 +77,7 @@ Web.prototype.leftMouseEventListener = function(){
         cudaRender.rotationX = rotationOption.rotationX;
         cudaRender.rotationY = rotationOption.rotationY;
         cudaRender.positionZ = cudaRender.recordPositionZ;
+        cudaRender.quality = rotationOption.quality;
 
         if(rotationOption.isPng) {
             $this.encoding.png(cudaRender, socket, rotationOption.type);
@@ -97,6 +99,7 @@ Web.prototype.rightMouseEventListener = function(){
         cudaRender.positionX = moveOption.positionX;
         cudaRender.positionY = moveOption.positionY;
         cudaRender.positionZ = cudaRender.recordPositionZ;
+        cudaRender.quality = moveOption.quality;
 
         if(moveOption.isPng) {
             $this.encoding.png(cudaRender, socket, moveOption.type);
@@ -116,6 +119,7 @@ Web.prototype.wheelEventListener = function(){
         cudaRender.type = scaleOption.renderingType;
         cudaRender.positionZ = scaleOption.positionZ;
         cudaRender.recordPositionZ = scaleOption.positionZ;
+        cudaRender.quality = scaleOption.quality;
 
         if(scaleOption.isPng) {
             $this.encoding.png(cudaRender, socket, scaleOption.type);
@@ -134,6 +138,7 @@ Web.prototype.sizeBtnEventListener = function(){
         cudaRender.type = scaleOption.renderingType;
         cudaRender.positionZ = scaleOption.positionZ;
         cudaRender.recordPositionZ = scaleOption.positionZ;
+        cudaRender.quality = scaleOption.quality;
 
         $this.encoding.png(cudaRender, socket, scaleOption.type);
     });
@@ -149,6 +154,7 @@ Web.prototype.brightBtnEventListener = function(){
         cudaRender.type = brightOption.renderingType;
         cudaRender.brightness = brightOption.brightness;
         cudaRender.positionZ = cudaRender.recordPositionZ;
+        cudaRender.quality = brightOption.quality;
 
         if(brightOption.isPng) {
             $this.encoding.png(cudaRender, socket, brightOption.type);
@@ -172,6 +178,7 @@ Web.prototype.otfEventListener = function(){
         cudaRender.transferEnd = otfOption.transferEnd;
         cudaRender.transferFlag = otfOption.transferFlag
         cudaRender.positionZ = cudaRender.recordPositionZ;
+        cudaRender.quality = otfOption.quality;
 
         if(otfOption.isPng) {
             $this.encoding.png(cudaRender, socket, otfOption.type);
