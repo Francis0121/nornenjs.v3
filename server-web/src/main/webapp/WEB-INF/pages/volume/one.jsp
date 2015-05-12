@@ -274,11 +274,11 @@
             socket.emit('wheelScale', scaleOption);
 
             if(wheelTimeout == undefined) {
-                wheelTimeout = setTimeout(wheelTimeFunc, 500);
+                wheelTimeout = setTimeout(wheelTimeFunc, 200);
             }else{
                 clearTimeout(wheelTimeout);
                 scaleOption.isPng = true;
-                wheelTimeout = setTimeout(wheelTimeFunc, 500);
+                wheelTimeout = setTimeout(wheelTimeFunc, 200);
             }
         };
 
