@@ -30,6 +30,16 @@ public class MockVolumeServiceImpl implements VolumeService{
     }
 
     @Override
+    public Boolean selectVolumeIsExist(Volume volume) {
+        return null;
+    }
+
+    @Override
+    public void deleteVolumeAndFile(Volume volume) {
+
+    }
+
+    @Override
     public Volume selectOne(Integer pn) {
         return null;
     }

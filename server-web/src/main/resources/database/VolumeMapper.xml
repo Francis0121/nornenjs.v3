@@ -109,5 +109,16 @@
         LIMIT #{pagination.itemSeqBegin}, #{pagination.numItemsPerPage}
     </select>
     
-    
+
+    <select id="selectVolumeIsExist" parameterType="Volume" resultType="Integer">
+        SELECT
+          COUNT(*)
+        FROM
+          `volume`
+        WHERE
+          `username` = #{username}
+        AND
+          `pn` = #{pn}
+    </select>
+
 </mapper>

@@ -52,8 +52,9 @@ public class VolumeController {
     }
     
     @RequestMapping(value = "/page/{volumePn}", method = RequestMethod.GET)
-    public String volumeUpadatePage(Model model, @PathVariable Integer volumePn){
+    public String volumeUpdatePage(Model model, @PathVariable Integer volumePn){
         model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
+        model.addAttribute("deleteVolume", new Volume(volumePn));
         return "volume/update";
     }
 
@@ -63,6 +64,7 @@ public class VolumeController {
         new VolumeValidator().validate(volume, result);
         if(result.hasErrors()){
             model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
+            model.addAttribute("deleteVolume", new Volume(volumePn));
             return "volume/update";
         }else {
             volumeService.update(volume);
@@ -70,6 +72,35 @@ public class VolumeController {
             return "redirect:/volume/page/" + volumePn;
         }
     }
+
+    @RequestMapping(value="/delete", method = RequestMethod.POST)
+    public String volumeListPage(@ModelAttribute Volume volume, BindingResult result){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        volume.setUsername(user.getUsername());
+        new Validator(){
+            @Override
+            public boolean supports(Class<?> aClass) {
+                return Volume.class.isAssignableFrom(aClass);
+            }
+
+            @Override
+            public void validate(Object object, Errors errors) {
+                Volume volume = (Volume) object;
+
+                if(!volumeService.selectVolumeIsExist(volume)){
+                    errors.rejectValue("volumePn", "volume.delete.notExist");
+                }
+            }
+        }.validate(volume, result);
+
+        if(result.hasErrors()){
+            return "redirect:/noPermission";
+        }else{
+            volumeService.deleteVolumeAndFile(volume);
+            return "redirect:/volume/list";
+        }
+    }
+
     
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listPage(Model model, @ModelAttribute VolumeFilter volumeFilter){

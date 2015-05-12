@@ -108,7 +108,20 @@
 .renderingReduceBtn{ background: #000 url("../image/icon/reduce.png") no-repeat 5px 5px; width: 20px; height: 20px; padding: 15px; margin: 0; text-indent: 9999px; border-top: 0px; border-left: 0px; float: left;}
 
 .volumeRenderingOTF{ position: absolute; border: 2px solid #ccc;display: none; background: #fff; z-index: 2; }
-.volumeRenderingOTF>svg{margin: 0 24px;}
+.volumeRenderingOTF>div{ float: left; height: 150px; width: 37.5px;}
+.volumeRenderingOTF>svg{margin: 0 0; float: left;}
+
+.otfNumberChangeWrap{ position: absolute; font-weight: bold;}
+.otfNumberChangeWrap>span{ display: block; width: 20px; text-align: center; font-size: 75%;}
+.otfNumberChangeWrap>a{ display: block; width: 20px; text-align: center; font-size: 100%;}
+.otfNumberChangeWrap>a:focus{ outline: 0; border: 0;}
+
+#leftTopTextWrap{ top: 26px; left:17px; }
+#leftBottomTextWrap{ position: absolute; top: 96px; left:17px; }
+
+#rightTopTextWrap{ position: absolute; top: 26px; right:13px; }
+#rightBottomTextWrap{ position: absolute; top: 96px; right:13px; }
+
 
 /**
 * Volume otf
