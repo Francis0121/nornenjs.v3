@@ -337,7 +337,8 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
         transferEnd : 120,
         transferFlag : 0,
         isPng : false,
-        type : 0
+        type : 0,
+        quality : quality
     };
 
     var OTF_MAX_VALUE = 262;

@@ -50,6 +50,7 @@
     var mprZImgUrl = '${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}';
     var socket;
     var renderingType = 1;
+    var quality = 2;
 
     var bindSocket = function(info){
 
@@ -68,7 +69,7 @@
         socket.emit('init', init);
 
         socket.on('loadCudaMemory', function(){
-            socket.emit('webPng', { type : 0, renderingType : renderingType} );
+            socket.emit('webPng', { type : 0, renderingType : renderingType, quality : quality} );
         });
 
         /**
@@ -123,7 +124,8 @@
             beforeX : 0,
             beforeY : 0,
             count : 0,
-            type : 0
+            type : 0,
+            quality : quality
         };
 
         var right = {
@@ -131,32 +133,37 @@
             beforeX : 0,
             beforeY : 0,
             count : 0,
-            type : 0
+            type : 0,
+            quality : quality
         };
 
         var rotationOption = {
             rotationX : 0,
             rotationY : 0,
             isPng : false,
-            type : 0
+            type : 0,
+            quality : quality
         };
 
         var moveOption = {
             positionX : 0,
             positionY : 0,
             isPng : false,
-            type : 0
+            type : 0,
+            quality : quality
         };
 
         var scaleOption = {
             positionZ : 3.0,
-            type : 0
+            type : 0,
+            quality : quality
         };
 
         var brightOption = {
             isPng : false,
             brightness : 2.0,
-            type : 0
+            type : 0,
+            quality : quality
         };
 
 
@@ -195,6 +202,7 @@
                         rotationOption.rotationY += (event.pageY - left.beforeY)/3.0;
                         rotationOption.isPng = false;
                         rotationOption.renderingType = renderingType;
+                        rotationOption.quality = quality;
 
                         left.beforeX = event.pageX;
                         left.beforeY = event.pageY;
@@ -210,6 +218,7 @@
                         moveOption.positionY -= (event.pageY - right.beforeY)/150.0;
                         moveOption.isPng = false;
                         moveOption.renderingType = renderingType;
+                        moveOption.quality = quality;
 
                         right.beforeX = event.pageX;
                         right.beforeY = event.pageY;
@@ -229,6 +238,7 @@
                     left.isOn = false;
                     rotationOption.isPng = true;
                     rotationOption.renderingType = renderingType;
+                    rotationOption.quality = quality;
                     socket.emit('leftMouse', rotationOption);
                     break;
                 case 1:
@@ -238,6 +248,7 @@
                     right.isOn = false;
                     moveOption.isPng = true;
                     moveOption.renderingType = renderingType;
+                    moveOption.quality = quality;
                     socket.emit('rightMouse', moveOption);
                     break;
             }
@@ -259,6 +270,7 @@
             scaleOption.isPng = false;
             scaleOption.positionZ += -(event.wheelDelta/1200);
             scaleOption.renderingType = renderingType;
+            scaleOption.quality = quality;
             socket.emit('wheelScale', scaleOption);
 
             if(wheelTimeout == undefined) {
@@ -273,6 +285,7 @@
         var wheelTimeFunc = function(){
             scaleOption.isPng = true;
             scaleOption.renderingType = renderingType;
+            scaleOption.quality = quality;
             socket.emit('wheelScale', scaleOption);
             wheelTimeout = undefined;
         };
@@ -288,6 +301,7 @@
             }
             scaleOption.positionZ -= 0.1;
             scaleOption.renderingType = renderingType;
+            scaleOption.quality = quality;
             socket.emit('sizeBtn', scaleOption);
         });
 
@@ -298,6 +312,7 @@
             }
             scaleOption.positionZ += 0.1;
             scaleOption.renderingType = renderingType;
+            scaleOption.quality = quality;
             socket.emit('sizeBtn', scaleOption);
         });
 
@@ -309,6 +324,7 @@
             brightOption.isPng = true;
             brightOption.brightness += 0.1;
             brightOption.renderingType = renderingType;
+            brightOption.quality = quality;
             $('#sliderVerticalBrightness').slider('value', brightOption.brightness*100);
             socket.emit('brightBtn', brightOption);
         });
@@ -321,12 +337,13 @@
             brightOption.isPng = true;
             brightOption.brightness -= 0.1;
             brightOption.renderingType = renderingType;
+            brightOption.quality = quality;
             $('#sliderVerticalBrightness').slider('value', brightOption.brightness*100);
             socket.emit('brightBtn', brightOption);
         });
 
         window.onresize = function() {
-            socket.emit('webPng', { type : 0, renderingType : renderingType });
+            socket.emit('webPng', { type : 0, renderingType : renderingType, quality : quality});
         };
 
         var transferScaleXOption = {
@@ -418,7 +435,7 @@
             renderingType = 1;
             $('#mipBtn').addClass('mipBtnNoneActive').removeClass('mipBtnActive');
             $('#volumeBtn').addClass('volumeBtnActive').removeClass('volumeBtnNoneActive');
-            socket.emit('webPng', { type : 0, renderingType : renderingType});
+            socket.emit('webPng', { type : 0, renderingType : renderingType, quality : quality });
             layoutFunction.typeChangeEventListener();
 
             $('#otfBtn').show();
@@ -429,7 +446,7 @@
             renderingType = 2;
             $('#mipBtn').addClass('mipBtnActive').removeClass('mipBtnNoneActive');
             $('#volumeBtn').addClass('volumeBtnNoneActive').removeClass('volumeBtnActive');
-            socket.emit('webPng', { type : 0, renderingType : renderingType});
+            socket.emit('webPng', { type : 0, renderingType : renderingType, quality : quality});
             layoutFunction.typeChangeEventListener();
 
             $('#otfBtn').hide();
@@ -455,10 +472,12 @@
         document.getElementById('qualityBtn').addEventListener('click', function(){
             if($('#qualityBtn').hasClass('qualityBtnActive')){
                 $('#qualityBtn').addClass('qualityBtnNoneActive').removeClass('qualityBtnActive');
+                quality = 2;
             }else {
                 $('#qualityBtn').addClass('qualityBtnActive').removeClass('qualityBtnNoneActive');
+                quality = 1;
             }
-            //socket.emit('webPng', { type : 0, renderingType : renderingType});
+            socket.emit('webPng', { type : 0, renderingType : renderingType, quality : quality});
         });
 
 
@@ -531,12 +550,14 @@
                     brightOption.isPng = false;
                     brightOption.brightness = ui.value/100;
                     brightOption.renderingType = renderingType;
+                    brightOption.quality = quality;
                     socket.emit('brightBtn', brightOption);
                 },
                 stop : function( event, ui ){
                     brightOption.isPng = true;
                     brightOption.brightness = ui.value/100;
                     brightOption.renderingType = renderingType;
+                    brightOption.quality = quality;
                     socket.emit('brightBtn', brightOption);
                 }
             });
