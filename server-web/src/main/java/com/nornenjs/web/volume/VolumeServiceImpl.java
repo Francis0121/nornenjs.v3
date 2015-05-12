@@ -2,6 +2,7 @@ package com.nornenjs.web.volume;
 
 import com.nornenjs.web.data.Data;
 import com.nornenjs.web.data.DataService;
+import com.nornenjs.web.util.FileUtil;
 import com.nornenjs.web.util.Pagination;
 import com.nornenjs.web.volume.thumbnail.Thumbnail;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
@@ -75,6 +76,33 @@ public class VolumeServiceImpl extends SqlSessionDaoSupport implements VolumeSer
         result.put("data", data);
         result.put("thumbnails", thumbnails);
         return result;
+    }
+
+    @Override
+    public Boolean selectVolumeIsExist(Volume volume) {
+        int count = getSqlSession().selectOne("volume.selectVolumeIsExist", volume);
+        return count > 0;
+    }
+
+    @Override
+    public void deleteVolumeAndFile(Volume volume) {
+
+        // ~ Volume Data Delete
+        Data data = dataService.selectVolumeSavePath(volume.getPn());
+        if(!FileUtil.delFileRecursive(data.getSavePath())){
+            throw new RuntimeException("File not delete");
+        }
+
+        // ~ Thumbnail Data delete
+        List<String> thumbnailPaths = dataService.selectThumbnailSavePath(data.getPn());
+        for(String thumbnailPath : thumbnailPaths){
+            FileUtil.delFileRecursive(thumbnailPath);
+        }
+
+        // ~ Volume Data delete - Cascade thumbnail
+        dataService.delete(data.getPn());
+        // ~ Volume delete
+        delete(volume.getPn());
     }
 
     @Override

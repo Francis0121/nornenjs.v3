@@ -74,6 +74,11 @@
                 <button type="submit" class="orangeButton volumeDataBtn">볼륨 수정</button>
             </div>
         </form:form>
+
+        <form:form commandName="deleteVolume" action="${cp}/volume/delete" method="post">
+            <form:hidden path="pn"/>
+            <button type="submit" class="orangeButton volumeDataBtn">볼륨 삭제</button>
+        </form:form>
         
     </section>
 

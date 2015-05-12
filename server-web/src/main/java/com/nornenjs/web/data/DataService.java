@@ -18,4 +18,8 @@ public interface DataService extends CRUDService<Data, DataFilter>{
     List<Integer> selectVolumeThumbnailPn(Thumbnail thumbnail);
 
     List<String> makeSavePaths(Integer size);
+
+    Data selectVolumeSavePath(Integer pn);
+
+    List<String> selectThumbnailSavePath(Integer pn);
 }

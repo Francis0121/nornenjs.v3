@@ -29,6 +29,10 @@ public class Volume {
     public Volume() {
     }
 
+    public Volume(Integer pn) {
+        this.pn = pn;
+    }
+
     public Volume(String username, Integer volumeDataPn, String title, Integer width, Integer height, Integer depth) {
         this.username = username;
         this.volumeDataPn = volumeDataPn;

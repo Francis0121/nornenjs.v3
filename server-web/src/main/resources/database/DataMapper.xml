@@ -37,5 +37,29 @@
         WHERE
           `dataPn` = #{dataPn}
     </select>
-    
+
+    <select id="selectVolumeSavePath" parameterType="Integer" resultType="Data">
+        SELECT
+          d.`pn`, d.`savePath`
+        FROM
+          `volume` AS `v`,
+          `data` AS `d`
+        WHERE
+          v.`volumeDataPn` = d.`pn`
+        AND
+          v.`pn` = #{pn}
+    </select>
+
+    <select id="selectThumbnailSavePath" parameterType="Integer" resultType="String">
+        SELECT
+          d.`savePath`
+        FROM
+          `data` AS `d`,
+          `thumbnail` AS `t`
+        WHERE
+          d.`pn` = t.`dataPn`
+        AND
+          d.`pn` = #{pn}
+    </select>
+
 </mapper>
