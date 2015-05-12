@@ -176,7 +176,7 @@ LayoutFunction.prototype.expandEventListener = function(){
         };
         mprZImg.src = mprZImgUrl;
     }
-    socket.emit('webPng', {type : 0, renderingType : renderingType});
+    socket.emit('webPng', {type : 0, renderingType : renderingType, quality : quality});
 };
 
 var layoutFunction = new LayoutFunction();
@@ -193,7 +193,7 @@ $(function(){
         }
         layoutFunction.renderingPageResize();
         if(socket != null){
-            socket.emit('webPng', {type : 0, renderingType : renderingType});
+            socket.emit('webPng', {type : 0, renderingType : renderingType, quality : quality});
         }
     });
     
@@ -361,6 +361,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
 
                 socket.emit('otfEvent', otfOption);
             } else{ // -
@@ -375,6 +376,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferMiddle1 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
 
                 socket.emit('otfEvent', otfOption);
             }
@@ -393,6 +395,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number($('#otfLeftBottomCircle').attr('cx'))-1;
@@ -406,6 +409,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferStart = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -429,6 +433,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
@@ -448,6 +453,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferStart = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -465,6 +471,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number($('#otfRightTopCircle').attr('cx'))-1;
@@ -478,6 +485,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferMiddle2 = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -495,6 +503,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cx = Number($('#otfRightBottomCircle').attr('cx'))-1;
@@ -507,6 +516,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferEnd = Math.round(cx/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -530,6 +540,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxTop = Number($('#otfRightTopCircle').attr('cx'))-2;
@@ -548,6 +559,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferEnd = Math.round(cxBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -582,6 +594,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             } else{ // -
                 var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))-2;
@@ -612,6 +625,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
                 otfOption.transferEnd = Math.round(cxRightBottom/OTF_MUL_VALUE)-OTF_OFFSET_VALUE;
                 otfOption.transferFlag = 1;
                 otfOption.isPng = false;
+                otfOption.quality = quality;
                 socket.emit('otfEvent', otfOption);
             }
         }
@@ -637,6 +651,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
 
             otfOption.transferFlag = 2;
             otfOption.isPng = true;
+            otfOption.quality = quality;
             socket.emit('otfEvent', otfOption);
         }
     });
