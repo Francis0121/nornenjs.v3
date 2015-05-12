@@ -8,7 +8,8 @@ var EVENT_MESSAGE = {
         ROTATION : 'rotation',
         TRANSLATION : 'translation',
         PINCHZOOM : 'pinchZoom',
-        PNG : 'androidPng'
+        PNG : 'androidPng',
+        MPR : 'mpr'
     },
     
     WEB : {

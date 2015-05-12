@@ -25,11 +25,13 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
     private static final String TAG = "ImageAdapter";
 
-//    private Context mContext;
 
-    private List<String> titles;
-    private List<Bitmap> thumbnails;
-    private List<Integer> pns;
+    private List<String> titles1;
+    private List<String> titles2;
+    private List<Bitmap> thumbnails1;
+    private List<Bitmap> thumbnails2;
+    private List<Integer> pns1;
+    private List<Integer> pns2;
     private Map<Integer, Integer> pnMap;
 
     private Activity activity;
@@ -40,22 +42,25 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 //        mContext = c;
 //    }
 
-    public ImageAdapter(Activity activity, List<Bitmap> thumbnails, List<String> titles, List<Integer> pns) {
-        super();
-        this.titles = titles;
-        this.thumbnails = thumbnails;
-        this.pns = pns;
+
+    public ImageAdapter(List<String> titles, List<String> titles2, List<Bitmap> thumbnails, List<Bitmap> thumbnails2, List<Integer> pns, List<Integer> pns2, Activity activity) {
+        this.titles1 = titles;
+        this.titles2 = titles2;
+        this.thumbnails1 = thumbnails;
+        this.thumbnails2 = thumbnails2;
+        this.pns1 = pns;
+        this.pns2 = pns2;
         this.activity = activity;
         this.pnMap = new HashMap<Integer, Integer>();
     }
 
     public int getCount() {
-        return thumbnails.size();
+        return thumbnails1.size();//더 짧은 오른쪽을 기준
         //return titles.size();
     }
 
     public Object getItem(int position) {
-        return thumbnails.get(position);
+        return thumbnails1.get(position);
         //return titles.get(position);
     }
 
@@ -82,10 +87,8 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         if(convertView==null)
         {
             view = new ViewHolder();
-            //view.txtViewTitle.setBackground(R.drawable.bold);
             convertView = inflator.inflate(R.layout.activity_grid_row, null);
 
-            //convertView.setLayoutParams(new GridView.LayoutParams(convertView.getLayoutParams().width,convertView.getLayoutParams().height));
             view.metadata = (TextView) convertView.findViewById(R.id.textView1);
             view.imgViewFlag = (ImageView) convertView.findViewById(R.id.imageView1);
             view.metadata2 = (TextView) convertView.findViewById(R.id.textView2_1);
@@ -103,21 +106,20 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view = (ViewHolder) convertView.getTag();
         }
 
-        view.metadata.setText(titles.get(position));
-        //view.imgViewFlag.setImageResource(thumbnails.get(position));
-        view.imgViewFlag.setImageBitmap(thumbnails.get(position));
+        view.metadata.setText(titles1.get(position));
+        view.imgViewFlag.setTag(pns1.get(position));
 
-        view.imgViewFlag.setTag(pns.get(position));
+        if(thumbnails1.size() > position)
+        {
+            view.imgViewFlag.setImageBitmap(thumbnails1.get(position));
+        }
 
-        view.metadata2.setText(titles.get(position));
-        //view.imgViewFlag2.setImageResource(thumbnails.get(position));
-        view.imgViewFlag2.setImageBitmap(thumbnails.get(position));
-        view.imgViewFlag2.setTag(pns.get(position));
+        view.metadata2.setText(titles2.get(position));
+        view.imgViewFlag2.setTag(pns2.get(position));
 
-        //Log.d(TAG, "" + view.imgViewFlag);
-        Log.d(TAG, "ImageView.getId : " + view.imgViewFlag.getId());
-        //pnMap.put(view.imgViewFlag.getId(), pns.get(position));
-
+        if(thumbnails2.size() > position) {
+            view.imgViewFlag2.setImageBitmap(thumbnails2.get(position));
+        }
         convertView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 return true;

@@ -27,10 +27,16 @@ import java.util.Map;
 
 public class JniGLActivity extends Activity {
 
+
     static final String TAG = "JniGLActivity";
     int mode = NONE;
     static final int NONE = 0;
     static final int DRAG = 1;
+    static final int VOLUME = 0;
+    static final int MPRX = 1;
+    static final int MPRY = 2;
+    static final int MPRZ = 3;
+
 
     float oldDist = 1.0f;
     float newDist = 1.0f;
@@ -64,6 +70,7 @@ public class JniGLActivity extends Activity {
 
     public int volumeWidth, volumeHeight, volumeDepth;
     public String volumeSavePath = "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8";//일단 상수 박아줌
+    public int datatype;
 
     public void setMyEventListener(MyEventListener myEventListener) {
         this.myEventListener = myEventListener;
@@ -78,14 +85,16 @@ public class JniGLActivity extends Activity {
         volumeHeight = intent.getIntExtra("height",256);
         volumeDepth = intent.getIntExtra("depth", 255);
         volumeSavePath = intent.getStringExtra("savepath");
+        datatype = intent.getIntExtra("datatype", 0);//0이 기본값
 
-        Log.d(TAG, "JNIActivity : " + volumeWidth + ", " + volumeHeight + ", " + volumeDepth + ", " + volumeSavePath);
+        Log.d("emitTag", "emit JNIActivity : " + datatype);
+
         String host = getString(R.string.host);
         setContentView(R.layout.activity_jni_gl);
-        mGLSurfaceView = new TouchSurfaceView(this, host);
-        setContentView(mGLSurfaceView);
-        mGLSurfaceView.requestFocus();
-        mGLSurfaceView.setFocusableInTouchMode(true);
+        JniGLActivity.this.mGLSurfaceView = new TouchSurfaceView(this, host);
+        setContentView(JniGLActivity.this.mGLSurfaceView);
+        JniGLActivity.this.mGLSurfaceView.requestFocus();
+        JniGLActivity.this.mGLSurfaceView.setFocusableInTouchMode(true);
 
     }
 
@@ -104,7 +113,8 @@ public class JniGLActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d("bmp", "onPause");
+        Log.d("bmp", "onDestroy");
+        myEventListener.BackToPreview();
     }
 
     @Override
@@ -279,15 +289,16 @@ class TouchSurfaceView extends GLSurfaceView {
     public TouchSurfaceView(Context context, String host) {
         super(context);
         this.host = host;
-        mContext = context;
-        mActivity = (JniGLActivity) context;
-        mRenderer = new CubeRenderer(mActivity);
-        setRenderer(mRenderer);
+        this.mContext = context;
+        this.mActivity = (JniGLActivity) context;
+        this.mRenderer = new CubeRenderer(this.mActivity, host);
+        Log.d("emitTag","make CubeRenderer");
+        setRenderer(this.mRenderer);
     }
 
     @Override
     public boolean onTrackballEvent(MotionEvent e) {
-        mActivity.nativeOnTrackballEvent(e.getAction(), e.getX(), e.getY());
+        this.mActivity.nativeOnTrackballEvent(e.getAction(), e.getX(), e.getY());
         requestRender();
         return true;
     }
@@ -295,211 +306,244 @@ class TouchSurfaceView extends GLSurfaceView {
     /**
      * Render a cube.
      */
-    private class CubeRenderer implements GLSurfaceView.Renderer, MyEventListener {
 
-        private JniGLActivity mActivity;
-        private byte[] byteArray;
-        private Integer width;
-        private Integer height;
-        private Socket relay;
-        private Socket socket;
+    
+}
+
+class CubeRenderer implements GLSurfaceView.Renderer, MyEventListener {
+
+    private JniGLActivity mActivity;
+    private byte[] byteArray;
+    private Integer width;
+    private Integer height;
+    private Socket relay;
+    private Socket socket;
 
 
+    public void bindSocket(String ipAddress, String port, String deviceNumber){
+        try {
+            Log.d("emitTag", CubeRenderer.this.toString());
+            socket = IO.socket("http://"+ipAddress+":"+port);
 
-        public void bindSocket(String ipAddress, String port, String deviceNumber){
-            try {
-                socket = IO.socket("http://"+ipAddress+":"+port);
+            JSONObject json = new JSONObject();
+            Log.d("SurfaceView", "from intent " + CubeRenderer.this.mActivity.volumeWidth + ", " + CubeRenderer.this.mActivity.volumeHeight + ", " + CubeRenderer.this.mActivity.volumeDepth + ", " + CubeRenderer.this.mActivity.volumeSavePath);
+            json.put("savePath", CubeRenderer.this.mActivity.volumeSavePath);
+            json.put("width", CubeRenderer.this.mActivity.volumeWidth);
+            json.put("height", CubeRenderer.this.mActivity.volumeHeight);
+            json.put("depth", CubeRenderer.this.mActivity.volumeDepth);
 
-                JSONObject json = new JSONObject();
-                Log.d("SurfaceView", "from intent "  + mActivity.volumeWidth + ", " + mActivity.volumeHeight + ", " + mActivity.volumeDepth + ", " + mActivity.volumeSavePath);
-                json.put("savePath", mActivity.volumeSavePath);
-                json.put("width", mActivity.volumeWidth);
-                json.put("height", mActivity.volumeHeight);
-                json.put("depth", mActivity.volumeDepth);
 
-//                json.put("savePath", "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8");
-//                json.put("width", 256);
-//                json.put("height", 256);
-//                json.put("depth", 225);
+            socket.emit("join", deviceNumber);
+            socket.emit("init", json);
 
-                socket.emit("join", deviceNumber);
-                socket.emit("init", json);
 
-                socket.on("loadCudaMemory", new Emitter.Listener() { //112.108.40.166
-                    @Override
-                    public void call(Object... args) {
+            socket.on("loadCudaMemory", new Emitter.Listener() { //112.108.40.166
+                @Override
+                public void call(Object... args) {
+
+                    socket.emit("androidPng");
+
+                    if(CubeRenderer.this.mActivity.datatype == CubeRenderer.this.mActivity.VOLUME) {
                         socket.emit("androidPng");
+                        Log.d("emitTag","VOLUME emit");
                     }
-                });
+                    else
+                    {
+                        try
+                        {
+                            JSONObject json2 = new JSONObject();
+                            json2.put("mprType", mActivity.datatype);
+                            socket.emit("mpr", json2);
 
-                socket.on("stream", new Emitter.Listener() { //112.108.40.166
-                    @Override
-                    public void call(Object... args) {
+                        }catch(JSONException e)
+                        {
 
-                        JSONObject info = (JSONObject) args[0];
-
-                        Log.d("ByteBuffer", info.toString());
-
-                        try {
-                            byteArray = (byte[]) info.get("data");
-                            width = (Integer) info.get("width");
-                            height = (Integer) info.get("height");
-                            //Log.d("ByteBuffer", ""+width+" "+ height+ " " + byteArray.length);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.e("ByteBuffer", e.getMessage(),e);
                         }
 
-                        mActivity.count++;
+                        Log.d("emitTag", "mpr emit..type : " + CubeRenderer.this.mActivity.datatype);
                     }
-                });
 
-                socket.connect();
 
-            } catch (Exception e) {
-                Log.e("socket", e.getMessage(), e);
 
-            }
-        }
+                }
+            });
 
-        public CubeRenderer(JniGLActivity activity) {
-
-            mActivity = activity;
-            Log.d("socket", "connection");
-            // ~ socket connection
-            try {
-                relay = IO.socket(host);
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-
-            relay.emit("getInfo", 0);
-
-            /**
-             * emit connect - response message
-             */
-            relay.on("getInfoClient", new Emitter.Listener() {
-
+            socket.on("stream", new Emitter.Listener() { //112.108.40.166
                 @Override
                 public void call(Object... args) {
 
                     JSONObject info = (JSONObject) args[0];
 
-                    try {
-                        Log.d("socket", "Connection");
-                        if (!info.getBoolean("conn")) {
-                            Log.d("socket", "Connection User is full");
-                            return;
-                        } else {
-                            relay.disconnect();
-                            String ipAddress = info.getString("ipAddress");
-                            String port = info.getString("port");
-                            String deviceNumber = info.getString("deviceNumber");
+                    Log.d("ByteBuffer", info.toString());
 
-                            bindSocket(ipAddress, port, deviceNumber);
-                        }
-                    }catch (Exception e){
-                        Log.e("Socket", e.getMessage(), e);
+                    try {
+                        byteArray = (byte[]) info.get("data");
+                        width = (Integer) info.get("width");
+                        height = (Integer) info.get("height");
+                        //Log.d("ByteBuffer", ""+width+" "+ height+ " " + byteArray.length);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e("ByteBuffer", e.getMessage(),e);
                     }
+
+                    CubeRenderer.this.mActivity.count++;
                 }
             });
 
-            relay.connect();
-            
-            mActivity.setMyEventListener(this);
-        }
-        
-        Bitmap imgPanda;
-        int[] pixels = new int[256*256];
-        //int[] pixels2 = new int[512*512];
+            socket.connect();
 
-        public void onDrawFrame(GL10 gl) {
+        } catch (Exception e) {
+            Log.e("socket", e.getMessage(), e);
 
-            if(byteArray!=null) {
-
-                //Log.d("ByteBuffer", ""+width.intValue()+" "+ height.intValue()+ " " + byteArray.length);
-                //BitmapFactory.Options options = new BitmapFactory.Options();
-                if(imgPanda != null)
-                {
-                    //Log.d("ByteBuffer", "free bitmap");
-                    imgPanda.recycle();
-                    imgPanda = null;
-                }
-
-                imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
-                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
-
-                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
-                mActivity.draw++;
-            }
-            mActivity.nativeDrawIteration(0, 0);
-        }
-
-        public void onSurfaceChanged(GL10 gl, int width, int height) {
-            mActivity.nativeResize(width, height);
-        }
-
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            Log.d("bmp", "onSurfaceCreated");
-            mActivity.nativeInitGL();
-        }
-
-        public int[] convert(byte buf[]) {
-            int intArr[] = new int[buf.length / 4];
-            int offset = 0;
-            for(int i = 0; i < intArr.length; i++) {
-                intArr[i] = (buf[3 + offset] & 0xFF) | ((buf[2 + offset] & 0xFF) << 8) |
-                        ((buf[1 + offset] & 0xFF) << 16) | ((buf[0 + offset] & 0xFF) << 24);
-                offset += 4;
-            }
-            return intArr;
-        }
-
-        @Override
-        public void RotationEvent(float rotationX, float rotationY) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("rotationX", rotationX);
-                jsonObject.put("rotationY", rotationY);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("error", "Make json object");
-            }
-
-            socket.emit("rotation", jsonObject);
-        }
-        @Override
-        public void TranslationEvent(float translationX, float translationY) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("positionX", translationX);
-                jsonObject.put("positionY", translationY);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("error", "Make json object");
-            }
-
-            socket.emit("translation", jsonObject);
-        }
-        @Override
-        public void PinchZoomEvent(float div) {
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put("positionZ", div);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("error", "Make json object");
-            }
-
-            socket.emit("pinchZoom", jsonObject);
         }
     }
-    
-    
+
+    public CubeRenderer(JniGLActivity activity, String host) {
+
+        CubeRenderer.this.mActivity = activity;
+        Log.d("emitTag", "connection");
+        // ~ socket connection
+        try {
+            relay = IO.socket(host);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        Log.d("emitTag", "connection1");
+        relay.emit("getInfo", 0);
+
+        /**
+         * emit connect - response message
+         */
+        Log.d("emitTag", "connection2");
+        relay.on("getInfoClient", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.d("emitTag", "connection3");
+                JSONObject info = (JSONObject) args[0];
+
+                try {
+                    Log.d("emitTag", "Connection");
+                    if (!info.getBoolean("conn")) {
+                        Log.d("emitTag", "Connection User is full");
+                        return;
+                    } else {
+                        relay.disconnect();
+                        relay.off("getInfoClient");
+
+                        String ipAddress = info.getString("ipAddress");
+                        String port = info.getString("port");
+                        String deviceNumber = info.getString("deviceNumber");
+
+                        Log.d("emitTag", "bindSocket() call");
+                        CubeRenderer.this.bindSocket(ipAddress, port, deviceNumber);
+                    }
+                } catch (Exception e) {
+                    Log.e("Socket", e.getMessage(), e);
+                }
+            }
+        });
+
+        relay.connect();
+
+        CubeRenderer.this.mActivity.setMyEventListener(CubeRenderer.this);
+    }
+
+    Bitmap imgPanda;
+    int[] pixels = new int[256*256];
+    //int[] pixels2 = new int[512*512];
+
+    public void onDrawFrame(GL10 gl) {
+
+        if(byteArray!=null) {
+
+            if(imgPanda != null)
+            {
+                imgPanda.recycle();
+                imgPanda = null;
+            }
+
+            imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+            imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
+
+            mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
+            mActivity.draw++;
+        }
+        mActivity.nativeDrawIteration(0, 0);
+    }
+
+    public void onSurfaceChanged(GL10 gl, int width, int height) {
+        mActivity.nativeResize(width, height);
+    }
+
+    public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+        Log.d("bmp", "onSurfaceCreated");
+        mActivity.nativeInitGL();
+    }
+
+    public int[] convert(byte buf[]) {
+        int intArr[] = new int[buf.length / 4];
+        int offset = 0;
+        for(int i = 0; i < intArr.length; i++) {
+            intArr[i] = (buf[3 + offset] & 0xFF) | ((buf[2 + offset] & 0xFF) << 8) |
+                    ((buf[1 + offset] & 0xFF) << 16) | ((buf[0 + offset] & 0xFF) << 24);
+            offset += 4;
+        }
+        return intArr;
+    }
+
+    @Override
+    public void RotationEvent(float rotationX, float rotationY) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("rotationX", rotationX);
+            jsonObject.put("rotationY", rotationY);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("error", "Make json object");
+        }
+
+        socket.emit("rotation", jsonObject);
+    }
+    @Override
+    public void TranslationEvent(float translationX, float translationY) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("positionX", translationX);
+            jsonObject.put("positionY", translationY);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("error", "Make json object");
+        }
+
+        socket.emit("translation", jsonObject);
+    }
+    @Override
+    public void PinchZoomEvent(float div) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("positionZ", div);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("error", "Make json object");
+        }
+
+        socket.emit("pinchZoom", jsonObject);
+    }
+
+    @Override
+    public void BackToPreview() {
+        Log.e("emitTag", "Back to PreViewActivity..");
+        socket.disconnect();
+        socket.off("loadCudaMemory");
+        socket.off("stream");
+        Log.e("emitTag", "socket.disconnect()");
+    }
 }
+
 
     

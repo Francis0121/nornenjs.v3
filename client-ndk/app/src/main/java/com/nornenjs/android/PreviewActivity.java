@@ -82,6 +82,8 @@ public class PreviewActivity extends Activity {
                 intent.putExtra("height", height);
                 intent.putExtra("depth", depth);
                 intent.putExtra("savepath", savepath);
+                Log.d("emitTag", "emit position : " + position);
+                intent.putExtra("datatype", position);
                 startActivity(intent);
             }
         });

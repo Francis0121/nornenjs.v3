@@ -32,14 +32,15 @@ public class VolumeList extends Activity {
 
     private static String TAG="VolumeList";
 
-
     private VolumeFilter volumeFilter;
 
     private ImageAdapter mAdapter;
-    private List<String> titles;
-    //private List<Integer> thumbnails;
-    private List<Bitmap> thumbnails;
-    private List<Integer> pns;
+    private List<String> titles1;
+    private List<String> titles2;
+    private List<Bitmap> thumbnails1;
+    private List<Bitmap> thumbnails2;
+    private List<Integer> pns1;
+    private List<Integer> pns2;
 
     private ListView imagelist;
 
@@ -53,19 +54,20 @@ public class VolumeList extends Activity {
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
-        titles = new ArrayList<String>();
-        thumbnails = new ArrayList<Bitmap>();
-        pns = new ArrayList<Integer>();
+        titles1 = new ArrayList<String>();
+        titles2 = new ArrayList<String>();
+        thumbnails1 = new ArrayList<Bitmap>();
+        thumbnails2 = new ArrayList<Bitmap>();
+        pns1 = new ArrayList<Integer>();
+        pns2 = new ArrayList<Integer>();
 
 //        thumbnails.add((ImageView) findViewById(R.id.imageView1));
 //        thumbnails.add((ImageView) findViewById(R.id.imageView2));
 
         //new PostVolumeTask().execute();
 
-        Log.d(TAG, "thumbnails size : " + thumbnails.size());
-        Log.d(TAG, "titles size : " + +titles.size());
 
-        mAdapter = new ImageAdapter(VolumeList.this , thumbnails, titles, pns);
+        mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, VolumeList.this);
 
         // Set custom adapter to gridview
         imagelist = (ListView) findViewById(R.id.imagelist);
@@ -134,12 +136,24 @@ public class VolumeList extends Activity {
                 for(Volume volume : volumes)
                 {
                     Log.d(TAG, volume.toString());
-                    titles.add(volume.getTitle() + volume.getInputDate());
-                    //thumbnails.add(R.drawable.head);
+
+
+                    if(titles1.size() == titles2.size())
+                    {
+                        titles1.add(volume.getTitle() + volume.getInputDate());
+                        pns1.add(volume.getPn());
+                        Log.d(TAG, "add title1");
+                    }
+                    else if(titles1.size() > titles2.size())
+                    {
+                        titles2.add(volume.getTitle() + volume.getInputDate());
+                        pns2.add(volume.getPn());
+                        Log.d(TAG, "add title2");
+                    }
+
                     Log.d(TAG, "volume.getThumbnailPnList().get(0) : " + volume.getThumbnailPnList().get(0));
                     //thumbnails.add(R.drawable.head);
                     new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0));
-                    pns.add(volume.getPn());
                     Log.d(TAG, "where am i?");
                 }
 
@@ -173,8 +187,19 @@ public class VolumeList extends Activity {
 
         @Override
         protected void onPostExecute(Bitmap bytes) {
-            if(bytes != null)//thumbnails.get(index).setImageBitmap(bytes);//image1.setImageBitmap(bytes);
-                thumbnails.add(bytes);//image1.setImageBitmap(bytes);
+            if(bytes != null)
+            {
+            //thumbnails.get(index).setImageBitmap(bytes);//image1.setImageBitmap(bytes);
+                if(thumbnails1.size() == thumbnails2.size())
+                {
+                    thumbnails1.add(bytes);//image1.setImageBitmap(bytes);
+                }
+                else if(thumbnails1.size() > thumbnails2.size())
+                {
+                    thumbnails2.add(bytes);//image1.setImageBitmap(bytes);
+                }
+                //thumbnails.add(bytes);//image1.setImageBitmap(bytes);
+            }
             else
                 Log.d("one Image", "bitmap is null");
 
