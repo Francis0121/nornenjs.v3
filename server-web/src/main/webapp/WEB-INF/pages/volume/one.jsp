@@ -563,7 +563,7 @@
             });
 
             $('#volumeRenderingOTF').dialog({
-                autoOpen: false,
+                autoOpen: true,
                 resizable : false,
                 width : 350,
                 position: { at: "left bottom"},
@@ -661,25 +661,31 @@
         <div class="volumeRenderingOTF" id="volumeRenderingOTF" title="OTF Table">
 
             <svg height="150" width="275">
+                <g>
+                    <!-- polygon -->
+                    <polygon points="90,40 110,40 130,110 75,110" style="fill:rgb(119,119,119);" id="otfPolygon"/>
+                </g>
 
-                <!-- Top -->
-                <line x1="90" y1="40" x2="110" y2="40" style="stroke:rgb(243,157,65);stroke-width:6; cursor: pointer;" id="otfTopLine"/>
-                <!-- Left Line -->
-                <line x1="75" y1="110" x2="90" y2="40" style="stroke:rgb(243,157,65);stroke-width:6; " id="otfLeftDashLine" class="otfDashLine"/>
-                <!-- Bottom -->
-                <line x1="13" y1="110" x2="265" y2="110" style="stroke:rgb(243,157,65);stroke-width:6; " id="otfBottomLine"/>
-                <!-- Right Line -->
-                <line x1="110" y1="40" x2="130" y2="110" style="stroke:rgb(243,157,65);stroke-width:6; " id="otfRightDashLine" class="otfDashLine"/>
+                <g>
+                    <!-- Top -->
+                    <line x1="90" y1="40" x2="110" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; cursor: pointer;" id="otfTopLine"/>
+                    <!-- Left Line -->
+                    <line x1="75" y1="110" x2="90" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; " id="otfLeftDashLine" class="otfDashLine"/>
+                    <!-- Bottom -->
+                    <line x1="13" y1="110" x2="265" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; " id="otfBottomLine"/>
+                    <!-- Right Line -->
+                    <line x1="110" y1="40" x2="130" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; " id="otfRightDashLine" class="otfDashLine"/>
 
-                <!-- Left Top Circle-->
-                <circle cx="90" cy="40" r="6" fill="rgb(224,72,54)" id="otfLeftTopCircle" class="otfCircle"/>
-                <!-- Left Bottom Circle -->
-                <circle cx="75" cy="110" r="6" fill="rgb(224,72,54)" id="otfLeftBottomCircle" class="otfCircle"/>
+                    <!-- Left Top Circle-->
+                    <circle cx="90" cy="40" r="6" fill="rgb(0,0,0)" id="otfLeftTopCircle" class="otfCircle"/>
+                    <!-- Left Bottom Circle -->
+                    <circle cx="75" cy="110" r="6" fill="rgb(0,0,0)" id="otfLeftBottomCircle" class="otfCircle"/>
 
-                <!-- Right Top Circle-->
-                <circle cx="110" cy="40" r="6" fill="rgb(224,72,54)" id="otfRightTopCircle" class="otfCircle"/>
-                <!-- Right Bottom Circle -->
-                <circle cx="130" cy="110" r="6" fill="rgb(224,72,54)" id="otfRightBottomCircle" class="otfCircle"/>
+                    <!-- Right Top Circle-->
+                    <circle cx="110" cy="40" r="6" fill="rgb(0,0,0)" id="otfRightTopCircle" class="otfCircle"/>
+                    <!-- Right Bottom Circle -->
+                    <circle cx="130" cy="110" r="6" fill="rgb(0,0,0)" id="otfRightBottomCircle" class="otfCircle"/>
+                </g>
             </svg>
 
         </div>

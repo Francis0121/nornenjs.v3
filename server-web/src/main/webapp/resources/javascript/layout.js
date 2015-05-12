@@ -631,6 +631,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
         }
 
         beforeX = event.pageX;
+        polygonResize();
     });
 
 
@@ -654,6 +655,7 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
             otfOption.quality = quality;
             socket.emit('otfEvent', otfOption);
         }
+        polygonResize();
     });
 
 
@@ -697,4 +699,22 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
         isOtfTopLine = true;
         beforeX = event.pageX;
     });
+
 };
+
+function polygonResize(){
+    var points = '';
+    points += $('#otfLeftTopCircle').attr('cx')+',';
+    points += $('#otfLeftTopCircle').attr('cy')+' ';
+
+    points += $('#otfLeftBottomCircle').attr('cx')+',';
+    points += $('#otfLeftBottomCircle').attr('cy')+' ';
+
+    points += $('#otfRightBottomCircle').attr('cx')+',';
+    points += $('#otfRightBottomCircle').attr('cy')+' ';
+
+    points += $('#otfRightTopCircle').attr('cx')+',';
+    points += $('#otfRightTopCircle').attr('cy');
+
+    $('#otfPolygon').attr('points', points);
+}
