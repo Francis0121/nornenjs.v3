@@ -563,7 +563,7 @@
             });
 
             $('#volumeRenderingOTF').dialog({
-                autoOpen: true,
+                autoOpen: false,
                 resizable : false,
                 width : 350,
                 position: { at: "left bottom"},
@@ -660,21 +660,38 @@
         
         <div class="volumeRenderingOTF" id="volumeRenderingOTF" title="OTF Table">
 
+            <div>
+                <div id="leftTopTextWrap" class="otfNumberChangeWrap">
+                    <a href="#" id="leftTopTextPlus" class="changeBtn">+</a>
+                    <span id="leftTopText" class="number">80</span>
+                    <a href="#" id="leftTopTextMinus" class="changeBtn">-</a>
+                </div>
+
+                <div id="leftBottomTextWrap" class="otfNumberChangeWrap">
+                    <a href="#" id="leftBottomTextPlus" class="changeBtn">+</a>
+                    <span id="leftBottomText">65</span>
+                    <a href="#" id="leftBottomTextMinus" class="changeBtn">-</a>
+                </div>
+            </div>
             <svg height="150" width="275">
                 <g>
+                    <line x1="0" y1="40" x2="275" y2="40" style="stroke:rgb(203,203,203);stroke-width:3;" stroke-dasharray="5,5"/>
+                    <line x1="0" y1="110" x2="275" y2="110" style="stroke:rgb(203,203,203);stroke-width:3;" stroke-dasharray="5,5"/>
                     <!-- polygon -->
                     <polygon points="90,40 110,40 130,110 75,110" style="fill:rgb(119,119,119);" id="otfPolygon"/>
                 </g>
 
                 <g>
                     <!-- Top -->
-                    <line x1="90" y1="40" x2="110" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; cursor: pointer;" id="otfTopLine"/>
+                    <line x1="90" y1="40" x2="110" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9; cursor: move;" id="otfTopLine"/>
                     <!-- Left Line -->
-                    <line x1="75" y1="110" x2="90" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; " id="otfLeftDashLine" class="otfDashLine"/>
+                    <line x1="75" y1="110" x2="90" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9;" id="otfLeftDashLine" class="otfDashLine"/>
                     <!-- Bottom -->
-                    <line x1="13" y1="110" x2="265" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; " id="otfBottomLine"/>
+                    <line x1="0" y1="110" x2="265" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9;" id="otfBottomLine"/>
                     <!-- Right Line -->
-                    <line x1="110" y1="40" x2="130" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; " id="otfRightDashLine" class="otfDashLine"/>
+                    <line x1="110" y1="40" x2="130" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9; " id="otfRightDashLine" class="otfDashLine"/>
+
+                    <line x1="10" y1="20" x2="10" y2="123" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9; " id="otfRightDashLine" class="otfDashLine"/>
 
                     <!-- Left Top Circle-->
                     <circle cx="90" cy="40" r="6" fill="rgb(0,0,0)" id="otfLeftTopCircle" class="otfCircle"/>
@@ -687,6 +704,20 @@
                     <circle cx="130" cy="110" r="6" fill="rgb(0,0,0)" id="otfRightBottomCircle" class="otfCircle"/>
                 </g>
             </svg>
+            <div>
+                <div id="rightTopTextWrap" class="otfNumberChangeWrap">
+                    <a href="#" id="rightTopTextPlus" class="changeBtn">+</a>
+                    <span id="rightTopText">100</span>
+                    <a href="#" id="rightTopTextMinus" class="changeBtn">-</a>
+                </div>
+
+                <div id="rightBottomTextWrap" class="otfNumberChangeWrap">
+                    <a href="#" id="rightBottomTextPlus" class="changeBtn">+</a>
+                    <span id="rightBottomText">120</span>
+                    <a href="#" id="rightBottomTextMinus" class="changeBtn">-</a>
+                </div>
+
+            </div>
 
         </div>
         

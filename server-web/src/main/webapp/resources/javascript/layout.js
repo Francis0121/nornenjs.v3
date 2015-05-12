@@ -315,6 +315,11 @@ $(function(){
 
 });
 
+var OTF_MAX_VALUE = 262;
+var OTF_MIN_VALUE = 13;
+var OTF_MUL_VALUE = 1;
+var OTF_OFFSET_VALUE = 10;
+
 LayoutFunction.prototype.otfDialogEventListener = function(){
     // ~ Left OTF EVENT
 
@@ -340,11 +345,6 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
         type : 0,
         quality : quality
     };
-
-    var OTF_MAX_VALUE = 262;
-    var OTF_MIN_VALUE = 13;
-    var OTF_MUL_VALUE = 1;
-    var OTF_OFFSET_VALUE = 10;
 
     $(window).off('mousemove').on('mousemove', function(event){
 
@@ -700,6 +700,174 @@ LayoutFunction.prototype.otfDialogEventListener = function(){
         beforeX = event.pageX;
     });
 
+
+    $('#leftTopTextPlus').off('click').on('click', function(){
+        var leftTopCx = new Number($('#otfLeftTopCircle').attr('cx'));
+        var rightTopCx = new Number($('#otfRightTopCircle').attr('cx'));
+
+        var value = leftTopCx + 1;
+        if(value > rightTopCx){
+            return;
+        }
+
+        $('#otfLeftTopCircle').attr('cx', value);
+        $('#otfTopLine').attr('x1', value);
+        $('#otfLeftDashLine').attr('x2', value);
+
+        otfOption.transferMiddle1 = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+
+        polygonResize();
+    });
+
+    $('#leftTopTextMinus').off('click').on('click', function(){
+        var leftTopCx = new Number($('#otfLeftTopCircle').attr('cx'));
+        var leftBottomCx = new Number($('#otfLeftBottomCircle').attr('cx'));
+
+        var value = leftTopCx - 1;
+        if(value < leftBottomCx){
+            return;
+        }
+
+        $('#otfLeftTopCircle').attr('cx', value);
+        $('#otfTopLine').attr('x1', value);
+        $('#otfLeftDashLine').attr('x2', value);
+
+        otfOption.transferMiddle1 = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+
+        polygonResize();
+    });
+
+    $('#leftBottomTextPlus').off('click').on('click', function(){
+        var leftTopCx = new Number($('#otfLeftTopCircle').attr('cx'));
+        var leftBottomCx = new Number($('#otfLeftBottomCircle').attr('cx'));
+
+        var value = leftBottomCx + 1;
+        if(value > leftTopCx){
+            return;
+        }
+
+        $('#otfLeftBottomCircle').attr('cx', value);
+        $('#otfLeftDashLine').attr('x1', value);
+
+        otfOption.transferStart = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+    });
+
+    $('#leftBottomTextMinus').off('click').on('click', function(){
+        var leftBottomCx = new Number($('#otfLeftBottomCircle').attr('cx'));
+
+        var value = leftBottomCx - 1;
+        if(value < OTF_MIN_VALUE){
+            return;
+        }
+
+        $('#otfLeftBottomCircle').attr('cx', value);
+        $('#otfLeftDashLine').attr('x1', value);
+
+        otfOption.transferStart = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+    });
+
+    $('#rightTopTextPlus').off('click').on('click', function(){
+        var rightTopCx = new Number($('#otfRightTopCircle').attr('cx'));
+        var rightBottomCx = new Number($('#otfRightBottomCircle').attr('cx'));
+
+        var value = rightTopCx + 1;
+        if(value > rightBottomCx){
+            return;
+        }
+
+        $('#otfRightTopCircle').attr('cx', value);
+        $('#otfTopLine').attr('x2', value);
+        $('#otfRightDashLine').attr('x1', value);
+
+        otfOption.transferMiddle2 = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+
+        polygonResize();
+    });
+
+    $('#rightTopTextMinus').off('click').on('click', function(){
+        var leftTopCx = new Number($('#otfLeftTopCircle').attr('cx'));
+        var rightTopCx = new Number($('#otfRightTopCircle').attr('cx'));
+
+        var value = rightTopCx - 1;
+        if(value < leftTopCx){
+            return;
+        }
+
+        $('#otfRightTopCircle').attr('cx', value);
+        $('#otfTopLine').attr('x2', value);
+        $('#otfRightDashLine').attr('x1', value);
+
+        otfOption.transferMiddle2 = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+
+        polygonResize();
+    });
+
+    $('#rightBottomTextPlus').off('click').on('click', function(){
+        var rightBottomCx = new Number($('#otfRightBottomCircle').attr('cx'));
+
+        var value = rightBottomCx + 1;
+        if(value > OTF_MAX_VALUE){
+            return;
+        }
+
+        $('#otfRightBottomCircle').attr('cx', value);
+        $('#otfRightDashLine').attr('x2', value);
+
+        otfOption.transferEnd = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+
+        polygonResize();
+    });
+
+    $('#rightBottomTextMinus').off('click').on('click', function(){
+        var rightTopCx = new Number($('#otfRightTopCircle').attr('cx'));
+        var rightBottomCx = new Number($('#otfRightBottomCircle').attr('cx'));
+
+        var value = rightBottomCx - 1;
+        if(value < rightTopCx){
+            return;
+        }
+
+        $('#otfRightBottomCircle').attr('cx', value);
+        $('#otfRightDashLine').attr('x2', value);
+
+        otfOption.transferEnd = value - OTF_OFFSET_VALUE;
+        otfOption.transferFlag = 2;
+        otfOption.isPng = true;
+        otfOption.quality = quality;
+        socket.emit('otfEvent', otfOption);
+
+        polygonResize();
+    });
+
+
 };
 
 function polygonResize(){
@@ -717,4 +885,9 @@ function polygonResize(){
     points += $('#otfRightTopCircle').attr('cy');
 
     $('#otfPolygon').attr('points', points);
+
+    $('#leftTopText').text($('#otfLeftTopCircle').attr('cx')-OTF_OFFSET_VALUE);
+    $('#leftBottomText').text($('#otfLeftBottomCircle').attr('cx')-OTF_OFFSET_VALUE);
+    $('#rightBottomText').text($('#otfRightBottomCircle').attr('cx')-OTF_OFFSET_VALUE);
+    $('#rightTopText').text($('#otfRightTopCircle').attr('cx')-OTF_OFFSET_VALUE)
 }
