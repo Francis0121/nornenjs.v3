@@ -6,6 +6,16 @@
 
 <script>
 
+    $(document).bind('keydown keyup', function(e) {
+        if(e.which === 116) {
+            return false;
+        }
+        if(e.which === 82 && e.ctrlKey) {
+            return false;
+        }
+    });
+
+
     document.oncontextmenu = function(e){
         var evt = new Object({ keyCode:93 });
         if(event.preventDefault != undefined)
