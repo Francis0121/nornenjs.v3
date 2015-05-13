@@ -336,6 +336,7 @@ function iDivUp(a, b) {
             }
             delete this.c_invViewMatrix;
             this.d_invViewMatrix.free();
+            //this.cuModule.destroyOtfTexRef(); //1차 tf 메모리 관리
         },
 
         destroy : function() {
