@@ -84,6 +84,7 @@
                 android:layout_centerVertical="true"
                 android:hint="password"
                 android:textColor="@android:color/darker_gray"
+                android:password="true"
                 android:ems="10"/>
 
         <TextView

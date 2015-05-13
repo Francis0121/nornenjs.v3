@@ -8,10 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.Adapter;
-import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.*;
 import com.nornenjs.android.dto.ResponseVolume;
 import com.nornenjs.android.dto.Volume;
 import com.nornenjs.android.dto.VolumeFilter;
@@ -41,6 +38,13 @@ public class VolumeList extends Activity {
     private List<Bitmap> thumbnails2;
     private List<Integer> pns1;
     private List<Integer> pns2;
+
+    private List<String> backuptitles1;
+    private List<String> backuptitles2;
+    private List<Bitmap> backupthumbnails1;
+    private List<Bitmap> backupthumbnails2;
+    private List<Integer> backuppns1;
+    private List<Integer> backuppns2;
 
     private ListView imagelist;
 

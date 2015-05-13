@@ -52,8 +52,8 @@ Android.prototype.pngEventListener = function(){
 
     socket.on(EVENT_MESSAGE.ANDROID.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-        //$this.encoding.Androidpng(cudaRender, socket);
-        $this.encoding.Androidjpeg(cudaRender, socket);
+        $this.encoding.Androidpng(cudaRender, socket);
+        //$this.encoding.Androidjpeg(cudaRender, socket);
     });
 };
 
@@ -113,8 +113,8 @@ Android.prototype.volumeMPRListener = function(){
         cudaRender.type = ENUMS.RENDERING_TYPE.MPR;
         cudaRender.mprType = option.mprType;
         cudaRender.transferScaleX = option.transferScaleX;
-        cudaRender.transferScaleX = option.transferScaleY;
-        cudaRender.transferScaleX = option.transferScaleZ;
+        cudaRender.transferScaleY = option.transferScaleY;
+        cudaRender.transferScaleZ = option.transferScaleZ;
         $this.encoding.Androidjpeg(cudaRender, socket);
     });
 

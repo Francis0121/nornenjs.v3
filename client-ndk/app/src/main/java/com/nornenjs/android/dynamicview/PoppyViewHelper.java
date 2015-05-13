@@ -1,6 +1,7 @@
 package com.nornenjs.android.dynamicview;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
@@ -12,6 +13,8 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 
 
 public class PoppyViewHelper {
+
+	private static final String TAG = "PoppyViewHelper";
 
 	public enum PoppyViewPosition {
 		TOP, BOTTOM
@@ -51,6 +54,12 @@ public class PoppyViewHelper {
 	//for searchbar
 		public View createPoppyViewOnListView(int editViewId, int listViewId, int poppyViewResId, OnScrollListener onScrollListener) {
 		editView = (EditText)mActivity.findViewById(editViewId);
+		editView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
+			}
+		});
 		final ListView listView = (ListView)mActivity.findViewById(listViewId);
 
 		if(listView.getHeaderViewsCount() != 0) {
@@ -65,6 +74,7 @@ public class PoppyViewHelper {
 
 		return mPoppyView;
 	}
+
 
 	public View createPoppyViewOnListView(int editViewId,int listViewId, int poppyViewResId) {
 		return createPoppyViewOnListView(editViewId,listViewId, poppyViewResId, null);
