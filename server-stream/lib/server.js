@@ -37,10 +37,14 @@ var redis = require('redis');
  *  it`s only need slave server
  * @constructor
  */
+
+
+
 var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.MAX_CONNECTION_CLIENT = 4;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
+
 
     this.io = socketIo.listen(server);
     this.cudaRenderMap = new HashMap();
@@ -337,8 +341,20 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
                 logger.info('[Socket]        RELAY SERVER CONNECT List    -', relayServer.length == 0 ? 'NONE' : relayServer);
             }else{
                 var deviceNumber = deviceMap.get(socket.id);
+
+                var cudaRender = $this.cudaRenderMap.get(socket.id);
+                //logger.debug('[Socket] DISCONNECT stream server', socket.id,cudaRender);
+                cudaRender.destroy();
+
                 deviceMap.remove(socket.id);
+
+                if(delete cudaRender.instance){
+                    logger.info('[ERROR] DISCONNECT SUCCEED');
+                }else{
+                    logger.info('[ERROR] DISCONNECT FAIL');
+                }
                 logger.info('[Socket] DISCONNECT stream server', deviceNumber);
+                logger.debug('[Socket] DISCONNECT stream server!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
                 if(typeof deviceNumber !== 'undefined') {
                     var launch = function(){
@@ -407,6 +423,7 @@ NornenjsServer.prototype.socketIoCuda = function(){
             var clientId = socket.id;
             var deviceCount = deviceMap.get(socket.id);
             logger.debug('[Stream] Register CUDA module ');
+
             var cudaRender = new CudaRender(
                 ENUMS.RENDERING_TYPE.VOLUME, init.savePath,
                 init.width, init.height, init.depth,

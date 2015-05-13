@@ -6,6 +6,7 @@ var fs = require('fs');
 var constants = require('constants');
 var mat4 = require('./mat/mat4');
 var vec3 = require('./mat/vec3');
+
 function iDivUp(a, b) {
 
     return (a % b != 0) ? (a >> 5 + 1) : (a >> 5);
@@ -98,7 +99,6 @@ function iDivUp(a, b) {
 
             this.d_blockvolume = cu.memAlloc(this.blockVolumeX * this.blockVolumeY * this.blockVolumeZ);
             var error = this.d_blockvolume.memSet(this.blockVolumeX * this.blockVolumeY * this.blockVolumeZ);
-
             var _cuModule = this.cuModule;
             var cuFunction = _cuModule.getFunction('block_volume');
 
@@ -140,7 +140,8 @@ function iDivUp(a, b) {
             this.d_volume.free();
             this.d_blockvolume.free();
 
-
+            delete this.d_blockBUffer;
+            delete this.h_volume;
         },
         make2Dtable :function(){
 
@@ -178,7 +179,6 @@ function iDivUp(a, b) {
                 logger.debug('[INFO_CUDA] TEXTURE memory COPY');
                 var error = this.cuModule.memOTFTextureAlloc(this.transferStart, this.transferMiddle1,this.transferMiddle2, this.transferEnd);
                 //logger.debug('[INFO_CUDA] _cuModule.memOTFTextureAlloc', error);
-
                 this.make2Dtable();
              }
 
@@ -190,7 +190,6 @@ function iDivUp(a, b) {
 
             // ~ View Vector
             this.makeViewVector();
-
             // ~ rendering
             this.render();
 
@@ -257,6 +256,7 @@ function iDivUp(a, b) {
 
             this.d_invViewMatrix = cu.memAlloc(12*4);
             var error = this.d_invViewMatrix.copyHtoD(c_invViewMatrix);
+            delete this.c_invViewMatrix;
             logger.debug('[INFO_CUDA] d_invViewMatrix.copyHtoD', error);
         },
 
@@ -323,17 +323,23 @@ function iDivUp(a, b) {
             // cuMemcpyDtoH
             this.d_outputBuffer = new Buffer(this.imageWidth * this.imageHeight * 4 );
             this.d_output.copyDtoH(this.d_outputBuffer, false);
+
         },
 
-        end : function(){
+        end : function() {
             this.d_output.free();
-            if(this.transferFlag == 1){
+            if (this.transferFlag == 1) {
                 this.d_tf2Dtable.free();
                 logger.debug('[INFO_CUDA] TEXTURE memory FREE');
-            }else{
+            } else {
                 logger.debug('[INFO_CUDA] TEXTURE memory NOT_FREE');
             }
             this.d_invViewMatrix.free();
+        },
+
+        destroy : function() {
+            var _cuModule = this.cuModule;
+            _cuModule.destroyTexRef();
         }
     };
 
