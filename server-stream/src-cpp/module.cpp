@@ -23,11 +23,12 @@ void Module::Initialize(Handle<Object> target) {
   NODE_SET_METHOD(target, "moduleLoad", Module::Load);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "getFunction", Module::GetFunction);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "destroyTexRef", Module::DestroyTexRef);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "destroyOtfTexRef", Module::DestroyOtfTexRef);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memVolumeTextureAlloc", Module::VolumeTextureAlloc);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memOTFTextureAlloc", Module::OTFTextureAlloc);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memBlockTextureAlloc", Module::BlockTextureAlloc);
-}
 
+}
 Handle<Value> Module::New(const Arguments& args) {
   HandleScope scope;
 
@@ -159,9 +160,7 @@ void Module::otfTableTextureLoad(float4 *input_float_1D, unsigned int otf_size, 
        cuTexRefSetFlags(m_cu_tf2Dref, CU_TRSF_READ_AS_INTEGER);
        cuTexRefSetFormat(m_cu_tf2Dref, CU_AD_FORMAT_FLOAT, 4);
        cuTexRefSetArray(m_cu_tf2Dref, pmodule->otf_array, CU_TRSA_OVERRIDE_FORMAT);
-
 }
-
 float4 *Module::getOTFtable(unsigned int tf_start, unsigned int tf_middle1, unsigned int tf_middle2, unsigned int tf_end, unsigned int tf_size){
 
         float4 *otf_table= (float4 *)malloc(sizeof(float4)*tf_size);
@@ -278,6 +277,16 @@ Handle<Value> Module::DestroyTexRef(const Arguments& args) {
 
       cuArrayDestroy(pmodule->cu_volumeArray);
       cuArrayDestroy(pmodule->cu_blockArray);
+      cuArrayDestroy(pmodule->otf_array);
+
+      return scope.Close(result);
+}
+Handle<Value> Module::DestroyOtfTexRef(const Arguments& args) {
+
+      HandleScope scope;
+      Local<Object> result = constructor_template->InstanceTemplate()->NewInstance();
+      Module *pmodule = ObjectWrap::Unwrap<Module>(args.This());
+
       cuArrayDestroy(pmodule->otf_array);
 
       return scope.Close(result);

@@ -4,7 +4,7 @@
 	// nvopencc 4.1 built on 2014-03-13
 
 	//-----------------------------------------------------------
-	// Compiling /tmp/tmpxft_000020fa_00000000-9_volume.cpp3.i (/tmp/ccBI#.Qenl9k)
+	// Compiling /tmp/tmpxft_000051d2_00000000-9_volume.cpp3.i (/tmp/ccBI#.yPFYVt)
 	//-----------------------------------------------------------
 
 	//-----------------------------------------------------------
@@ -17,7 +17,7 @@
 	//-----------------------------------------------------------
 
 	.file	1	"<command-line>"
-	.file	2	"/tmp/tmpxft_000020fa_00000000-8_volume.cudafe2.gpu"
+	.file	2	"/tmp/tmpxft_000051d2_00000000-8_volume.cudafe2.gpu"
 	.file	3	"volume.cu"
 	.file	4	"/usr/lib/gcc/i686-linux-gnu/4.6/include/stddef.h"
 	.file	5	"/usr/local/cuda/bin/..//include/crt/device_runtime.h"
@@ -601,7 +601,7 @@ $Lt_2_9986:
 	mov.f32 	%f145, %f144;
 	tex.3d.v4.u32.f32 {%r33,%r34,%r35,%r36},[tex,{%f141,%f142,%f143,%f145}];
 	mov.s32 	%r37, %r33;
-	.loc	3	229	0
+	.loc	3	226	0
 	mov.f32 	%f146, %f140;
 	mov.f32 	%f147, %f120;
 	mov.f32 	%f148, %f123;
@@ -609,7 +609,7 @@ $Lt_2_9986:
 	mov.f32 	%f150, %f149;
 	tex.3d.v4.u32.f32 {%r38,%r39,%r40,%r41},[tex,{%f146,%f147,%f148,%f150}];
 	mov.s32 	%r42, %r38;
-	.loc	3	230	0
+	.loc	3	227	0
 	mov.f64 	%fd15, 0d3fe0000000000000;	// 0.5
 	mul.f64 	%fd16, %fd1, %fd15;
 	sub.f64 	%fd17, %fd12, %fd16;
@@ -621,7 +621,7 @@ $Lt_2_9986:
 	mov.f32 	%f156, %f155;
 	tex.3d.v4.u32.f32 {%r43,%r44,%r45,%r46},[tex,{%f152,%f153,%f154,%f156}];
 	mov.s32 	%r47, %r43;
-	.loc	3	232	0
+	.loc	3	229	0
 	cvt.rn.f32.f64 	%f157, %fd12;
 	mov.f32 	%f158, %f157;
 	mov.f32 	%f159, %f138;
@@ -630,7 +630,7 @@ $Lt_2_9986:
 	mov.f32 	%f162, %f161;
 	tex.3d.v4.u32.f32 {%r48,%r49,%r50,%r51},[tex,{%f158,%f159,%f160,%f162}];
 	mov.s32 	%r52, %r48;
-	.loc	3	233	0
+	.loc	3	230	0
 	mov.f32 	%f163, %f157;
 	mov.f64 	%fd18, 0d3fe0000000000000;	// 0.5
 	mul.f64 	%fd19, %fd2, %fd18;
@@ -642,7 +642,7 @@ $Lt_2_9986:
 	mov.f32 	%f168, %f167;
 	tex.3d.v4.u32.f32 {%r53,%r54,%r55,%r56},[tex,{%f163,%f165,%f166,%f168}];
 	mov.s32 	%r57, %r53;
-	.loc	3	235	0
+	.loc	3	232	0
 	mov.f32 	%f169, %f157;
 	mov.f32 	%f170, %f120;
 	mov.f32 	%f171, %f139;
@@ -650,7 +650,7 @@ $Lt_2_9986:
 	mov.f32 	%f173, %f172;
 	tex.3d.v4.u32.f32 {%r58,%r59,%r60,%r61},[tex,{%f169,%f170,%f171,%f173}];
 	mov.s32 	%r62, %r58;
-	.loc	3	236	0
+	.loc	3	233	0
 	mov.f32 	%f174, %f157;
 	mov.f32 	%f175, %f120;
 	mov.f64 	%fd21, 0d3fe0000000000000;	// 0.5
@@ -718,30 +718,30 @@ $Lt_2_9986:
 	mul.f32 	%f212, %f208, %f205;
 	.loc	35	899	0
 	mul.f32 	%f213, %f209, %f205;
-	.loc	3	249	0
-	mul.f32 	%f214, %f213, %f210;
+	.loc	3	246	0
+	mul.f32 	%f214, %f210, %f213;
+	.loc	3	247	0
+	mul.f32 	%f215, %f211, %f213;
+	.loc	3	248	0
+	mul.f32 	%f216, %f212, %f213;
 	.loc	3	250	0
-	mul.f32 	%f215, %f213, %f211;
-	.loc	3	251	0
-	mul.f32 	%f216, %f213, %f212;
-	.loc	3	253	0
 	mov.f32 	%f217, 0f3f800000;   	// 1
 	sub.f32 	%f218, %f217, %f111;
 	mad.f32 	%f114, %f214, %f218, %f114;
 	mad.f32 	%f113, %f215, %f218, %f113;
 	mad.f32 	%f112, %f216, %f218, %f112;
 	mad.f32 	%f111, %f213, %f218, %f111;
-	.loc	3	256	0
+	.loc	3	253	0
 	mov.f32 	%f219, 0f3f733333;   	// 0.95
 	setp.gt.f32 	%p7, %f111, %f219;
 	@%p7 bra 	$Lt_2_11010;
-	.loc	3	258	0
+	.loc	3	255	0
 	cvt.f64.f32 	%fd28, %f100;
 	mov.f64 	%fd29, 0d3f747ae140000000;	// 0.005
 	add.f64 	%fd30, %fd28, %fd29;
 	cvt.rn.f32.f64 	%f220, %fd30;
 	mov.f32 	%f100, %f220;
-	.loc	3	260	0
+	.loc	3	257	0
 	setp.lt.f32 	%p8, %f96, %f220;
 	@%p8 bra 	$Lt_2_11010;
 	.loc	35	351	0
@@ -755,7 +755,7 @@ $Lt_2_9986:
 	mad.f32 	%f103, %f109, %f223, %f103;
 	bra.uni 	$Lt_2_9218;
 $Lt_2_9474:
-	.loc	3	266	0
+	.loc	3	263	0
 	mov.f32 	%f224, %f117;
 	mov.f32 	%f225, %f120;
 	mov.f32 	%f226, %f123;
@@ -763,7 +763,7 @@ $Lt_2_9474:
 	mov.f32 	%f228, %f227;
 	tex.3d.v4.u32.f32 {%r84,%r85,%r86,%r87},[tex,{%f224,%f225,%f226,%f228}];
 	mov.s32 	%r88, %r84;
-	.loc	3	267	0
+	.loc	3	264	0
 	mov.f32 	%f229, 0f3f000000;   	// 0.5
 	mul.f32 	%f230, %f101, %f229;
 	cvt.f64.f32 	%fd31, %f230;
@@ -790,7 +790,7 @@ $Lt_2_9474:
 	mov.f32 	%f238, %f237;
 	tex.3d.v4.u32.f32 {%r89,%r90,%r91,%r92},[tex,{%f232,%f234,%f236,%f238}];
 	mov.s32 	%r93, %r89;
-	.loc	3	271	0
+	.loc	3	268	0
 	mov.s32 	%r94, %r93;
 	mov.b32 	%f239, %r94;
 	mov.s32 	%r95, %r88;
@@ -806,7 +806,7 @@ $Lt_2_9474:
 	ld.param.u32 	%r102, [__cudaparm_render_kernel_volume_TF2d_k];
 	add.u32 	%r103, %r102, %r101;
 	ld.global.v4.f32 	{%f243,%f244,%f245,%f246}, [%r103+0];
-	.loc	3	280	0
+	.loc	3	274	0
 	mov.f32 	%f247, 0f3f800000;   	// 1
 	sub.f32 	%f248, %f247, %f111;
 	mul.f32 	%f249, %f243, %f246;
@@ -816,17 +816,17 @@ $Lt_2_9474:
 	mul.f32 	%f251, %f245, %f246;
 	mad.f32 	%f112, %f251, %f248, %f112;
 	mad.f32 	%f111, %f246, %f248, %f111;
-	.loc	3	283	0
+	.loc	3	277	0
 	mov.f32 	%f252, 0f3f733333;   	// 0.95
 	setp.gt.f32 	%p9, %f111, %f252;
 	@%p9 bra 	$Lt_2_11010;
-	.loc	3	285	0
+	.loc	3	279	0
 	cvt.f64.f32 	%fd45, %f100;
 	mov.f64 	%fd46, 0d3f747ae140000000;	// 0.005
 	add.f64 	%fd47, %fd45, %fd46;
 	cvt.rn.f32.f64 	%f253, %fd47;
 	mov.f32 	%f100, %f253;
-	.loc	3	287	0
+	.loc	3	281	0
 	setp.lt.f32 	%p10, %f96, %f253;
 	@%p10 bra 	$Lt_2_11010;
 	.loc	35	351	0
@@ -854,7 +854,7 @@ $Lt_2_258:
 	mul.f32 	%f113, %f259, %f113;
 	.loc	35	898	0
 	mul.f32 	%f112, %f259, %f112;
-	.loc	3	294	0
+	.loc	3	288	0
 	cvt.sat.f32.f32 	%f260, %f114;
 	mov.f32 	%f261, 0f437f0000;   	// 255
 	mul.f32 	%f262, %f260, %f261;
@@ -881,14 +881,14 @@ $Lt_2_258:
 	ld.param.u32 	%r114, [__cudaparm_render_kernel_volume_d_output];
 	.loc	3	176	0
 	ld.param.u32 	%r8, [__cudaparm_render_kernel_volume_imageW];
-	.loc	3	294	0
+	.loc	3	288	0
 	mul.lo.u32 	%r115, %r6, %r8;
 	add.u32 	%r116, %r4, %r115;
 	mul.lo.u32 	%r117, %r116, 4;
 	add.u32 	%r118, %r114, %r117;
 	st.global.u32 	[%r118+0], %r113;
 $LBB32_render_kernel_volume:
-	.loc	3	295	0
+	.loc	3	289	0
 	exit;
 $LDWend_render_kernel_volume:
 	} // render_kernel_volume
@@ -911,7 +911,7 @@ $LDWend_render_kernel_volume:
 	.reg .f32 %f<140>;
 	.reg .f64 %fd<5>;
 	.reg .pred %p<8>;
-	.loc	3	308	0
+	.loc	3	302	0
 $LDWbegin_render_kernel_MIP:
 	mov.u16 	%rh1, %ctaid.x;
 	mov.u16 	%rh2, %ntid.x;
@@ -969,11 +969,11 @@ $Lt_3_5122:
 	ld.global.f32 	%f28, [%r15+44];
 	mov.f32 	%f29, 0f3f800000;    	// 1
 	mad.f32 	%f30, %f28, %f29, %f27;
-	.loc	3	308	0
+	.loc	3	302	0
 	ld.param.u32 	%r7, [__cudaparm_render_kernel_MIP_imageH];
 	.loc	3	51	0
 	cvt.rn.f32.u32 	%f31, %r7;
-	.loc	3	308	0
+	.loc	3	302	0
 	ld.param.u32 	%r8, [__cudaparm_render_kernel_MIP_imageW];
 	.loc	3	51	0
 	cvt.rn.f32.u32 	%f32, %r8;
@@ -1010,7 +1010,7 @@ $Lt_3_5122:
 	mul.f32 	%f61, %f60, %f48;
 	mad.f32 	%f62, %f21, %f49, %f61;
 	mad.f32 	%f63, %f22, %f51, %f62;
-	.loc	3	329	0
+	.loc	3	323	0
 	rcp.approx.f32 	%f64, %f55;
 	mov.f32 	%f65, 0f3f800000;    	// 1
 	sub.f32 	%f66, %f65, %f10;
@@ -1048,13 +1048,13 @@ $Lt_3_5122:
 	@%p2 bra 	$Lt_3_5634;
 	bra.uni 	$LBB10_render_kernel_MIP;
 $Lt_3_5634:
-	.loc	3	336	0
+	.loc	3	330	0
 	mov.f32 	%f97, 0f00000000;    	// 0
 	setp.lt.f32 	%p3, %f95, %f97;
 	mov.f32 	%f98, 0f00000000;    	// 0
 	selp.f32 	%f99, %f98, %f95, %p3;
 	mov.f32 	%f100, %f99;
-	.loc	3	337	0
+	.loc	3	331	0
 	mad.f32 	%f101, %f55, %f99, %f10;
 	mad.f32 	%f102, %f59, %f99, %f20;
 	mad.f32 	%f103, %f63, %f99, %f30;
@@ -1067,8 +1067,8 @@ $Lt_3_5634:
 	mov.f32 	%f110, 0f00000000;   	// 0
 	mov.f32 	%f111, 0f00000000;   	// 0
 $Lt_3_6658:
- //<loop> Loop body line 337, nesting depth: 1, estimated iterations: unknown
-	.loc	3	342	0
+ //<loop> Loop body line 331, nesting depth: 1, estimated iterations: unknown
+	.loc	3	336	0
 	mov.f32 	%f112, 0f3f000000;   	// 0.5
 	mov.f32 	%f113, 0f3f000000;   	// 0.5
 	mad.f32 	%f114, %f113, %f101, %f112;
@@ -1089,12 +1089,12 @@ $Lt_3_6658:
 	mov.b32 	%f126, %r21;
 	setp.ge.f32 	%p4, %f126, %f111;
 	selp.f32 	%f111, %f126, %f111, %p4;
-	.loc	3	346	0
+	.loc	3	340	0
 	cvt.f64.f32 	%fd1, %f100;
 	mov.f64 	%fd2, 0d3f747ae140000000;	// 0.005
 	add.f64 	%fd3, %fd1, %fd2;
 	cvt.rn.f32.f64 	%f100, %fd3;
-	.loc	3	348	0
+	.loc	3	342	0
 	setp.lt.f32 	%p5, %f96, %f100;
 	@%p5 bra 	$Lt_3_258;
 	.loc	35	351	0
@@ -1106,14 +1106,14 @@ $Lt_3_6658:
 	.loc	35	353	0
 	mov.f32 	%f129, 0f3f000000;   	// 0.5
 	mad.f32 	%f103, %f109, %f129, %f103;
-	.loc	3	340	0
+	.loc	3	334	0
 	mov.f32 	%f130, 0f3f800000;   	// 1
 	add.f32 	%f110, %f110, %f130;
 	mov.f32 	%f131, 0f43fa0000;   	// 500
 	setp.lt.f32 	%p6, %f110, %f131;
 	@%p6 bra 	$Lt_3_6658;
 $Lt_3_258:
-	.loc	3	357	0
+	.loc	3	351	0
 	cvt.sat.f32.f32 	%f132, %f111;
 	mov.f32 	%f133, 0f437f0000;   	// 255
 	mul.f32 	%f134, %f132, %f133;
@@ -1130,16 +1130,16 @@ $Lt_3_258:
 	or.b32 	%r28, %r25, %r27;
 	or.b32 	%r29, %r24, %r28;
 	ld.param.u32 	%r30, [__cudaparm_render_kernel_MIP_d_output];
-	.loc	3	308	0
+	.loc	3	302	0
 	ld.param.u32 	%r8, [__cudaparm_render_kernel_MIP_imageW];
-	.loc	3	357	0
+	.loc	3	351	0
 	mul.lo.u32 	%r31, %r6, %r8;
 	add.u32 	%r32, %r4, %r31;
 	mul.lo.u32 	%r33, %r32, 4;
 	add.u32 	%r34, %r30, %r33;
 	st.global.u32 	[%r34+0], %r29;
 $LBB10_render_kernel_MIP:
-	.loc	3	358	0
+	.loc	3	352	0
 	exit;
 $LDWend_render_kernel_MIP:
 	} // render_kernel_MIP
@@ -1161,7 +1161,7 @@ $LDWend_render_kernel_MIP:
 	.reg .u32 %r<36>;
 	.reg .f32 %f<132>;
 	.reg .pred %p<5>;
-	.loc	3	371	0
+	.loc	3	365	0
 $LDWbegin_render_kernel_MPR:
 	mov.u16 	%rh1, %ctaid.x;
 	mov.u16 	%rh2, %ntid.x;
@@ -1219,11 +1219,11 @@ $Lt_4_2818:
 	ld.global.f32 	%f28, [%r15+44];
 	mov.f32 	%f29, 0f3f800000;    	// 1
 	mad.f32 	%f30, %f28, %f29, %f27;
-	.loc	3	371	0
+	.loc	3	365	0
 	ld.param.u32 	%r7, [__cudaparm_render_kernel_MPR_imageH];
 	.loc	3	51	0
 	cvt.rn.f32.u32 	%f31, %r7;
-	.loc	3	371	0
+	.loc	3	365	0
 	ld.param.u32 	%r8, [__cudaparm_render_kernel_MPR_imageW];
 	.loc	3	51	0
 	cvt.rn.f32.u32 	%f32, %r8;
@@ -1260,7 +1260,7 @@ $Lt_4_2818:
 	mul.f32 	%f61, %f60, %f48;
 	mad.f32 	%f62, %f21, %f49, %f61;
 	mad.f32 	%f63, %f22, %f51, %f62;
-	.loc	3	394	0
+	.loc	3	388	0
 	rcp.approx.f32 	%f64, %f55;
 	mov.f32 	%f65, 0f3f800000;    	// 1
 	sub.f32 	%f66, %f65, %f10;
@@ -1298,7 +1298,7 @@ $Lt_4_2818:
 	@%p2 bra 	$Lt_4_3330;
 	bra.uni 	$LBB7_render_kernel_MPR;
 $Lt_4_3330:
-	.loc	3	408	0
+	.loc	3	402	0
 	mov.f32 	%f97, 0f00000000;    	// 0
 	setp.lt.f32 	%p3, %f91, %f97;
 	mov.f32 	%f98, 0f00000000;    	// 0
@@ -1328,7 +1328,7 @@ $Lt_4_3330:
 	mov.f32 	%f122, %f121;
 	tex.3d.v4.u32.f32 {%r16,%r17,%r18,%r19},[tex,{%f106,%f113,%f120,%f122}];
 	mov.s32 	%r20, %r16;
-	.loc	3	414	0
+	.loc	3	408	0
 	mov.s32 	%r21, %r20;
 	mov.b32 	%f123, %r21;
 	cvt.sat.f32.f32 	%f124, %f123;
@@ -1347,16 +1347,16 @@ $Lt_4_3330:
 	or.b32 	%r28, %r25, %r27;
 	or.b32 	%r29, %r24, %r28;
 	ld.param.u32 	%r30, [__cudaparm_render_kernel_MPR_d_output];
-	.loc	3	371	0
+	.loc	3	365	0
 	ld.param.u32 	%r8, [__cudaparm_render_kernel_MPR_imageW];
-	.loc	3	414	0
+	.loc	3	408	0
 	mul.lo.u32 	%r31, %r6, %r8;
 	add.u32 	%r32, %r4, %r31;
 	mul.lo.u32 	%r33, %r32, 4;
 	add.u32 	%r34, %r30, %r33;
 	st.global.u32 	[%r34+0], %r29;
 $LBB7_render_kernel_MPR:
-	.loc	3	415	0
+	.loc	3	409	0
 	exit;
 $LDWend_render_kernel_MPR:
 	} // render_kernel_MPR

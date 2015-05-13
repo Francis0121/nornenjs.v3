@@ -66,6 +66,7 @@ function iDivUp(a, b) {
         d_tf2Dtable : undefined,
         d_tf2DtableBuffer : undefined,
         d_invViewMatrix : undefined,
+        c_invViewMatrix : undefined,
         d_outputBuffer : undefined,
 
         h_volume : undefined,
@@ -190,6 +191,7 @@ function iDivUp(a, b) {
 
             // ~ View Vector
             this.makeViewVector();
+
             // ~ rendering
             this.render();
 
@@ -240,23 +242,22 @@ function iDivUp(a, b) {
                 mat4.translate(model_matrix, model_matrix,vec)
             }
             /*view vector*/
-            var c_invViewMatrix = new Buffer(12*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[0], 0*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[4], 1*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[8], 2*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[12], 3*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[1], 4*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[5], 5*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[9], 6*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[13], 7*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[2], 8*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[6], 9*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[10], 10*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[14], 11*4);
+            this.c_invViewMatrix = new Buffer(12*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[0], 0*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[4], 1*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[8], 2*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[12], 3*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[1], 4*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[5], 5*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[9], 6*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[13], 7*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[2], 8*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[6], 9*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[10], 10*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[14], 11*4);
 
             this.d_invViewMatrix = cu.memAlloc(12*4);
-            var error = this.d_invViewMatrix.copyHtoD(c_invViewMatrix);
-            delete this.c_invViewMatrix;
+            var error = this.d_invViewMatrix.copyHtoD(this.c_invViewMatrix);
             logger.debug('[INFO_CUDA] d_invViewMatrix.copyHtoD', error);
         },
 
@@ -323,7 +324,6 @@ function iDivUp(a, b) {
             // cuMemcpyDtoH
             this.d_outputBuffer = new Buffer(this.imageWidth * this.imageHeight * 4 );
             this.d_output.copyDtoH(this.d_outputBuffer, false);
-
         },
 
         end : function() {
@@ -334,13 +334,15 @@ function iDivUp(a, b) {
             } else {
                 logger.debug('[INFO_CUDA] TEXTURE memory NOT_FREE');
             }
+            delete this.c_invViewMatrix;
             this.d_invViewMatrix.free();
         },
 
         destroy : function() {
             var _cuModule = this.cuModule;
-            _cuModule.destroyTexRef();
+             _cuModule.destroyTexRef();
         }
+
     };
 
     return CudaRender;

@@ -344,18 +344,14 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
 
                 var cudaRender = $this.cudaRenderMap.get(socket.id);
                 //logger.debug('[Socket] DISCONNECT stream server', socket.id,cudaRender);
-                cudaRender.destroy();
+                if(cudaRender != null && cudaRender != undefined) {
+                    logger.info('Confirm --------');
+                    cudaRender.destroy();
+                }
 
                 deviceMap.remove(socket.id);
 
-                if(delete cudaRender.instance){
-                    logger.info('[ERROR] DISCONNECT SUCCEED');
-                }else{
-                    logger.info('[ERROR] DISCONNECT FAIL');
-                }
                 logger.info('[Socket] DISCONNECT stream server', deviceNumber);
-                logger.debug('[Socket] DISCONNECT stream server!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-
                 if(typeof deviceNumber !== 'undefined') {
                     var launch = function(){
                         // Publish client to server

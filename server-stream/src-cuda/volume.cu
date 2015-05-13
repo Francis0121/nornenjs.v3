@@ -219,10 +219,7 @@ __global__ void render_kernel_volume(uint *d_output,
 
 						float4 col=make_float4(0.0f);
 
-						col.w = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].w;
-						col.x = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].x;
-						col.y = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].y;
-						col.z = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].z;
+						col = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255];
 
 						float3 nV = {0.0, 0.0, 0.0};
 
@@ -268,10 +265,7 @@ __global__ void render_kernel_volume(uint *d_output,
 
             			float4 col=make_float4(0.0f);
 
-            			col.w = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].w;
-            			col.x = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].x;
-            			col.y = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].y;
-            			col.z = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255].z;
+            			col = TF2d_k[(256*(int)(sample*255)) + (int)sample_next*255];
 
 						col.x *= col.w;
             			col.y *= col.w;
