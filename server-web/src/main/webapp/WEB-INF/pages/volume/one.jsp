@@ -2,7 +2,7 @@
 <%@ include file="../../layout/header.jspf" %>
 <%@ include file="../../layout/nav.jspf" %>
 
-<script src="http://112.108.40.166:5000/socket.io/socket.io.js"></script>
+<script src="http://112.108.40.19:5000/socket.io/socket.io.js"></script>
 
 <script>
 
@@ -25,7 +25,7 @@
             event.stopPropagation();
     }
 
-    var relay = io.connect('http://112.108.40.166:5000',{ forceNew : true, reconnection : false });
+    var relay = io.connect('http://112.108.40.19:5000',{ forceNew : true, reconnection : false });
 
     var count = 0;
 
@@ -293,11 +293,11 @@
             socket.emit('wheelScale', scaleOption);
 
             if(wheelTimeout == undefined) {
-                wheelTimeout = setTimeout(wheelTimeFunc, 500);
+                wheelTimeout = setTimeout(wheelTimeFunc, 200);
             }else{
                 clearTimeout(wheelTimeout);
                 scaleOption.isPng = true;
-                wheelTimeout = setTimeout(wheelTimeFunc, 500);
+                wheelTimeout = setTimeout(wheelTimeFunc, 200);
             }
         };
 

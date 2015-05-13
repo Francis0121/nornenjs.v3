@@ -23,11 +23,12 @@ void Module::Initialize(Handle<Object> target) {
   NODE_SET_METHOD(target, "moduleLoad", Module::Load);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "getFunction", Module::GetFunction);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "destroyTexRef", Module::DestroyTexRef);
+  NODE_SET_PROTOTYPE_METHOD(constructor_template, "destroyOtfTexRef", Module::DestroyOtfTexRef);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memVolumeTextureAlloc", Module::VolumeTextureAlloc);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memOTFTextureAlloc", Module::OTFTextureAlloc);
   NODE_SET_PROTOTYPE_METHOD(constructor_template, "memBlockTextureAlloc", Module::BlockTextureAlloc);
-}
 
+}
 Handle<Value> Module::New(const Arguments& args) {
   HandleScope scope;
 
@@ -60,7 +61,6 @@ void Module::volumeTextureLoad(unsigned int width, unsigned int height, unsigned
        size_t read = fread(h_data, 1, size, fp);
        fclose(fp);
 
-       CUarray cu_array;
        CUDA_ARRAY3D_DESCRIPTOR desc;
        desc.Format = CU_AD_FORMAT_UNSIGNED_INT8;
        desc.NumChannels = 1;
@@ -69,7 +69,7 @@ void Module::volumeTextureLoad(unsigned int width, unsigned int height, unsigned
        desc.Depth = depth;
        desc.Flags=0;
 
-       cuArray3DCreate(&cu_array, &desc);
+       cuArray3DCreate(&(pmodule->cu_volumeArray), &desc);
 
        CUDA_MEMCPY3D copyParam;
        memset(&copyParam, 0, sizeof(copyParam));
@@ -78,7 +78,7 @@ void Module::volumeTextureLoad(unsigned int width, unsigned int height, unsigned
        copyParam.srcPitch = width * sizeof(unsigned char);
        copyParam.srcHeight = height;
        copyParam.dstMemoryType = CU_MEMORYTYPE_ARRAY;
-       copyParam.dstArray = cu_array;
+       copyParam.dstArray = pmodule->cu_volumeArray;
        copyParam.dstHeight=height;
        copyParam.WidthInBytes = width * sizeof(unsigned char);
        copyParam.Height = height;
@@ -86,22 +86,22 @@ void Module::volumeTextureLoad(unsigned int width, unsigned int height, unsigned
 
        cuMemcpy3D(&copyParam);
 
-       CUtexref cu_texref;
-       cuModuleGetTexRef(&cu_texref, pmodule->m_module, "tex");
-       cuTexRefSetArray(cu_texref, cu_array, CU_TRSA_OVERRIDE_FORMAT);
-       cuTexRefSetAddressMode(cu_texref, 0, CU_TR_ADDRESS_MODE_BORDER);
-       cuTexRefSetAddressMode(cu_texref, 1, CU_TR_ADDRESS_MODE_BORDER);
-       cuTexRefSetFilterMode(cu_texref, CU_TR_FILTER_MODE_LINEAR);
-       cuTexRefSetFlags(cu_texref, CU_TRSF_NORMALIZED_COORDINATES);
-       cuTexRefSetFormat(cu_texref, CU_AD_FORMAT_UNSIGNED_INT8, 1);
+       CUtexref m_cu_volumeref;
+       cuTexRefCreate(&(m_cu_volumeref));
+       cuModuleGetTexRef(&(m_cu_volumeref), pmodule->m_module, "tex");
+       cuTexRefSetArray(m_cu_volumeref, pmodule->cu_volumeArray, CU_TRSA_OVERRIDE_FORMAT);
+       cuTexRefSetAddressMode(m_cu_volumeref, 0, CU_TR_ADDRESS_MODE_BORDER);
+       cuTexRefSetAddressMode(m_cu_volumeref, 1, CU_TR_ADDRESS_MODE_BORDER);
+       cuTexRefSetFilterMode(m_cu_volumeref, CU_TR_FILTER_MODE_LINEAR);
+       cuTexRefSetFlags(m_cu_volumeref, CU_TRSF_NORMALIZED_COORDINATES);
+       cuTexRefSetFormat(m_cu_volumeref, CU_AD_FORMAT_UNSIGNED_INT8, 1);
 
        free(h_data);
 }
-void Module::BlockTextureLoad(char *TF2d, unsigned int width, unsigned int height, unsigned int depth, Module *pmodule){
+void Module::BlockTextureLoad(char *blockVolume, unsigned int width, unsigned int height, unsigned int depth, Module *pmodule){
 
        size_t size = width * height *depth * sizeof(unsigned char);
 
-       CUarray cu_array;
        CUDA_ARRAY3D_DESCRIPTOR desc;
        desc.Format = CU_AD_FORMAT_UNSIGNED_INT8;
        desc.NumChannels = 1;
@@ -110,16 +110,16 @@ void Module::BlockTextureLoad(char *TF2d, unsigned int width, unsigned int heigh
        desc.Depth = depth;
        desc.Flags=0;
 
-       cuArray3DCreate(&cu_array, &desc);
+       cuArray3DCreate(&(pmodule->cu_blockArray), &desc);
 
        CUDA_MEMCPY3D copyParam;
        memset(&copyParam, 0, sizeof(copyParam));
        copyParam.srcMemoryType = CU_MEMORYTYPE_HOST;
-       copyParam.srcHost = TF2d;
+       copyParam.srcHost = blockVolume;
        copyParam.srcPitch = width * sizeof(unsigned char);
        copyParam.srcHeight = height;
        copyParam.dstMemoryType = CU_MEMORYTYPE_ARRAY;
-       copyParam.dstArray = cu_array;
+       copyParam.dstArray = pmodule->cu_blockArray;
        copyParam.dstHeight=height;
        copyParam.WidthInBytes = width * sizeof(unsigned char);
        copyParam.Height = height;
@@ -127,39 +127,40 @@ void Module::BlockTextureLoad(char *TF2d, unsigned int width, unsigned int heigh
 
        cuMemcpy3D(&copyParam);
 
-       CUtexref cu_texref;
-       cuModuleGetTexRef(&cu_texref, pmodule->m_module, "tex_block");
-       cuTexRefSetArray(cu_texref, cu_array, CU_TRSA_OVERRIDE_FORMAT);
-       cuTexRefSetAddressMode(cu_texref, 0, CU_TR_ADDRESS_MODE_BORDER);
-       cuTexRefSetAddressMode(cu_texref, 1, CU_TR_ADDRESS_MODE_BORDER);
-       cuTexRefSetFilterMode(cu_texref, CU_TR_FILTER_MODE_LINEAR);
-       cuTexRefSetFlags(cu_texref, CU_TRSF_NORMALIZED_COORDINATES);
-       cuTexRefSetFormat(cu_texref, CU_AD_FORMAT_UNSIGNED_INT8, 1);
+       CUtexref m_cu_blockref;
+       cuTexRefCreate(&(m_cu_blockref));
+       cuModuleGetTexRef(&(m_cu_blockref), pmodule->m_module, "tex_block");
+       cuTexRefSetArray(m_cu_blockref, pmodule->cu_blockArray, CU_TRSA_OVERRIDE_FORMAT);
+       cuTexRefSetAddressMode(m_cu_blockref, 0, CU_TR_ADDRESS_MODE_BORDER);
+       cuTexRefSetAddressMode(m_cu_blockref, 1, CU_TR_ADDRESS_MODE_BORDER);
+       cuTexRefSetFilterMode(m_cu_blockref, CU_TR_FILTER_MODE_LINEAR);
+       cuTexRefSetFlags(m_cu_blockref, CU_TRSF_NORMALIZED_COORDINATES);
+       cuTexRefSetFormat(m_cu_blockref, CU_AD_FORMAT_UNSIGNED_INT8, 1);
 
 }
 void Module::otfTableTextureLoad(float4 *input_float_1D, unsigned int otf_size, Module *pmodule){
        // Create the array on the device
-       CUarray otf_array;
        CUDA_ARRAY_DESCRIPTOR ad;
        ad.Format = CU_AD_FORMAT_FLOAT;
        ad.Width = otf_size;
        ad.Height = 1;
        ad.NumChannels = 4;
-       cuArrayCreate(&otf_array, &ad);
+       cuArrayCreate(&(pmodule->otf_array), &ad);
 
        // Copy the host input to the array
-       cuMemcpyHtoA(otf_array,0,input_float_1D,otf_size*sizeof(float4));
+       cuMemcpyHtoA(pmodule->otf_array,0,input_float_1D,otf_size*sizeof(float4));
 
        // Texture Binding
-       CUtexref otf_texref;
-       cuModuleGetTexRef(&otf_texref, pmodule->m_module, "texture_float_1D");
-       cuTexRefSetFilterMode(otf_texref, CU_TR_FILTER_MODE_POINT);
-       cuTexRefSetAddressMode(otf_texref, 0, CU_TR_ADDRESS_MODE_CLAMP);
-       cuTexRefSetFlags(otf_texref, CU_TRSF_READ_AS_INTEGER);
-       cuTexRefSetFormat(otf_texref, CU_AD_FORMAT_FLOAT, 4);
-       cuTexRefSetArray(otf_texref, otf_array, CU_TRSA_OVERRIDE_FORMAT);
-}
+       CUtexref m_cu_tf2Dref;
 
+       cuTexRefCreate(&(m_cu_tf2Dref));
+       cuModuleGetTexRef(&(m_cu_tf2Dref), pmodule->m_module, "texture_float_1D");
+       cuTexRefSetFilterMode(m_cu_tf2Dref, CU_TR_FILTER_MODE_POINT);
+       cuTexRefSetAddressMode(m_cu_tf2Dref, 0, CU_TR_ADDRESS_MODE_CLAMP);
+       cuTexRefSetFlags(m_cu_tf2Dref, CU_TRSF_READ_AS_INTEGER);
+       cuTexRefSetFormat(m_cu_tf2Dref, CU_AD_FORMAT_FLOAT, 4);
+       cuTexRefSetArray(m_cu_tf2Dref, pmodule->otf_array, CU_TRSA_OVERRIDE_FORMAT);
+}
 float4 *Module::getOTFtable(unsigned int tf_start, unsigned int tf_middle1, unsigned int tf_middle2, unsigned int tf_end, unsigned int tf_size){
 
         float4 *otf_table= (float4 *)malloc(sizeof(float4)*tf_size);
@@ -244,13 +245,13 @@ Handle<Value> Module::BlockTextureAlloc(const Arguments& args) {
 
        /*OTF binding*/
        Local<Object> buf = args[0]->ToObject();
-       char *TF2d = Buffer::Data(buf);
+       char *blockVolume = Buffer::Data(buf);
 
        unsigned int block_width =  args[1]->Uint32Value();
        unsigned int block_height =  args[2]->Uint32Value();
        unsigned int block_depth =  args[3]->Uint32Value();
 
-       BlockTextureLoad(TF2d, block_width,block_height,block_depth, pmodule);  //otf 생성.
+       BlockTextureLoad(blockVolume, block_width,block_height,block_depth, pmodule);  //otf 생성.
 
        return scope.Close(result);
 }
@@ -274,9 +275,20 @@ Handle<Value> Module::DestroyTexRef(const Arguments& args) {
       Local<Object> result = constructor_template->InstanceTemplate()->NewInstance();
       Module *pmodule = ObjectWrap::Unwrap<Module>(args.This());
 
-      CUresult error = cuTexRefDestroy(pmodule->m_cu_tf2Dref);
+      cuArrayDestroy(pmodule->cu_volumeArray);
+      cuArrayDestroy(pmodule->cu_blockArray);
+      cuArrayDestroy(pmodule->otf_array);
 
-      result->Set(String::New("error"), Integer::New(error));
+      return scope.Close(result);
+}
+Handle<Value> Module::DestroyOtfTexRef(const Arguments& args) {
+
+      HandleScope scope;
+      Local<Object> result = constructor_template->InstanceTemplate()->NewInstance();
+      Module *pmodule = ObjectWrap::Unwrap<Module>(args.This());
+
+      cuArrayDestroy(pmodule->otf_array);
+
       return scope.Close(result);
 }
 

@@ -37,10 +37,14 @@ var redis = require('redis');
  *  it`s only need slave server
  * @constructor
  */
+
+
+
 var NornenjsServer = function(server, isMaster, masterIpAddres){
     this.MAX_CONNECTION_CLIENT = 4;
 
     this.CUDA_PTX_PATH = path.join(__dirname, '../src-cuda/volume.ptx');
+
 
     this.io = socketIo.listen(server);
     this.cudaRenderMap = new HashMap();
@@ -53,7 +57,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         throw new Error('IsRoot type is "Boolean" type');
     }
 
-    this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
+    this.REDIS_PATH = '/home/russa/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
     this.redisProcess = undefined;
@@ -337,9 +341,17 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
                 logger.info('[Socket]        RELAY SERVER CONNECT List    -', relayServer.length == 0 ? 'NONE' : relayServer);
             }else{
                 var deviceNumber = deviceMap.get(socket.id);
-                deviceMap.remove(socket.id);
-                logger.info('[Socket] DISCONNECT stream server', deviceNumber);
 
+                var cudaRender = $this.cudaRenderMap.get(socket.id);
+                //logger.debug('[Socket] DISCONNECT stream server', socket.id,cudaRender);
+                if(cudaRender != null && cudaRender != undefined) {
+                    logger.info('Confirm --------');
+                    cudaRender.destroy();
+                }
+
+                deviceMap.remove(socket.id);
+
+                logger.info('[Socket] DISCONNECT stream server', deviceNumber);
                 if(typeof deviceNumber !== 'undefined') {
                     var launch = function(){
                         // Publish client to server
@@ -407,6 +419,7 @@ NornenjsServer.prototype.socketIoCuda = function(){
             var clientId = socket.id;
             var deviceCount = deviceMap.get(socket.id);
             logger.debug('[Stream] Register CUDA module ');
+
             var cudaRender = new CudaRender(
                 ENUMS.RENDERING_TYPE.VOLUME, init.savePath,
                 init.width, init.height, init.depth,

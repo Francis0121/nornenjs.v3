@@ -6,6 +6,7 @@ var fs = require('fs');
 var constants = require('constants');
 var mat4 = require('./mat/mat4');
 var vec3 = require('./mat/vec3');
+
 function iDivUp(a, b) {
 
     return (a % b != 0) ? (a >> 5 + 1) : (a >> 5);
@@ -65,6 +66,7 @@ function iDivUp(a, b) {
         d_tf2Dtable : undefined,
         d_tf2DtableBuffer : undefined,
         d_invViewMatrix : undefined,
+        c_invViewMatrix : undefined,
         d_outputBuffer : undefined,
 
         h_volume : undefined,
@@ -98,7 +100,6 @@ function iDivUp(a, b) {
 
             this.d_blockvolume = cu.memAlloc(this.blockVolumeX * this.blockVolumeY * this.blockVolumeZ);
             var error = this.d_blockvolume.memSet(this.blockVolumeX * this.blockVolumeY * this.blockVolumeZ);
-
             var _cuModule = this.cuModule;
             var cuFunction = _cuModule.getFunction('block_volume');
 
@@ -140,7 +141,8 @@ function iDivUp(a, b) {
             this.d_volume.free();
             this.d_blockvolume.free();
 
-
+            delete this.d_blockBUffer;
+            delete this.h_volume;
         },
         make2Dtable :function(){
 
@@ -178,7 +180,6 @@ function iDivUp(a, b) {
                 logger.debug('[INFO_CUDA] TEXTURE memory COPY');
                 var error = this.cuModule.memOTFTextureAlloc(this.transferStart, this.transferMiddle1,this.transferMiddle2, this.transferEnd);
                 //logger.debug('[INFO_CUDA] _cuModule.memOTFTextureAlloc', error);
-
                 this.make2Dtable();
              }
 
@@ -241,22 +242,22 @@ function iDivUp(a, b) {
                 mat4.translate(model_matrix, model_matrix,vec)
             }
             /*view vector*/
-            var c_invViewMatrix = new Buffer(12*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[0], 0*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[4], 1*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[8], 2*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[12], 3*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[1], 4*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[5], 5*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[9], 6*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[13], 7*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[2], 8*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[6], 9*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[10], 10*4);
-            c_invViewMatrix.writeFloatLE( model_matrix[14], 11*4);
+            this.c_invViewMatrix = new Buffer(12*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[0], 0*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[4], 1*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[8], 2*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[12], 3*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[1], 4*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[5], 5*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[9], 6*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[13], 7*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[2], 8*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[6], 9*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[10], 10*4);
+            this.c_invViewMatrix.writeFloatLE( model_matrix[14], 11*4);
 
             this.d_invViewMatrix = cu.memAlloc(12*4);
-            var error = this.d_invViewMatrix.copyHtoD(c_invViewMatrix);
+            var error = this.d_invViewMatrix.copyHtoD(this.c_invViewMatrix);
             logger.debug('[INFO_CUDA] d_invViewMatrix.copyHtoD', error);
         },
 
@@ -325,16 +326,24 @@ function iDivUp(a, b) {
             this.d_output.copyDtoH(this.d_outputBuffer, false);
         },
 
-        end : function(){
+        end : function() {
             this.d_output.free();
-            if(this.transferFlag == 1){
+            if (this.transferFlag == 1) {
                 this.d_tf2Dtable.free();
                 logger.debug('[INFO_CUDA] TEXTURE memory FREE');
-            }else{
+            } else {
                 logger.debug('[INFO_CUDA] TEXTURE memory NOT_FREE');
             }
+            delete this.c_invViewMatrix;
             this.d_invViewMatrix.free();
+            //this.cuModule.destroyOtfTexRef(); //1차 tf 메모리 관리
+        },
+
+        destroy : function() {
+            var _cuModule = this.cuModule;
+             _cuModule.destroyTexRef();
         }
+
     };
 
     return CudaRender;
