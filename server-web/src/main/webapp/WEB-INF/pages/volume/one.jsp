@@ -5,6 +5,7 @@
 <script src="http://112.108.40.166:5000/socket.io/socket.io.js"></script>
 
 <script>
+
     document.oncontextmenu = function(e){
         var evt = new Object({ keyCode:93 });
         if(event.preventDefault != undefined)
@@ -28,10 +29,12 @@
     relay.on('getInfoClient', function(info){
         //console.log(info, typeof info);
         if(!info.conn){
+            volumeRenderLoading(true, '사용자가 너무 많아 접근할 수 없습니다.<br/>잠시만 기다려주세요...');
             console.log('Connection User is full');
         }else{
             relay.disconnect();
             bindSocket(info);
+            volumeRenderLoading(true, '데이터를 불러오고 있습니다.<br/>잠시만 기다려주세요 ...');
         }
     });
 
@@ -56,7 +59,7 @@
 
         socket = io.connect('http://'+info.ipAddress+':'+info.port);
 
-
+        var initializeServer = true;
 
         var init = {
             savePath : '<c:out value="${data.savePath}"/>',
@@ -68,14 +71,19 @@
         socket.emit('join', info.deviceNumber);
         socket.emit('init', init);
 
+
         socket.on('loadCudaMemory', function(){
             socket.emit('webPng', { type : 0, renderingType : renderingType, quality : quality} );
         });
 
-        /**
+        /**var
          * Socket stream data
          */
         socket.on('stream', function(image){
+            if(initializeServer){
+                setTimeout(volumeRenderLoading, 1000, false, '');
+                initializeServer = false;
+            }
             var imageBlob = image.data;
             var type = image.type;
 
@@ -576,6 +584,7 @@
             });
         });
 
+
     };
 
 
@@ -722,6 +731,17 @@
         </div>
         
     </section>
+
+    <div id="volumeLoadingWrap" class="volumeLoadingWrap volumeLoadingWrapHide">
+
+        <div class="size">
+            <div class="center">
+                <img src="${cp}/resources/image/loading.gif"/><br/>
+                <span class="text">Now data loading ... </span>
+            </div>
+        </div>
+
+    </div>
     
 </section>
 

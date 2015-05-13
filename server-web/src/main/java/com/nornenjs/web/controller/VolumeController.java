@@ -42,6 +42,9 @@ public class VolumeController {
     @RequestMapping(method = RequestMethod.GET)
     public String maxVolumeRenderingPage(){
         Integer maxVolumePn = volumeService.selectMaxVolume();
+        if(maxVolumePn == null){
+            return "redirect:/volume/list";
+        }
         return "redirect:/volume/pn/"+maxVolumePn;
     }
     

@@ -128,3 +128,10 @@
 */
 .otfCircle{ cursor: move;}
 .otfDashLine{ cursor: move;}
+
+
+.volumeLoadingWrapHide{ display: none !important;}
+.volumeLoadingWrap{ position: fixed; display: block; width: 100%; min-height: 100%; max-height: 100%; top: 0; background: #fff; z-index: 99; opacity: .8; }
+.volumeLoadingWrap div.size{ position: absolute; left: 50%; top: 50%; width: 250px; height: 100px; margin-left: -105px; margin-top: -44px; }
+.volumeLoadingWrap div.center{ display: table-cell; text-align: center; vertical-align: middle; width: 250px; height: 100px;}
+.volumeLoadingWrap span.text{ font-weight: bold; font-size: 75%;}

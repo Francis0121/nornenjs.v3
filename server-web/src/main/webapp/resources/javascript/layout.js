@@ -891,3 +891,16 @@ function polygonResize(){
     $('#rightBottomText').text($('#otfRightBottomCircle').attr('cx')-OTF_OFFSET_VALUE);
     $('#rightTopText').text($('#otfRightTopCircle').attr('cx')-OTF_OFFSET_VALUE)
 }
+
+
+function volumeRenderLoading(isHide, text){
+  if(isHide){
+      $('#volumeLoadingWrap').removeClass('volumeLoadingWrapHide');
+      $('#volumeLoadingWrap').find('span').html(text);
+  }else{
+      $('#volumeLoadingWrap').fadeOut(1000, function(){
+          $('#volumeLoadingWrap').addClass('volumeLoadingWrapHide');
+      });
+
+  }
+}
