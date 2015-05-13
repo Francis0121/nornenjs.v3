@@ -7,10 +7,11 @@
 <script>
 
     $(document).bind('keydown keyup', function(e) {
-        if(e.which === 116) {
+        if(e.which == 116) {
             return false;
         }
-        if(e.which === 82 && e.ctrlKey) {
+
+        if(e.which == 82 && e.ctrlKey) {
             return false;
         }
     });
