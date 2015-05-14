@@ -144,6 +144,7 @@
     .thumbnailSlider {
         position: relative;
         overflow: hidden;
+        border-radius: 6px 6px 0 0;
     }
 
     .thumbnailSlider ul {
@@ -249,14 +250,26 @@
                             <ul>
                                 <li><img src="${cp}/data/thumbnail/${volume.thumbnailPnList[3]}" /></li>
                                 <c:forEach items="${volume.thumbnailPnList}" var="thumbnailPn" varStatus="loop" end="2">
-                                    <li><img src="${cp}/data/thumbnail/${thumbnailPn}" /></li>
+                                    <li>
+                                        <a href="${cp}/volume/pn/${volume.pn}">
+                                            <img src="${cp}/data/thumbnail/${thumbnailPn}" />
+                                        </a>
+                                    </li>
                                 </c:forEach>
                             </ul>
                         </div>
                         
                         <figcaption>
-                            <a href="${cp}/volume/pn/${volume.pn}" class="name"><c:out value="${volume.title}"/></a> <a href="${cp}/volume/page/${volume.pn}" class="volumeUpdateBtn">수정</a><br/>
-                            <span class="number"><c:out value="${volume.width}"/> x <c:out value="${volume.height}"/> x <c:out value="${volume.depth}"/></span> <span class="date"><c:out value="${volume.inputDate}"/></span>
+
+                            <span class="volumeTitle">
+                                <c:out value="${fn:substring(volume.title,0, 20)}"/>${fn:length(volume.title) > 20 ? '...' : ''}
+                                <a href="${cp}/volume/page/${volume.pn}" class="volumeUpdateBtn">수정</a>
+                            </span>
+                            <span class="number">SIZE : <c:out value="${volume.width}"/> <b>x</b> <c:out value="${volume.height}"/> <b>x</b> <c:out value="${volume.depth}"/></span>
+                            <span class="date">DATE : <c:out value="${fn:substring(volume.inputDate,0, 10)}"/></span>
+
+
+
                         </figcaption>
                     </figure>
                 </li>
