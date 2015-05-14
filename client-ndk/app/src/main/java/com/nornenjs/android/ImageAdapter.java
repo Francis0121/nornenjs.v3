@@ -60,8 +60,8 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
     }
 
     public Object getItem(int position) {
-        return thumbnails1.get(position);
-        //return titles.get(position);
+        return null;
+        //return thumbnails1.get(position);
     }
 
     public long getItemId(int position) {

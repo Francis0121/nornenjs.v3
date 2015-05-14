@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.AbsListView;
+import android.view.inputmethod.EditorInfo;
+import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ListView;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.nornenjs.android.VolumeList;
 
 
 public class PoppyViewHelper {
@@ -32,7 +31,7 @@ public class PoppyViewHelper {
 
 	private View mPoppyView;
 
-	private EditText editView;
+	public EditText editView;
 
 	private int mScrollDirection = 0;
 
@@ -40,8 +39,12 @@ public class PoppyViewHelper {
 
 	private PoppyViewPosition mPoppyViewPosition;
 
+	VolumeList volumePage;
+
+	//public PoppyViewHelper(Activity activity, PoppyViewPosition position) {
 	public PoppyViewHelper(Activity activity, PoppyViewPosition position) {
-		mActivity = activity;
+		mActivity = activity;//mActivity 대체할 수도...
+		volumePage = (VolumeList) activity;
 		mLayoutInflater = LayoutInflater.from(activity);
 		mPoppyViewPosition = position;
 	}
@@ -53,13 +56,30 @@ public class PoppyViewHelper {
 
 	//for searchbar
 		public View createPoppyViewOnListView(int editViewId, int listViewId, int poppyViewResId, OnScrollListener onScrollListener) {
-		editView = (EditText)mActivity.findViewById(editViewId);
+
+		editView = (EditText) mActivity.findViewById(editViewId);
 		editView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
 			}
 		});
+
+		editView.setOnEditorActionListener(new EditText.OnEditorActionListener(){
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+					//performSearch();
+					Log.d(TAG, "setOnEditorActionListener called");
+					volumePage.searchRequest(editView.getText().toString());
+					//return true;
+				}
+				return false;
+			}
+		});
+
+
+
 		final ListView listView = (ListView)mActivity.findViewById(listViewId);
 
 		if(listView.getHeaderViewsCount() != 0) {
@@ -115,6 +135,7 @@ public class PoppyViewHelper {
 			mScrollDirection = newScrollDirection;
 			translateYPoppyView(ScrollDirection);
 		}
+
 	}
 
 	private void translateYPoppyView(int ScrollLocation) {
@@ -173,6 +194,13 @@ public class PoppyViewHelper {
 		setPoppyViewOnView(editView);
 		listView.setOnScrollListener(new OnScrollListener() {
 
+			//@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				if(onScrollListener != null) {
+					onScrollListener.onScrollStateChanged(view, scrollState);
+				}
+			}
+
 			int mScrollPosition;
 
 			//@Override
@@ -189,19 +217,19 @@ public class PoppyViewHelper {
 					newScrollPosition = - topChild.getTop() + view.getFirstVisiblePosition() * topChild.getHeight();
 				}
 
-				if(Math.abs(newScrollPosition - mScrollPosition) >= SCROLL_DIRECTION_CHANGE_THRESHOLD) {
-					onScrollPositionChanged(mScrollPosition, newScrollPosition);
+				if(newScrollPosition <= 160)
+				{
+					if(Math.abs(newScrollPosition - mScrollPosition) >= SCROLL_DIRECTION_CHANGE_THRESHOLD) {
+						onScrollPositionChanged(mScrollPosition, newScrollPosition);
+					}
 				}
 
 				mScrollPosition = newScrollPosition;
+
+
 			}
 
-			//@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				if(onScrollListener != null) {
-					onScrollListener.onScrollStateChanged(view, scrollState);
-				}
-			}
+
 		});
 	}
 }

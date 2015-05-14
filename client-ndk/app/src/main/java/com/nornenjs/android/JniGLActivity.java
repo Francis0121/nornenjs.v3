@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 
-public class JniGLActivity extends Activity implements MyViewListener{
+public class JniGLActivity extends Activity{
 
 
     static final String TAG = "JniGLActivity";
@@ -131,115 +131,121 @@ public class JniGLActivity extends Activity implements MyViewListener{
     public boolean onTouchEvent(MotionEvent event) {
         //모든 이벤트는 이 액티비티가 받고 있음.
 
-        int act = event.getAction();
-        switch(act & MotionEvent.ACTION_MASK) {
+        if(mGLSurfaceView.isShown()) {
 
-            case MotionEvent.ACTION_DOWN :
-                if(event.getPointerCount()==1){
 
-                    beforeX = event.getX();  //posX1
-                    beforeY = event.getY();  //posY1
-                    mode = DRAG;
-                }
-                break;
+            int act = event.getAction();
+            switch (act & MotionEvent.ACTION_MASK) {
 
-            case MotionEvent.ACTION_MOVE :
+                case MotionEvent.ACTION_DOWN:
+                    if (event.getPointerCount() == 1) {
 
-                if(mode == DRAG && event.getPointerCount() == 1 ) {
-
-                    rotationX += (event.getX() - beforeX) / 10.0;
-                    rotationY += (event.getY() - beforeY) / 10.0;
-
-                    beforeX = event.getX();
-                    beforeY = event.getY();
-
-                    myEventListener.RotationEvent(rotationX, rotationY);
-                    rotation++;
-
-                }
-                else if(event.getPointerCount() == 2) { //multi touch
-
-                    newVectorX1 = event.getX(0); newVectorX2 = event.getX(1);
-                    newVectorY1 = event.getY(0); newVectorY2 = event.getY(1);
-
-                    if((VecotrDirection(oldVectorX1,newVectorX1) == (VecotrDirection(oldVectorX2,newVectorX2)) &&  //multi touch translation
-                            (VecotrDirection(oldVectorY1,newVectorY1) == (VecotrDirection(oldVectorY2,newVectorY2))))){
-
-                        newDist = spacing(event);
-
-                        newMidVectorX= midPoint(newVectorX1, newVectorX2);
-                        newMidVectorY= midPoint(newVectorY1,newVectorY2);
-
-                        translationX += (newMidVectorX - oldMidVectorX) / 250.0;
-                        translationY -= (newMidVectorY - oldMidVectorY) / 250.0;
-
-                        oldMidVectorX = newMidVectorX;
-                        oldMidVectorY = newMidVectorY;
-
-                        translationPng = false;
-                        myEventListener.TranslationEvent(translationX, translationY);
-                        move++;
-
+                        beforeX = event.getX();  //posX1
+                        beforeY = event.getY();  //posY1
+                        mode = DRAG;
                     }
-                    else{ // multi touch pinch zoom
-                        newDist = spacing(event);
+                    break;
 
-                        if (newDist - oldDist > 15) { // zoom in
+                case MotionEvent.ACTION_MOVE:
 
-                            oldDist = newDist;
-                            div -= (((newDist / oldDist) / 50) * 10);
+                    if (mode == DRAG && event.getPointerCount() == 1) {
 
-                            if (div <= 0.2f) {
-                                div = 0.2f;
+                        rotationX += (event.getX() - beforeX) / 10.0;
+                        rotationY += (event.getY() - beforeY) / 10.0;
+
+                        beforeX = event.getX();
+                        beforeY = event.getY();
+
+                        myEventListener.RotationEvent(rotationX, rotationY);
+                        rotation++;
+
+                    } else if (event.getPointerCount() == 2) { //multi touch
+
+                        newVectorX1 = event.getX(0);
+                        newVectorX2 = event.getX(1);
+                        newVectorY1 = event.getY(0);
+                        newVectorY2 = event.getY(1);
+
+                        if ((VecotrDirection(oldVectorX1, newVectorX1) == (VecotrDirection(oldVectorX2, newVectorX2)) &&  //multi touch translation
+                                (VecotrDirection(oldVectorY1, newVectorY1) == (VecotrDirection(oldVectorY2, newVectorY2))))) {
+
+                            newDist = spacing(event);
+
+                            newMidVectorX = midPoint(newVectorX1, newVectorX2);
+                            newMidVectorY = midPoint(newVectorY1, newVectorY2);
+
+                            translationX += (newMidVectorX - oldMidVectorX) / 250.0;
+                            translationY -= (newMidVectorY - oldMidVectorY) / 250.0;
+
+                            oldMidVectorX = newMidVectorX;
+                            oldMidVectorY = newMidVectorY;
+
+                            translationPng = false;
+                            myEventListener.TranslationEvent(translationX, translationY);
+                            move++;
+
+                        } else { // multi touch pinch zoom
+                            newDist = spacing(event);
+
+                            if (newDist - oldDist > 15) { // zoom in
+
+                                oldDist = newDist;
+                                div -= (((newDist / oldDist) / 50) * 10);
+
+                                if (div <= 0.2f) {
+                                    div = 0.2f;
+                                }
+                                pinchzoomPng = false;
+                                myEventListener.PinchZoomEvent(div);
+                                pinch++;
+
+                            } else if (oldDist - newDist > 15) { // zoom out
+
+                                oldDist = newDist;
+                                div += (((newDist / oldDist) / 50) * 10);
+
+                                if (div >= 10.0f) {
+                                    div = 10.0f;
+                                }
+                                pinchzoomPng = false;
+                                myEventListener.PinchZoomEvent(div);
+                                pinch++;
                             }
-                            pinchzoomPng = false;
-                            myEventListener.PinchZoomEvent(div);
-                            pinch++;
-
-                        } else if (oldDist - newDist > 15) { // zoom out
-
-                            oldDist = newDist;
-                            div += (((newDist / oldDist) / 50) * 10);
-
-                            if (div >= 10.0f) {
-                                div = 10.0f;
-                            }
-                            pinchzoomPng = false;
-                            myEventListener.PinchZoomEvent(div);
-                            pinch++;
                         }
                     }
-                }
-                break;
+                    break;
 
-            case MotionEvent.ACTION_UP :
-                mode = NONE;
-                Log.d("emitTag", "Event ended");
-                myEventListener.GetPng();
-                break;
+                case MotionEvent.ACTION_UP:
+                    mode = NONE;
+                    Log.d("emitTag", "Event ended");
+                    myEventListener.GetPng();
+                    break;
 
-            case MotionEvent.ACTION_POINTER_UP:
-                mode = NONE;
-                break;
+                case MotionEvent.ACTION_POINTER_UP:
+                    mode = NONE;
+                    break;
 
-            case MotionEvent.ACTION_POINTER_DOWN:
+                case MotionEvent.ACTION_POINTER_DOWN:
 
-                oldDist = spacing(event);
+                    oldDist = spacing(event);
 
-                oldVectorX1 = event.getX(0);oldVectorX2 = event.getX(1);
-                oldVectorY1 = event.getY(0);oldVectorY2 = event.getY(1);
+                    oldVectorX1 = event.getX(0);
+                    oldVectorX2 = event.getX(1);
+                    oldVectorY1 = event.getY(0);
+                    oldVectorY2 = event.getY(1);
 
-                oldMidVectorX= midPoint(oldVectorX1,oldVectorX2);
-                oldMidVectorY= midPoint(oldVectorY1,oldVectorY2);
+                    oldMidVectorX = midPoint(oldVectorX1, oldVectorX2);
+                    oldMidVectorY = midPoint(oldVectorY1, oldVectorY2);
 
-                break;
+                    break;
 
-            case MotionEvent.ACTION_CANCEL:
-                break;
+                case MotionEvent.ACTION_CANCEL:
+                    break;
 
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
         return super.onTouchEvent(event);
     }
@@ -293,7 +299,7 @@ public class JniGLActivity extends Activity implements MyViewListener{
     public static native void nativeInitTextureData(int[] pixels, int width, int height);
     public static native void nativeSetTextureData(int[] pixels, int width, int height);
 
-    @Override
+    //@Override
     public void setView() {
         //setContentView(mGLSurfaceView);
         if(!mGLSurfaceView.isShown())
@@ -539,24 +545,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
 //                imgPanda = null;
 //            }
 
-            //imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
-            int size;
-//            if(width.intValue() == 256){
-//                size = 256;
-//            }
-//            else
-//            {
-//                size = 512;
-//            }
-
             int[] pixels = new int[width.intValue()*height.intValue()];
-            //Log.d("pixels","size : " + size);
-//
-//            imgPanda.getPixels(pixels, 0, size, 0, 0, size, size);
-            Log.d("pixels", "getWidth()2 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
-            Log.d("pixels", "width.intValue()2 : " + width.intValue() + ", height.intValue() : " + height.intValue());
-            //imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
             if(imgPanda.getWidth() == width.intValue())
             {
                 imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
@@ -564,11 +553,10 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
                 mActivity.draw++;
             }
 
-
-            //mActivity.nativeSetTextureData(pixels, size, size);
-            //mActivity.draw++;
         }
         mActivity.nativeDrawIteration(0, 0);
+        //웅규오빠한테 물어보기
+
     }
 
     public void onSurfaceChanged(GL10 gl, int width, int height) {

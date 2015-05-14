@@ -61,6 +61,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:hint="username"
+                android:inputType="text"
                 android:textColor="@android:color/darker_gray"
                 android:ems="10"/>
         
@@ -83,6 +84,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:hint="password"
+                android:inputType="text"
                 android:textColor="@android:color/darker_gray"
                 android:password="true"
                 android:ems="10"/>
