@@ -6,6 +6,10 @@
 
     <section class="layoutContentSection">
 
+        <header>
+            <h2>볼륨 데이터 업로드</h2>
+        </header>
+
         <form:form commandName="volume" action="${cp}/volume/upload" method="post" htmlEscape="true" cssClass="volumeForm" enctype="multipart/form-data">
             <ul>
                 <li>

@@ -66,7 +66,9 @@ public class VolumeController {
                                    @ModelAttribute Volume volume, BindingResult result) {
         new VolumeValidator().validate(volume, result);
         if(result.hasErrors()){
-            model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
+            Map<String, Object> infoMap = volumeService.selectVolumeInformation(volumePn);
+            infoMap.remove("volume");
+            model.addAllAttributes(infoMap);
             model.addAttribute("deleteVolume", new Volume(volumePn));
             return "volume/update";
         }else {
@@ -142,8 +144,10 @@ public class VolumeController {
         new VolumeValidator().validate(volume, result);
         
         if (result.hasErrors()) {
-            model.addAttribute("data", dataService.selectOne(volume.getVolumeDataPn()));
-            model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
+            if(volume.getVolumeDataPn() != null) {
+                model.addAttribute("data", dataService.selectOne(volume.getVolumeDataPn()));
+                model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
+            }
             return "volume/upload";
         }else{
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

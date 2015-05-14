@@ -313,6 +313,27 @@ $(function(){
         layoutFunction.expandEventListener();
     });
 
+
+    $('#volumeDelDialog').dialog({
+        autoOpen : false,
+        resizable: false,
+        height:150,
+        modal: true,
+        buttons: {
+            '삭제': function() {
+                var form = document.forms['deleteVolume'];
+                form.submit();
+            },
+            '취소': function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+
+    $('#volumeDelBtn').on('click', function(){
+        $('#volumeDelDialog').dialog('open');
+    });
+
 });
 
 var OTF_MAX_VALUE = 262;

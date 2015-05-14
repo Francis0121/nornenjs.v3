@@ -47,8 +47,9 @@
 .volumeForm li span.success{ width: 100%; font-size: 68.75%; color: #0099FF; display: block; padding: 3px 0 10px 0;}
 .volumeForm input.text:focus{ border: 2px solid #777777;}
 
-.volumeBtnWrap{ width: 585px; clear: left; padding-top: 15px; text-align: center;}
+.volumeBtnWrap{ width: 585px; clear: left; padding-top: 15px;}
 .volumeDataBtn{ width: 124px; height: 34px; }
+.volumeDelBtn{ width: 124px; height: 34px; margin-left: 15px;}
 
 .volumeRenderingSampleWrap{ width: 340px; float: left; padding: 10px 30px; }
 .volumeRenderingSampleWrap figure{ width: 150px; float: left; padding: 10px 10px 0 10px; background: #000000;}

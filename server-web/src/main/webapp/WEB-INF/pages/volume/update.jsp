@@ -7,6 +7,10 @@
 
     <section class="layoutContentSection">
 
+        <header>
+            <h2>볼륨 데이터 수정</h2>
+        </header>
+
         <form:form commandName="volume" action="${cp}/volume/page/${volume.pn}" method="post" htmlEscape="true" cssClass="volumeForm" enctype="multipart/form-data">
             <forn:hidden path="pn"/>
             <ul>
@@ -72,13 +76,18 @@
 
             <div class="volumeBtnWrap">
                 <button type="submit" class="orangeButton volumeDataBtn">볼륨 수정</button>
+
+                <button type="button" class="redButton volumeDelBtn" id="volumeDelBtn">볼륨 삭제</button>
             </div>
         </form:form>
 
         <form:form commandName="deleteVolume" action="${cp}/volume/delete" method="post">
             <form:hidden path="pn"/>
-            <button type="submit" class="orangeButton volumeDataBtn">볼륨 삭제</button>
         </form:form>
+
+        <div id="volumeDelDialog" title="볼륨 데이터를 삭제하시겠습니까?">
+            <p style="font-size: 75%; margin: 10px; color: #e04836;">볼륨데이터 삭제시 해당 되는 데이터는 복구 되지 않습니다.</p>
+        </div>
         
     </section>
 

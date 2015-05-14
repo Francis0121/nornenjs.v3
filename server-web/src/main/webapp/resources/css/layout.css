@@ -17,6 +17,9 @@ body{ background: #34495e; overflow-y: hidden; height: 100%;}
 .orangeButton{ background: #f39d41; color: #fff; font-size: 75%; border-radius: 4px; border: 0px; padding: 8px 10px; }
 .orangeButton:hover{ background: #e08a2e; }
 
+.redButton{ background: #981919; color: #fff; font-size: 75%; border-radius: 4px; border: 0px; padding: 8px 10px; }
+.redButton:hover{ background: #790000;}
+
 /**
 * Navigation
 */
