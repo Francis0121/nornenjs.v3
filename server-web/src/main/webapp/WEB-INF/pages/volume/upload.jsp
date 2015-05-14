@@ -10,17 +10,17 @@
             <ul>
                 <li>
                     <form:label path="width">가로</form:label>
-                    <form:input path="width" cssClass="text" placeholder="볼륨 데이터의 가로 크기를 입력해주세요." maxlength="4" value="256"/>
+                    <form:input path="width" cssClass="text" placeholder="볼륨 데이터의 가로 크기를 입력해주세요." maxlength="4" />
                     <form:errors path="width" cssClass="error"/>
                 </li>
                 <li>
                     <form:label path="height">세로</form:label>
-                    <form:input path="height" cssClass="text" placeholder="볼륨 데이터의 가로 세로를 입력해주세요." maxlength="4" value="256"/>
+                    <form:input path="height" cssClass="text" placeholder="볼륨 데이터의 가로 세로를 입력해주세요." maxlength="4"/>
                     <form:errors path="height" cssClass="error"/>
                 </li>
                 <li>
                     <form:label path="depth">깊이</form:label>
-                    <form:input path="depth" cssClass="text" placeholder="볼륨 데이터의 가로 깊이를 입력해주세요." maxlength="4" value="225"/>
+                    <form:input path="depth" cssClass="text" placeholder="볼륨 데이터의 가로 깊이를 입력해주세요." maxlength="4"/>
                     <form:errors path="depth" cssClass="error"/>
                 </li>
                 <li>
