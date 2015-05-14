@@ -259,6 +259,45 @@ $(function(){
         }
     });
 
+    $('#volume input#width, #volume input#height, #volume input#depth').on('keydown', function(e) {
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+                // Allow: Ctrl+A
+            (e.keyCode == 65 && e.ctrlKey === true) ||
+                // Allow: Ctrl+C
+            (e.keyCode == 67 && e.ctrlKey === true) ||
+                // Allow: Ctrl+X
+            (e.keyCode == 88 && e.ctrlKey === true) ||
+                // Allow: home, end, left, right
+            (e.keyCode >= 35 && e.keyCode <= 39)) {
+            // let it happen, don't do anything
+            return;
+        }
+        // Ensure that it is a number and stop the keypress
+        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+            e.preventDefault();
+        }
+    });
+
+    $('#volume input#width, #volume input#height, #volume input#depth').on('keyup', function(e){
+        viewVolumeFileUploadWrap();
+    });
+
+    var viewVolumeFileUploadWrap = function(){
+        var width = $('#volume input#width').val();
+        var height = $('#volume input#height').val();
+        var depth = $('#volume input#depth').val();
+
+        if( (width != null && width != '') && (height != null && height != '') && (depth != null && depth != '') ){
+            $('#volumeUploadTextWrap').hide();
+            $('#volumeUploadBtnWrap').show();
+        }else{
+            $('#volumeUploadTextWrap').show();
+            $('#volumeUploadBtnWrap').hide();
+        }
+    };
+
+    viewVolumeFileUploadWrap();
+
     // ~ STEP 01 볼륨을 업로드한다.
     $('#dataUpload').uploadify({
         'buttonText' : '파일선택',
@@ -268,7 +307,7 @@ $(function(){
         'swf': contextPath + '/resources/javascript/uploadify.swf',
         'uploader' : contextPath+'/data/upload',
         'onUploadStart' : function(){
-            //console.log('On Upload Start');
+            volumeRenderLoading(true, '볼륨 데이터를 업로드 하고 있습니다.<br/>잠시만 기다려주세요...');
         },
         'onUploadSuccess' : function(file, data, response){
             //console.log('On Upload Success');
@@ -295,11 +334,12 @@ $(function(){
                             if(list.length != result.thumbnailOptionList.length){
                                 setTimeout(pollingFunc, 1000);
                             }else{
-                                console.log(list);
                                 $('#thumbnailMPRx').attr('src', contextPath+'/data/thumbnail/'+list[1]);
                                 $('#thumbnailMPRy').attr('src', contextPath+'/data/thumbnail/'+list[2]);
                                 $('#thumbnailMPRz').attr('src', contextPath+'/data/thumbnail/'+list[3]);
                                 $('#thumbnailMPRvolume').attr('src', contextPath+'/data/thumbnail/'+list[0]);
+                                volumeRenderLoading(false, '');
+                                $('#volumeRenderingSampleWrap').show();
                             }
                         });
                     }
@@ -308,7 +348,8 @@ $(function(){
             }
         }
     });
-    
+
+
     $('#renderingSizeBtn').off('click').on('click', function(){
         layoutFunction.expandEventListener();
     });

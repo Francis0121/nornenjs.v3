@@ -39,45 +39,63 @@
                             <span class="success">파일업로드 : <c:out value="${data.name}"/></span>
                         </c:if>
                     </div>
-                    <input type="file" id="dataUpload" name="dataUpload"/>
+                    <div id="volumeUploadBtnWrap">
+                        <input type="file" id="dataUpload" name="dataUpload"/>
+                    </div>
+                    <div id="volumeUploadTextWrap" class="volumeUploadTextWrap">
+                        <p>볼륨 데이터를 업로드 하기 위해 볼륨에 대한</p>
+                        <p><span class="emphasize">가로</span>, <span class="emphasize">세로</span>, <span class="emphasize">깊이</span> 수치를 입력해주시기 바랍니다.</p>
+                    </div>
                     <form:hidden path="volumeDataPn"/>
                     <form:errors path="volumeDataPn" cssClass="error"/>
+
+                    <div class="volumeRenderingSampleWrap" style="display: none;" id="volumeRenderingSampleWrap">
+                        <figure>
+                            <img src="${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}" id="thumbnailMPRx"/>
+                            <figcaption>
+                                MPR-X 영상
+                            </figcaption>
+                        </figure>
+                        <figure>
+                            <img src="${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}" id="thumbnailMPRy"/>
+                            <figcaption>
+                                MPR-Y 영상
+                            </figcaption>
+                        </figure>
+                        <figure>
+                            <img src="${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}" id="thumbnailMPRz"/>
+                            <figcaption>
+                                MPR-Z 영상
+                            </figcaption>
+                        </figure>
+                        <figure>
+                            <img src="${cp}/data/thumbnail/${thumbnails[0] eq null ? -1 : thumbnails[0]}" id="thumbnailMPRvolume"/>
+                            <figcaption>
+                                볼륨 영상
+                            </figcaption>
+                        </figure>
+                    </div>
+
+                </li>
+                <li class="volumeBtnWrap">
+                    <button type="submit" class="orangeButton volumeDataBtn">볼륨데이터 등록</button>
                 </li>
             </ul>
 
-            <div class="volumeRenderingSampleWrap">
-                <figure>
-                    <img src="${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}" id="thumbnailMPRx"/>
-                    <figcaption>
-                        MPR-X 영상
-                    </figcaption>
-                </figure>
-                <figure>
-                    <img src="${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}" id="thumbnailMPRy"/>
-                    <figcaption>
-                        MPR-Y 영상
-                    </figcaption>
-                </figure>
-                <figure>
-                    <img src="${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}" id="thumbnailMPRz"/>
-                    <figcaption>
-                        MPR-Z 영상
-                    </figcaption>
-                </figure>
-                <figure>
-                    <img src="${cp}/data/thumbnail/${thumbnails[0] eq null ? -1 : thumbnails[0]}" id="thumbnailMPRvolume"/>
-                    <figcaption>
-                        볼륨 영상
-                    </figcaption>
-                </figure>
-            </div>
-
-            <div class="volumeBtnWrap">
-                <button type="submit" class="orangeButton volumeDataBtn">볼륨데이터 등록</button>
-            </div>
         </form:form>
         
     </section>
+
+    <div id="volumeLoadingWrap" class="volumeLoadingWrap volumeLoadingWrapHide">
+
+        <div class="size">
+            <div class="center">
+                <img src="${cp}/resources/image/loading.gif"/><br/>
+                <span class="text">Now data loading ... </span>
+            </div>
+        </div>
+
+    </div>
 
 </section>
 

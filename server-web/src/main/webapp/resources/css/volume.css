@@ -37,7 +37,7 @@
 */
 
 .volumeForm{ padding: 20px 30px; }
-.volumeForm ul{ width: 260px; float: left;}
+.volumeForm ul{ width: 300px; float: left; padding-bottom: 30px;}
 
 .volumeForm li>label{ width: 100%; display: block; font-size: 75%; padding: 10px 0;}
 .volumeForm li>textarea{ width: 88%; height: 50px; border: 2px solid #ccc; padding: 6px; font-size: 75%; border-radius: 5px; resize: none;}
@@ -47,18 +47,16 @@
 .volumeForm li span.success{ width: 100%; font-size: 68.75%; color: #0099FF; display: block; padding: 3px 0 10px 0;}
 .volumeForm input.text:focus{ border: 2px solid #777777;}
 
-.volumeBtnWrap{ width: 585px; clear: left; padding-top: 15px;}
+.volumeBtnWrap{ padding-top: 15px; }
 .volumeDataBtn{ width: 124px; height: 34px; }
 .volumeDelBtn{ width: 124px; height: 34px; margin-left: 15px;}
+.volumeUploadTextWrap{ font-size: 75%; color: #4d4d4d; font-weight: bold; line-height: 2;}
+.volumeUploadTextWrap span.emphasize{ color: #e04836;}
 
-.volumeRenderingSampleWrap{ width: 340px; float: left; padding: 10px 30px; }
-.volumeRenderingSampleWrap figure{ width: 150px; float: left; padding: 10px 10px 0 10px; background: #000000;}
-.volumeRenderingSampleWrap figure:nth-child(1){ border-radius: 5px 0 0 0; }
-.volumeRenderingSampleWrap figure:nth-child(2){ border-radius: 0 5px 0 0; }
-.volumeRenderingSampleWrap figure:nth-child(3){ border-radius: 0 0 0 5px; padding-bottom: 10px;}
-.volumeRenderingSampleWrap figure:nth-child(4){ border-radius: 0 0 5px 0; padding-bottom: 10px;}
-.volumeRenderingSampleWrap figure img{ width: 150px; }
-.volumeRenderingSampleWrap figure figcaption{ width: 150px; height: 20px; font-size: 75%; line-height: 20px; text-align: center; color: #fafafa;}
+.volumeRenderingSampleWrap{ width: 480px; float: left; padding: 10px 10px; margin: 20px 0; border: 2px solid #ccc; border-radius: 5px; }
+.volumeRenderingSampleWrap figure{ width: 100px; float: left; padding: 10px 10px 0 10px; }
+.volumeRenderingSampleWrap figure img{ width: 100px; }
+.volumeRenderingSampleWrap figure figcaption{ width: 100px; height: 20px; font-size: 75%; line-height: 20px; text-align: center; color: #000;}
 
 /**
 * Volume Rendering page
