@@ -49,7 +49,7 @@
                     <form:hidden path="volumeDataPn"/>
                     <form:errors path="volumeDataPn" cssClass="error"/>
 
-                    <div class="volumeRenderingSampleWrap" style="display: none;" id="volumeRenderingSampleWrap">
+                    <div class="volumeRenderingSampleWrap" style="display: ${fn:length(thumbnails) >0 ? 'block' : 'none'};" id="volumeRenderingSampleWrap">
                         <figure>
                             <img src="${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}" id="thumbnailMPRx"/>
                             <figcaption>
