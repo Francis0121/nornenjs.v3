@@ -53,10 +53,11 @@
             }
             html+='     </ul>';
             html+=' </div>'
-
             html+=' <figcaption>';
             html+='     <p class="volumeTitle">'
-            html+='         '+(volume.title).substring(0, 20);//+ '' + (volume.title).length > 20 ? '...' : '';
+            var title = volume.title.substring(0, 20);
+            var more = (new Number(volume.title.length) > 20) ? '...' : '';
+            html+='         '+title + more;
             html+='         <a href="${cp}/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a>';
             html+='     </p>';
             html+='     <p class="date"><span class="label">DATE</span><span class="text"> : '+(volume.inputDate).substring(0,10)+'</span></p>';
