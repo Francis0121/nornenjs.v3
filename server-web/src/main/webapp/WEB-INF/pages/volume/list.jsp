@@ -55,8 +55,12 @@
             html+=' </div>'
 
             html+=' <figcaption>';
-            html+='     <a href="'+contextPath+'/volume/pn/'+volume.pn+'" class="name">'+volume.title+'</a> <a href="'+contextPath+'/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a><br/>';
-            html+='     <span class="number">'+volume.width+' x '+volume.height+' x '+volume.depth+'</span> <span class="date">'+volume.inputDate+'</span>';
+            html+='     <p class="volumeTitle">'
+            html+='         '+(volume.title).substring(0, 20);//+ '' + (volume.title).length > 20 ? '...' : '';
+            html+='         <a href="${cp}/volume/page/'+volume.pn+'" class="volumeUpdateBtn">수정</a>';
+            html+='     </p>';
+            html+='     <p class="date"><span class="label">DATE</span><span class="text"> : '+(volume.inputDate).substring(0,10)+'</span></p>';
+            html+='     <p class="number"><span class="label" style="letter-spacing: 2.5px;">SIZE</span><span class="text"> : '+volume.width+' <b>x</b> '+volume.height+' <b>x</b> '+volume.depth+'</span></p>';
             html+=' </figcaption>';
             html+='</figure>';
             html+='</li>';
@@ -261,14 +265,12 @@
                         
                         <figcaption>
 
-                            <span class="volumeTitle">
+                            <p class="volumeTitle">
                                 <c:out value="${fn:substring(volume.title,0, 20)}"/>${fn:length(volume.title) > 20 ? '...' : ''}
                                 <a href="${cp}/volume/page/${volume.pn}" class="volumeUpdateBtn">수정</a>
-                            </span>
-                            <span class="number">SIZE : <c:out value="${volume.width}"/> <b>x</b> <c:out value="${volume.height}"/> <b>x</b> <c:out value="${volume.depth}"/></span>
-                            <span class="date">DATE : <c:out value="${fn:substring(volume.inputDate,0, 10)}"/></span>
-
-
+                            </p>
+                            <p class="date"><span class="label">DATE</span><span class="text"> : <c:out value="${fn:substring(volume.inputDate,0, 10)}"/></span></p>
+                            <p class="number"><span class="label" style="letter-spacing: 2.5px;">SIZE</span><span class="text"> : <c:out value="${volume.width}"/> <b>x</b> <c:out value="${volume.height}"/> <b>x</b> <c:out value="${volume.depth}"/></span></p>
 
                         </figcaption>
                     </figure>
