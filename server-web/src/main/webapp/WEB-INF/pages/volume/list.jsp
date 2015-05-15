@@ -8,6 +8,7 @@
     var numPages = <c:out value='${pagination.numPages}'/>;
 
     function goToNextPages() {
+        volumeRenderLoading(true, '데이터를 불러오고 있습니다.');
         if(currentPage == numPages){
             return;
         }
@@ -69,7 +70,7 @@
         list.append(html);
 
         sliderEventListener();
-
+        volumeRenderLoading(false, '');
     }
 
     var slider = {
@@ -77,6 +78,13 @@
         height : null,
         count : null,
         ulWidth : null
+    }
+
+    function searchVolumeFilter(){
+        volumeRenderLoading(true, '데이터를 불러오고 있습니다.');
+        $('.volumeListArticle>.list').html('');
+        currentPage = 0;
+        goToPage(currentPage);
     }
 
     $(function(){
@@ -89,9 +97,13 @@
         sliderEventListener();
 
         $('#volumeFilterBtn').on('click', function(){
-            $('.volumeListArticle>.list').html('');
-            currentPage = 0;
-            goToPage(currentPage);
+            searchVolumeFilter();
+        });
+
+        $('input[type=text]').on('keyup', function(e) {
+            if (e.which == 13) {
+                searchVolumeFilter();
+            }
         });
     });
 
@@ -282,6 +294,18 @@
         </article>
             
     </section>
+
+
+    <div id="volumeLoadingWrap" class="volumeLoadingWrap volumeLoadingWrapHide">
+
+        <div class="size">
+            <div class="center">
+                <img src="${cp}/resources/image/loading.gif"/><br/>
+                <span class="text">Now data loading ... </span>
+            </div>
+        </div>
+
+    </div>
     
 </section>
 

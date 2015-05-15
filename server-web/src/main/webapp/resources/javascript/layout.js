@@ -957,7 +957,7 @@ function polygonResize(){
 
 function volumeRenderLoading(isHide, text){
   if(isHide){
-      $('#volumeLoadingWrap').removeClass('volumeLoadingWrapHide');
+      $('#volumeLoadingWrap').removeClass('volumeLoadingWrapHide').removeAttr('style');
       $('#volumeLoadingWrap').find('span').html(text);
   }else{
       $('#volumeLoadingWrap').fadeOut(1000, function(){
