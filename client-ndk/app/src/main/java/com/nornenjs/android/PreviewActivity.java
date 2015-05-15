@@ -132,12 +132,15 @@ public class PreviewActivity extends Activity {
             Log.d(TAG, "volumes : " + volumes.toString());
 
             List<Integer> thumbnails = responseVolume.getThumbnails();
-            Log.d(TAG, "thumbnails : " + thumbnails.toString());
 
             width = responseVolume.getVolume().getWidth();
             height = responseVolume.getVolume().getHeight();
             depth = responseVolume.getVolume().getDepth();
             savepath = responseVolume.getData().getSavePath();
+            Log.d(TAG, "getData : " + responseVolume.getData().toString());
+
+
+            thumbAdapter.text = volumes.getTitle();
 
             new GetThumbnails().execute("" + thumbnails.get(0), "0");
             new GetThumbnails().execute("" + thumbnails.get(1), "1");

@@ -27,6 +27,7 @@ public class ThumbAdapter extends BaseAdapter{
     private static final String TAG = "ThumbAdapter";
 
     List<Bitmap> thumbnails;
+    String text;
     private Activity activity;
 
     public ThumbAdapter(List<Bitmap> thumbnails, Activity activity) {
@@ -37,7 +38,7 @@ public class ThumbAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        return thumbnails.size();
+        return thumbnails.size()+1;//+1했음
     }
 
     @Override
@@ -60,12 +61,22 @@ public class ThumbAdapter extends BaseAdapter{
 
         convertView = inflator.inflate(R.layout.activity_thumb_row, null);
 
-        view.thumbnailText = (TextView) convertView.findViewById(R.id.thumbText);
-        view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumbImg);
 
-        view.thumbnailImage.setImageBitmap(thumbnails.get(position));
-        view.thumbnailImage.getLayoutParams().height = view.thumbnailImage.getLayoutParams().width;
+        if(position == 0)
+        {
+            view.thumbnailText = (TextView) convertView.findViewById(R.id.thumbText);
+            view.thumbnailText.setVisibility(View.VISIBLE);
+            view.thumbnailText.setText(text+text+text+text+text+text+text);
+            view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumbImg);
+            view.thumbnailImage.setVisibility(View.GONE);
+        }
+        else
+        {
+            view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumbImg);
+            view.thumbnailImage.setImageBitmap(thumbnails.get(position-1));
+            view.thumbnailImage.getLayoutParams().height = view.thumbnailImage.getLayoutParams().width;
 
+        }
         convertView.setTag(view);
         return convertView;
     }
