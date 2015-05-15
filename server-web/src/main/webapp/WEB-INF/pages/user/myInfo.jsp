@@ -62,7 +62,7 @@
                     <form:errors path="changePassword" cssClass="error"/>
                 </li>
                 <li>
-                    <label for="confirmPassword">비밀번호 확인</label>
+                    <label for="confirmPassword">비밀번호확인</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="동일한 비밀번호를 입력해주세요."/>
                 </li>
                 <li class="actorUpdateBtn">

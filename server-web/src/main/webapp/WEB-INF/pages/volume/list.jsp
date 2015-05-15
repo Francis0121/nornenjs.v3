@@ -8,10 +8,10 @@
     var numPages = <c:out value='${pagination.numPages}'/>;
 
     function goToNextPages() {
-        volumeRenderLoading(true, '데이터를 불러오고 있습니다.');
         if(currentPage == numPages){
             return;
         }
+        volumeRenderLoading(true, '데이터를 불러오고 있습니다.');
         goToPage(Math.min(numPages, currentPage));
     }
 
