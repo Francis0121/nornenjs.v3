@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+var http = require('http');
+var HTTP_PORT = 5000;
+var server = http.createServer().listen(HTTP_PORT);
+
+// ~ Create nornenjs server
+var NornenjsServer = require('../lib/server').NornenjsServer;
+var nornenjsServer = new NornenjsServer(server, false, '112.108.40.14');
+nornenjsServer.connect();
+
+/**
+ * Override nodejs process delete function
+ */
+process.on('SIGINT', function() {
+    nornenjsServer.close(function(){
+        server.close(function() {
+            process.exit(0);
+        });
+    });
+});
