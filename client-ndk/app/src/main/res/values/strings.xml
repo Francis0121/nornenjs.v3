@@ -12,12 +12,9 @@
     <string name="title_activity_volume_list">VolumeList</string>
     <string name="title_activity_preview">PreviewActivity</string>
     <string name="title_activity_pre_view">PreView</string>
-    <string name="share">Share</string>
-    <string name="upload">Upload</string>
-    <string name="copy">Copy</string>
-    <string name="print">Print this page</string>
-    <string name="call">Call</string>
+    <string name="logout">Logout</string>
     <string name="help">Help</string>
     <string name="bottomsheet">BottomSheet Sample</string>
+    <string name="title_activity_mpr">MprActivity</string>
 
 </resources>

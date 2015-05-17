@@ -38,6 +38,7 @@ public class PreviewActivity extends Activity {
     private VolumeFilter volumeFilter;
     int pns;
 
+
     Volume volumes;
     Data datas;
     List<Bitmap> thumbnails;
@@ -75,15 +76,24 @@ public class PreviewActivity extends Activity {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "go to JNIActivity");
 
-                Intent intent = new Intent(PreviewActivity.this, JniGLActivity.class);
+                Log.d("emitTag", "emit position : " + position);
+                Intent intent;
+                if(position == 1)
+                {
+                    Log.d(TAG, "go to JNIActivity");
+                    intent = new Intent(PreviewActivity.this, JniGLActivity.class);
+                }
+                else {
+                    Log.d(TAG, "go to MprActivity");
+                    intent = new Intent(PreviewActivity.this, MprActivity.class);
+                }
                 intent.putExtra("width", width);
                 intent.putExtra("height", height);
                 intent.putExtra("depth", depth);
                 intent.putExtra("savepath", savepath);
-                Log.d("emitTag", "emit position : " + position);
-                intent.putExtra("datatype", position);
+
+                intent.putExtra("datatype", position-1);
                 startActivity(intent);
             }
         });

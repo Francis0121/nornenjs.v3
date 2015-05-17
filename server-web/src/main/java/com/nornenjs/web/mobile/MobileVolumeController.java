@@ -42,6 +42,7 @@ public class MobileVolumeController {
         volumeFilter.setFrom("1800-01-01");
 
         List<Volume> volumes = volumeService.selectList(volumeFilter);
+
         response.put("volumes", volumes);
         response.put("volumeFilter", volumeFilter);
         logger.debug(volumes.toString());

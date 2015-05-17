@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/mprActivity"
+                tools:context="com.nornenjs.android.MprActivity">
+
+
+    <SeekBar
+
+            android:id="@+id/player_seek_horizontal"
+            style="@style/mySeekBar"
+            android:layout_gravity="center_vertical"
+            android:max="100"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/round_background"
+            android:maxHeight="18dp"
+            android:minHeight="18dp"
+            android:paddingRight="4dp"
+            android:paddingLeft="4dp"
+            android:layout_marginBottom="30dp"
+            android:thumb="@drawable/thumb"
+
+            />
+</RelativeLayout>

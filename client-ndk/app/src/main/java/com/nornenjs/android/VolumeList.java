@@ -2,6 +2,8 @@ package com.nornenjs.android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//import com.cocosw.bottomsheet.*;
+import com.cocosw.bottomsheet.BottomSheet;
 
 public class VolumeList extends Activity {
 
@@ -48,6 +50,10 @@ public class VolumeList extends Activity {
     private List<Bitmap> thumbnails2;
     private List<Integer> pns1;
     private List<Integer> pns2;
+    private List<String> date1;
+    private List<String> date2;
+    private List<String> metadata1;
+    private List<String> metadata2;
 
     private List<String> backuptitles1;
     private List<String> backuptitles2;
@@ -55,6 +61,10 @@ public class VolumeList extends Activity {
     private List<Bitmap> backupthumbnails2;
     private List<Integer> backuppns1;
     private List<Integer> backuppns2;
+    private List<String> backupdate1;
+    private List<String> backupdate2;
+    private List<String> backupmetadata1;
+    private List<String> backupmetadata2;
 
     private ListView imagelist;
 
@@ -63,12 +73,14 @@ public class VolumeList extends Activity {
 
     private PoppyViewHelper mPoppyViewHelper;
 
-    private View footer;
     private int CurrentPage = 1;
     private int totalPage;
 
-    //private BottomSheet sheet;
+    private BottomSheet sheet;
+    public boolean bottom = false;
+
     //View v;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,14 +104,23 @@ public class VolumeList extends Activity {
         backuppns2 = new ArrayList<Integer>();
 
 
-        mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, VolumeList.this);
-        searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, VolumeList.this);
+        date1 = new ArrayList<String>();
+        date2 = new ArrayList<String>();
+        metadata1 = new ArrayList<String>();
+        metadata2 = new ArrayList<String>();
+
+        backupdate1 = new ArrayList<String>();
+        backupdate2 = new ArrayList<String>();
+        backupmetadata1 = new ArrayList<String>();
+        backupmetadata2 = new ArrayList<String>();
+
+        mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, date1, date2, metadata1, metadata2, VolumeList.this);
+        searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, backupdate1, backupdate2, backupmetadata1, backupmetadata2, VolumeList.this);
 
         // Set custom adapter to gridview
         imagelist = (ListView) findViewById(R.id.imagelist);
         imagelist.setAdapter(mAdapter);
 
-        footer = getLayoutInflater().inflate(R.layout.footer, null, false);
 
         progressBar = (RelativeLayout) findViewById(R.id.progress_layout);
 
@@ -122,6 +143,12 @@ public class VolumeList extends Activity {
         alert.setVisibility(View.GONE);
         new PostVolumeTask().execute("search", keyword);
         imagelist.setAdapter(searchAdapter);
+    }
+
+    public void getPage()
+    {
+        Log.d(TAG, "request next page.. : " + CurrentPage);
+        new PostVolumeTask().execute("page");
     }
 
 
@@ -217,12 +244,16 @@ public class VolumeList extends Activity {
                     {
                         if(titles1.size() == titles2.size())
                         {
-                            titles1.add(volume.getTitle() + volume.getInputDate());
+                            titles1.add(volume.getTitle());
+                            date1.add(volume.getInputDate().substring(0, 10));
+                            metadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
                             pns1.add(volume.getPn());
                         }
                         else if(titles1.size() > titles2.size())
                         {
-                            titles2.add(volume.getTitle() + volume.getInputDate());
+                            titles2.add(volume.getTitle());
+                            date2.add(volume.getInputDate().substring(0,10));
+                            metadata2.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
                             pns2.add(volume.getPn());
                         }
                         new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"none");
@@ -231,12 +262,16 @@ public class VolumeList extends Activity {
                     {
                         if(backuptitles1.size() == backuptitles2.size())
                         {
-                            backuptitles1.add(volume.getTitle() + volume.getInputDate());
+                            backuptitles1.add(volume.getTitle());
+                            backupdate1.add(volume.getInputDate().substring(0, 10));
+                            backupmetadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
                             backuppns1.add(volume.getPn());
                         }
                         else if(backuptitles1.size() > backuptitles2.size())
                         {
-                            backuptitles2.add(volume.getTitle() + volume.getInputDate());
+                            backuptitles2.add(volume.getTitle());
+                            backupdate2.add(volume.getInputDate().substring(0,10));
+                            backupmetadata2.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() + "x" + volume.getDepth().toString());
                             backuppns2.add(volume.getPn());
                         }
                         new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"search");
@@ -263,11 +298,13 @@ public class VolumeList extends Activity {
 
 
     }
+    int count = 0;
     private class GetThumbnail extends AsyncTask<String, Void, Bitmap>{
-        int index;
         String request;
+
         @Override
         protected Bitmap doInBackground(String... params) {
+
             request = params[1];
             Log.d("one Image", "In doInBackground params0 : " + params[0]);
             Bitmap data = downloadImage(getString(R.string.tomcat) + "/data/thumbnail/" + params[0]);
@@ -293,8 +330,13 @@ public class VolumeList extends Activity {
                         thumbnails2.add(bytes);//image1.setImageBitmap(bytes);
                     }
 
-
                     mAdapter.notifyDataSetChanged();
+                    if(count == 10) {
+                        count = 0;
+                        bottom = false;
+                    }
+                    count++;
+                    //bottom = false;
                 }
                 else if("search".equals(request))
                 {
@@ -308,6 +350,7 @@ public class VolumeList extends Activity {
                         backupthumbnails2.add(bytes);//image1.setImageBitmap(bytes);
                     }
                     searchAdapter.notifyDataSetChanged();
+
                 }
 
 
@@ -371,15 +414,31 @@ public class VolumeList extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         Log.d(TAG, "keyCode : " + keyCode);
+
         if(keyCode == 82)
         {
-//            sheet = new BottomSheet.Builder(this).darkTheme().title("To " + adapter.getItem(position)).sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    //ListAcitivty.this.onClick(adapter.getItem(position), which);
-//                }
-//            }).build();
+            new BottomSheet.Builder(this).title("").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case R.id.help:
+
+                            break;
+                        case R.id.logout:
+                            SharedPreferences pref = getSharedPreferences("userInfo", 0);
+                            SharedPreferences.Editor prefEdit = pref.edit();
+
+                            prefEdit.putString("username", "");
+                            Intent intent = new Intent(VolumeList.this, LoginActivity.class);
+
+                            startActivity(intent);
+                            finish();
+                            break;
+                    }
+                }
+            }).show();
         }
+
         return super.onKeyDown(keyCode, event);
     }
 }

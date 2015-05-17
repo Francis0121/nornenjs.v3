@@ -32,6 +32,10 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
     private List<Bitmap> thumbnails2;
     private List<Integer> pns1;
     private List<Integer> pns2;
+    private List<String> date1;
+    private List<String> date2;
+    private List<String> metadata1;
+    private List<String> metadata2;
     private Map<Integer, Integer> pnMap;
 
     private Activity activity;
@@ -42,17 +46,31 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 //        mContext = c;
 //    }
 
-
-    public ImageAdapter(List<String> titles, List<String> titles2, List<Bitmap> thumbnails, List<Bitmap> thumbnails2, List<Integer> pns, List<Integer> pns2, Activity activity) {
-        this.titles1 = titles;
+    public ImageAdapter(List<String> titles1, List<String> titles2, List<Bitmap> thumbnails1, List<Bitmap> thumbnails2, List<Integer> pns1, List<Integer> pns2, List<String> date1, List<String> date2, List<String> metadata1, List<String> metadata2, Activity activity) {
+        this.titles1 = titles1;
         this.titles2 = titles2;
-        this.thumbnails1 = thumbnails;
+        this.thumbnails1 = thumbnails1;
         this.thumbnails2 = thumbnails2;
-        this.pns1 = pns;
+        this.pns1 = pns1;
         this.pns2 = pns2;
+        this.date1 = date1;
+        this.date2 = date2;
+        this.metadata1 = metadata1;
+        this.metadata2 = metadata2;
         this.activity = activity;
-        this.pnMap = new HashMap<Integer, Integer>();
     }
+
+
+//    public ImageAdapter(List<String> titles, List<String> titles2, List<Bitmap> thumbnails, List<Bitmap> thumbnails2, List<Integer> pns, List<Integer> pns2, Activity activity) {
+//        this.titles1 = titles;
+//        this.titles2 = titles2;
+//        this.thumbnails1 = thumbnails;
+//        this.thumbnails2 = thumbnails2;
+//        this.pns1 = pns;
+//        this.pns2 = pns2;
+//        this.activity = activity;
+//        this.pnMap = new HashMap<Integer, Integer>();
+//    }
 
     public int getCount() {
         return thumbnails1.size();//더 짧은 오른쪽을 기준
@@ -71,11 +89,13 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
     public static class ViewHolder
     {
         public ImageView imgViewFlag;
-        public TextView metadata;
+        public TextView title;
         public TextView date;
+        public TextView metadata;
         public ImageView imgViewFlag2;
-        public TextView metadata2;
+        public TextView title2;
         public TextView date2;
+        public TextView metadata2;
     }
 
 
@@ -89,9 +109,14 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view = new ViewHolder();
             convertView = inflator.inflate(R.layout.activity_grid_row, null);
 
-            view.metadata = (TextView) convertView.findViewById(R.id.textView1);
+            view.title = (TextView) convertView.findViewById(R.id.textView1);
+            view.date = (TextView) convertView.findViewById(R.id.textView2);
+            view.metadata = (TextView) convertView.findViewById(R.id.textView3);
             view.imgViewFlag = (ImageView) convertView.findViewById(R.id.imageView1);
-            view.metadata2 = (TextView) convertView.findViewById(R.id.textView2_1);
+
+            view.title2 = (TextView) convertView.findViewById(R.id.textView2_1);
+            view.date2 = (TextView) convertView.findViewById(R.id.textView2_2);
+            view.metadata2 = (TextView) convertView.findViewById(R.id.textView2_3);
             view.imgViewFlag2 = (ImageView) convertView.findViewById(R.id.imageView2);
 
             view.metadata.setOnClickListener(this);
@@ -106,7 +131,17 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view = (ViewHolder) convertView.getTag();
         }
 
-        view.metadata.setText(titles1.get(position));
+        //여기서 문자열 처
+        String titleText;
+        if(titles1.get(position).length() > 10)
+            titleText = titles1.get(position).substring(0, 10) + "...";
+        else
+            titleText = titles1.get(position);
+
+        view.title.setText(titleText);
+        view.date.setText(date1.get(position));
+        view.metadata.setText(metadata1.get(position));
+
         view.imgViewFlag.setTag(pns1.get(position));
 
         if(thumbnails1.size() > position)
@@ -114,7 +149,15 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view.imgViewFlag.setImageBitmap(thumbnails1.get(position));
         }
 
-        view.metadata2.setText(titles2.get(position));
+        if(titles2.get(position).length() > 10)
+            titleText = titles2.get(position).substring(0, 10) + "...";
+        else
+            titleText = titles2.get(position);
+
+        view.title2.setText(titleText);
+        view.date2.setText(date2.get(position));
+        view.metadata2.setText(metadata2.get(position));
+
         view.imgViewFlag2.setTag(pns2.get(position));
 
         if(thumbnails2.size() > position) {

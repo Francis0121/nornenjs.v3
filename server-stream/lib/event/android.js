@@ -52,8 +52,14 @@ Android.prototype.pngEventListener = function(){
 
     socket.on(EVENT_MESSAGE.ANDROID.PNG, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
+
+        if(option.mip == "mip")
+            cudaRender.type = ENUMS.RENDERING_TYPE.MIP;
+        else
+            cudaRender.type = ENUMS.RENDERING_TYPE.VOLUME;
+
+
         $this.encoding.Androidpng(cudaRender, socket);
-        //$this.encoding.Androidjpeg(cudaRender, socket);
     });
 };
 
@@ -67,6 +73,9 @@ Android.prototype.rotationtouchEventListener = function(){
 
     socket.on(EVENT_MESSAGE.ANDROID.ROTATION, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
+
+        if(option.mip == "mip")
+            cudaRender.type = ENUMS.RENDERING_TYPE.MIP;
 
         cudaRender.rotationX = option.rotationX;
         cudaRender.rotationY = option.rotationY;
@@ -82,6 +91,9 @@ Android.prototype.translationtouchEventListener = function(){
     socket.on(EVENT_MESSAGE.ANDROID.TRANSLATION, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
+        if(option.mip == "mip")
+            cudaRender.type = ENUMS.RENDERING_TYPE.MIP;
+
         cudaRender.positionX = option.positionX;
         cudaRender.positionY = option.positionY;
 
@@ -95,6 +107,9 @@ Android.prototype.pinchzoomtouchEventListener = function(){
 
     socket.on(EVENT_MESSAGE.ANDROID.PINCHZOOM, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
+
+        if(option.mip == "mip")
+            cudaRender.type = ENUMS.RENDERING_TYPE.MIP;
 
         cudaRender.positionZ = option.positionZ;
 
@@ -110,12 +125,21 @@ Android.prototype.volumeMPRListener = function(){
     socket.on(EVENT_MESSAGE.ANDROID.MPR, function(option){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
-        cudaRender.type = ENUMS.RENDERING_TYPE.MPR;
+        if(option.mip == "mip")
+            cudaRender.type = ENUMS.RENDERING_TYPE.MIP;
+        else
+            cudaRender.type = ENUMS.RENDERING_TYPE.MPR;
+
         cudaRender.mprType = option.mprType;
         cudaRender.transferScaleX = option.transferScaleX;
         cudaRender.transferScaleY = option.transferScaleY;
         cudaRender.transferScaleZ = option.transferScaleZ;
-        $this.encoding.Androidjpeg(cudaRender, socket);
+        cudaRender.positionZ = option.positionZ;
+
+        if("ok" == option.png)
+            $this.encoding.Androidpng(cudaRender, socket);
+        else
+            $this.encoding.Androidjpeg(cudaRender, socket);
     });
 
 };

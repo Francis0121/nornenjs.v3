@@ -1,14 +1,16 @@
 package com.nornenjs.android;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 import android.util.FloatMath;
 import android.util.Log;
-import android.view.MotionEvent;
+import android.view.*;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -16,10 +18,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.view.SurfaceHolder;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import com.cocosw.bottomsheet.BottomSheet;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.nineoldandroids.view.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +52,7 @@ public class JniGLActivity extends Activity{
     public float rotationX = 0.0f, rotationY = 0.0f;
     public float translationX =0.0f, translationY =0.0f;
 
-    public float div=3.0f;
+    public float div=2.0f;//3
 
     public float oldVectorX1 =0.0f, oldVectorY1 =0.0f;
     public float oldVectorX2 =0.0f, oldVectorY2 =0.0f;
@@ -70,10 +75,13 @@ public class JniGLActivity extends Activity{
 
     private MyEventListener myEventListener;
     GLSurfaceView mGLSurfaceView;
+    CudaRenderer mRenderer;
 
     public int volumeWidth, volumeHeight, volumeDepth;
     public String volumeSavePath = "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8";//일단 상수 박아줌
-    public int datatype;
+    public int datatype;//4는 MIP
+
+    Button togglebtn;
 
     public void setMyEventListener(MyEventListener myEventListener) {
         this.myEventListener = myEventListener;
@@ -96,14 +104,26 @@ public class JniGLActivity extends Activity{
         setContentView(R.layout.loding);
         Log.d(TAG, "before create TouchSurfaceView");
         mGLSurfaceView = new TouchSurfaceView(this, host);
-        //if(mGLSurfaceView.getRenderMode())
-        //setContentView(mGLSurfaceView);
+        Log.d("emitTag","make CudaRenderer");
+        mRenderer = new CudaRenderer(this, host);
+        mGLSurfaceView.setRenderer(mRenderer);
         Log.d(TAG, "setcontentView mGLSurfaceView");
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
 
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == 82)
+        {
+            //sliding view
+            //com.nineoldandroids.view.ViewPropertyAnimator.animate()
+
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -330,13 +350,34 @@ public class JniGLActivity extends Activity{
         public void handleMessage(Message msg)
 
         {
+
             Log.d(TAG, "handleMessage() called");
 
-            setContentView(mGLSurfaceView);
+            final RelativeLayout newContainer = new RelativeLayout(JniGLActivity.this);//FrameLayout
+
+            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT );
+
+            newContainer.setLayoutParams(layoutParams);
+
+            setContentView(R.layout.toggle);
+            togglebtn = (Button) findViewById(R.id.toggleBtn);
+
+            togglebtn.setOnClickListener(mRenderer);
+
+            ViewParent parent = togglebtn.getParent();
+            ViewGroup group = (ViewGroup)parent;
+            group.addView(mGLSurfaceView);
+
+            togglebtn.bringToFront();
+            togglebtn.invalidate();
+
+            setContentView(group);
 
         }
 
     };
+
 }
 
 class TouchSurfaceView extends GLSurfaceView {
@@ -358,9 +399,7 @@ class TouchSurfaceView extends GLSurfaceView {
         this.host = host;
         this.mContext = context;
         this.mActivity = (JniGLActivity) context;
-        this.mRenderer = new CudaRenderer(this.mActivity, host);
-        Log.d("emitTag","make CudaRenderer");
-        setRenderer(this.mRenderer);
+
     }
 
     @Override
@@ -377,7 +416,8 @@ class TouchSurfaceView extends GLSurfaceView {
 
 }
 
-class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
+
+class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnClickListener{
 
     private JniGLActivity mActivity;
     private byte[] byteArray;
@@ -388,12 +428,11 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
 
     Bitmap imgPanda;
 
-
-    private String mprarr[] = {"none","transferScaleX","transferScaleY","transferScaleZ"};
+    private boolean mip = false;
 
     public void bindSocket(String ipAddress, String port, String deviceNumber){
         try {
-            Log.d("emitTag", toString());
+            //Log.d("emitTag", toString());
             socket = IO.socket("http://"+ipAddress+":"+port);
 
             JSONObject json = new JSONObject();
@@ -403,6 +442,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
             json.put("height", mActivity.volumeHeight);
             json.put("depth", mActivity.volumeDepth);
 
+            if(mip)
+                json.put("mip", "mip");
 
             socket.emit("join", deviceNumber);
             socket.emit("init", json);
@@ -412,38 +453,10 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
                 @Override
                 public void call(Object... args) {
 
+                    JSONObject jsonObject = new JSONObject();
+                    socket.emit("androidPng", jsonObject);
 
-                    if(mActivity.datatype == mActivity.VOLUME) {
-                        socket.emit("androidPng");
-                        Log.d("emitTag","VOLUME emit");
-                    }
-                    else
-                    {
-
-                        try
-                        {
-                            JSONObject json2 = new JSONObject();
-                            json2.put("mprType", mActivity.datatype);
-                            json2.put(mprarr[mActivity.datatype], 0.5);//처음에는 50을 줌
-                            Log.d("emitTag",mprarr[mActivity.datatype] + " : " + 0.5);
-                            for(int i = 1; i < 4; i++)
-                            {
-                                if(i != mActivity.datatype)
-                                {
-                                    json2.put(mprarr[i], 0);//처음에는 50을 줌
-                                    Log.d("emitTag", mprarr[i] + " : " + 0);
-                                }
-                            }
-                            socket.emit("mpr", json2);
-
-                        }catch(JSONException e)
-                        {
-
-                        }
-
-                        Log.d("emitTag", "mpr emit..type : " + mActivity.datatype);
-                    }
-
+                    Log.d("emitTag","VOLUME emit");
 
 
                 }
@@ -462,10 +475,10 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
                         width = (Integer) info.get("width");
                         height = (Integer) info.get("height");
                         mActivity.setView();
-                        imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
-                        Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
-                        Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
+
+//                        Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
+//                        Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -538,6 +551,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
     public void onDrawFrame(GL10 gl) {
 
         if(byteArray!=null) {
+        //if(imgPanda!=null) {
 
 //            if(imgPanda != null)
 //            {
@@ -545,17 +559,28 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
 //                imgPanda = null;
 //            }
 
-            int[] pixels = new int[width.intValue()*height.intValue()];
+            imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
+            int[] pixels;// = new int[width.intValue()*height.intValue()];
             if(imgPanda.getWidth() == width.intValue())
             {
+                pixels = new int[width.intValue()*height.intValue()];
                 imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
                 mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
-                mActivity.draw++;
             }
+            else
+            {
+                Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
+                pixels = new int[imgPanda.getWidth()*imgPanda.getHeight()];
+                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
+                mActivity.nativeSetTextureData(pixels, imgPanda.getWidth(), imgPanda.getHeight());
+            }
+            mActivity.draw++;
 
         }
+        else
+            Log.d("Jni", "byteArray is null");
         mActivity.nativeDrawIteration(0, 0);
-        //웅규오빠한테 물어보기
 
     }
 
@@ -586,10 +611,14 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
             jsonObject.put("rotationX", rotationX);
             jsonObject.put("rotationY", rotationY);
 
+            if(mip)
+                jsonObject.put("mip", "mip");
+
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("error", "Make json object");
         }
+
 
         socket.emit("rotation", jsonObject);
     }
@@ -599,6 +628,9 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
         try {
             jsonObject.put("positionX", translationX);
             jsonObject.put("positionY", translationY);
+
+            if(mip)
+                jsonObject.put("mip", "mip");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -614,6 +646,9 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
         try {
             jsonObject.put("positionZ", div);
 
+            if(mip)
+                jsonObject.put("mip", "mip");
+
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e("error", "Make json object");
@@ -625,18 +660,49 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener {
     @Override
     public void GetPng() {
         JSONObject jsonObject = new JSONObject();
+        try
+        {
+            if(mip)
+                jsonObject.put("mip", "mip");
+
+        }catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+
         socket.emit("androidPng", jsonObject);
-        Log.d("GETPng","GETPng");
+        Log.d("GETPng", "GETPng");
 
     }
 
     @Override
     public void BackToPreview() {
         Log.e("emitTag", "Back to PreViewActivity..");
-        socket.disconnect();
-        socket.off("loadCudaMemory");
-        socket.off("stream");
-        Log.e("emitTag", "socket.disconnect()");
+        if(socket.connected())
+        {
+            socket.disconnect();
+            socket.off("loadCudaMemory");
+            socket.off("stream");
+            Log.e("emitTag", "socket.disconnect()");
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+            switch (v.getId())
+            {
+                case R.id.toggleBtn :
+                    if("VOL".equals(mActivity.togglebtn.getText())) {
+                        mip = true;
+                        mActivity.togglebtn.setText("MIP");
+                    }
+                    else {
+                        mip = false;
+                        mActivity.togglebtn.setText("VOL");
+                    }
+                    GetPng();
+                    break;
+            }
     }
 }
 
