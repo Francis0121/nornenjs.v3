@@ -129,6 +129,9 @@ public class ActorServiceImpl extends SqlSessionDaoSupport implements ActorServi
 
     @Override
     public Boolean updatePassword(Actor actor) {
+        actor.setPassword(actor.getChangePassword());
+        setEncodedPassword(actor);
+
         Integer result = getSqlSession().update("actor.updatePassword", actor);
         if(!result.equals(1)) return false;
         

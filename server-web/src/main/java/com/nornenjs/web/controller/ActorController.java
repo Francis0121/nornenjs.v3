@@ -23,6 +23,8 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 
+import java.io.UnsupportedEncodingException;
+
 
 /**
  * Created by Francis on 2015-04-22.
@@ -87,7 +89,18 @@ public class ActorController {
     }
     
     @RequestMapping(value = "/join", method = RequestMethod.POST)
-    public String joinPost(@ModelAttribute ActorInfo actorInfo, BindingResult result){
+    public String joinPost(@ModelAttribute ActorInfo actorInfo, BindingResult result) throws UnsupportedEncodingException {
+        if(actorInfo.getFirstName() != null) {
+            String firstName = new String(actorInfo.getFirstName().getBytes("8859_1"), "utf-8");
+            actorInfo.setFirstName(firstName);
+        }
+
+        if(actorInfo.getLastName() != null) {
+            String lastName = new String(actorInfo.getLastName().getBytes("8859_1"), "utf-8");
+            actorInfo.setLastName(lastName);
+        }
+
+        logger.debug(actorInfo.toString());
         new ActorInfoJoinValidator().validate(actorInfo, result);
         if(result.hasErrors()){
             return "user/join";
@@ -167,7 +180,17 @@ public class ActorController {
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value = "/myInfo/{username}", method = RequestMethod.POST)
     public String myInfoPagePost(Model model, @PathVariable("username") String username,
-                                 @ModelAttribute ActorInfo actorInfo, BindingResult result){
+                                 @ModelAttribute ActorInfo actorInfo, BindingResult result) throws UnsupportedEncodingException {
+        if(actorInfo.getFirstName() != null) {
+            String firstName = new String(actorInfo.getFirstName().getBytes("8859_1"), "utf-8");
+            actorInfo.setFirstName(firstName);
+        }
+
+        if(actorInfo.getLastName() != null) {
+            String lastName = new String(actorInfo.getLastName().getBytes("8859_1"), "utf-8");
+            actorInfo.setLastName(lastName);
+        }
+
         logger.debug(actorInfo.toString());
         new Validator(){
             @Override
@@ -183,7 +206,7 @@ public class ActorController {
                 if(ValidationUtil.isNull(lastName)){
                     errors.rejectValue("lastName", "actorInfo.lastName.empty");
                 }else{
-                    if(ValidationUtil.isChar(lastName)){
+                    if(ValidationUtil.isName(lastName)){
                         errors.rejectValue("lastName", "actorInfo.lastName.wrong");
                     }
                 }
@@ -192,7 +215,7 @@ public class ActorController {
                 if(ValidationUtil.isNull(firstName)){
                     errors.rejectValue("firstName", "actorInfo.firstName.empty");
                 }else{
-                    if(ValidationUtil.isChar(firstName)){
+                    if(ValidationUtil.isName(firstName)){
                         errors.rejectValue("firstName", "actorInfo.firstName.wrong");
                     }
                 }
@@ -313,7 +336,7 @@ public class ActorController {
             if(ValidationUtil.isNull(firstName)){
                 errors.rejectValue("firstName", "actorInfo.firstName.empty");
             }else{
-                if(ValidationUtil.isChar(firstName)){
+                if(ValidationUtil.isName(firstName)){
                     errors.rejectValue("firstName", "actorInfo.firstName.wrong");
                 }
             }
@@ -322,7 +345,7 @@ public class ActorController {
             if(ValidationUtil.isNull(lastName)){
                 errors.rejectValue("lastName", "actorInfo.lastName.empty");
             }else{
-                if(ValidationUtil.isChar(lastName)){
+                if(ValidationUtil.isName(lastName)){
                     errors.rejectValue("lastName", "actorInfo.lastName.wrong");
                 }
             }
