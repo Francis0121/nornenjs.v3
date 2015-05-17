@@ -20,7 +20,7 @@ public class MockVolumeServiceImpl implements VolumeService{
     }
 
     @Override
-    public Integer selectMaxVolume() {
+    public Integer selectMaxVolume(String username) {
         return null;
     }
 

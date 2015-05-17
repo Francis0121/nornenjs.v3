@@ -41,11 +41,13 @@
           `pn` = #{pn}
     </update>
     
-    <select id="selectMaxVolume" resultType="Integer">
+    <select id="selectMaxVolume" parameterType="String"  resultType="Integer">
         SELECT
           MAX(`pn`)
         FROM
           `volume`
+        WHERE
+          `username` = #{username}
     </select>
 
     <select id="selectOne" parameterType="Integer" resultType="Volume">

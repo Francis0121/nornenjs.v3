@@ -60,8 +60,8 @@ public class VolumeServiceImpl extends SqlSessionDaoSupport implements VolumeSer
     }
 
     @Override
-    public Integer selectMaxVolume() {
-        return getSqlSession().selectOne("volume.selectMaxVolume");
+    public Integer selectMaxVolume(String username) {
+        return getSqlSession().selectOne("volume.selectMaxVolume", username);
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface VolumeService extends CRUDService<Volume, VolumeFilter>{
     
     Integer updateData(Volume updateVolume);
 
-    Integer selectMaxVolume();
+    Integer selectMaxVolume(String username);
 
     Map<String, Object> selectVolumeInformation(Integer volumePn);
 

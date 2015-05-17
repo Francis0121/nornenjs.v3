@@ -41,7 +41,8 @@ public class VolumeController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String maxVolumeRenderingPage(){
-        Integer maxVolumePn = volumeService.selectMaxVolume();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer maxVolumePn = volumeService.selectMaxVolume(user.getUsername());
         if(maxVolumePn == null){
             return "redirect:/volume/list";
         }
