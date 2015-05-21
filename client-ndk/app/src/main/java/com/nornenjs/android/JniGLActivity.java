@@ -405,9 +405,10 @@ public class JniGLActivity extends Activity{
             group.addView(mGLSurfaceView);
 
             da = (DrawActivity) findViewById(R.id.canvas);
-
             da.bringToFront();
             da.invalidate();
+            da.otf_width = da.getWidth();
+            da.otf_height = da.getHeight();
 
 
             //group.addView(wv);
@@ -621,36 +622,36 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
     public void onDrawFrame(GL10 gl) {
 
-        if(byteArray!=null) {
-        //if(imgPanda!=null) {
-
-//            if(imgPanda != null)
+//        if(byteArray!=null) {
+//        //if(imgPanda!=null) {
+//
+////            if(imgPanda != null)
+////            {
+////                imgPanda.recycle();
+////                imgPanda = null;
+////            }
+//
+//
+//            int[] pixels;// = new int[width.intValue()*height.intValue()];
+//            if(imgPanda.getWidth() == width.intValue())
 //            {
-//                imgPanda.recycle();
-//                imgPanda = null;
+//                pixels = new int[width.intValue()*height.intValue()];
+//                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
+//                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
 //            }
-
-
-            int[] pixels;// = new int[width.intValue()*height.intValue()];
-            if(imgPanda.getWidth() == width.intValue())
-            {
-                pixels = new int[width.intValue()*height.intValue()];
-                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
-                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
-            }
-            else
-            {
-                Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
-                pixels = new int[imgPanda.getWidth()*imgPanda.getHeight()];
-                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
-                mActivity.nativeSetTextureData(pixels, imgPanda.getWidth(), imgPanda.getHeight());
-            }
-            mActivity.draw++;
-
-        }
-        else
-            Log.d("Jni", "byteArray is null");
-        mActivity.nativeDrawIteration(0, 0);
+//            else
+//            {
+//                Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
+//                pixels = new int[imgPanda.getWidth()*imgPanda.getHeight()];
+//                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
+//                mActivity.nativeSetTextureData(pixels, imgPanda.getWidth(), imgPanda.getHeight());
+//            }
+//            mActivity.draw++;
+//
+//        }
+//        else
+//            Log.d("Jni", "byteArray is null");
+//        mActivity.nativeDrawIteration(0, 0);
 
     }
 
