@@ -74,80 +74,48 @@ public class DrawActivity extends View{
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Log.d("onDraw", "canvas onDraw called");
-        drawBackground();
+        if(otf_width == 0 || otf_width == 0.0f)
+        {
+            Log.d("onDraw", "otf_width is 0");
+            View layoutMainView = (View)this.findViewById(R.id.canvas);
 
-        //canvas.drawColor(Color.WHITE, PorterDuff.Mode.CLEAR);
-        figure.reset();
-        figure.addCircle(topLeft.x, topLeft.y, topLeft.radius, Path.Direction.CW);
-        figure.addCircle(topRight.x, topRight.y, topRight.radius, Path.Direction.CW);
-        figure.addCircle(bottomLeft.x, bottomLeft.y, bottomLeft.radius, Path.Direction.CW);
-        figure.addCircle(bottomRight.x, bottomRight.y, bottomRight.radius, Path.Direction.CW);
-        figure.close();
-        canvas.drawPath(figure, cPaint);//원
+            otf_width = layoutMainView.getWidth();
+            otf_height = layoutMainView.getHeight();
+
+            bottomLeft.setY(otf_height - 100);
+            bottomRight.setY(otf_height - 100);
+        }
+        drawBackground(canvas);
+
+
+    }
 
 
 
-        canvas.drawPath(bg, bg_Paint);
-        canvas.drawPath(line, bg_LinePaint);
-        line.moveTo(50, otf_height - 100);//아래 선
-        line.lineTo(otf_width - 70, otf_height - 100);//margin 70
+    public void drawBackground(Canvas canvas)
+    {
+
+        //점선
+        canvas.drawLine(70, 100, otf_width - 70, 100, bg_Paint);
+
+        //기준선 2개
         bg_LinePaint.setColor(Color.BLACK);
-        canvas.drawPath(line, bg_LinePaint);
+        bg_LinePaint.setStrokeWidth(15);
+        canvas.drawLine(100, 30, 100, otf_height - 30, bg_LinePaint);
+        canvas.drawLine(50, otf_height - 100, otf_width - 70, otf_height - 100, bg_LinePaint);
 
-        drawTrapezoid(topLeft, topRight, bottomLeft, bottomRight);
-
+        //사다리꼴 3개 라인
         bg_LinePaint.setColor(Color.LTGRAY);
-//        cPaint.setAntiAlias(true) ;
-        canvas.drawPath(figure, bg_LinePaint);//원
-    }
+        bg_LinePaint.setStrokeWidth(30);
+        canvas.drawLine(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y, bg_LinePaint);
+        canvas.drawLine(topLeft.x, topLeft.y, topRight.x, topRight.y, bg_LinePaint);
+        canvas.drawLine(topRight.x, topRight.y, bottomRight.x, bottomRight.y, bg_LinePaint);
 
-    public void drawTrapezoid(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight)
-    {
-//        //위의 두가지로 사각형을 그리고, 삼각형 두개를 그려 채운다.
-//        figure.addRect(topLeft.x, topLeft.y, topRight.x, bottomRight.y, Path.Direction.CW);
-//
-//        figure.moveTo(topLeft.x, topLeft.y);
-//        figure.lineTo(topLeft.x, bottomLeft.y);
-//        figure.lineTo(bottomLeft.x, bottomLeft.y);//왼쪽 삼각형
-//
-//        figure.moveTo(topRight.x, topRight.y);
-//        figure.lineTo(topRight.x, bottomRight.y);
-//        figure.lineTo(bottomRight.x, bottomRight.y);//오른쪽 삼각형
-
-        //채우지 말구 선으로만...
-        //위의 두가지로 사각형을 그리고, 삼각형 두개를 그려 채운다.
-        //figure.addRect(topLeft.x, topLeft.y, topRight.x, bottomRight.y, Path.Direction.CW);
-
-        figure.moveTo(topLeft.x, topLeft.y);
-        figure.lineTo(bottomLeft.x, bottomLeft.y);//왼쪽 선
-        figure.moveTo(topLeft.x, topLeft.y);
-        figure.lineTo(topRight.x, topRight.y);//상단 선
-
-        figure.moveTo(topRight.x, topRight.y);
-        figure.lineTo(bottomRight.x, bottomRight.y);//오른쪽 삼각형
-
-
-    }
-
-
-    public void drawBackground()
-    {
-        View layoutMainView = (View)this.findViewById(R.id.canvas);
-
-        otf_width = layoutMainView.getWidth();
-        otf_height = layoutMainView.getHeight();
-
-        bg.moveTo(70, 100);//점선
-        bg.lineTo(otf_width - 70, 100);//vertical margin 100, horizontal margin 70
-
-        line.moveTo(100, 30);
-        line.lineTo(100, otf_height - 30);//vertical margin 70, horizontal margin 100
-
-        bottomLeft.setX(250);//동그라미 밑에 두개의 위치를 지정
-        bottomLeft.setY(otf_height - 100);
-        bottomRight.setX(800);
-        bottomRight.setY(otf_height - 100);
+        //꼭지점 4개
+        canvas.drawCircle(topLeft.x, topLeft.y, topLeft.radius, cPaint);
+        canvas.drawCircle(topRight.x, topRight.y, topRight.radius, cPaint);
+        canvas.drawCircle(bottomLeft.x, bottomLeft.y, bottomLeft.radius, cPaint);
+        canvas.drawCircle(bottomRight.x, bottomRight.y, bottomRight.radius, cPaint);
 
     }
 
@@ -184,27 +152,25 @@ public class DrawActivity extends View{
 
             if(t_Left)
             {
-                topLeft.setX(event.getX());
-                //topLeft.setY(event.getY());
+                if(event.getX() >= bottomLeft.x)
+                    topLeft.setX(event.getX());
             }
             else if(t_Right)
             {
-                topRight.setX(event.getX());
-                //topRight.setY(event.getY());
+                if(event.getX() <= bottomRight.x)
+                    topRight.setX(event.getX());
             }
             else if(b_Left)
             {
                 //조건문
-                //if(event.getX() <= topLeft.x)
+                if(event.getX() <= topLeft.x)
                     bottomLeft.setX(event.getX());
-                //bottomLeft.setY(event.getY());
             }
             else if(b_Right)
             {
                 //조건문
-                //if(event.getX() >= topRight.x)
+                if(event.getX() >= topRight.x)
                     bottomRight.setX(event.getX());
-                //bottomRight.setY(event.getY());
             }
 
             invalidate();
