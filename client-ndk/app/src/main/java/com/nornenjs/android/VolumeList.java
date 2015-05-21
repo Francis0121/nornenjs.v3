@@ -117,7 +117,9 @@ public class VolumeList extends Activity {
         mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, date1, date2, metadata1, metadata2, VolumeList.this);
         searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, backupdate1, backupdate2, backupmetadata1, backupmetadata2, VolumeList.this);
 
-        // Set custom adapter to gridview
+        // mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, VolumeList.this);
+        //searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, VolumeList.this);
+
         imagelist = (ListView) findViewById(R.id.imagelist);
         imagelist.setAdapter(mAdapter);
 

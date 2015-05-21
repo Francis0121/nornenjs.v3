@@ -25,12 +25,13 @@
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_jni_gl" >
+            android:label="Nornenjs" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".JniGLActivity"
@@ -52,6 +53,13 @@
             android:name=".MprActivity"
             android:label="@string/title_activity_mpr" >
         </activity>
+
+        <activity
+                android:name=".DrawActivity"
+                android:label="@string/title_activity_mpr" >
+
+        </activity>
+
     </application>
 
 </manifest>

@@ -59,10 +59,11 @@ public class PoppyViewHelper {
 	//for searchbar
 		public View createPoppyViewOnListView(int editViewId, int listViewId, int poppyViewResId, OnScrollListener onScrollListener) {
 
-		editView = (EditText) mActivity.findViewById(editViewId);
+		editView = (EditText) mActivity.findViewById(editViewId);//editview가 아니라 poppyViewResId를 터치했을때...
 		editView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Log.d(TAG, "setOnClickListener called : " + v.getId() + ", editViewId : " + editView.getId() +  ", mPoppyView : " + mPoppyView.getId());
 				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
 			}
 		});
@@ -117,6 +118,8 @@ public class PoppyViewHelper {
 
 		newContainer.addView(view);
 
+		Log.d(TAG, "addView called");
+
 		final FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.gravity = mPoppyViewPosition == PoppyViewPosition.BOTTOM ? Gravity.BOTTOM : Gravity.TOP;
 		newContainer.addView(mPoppyView, layoutParams);
@@ -162,34 +165,35 @@ public class PoppyViewHelper {
 						break;
 				}
 
-				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(translationY);
+				Log.d(TAG, "animate view!");
+				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(translationY);//translationY
 			}
 		});
 	}
 
-	private void translateYSearchView() {
-		mPoppyView.post(new Runnable() {
-
-			//@Override
-			public void run() {
-				if(mPoppyViewHeight <= 0) {
-					mPoppyViewHeight = mPoppyView.getHeight();
-				}
-
-				int translationY = 0;
-				switch (mPoppyViewPosition) {
-					case BOTTOM:
-						translationY = mScrollDirection == SCROLL_TO_TOP ? 0 : mPoppyViewHeight;
-						break;
-					case TOP:
-						translationY = mScrollDirection == SCROLL_TO_TOP ? -mPoppyViewHeight : 0;
-						break;
-				}
-
-				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(translationY);
-			}
-		});
-	}
+//	private void translateYSearchView() {
+//		mPoppyView.post(new Runnable() {
+//
+//			//@Override
+//			public void run() {
+//				if(mPoppyViewHeight <= 0) {
+//					mPoppyViewHeight = mPoppyView.getHeight();
+//				}
+//
+//				int translationY = 0;
+//				switch (mPoppyViewPosition) {
+//					case BOTTOM:
+//						translationY = mScrollDirection == SCROLL_TO_TOP ? 0 : mPoppyViewHeight;
+//						break;
+//					case TOP:
+//						translationY = mScrollDirection == SCROLL_TO_TOP ? -mPoppyViewHeight : 0;
+//						break;
+//				}
+//
+//				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(translationY);
+//			}
+//		});
+//	}
 
 	// for ListView
 
@@ -198,12 +202,6 @@ public class PoppyViewHelper {
 		Log.d(TAG,"editView.getheight : " + editView.getHeight());
 		listView.setOnScrollListener(new OnScrollListener() {
 
-			//@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-				if(onScrollListener != null) {
-					onScrollListener.onScrollStateChanged(view, scrollState);
-				}
-			}
 
 			int mScrollPosition;
 
@@ -218,7 +216,7 @@ public class PoppyViewHelper {
 				if(topChild == null) {
 					newScrollPosition = 0;
 				} else {
-					newScrollPosition = - topChild.getTop() + view.getFirstVisiblePosition() * topChild.getHeight();//getTop이었음
+					newScrollPosition = - topChild.getTop() + view.getFirstVisiblePosition() * topChild.getHeight();
 				}
 
 				if(newScrollPosition <= 160)
@@ -278,6 +276,12 @@ public class PoppyViewHelper {
 
 			}
 
+			//@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				if(onScrollListener != null) {
+					onScrollListener.onScrollStateChanged(view, scrollState);
+				}
+			}
 
 		});
 	}

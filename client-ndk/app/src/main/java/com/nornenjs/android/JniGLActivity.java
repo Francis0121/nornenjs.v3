@@ -1,6 +1,7 @@
 package com.nornenjs.android;
 
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import com.cocosw.bottomsheet.BottomSheet;
@@ -25,6 +29,9 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.nineoldandroids.view.*;
+import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.nornenjs.android.dynamicview.PoppyViewHelper;
+import com.nornenjs.android.dynamicview.SlidingViewHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,6 +84,11 @@ public class JniGLActivity extends Activity{
     GLSurfaceView mGLSurfaceView;
     CudaRenderer mRenderer;
 
+    WebView wv;
+    DrawActivity da;
+
+    //private SlidingViewHelper mSlidingViewHelper;
+
     public int volumeWidth, volumeHeight, volumeDepth;
     public String volumeSavePath = "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8";//일단 상수 박아줌
     public int datatype;//4는 MIP
@@ -86,6 +98,7 @@ public class JniGLActivity extends Activity{
     public void setMyEventListener(MyEventListener myEventListener) {
         this.myEventListener = myEventListener;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,6 +124,7 @@ public class JniGLActivity extends Activity{
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
+        //mSlidingViewHelper = new SlidingViewHelper(JniGLActivity.this);
 
 
     }
@@ -120,6 +134,12 @@ public class JniGLActivity extends Activity{
         if(keyCode == 82)
         {
             //sliding view
+
+            View slidingView;
+            LayoutInflater mLayoutInflater;
+            mLayoutInflater = LayoutInflater.from(this);
+            //slidingView = mLayoutInflater.inflate(R.id., null);
+
             //com.nineoldandroids.view.ViewPropertyAnimator.animate()
 
         }
@@ -146,6 +166,7 @@ public class JniGLActivity extends Activity{
         if(mGLSurfaceView != null)
             myEventListener.BackToPreview();
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -299,6 +320,7 @@ public class JniGLActivity extends Activity{
 //    }
 
 
+
     /** load irrlicht.so */
     static {
         Log.i("opengles", "try to load opengles.so");
@@ -363,11 +385,39 @@ public class JniGLActivity extends Activity{
             setContentView(R.layout.toggle);
             togglebtn = (Button) findViewById(R.id.toggleBtn);
 
+//            wv = (WebView) findViewById(R.id.otf);
+//
+//            //wv.setVisibility(View.GONE);
+//            wv.getSettings().setJavaScriptEnabled(true);
+//            wv.addJavascriptInterface(new AndroidBridge(), "nornenjs");
+//
+//            wv.loadUrl("file:///android_asset/svg.html");
+//            //wv.setWebViewClient(new WebViewClient());
+//            wv.setWebChromeClient(new WebChromeClient());
+//
+//            WebView.setWebContentsDebuggingEnabled(true);
+
+
             togglebtn.setOnClickListener(mRenderer);
 
             ViewParent parent = togglebtn.getParent();
             ViewGroup group = (ViewGroup)parent;
             group.addView(mGLSurfaceView);
+
+            da = (DrawActivity) findViewById(R.id.canvas);
+
+            da.bringToFront();
+            da.invalidate();
+
+
+            //group.addView(wv);
+
+//            wv.bringToFront();
+//            wv.invalidate();
+
+            //wv.setY(mGLSurfaceView.getHeight());
+            //ViewPropertyAnimator.animate(wv).translationYBy(300).setDuration(300);//translationY
+            //여기에서 webview 추가
 
             togglebtn.bringToFront();
             togglebtn.invalidate();
@@ -377,6 +427,25 @@ public class JniGLActivity extends Activity{
         }
 
     };
+
+    final Handler handler1 = new Handler();
+
+    private class AndroidBridge
+    {
+        @SuppressLint("JavascriptInterface")
+        public void callHyok(final String arg)
+        {
+
+            handler1.post(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d("AndroidBridge", arg.toString());
+                }
+            });
+        }
+
+    }
+
 
 }
 
@@ -477,6 +546,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                         mActivity.setView();
 
 
+                        imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
 //                        Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
 //                        Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
 
@@ -559,7 +630,6 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 //                imgPanda = null;
 //            }
 
-            imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
             int[] pixels;// = new int[width.intValue()*height.intValue()];
             if(imgPanda.getWidth() == width.intValue())
@@ -695,15 +765,24 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                     if("VOL".equals(mActivity.togglebtn.getText())) {
                         mip = true;
                         mActivity.togglebtn.setText("MIP");
+                        Log.d("Animation", "mActivity.da.getHeight() before : " + mActivity.da.getY());
+                        ViewPropertyAnimator.animate(mActivity.da).translationY(mActivity.da.getHeight()).setDuration(300);//translationY
+                        Log.d("Animation", "mActivity.da.getHeight() after : " + mActivity.da.getY());
                     }
                     else {
                         mip = false;
                         mActivity.togglebtn.setText("VOL");
+                        Log.d("Animation", "mActivity.da.getHeight() before : " + mActivity.da.getY());
+                        ViewPropertyAnimator.animate(mActivity.da).translationY(-mActivity.da.getHeight()).setDuration(300);//translationY
+                        Log.d("Animation", "mActivity.da.getHeight() after : " + mActivity.da.getY());
                     }
+
                     GetPng();
                     break;
             }
     }
+
+
 }
 
     

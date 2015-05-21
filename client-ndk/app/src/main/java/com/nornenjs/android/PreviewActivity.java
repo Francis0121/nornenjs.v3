@@ -2,25 +2,18 @@ package com.nornenjs.android;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.nornenjs.android.dto.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -63,6 +56,8 @@ public class PreviewActivity extends Activity {
         }
 
         thumbnails = new ArrayList<Bitmap>();
+
+
 
 
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
@@ -233,6 +228,6 @@ public class PreviewActivity extends Activity {
             t.printStackTrace();
         }
         return bitmap;
-    }
 
+    }
 }

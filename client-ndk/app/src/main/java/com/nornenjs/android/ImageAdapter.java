@@ -47,6 +47,8 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 //    }
 
     public ImageAdapter(List<String> titles1, List<String> titles2, List<Bitmap> thumbnails1, List<Bitmap> thumbnails2, List<Integer> pns1, List<Integer> pns2, List<String> date1, List<String> date2, List<String> metadata1, List<String> metadata2, Activity activity) {
+
+        Log.d(TAG, "ImageAdapter called");
         this.titles1 = titles1;
         this.titles2 = titles2;
         this.thumbnails1 = thumbnails1;

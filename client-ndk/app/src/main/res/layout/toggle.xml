@@ -10,4 +10,19 @@
             android:layout_height="wrap_content"
             android:text="VOL"/>
 
+    <WebView
+            android:id="@+id/otf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+    </WebView>
+
+    <com.nornenjs.android.DrawActivity
+            android:id="@+id/canvas"
+            android:layout_width="match_parent"
+            android:background="@android:color/white"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"/>
+
 </RelativeLayout>
