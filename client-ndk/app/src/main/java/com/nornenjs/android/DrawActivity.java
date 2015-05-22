@@ -34,6 +34,9 @@ public class DrawActivity extends View{
     Point bottomLeft ,bottomRight, topRight, topLeft;
     boolean b_Left ,b_Right, t_Right, t_Left;
 
+    Line left, top, right;
+    boolean left_line, top_line, right_line;
+
     private final Paint cPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint bg_Paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint bg_LinePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -59,6 +62,11 @@ public class DrawActivity extends View{
         topRight = new Point(tl_x,tl_y);
         bottomLeft = new Point(bl_x, bl_y);
         bottomRight = new Point(br_x, br_y);
+
+        left = new Line(topLeft, bottomLeft);
+        top = new Line(topLeft, topRight);
+        right = new Line(topRight, bottomRight);
+
 
         figure.addCircle(topLeft.x, topLeft.y, topLeft.radius, Path.Direction.CW);
         figure.addCircle(topRight.x, topRight.y, topRight.radius, Path.Direction.CW);
@@ -119,6 +127,7 @@ public class DrawActivity extends View{
 
     }
 
+    float beforeX;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
@@ -146,6 +155,24 @@ public class DrawActivity extends View{
 
                 b_Right = true;
             }
+            else if(left.IsOnLine(event.getX(), event.getY()))
+            {
+                beforeX = event.getX();
+                left_line = true;
+                Log.d("IsOnLine","left line clicked");
+            }
+            else if(right.IsOnLine(event.getX(), event.getY()))
+            {
+                beforeX = event.getX();
+                right_line = true;
+                Log.d("IsOnLine","right line clicked");
+            }
+            else if(top.IsOnLine(event.getX(), event.getY()))
+            {
+                beforeX = event.getX();
+                top_line = true;
+                Log.d("IsOnLine","top line clicked");
+            }
             return true;
         }else if(event.getAction() == MotionEvent.ACTION_MOVE) {
 
@@ -162,17 +189,37 @@ public class DrawActivity extends View{
             }
             else if(b_Left)
             {
-                //조건문
                 if(event.getX() <= topLeft.x)
                     bottomLeft.setX(event.getX());
             }
             else if(b_Right)
             {
-                //조건문
                 if(event.getX() >= topRight.x)
                     bottomRight.setX(event.getX());
             }
+            else if(left_line)
+            {
+                topLeft.setX(topLeft.getX() + (-1)*(beforeX - event.getX()));
+                bottomLeft.setX(bottomLeft.getX() + (-1)*(beforeX - event.getX()));
+                beforeX = event.getX();
 
+            }
+            else if(top_line)
+            {
+
+                topLeft.setX(topLeft.getX() + (-1)*(beforeX - event.getX()));
+                topRight.setX(topRight.getX() + (-1)*(beforeX - event.getX()));
+                bottomLeft.setX(bottomLeft.getX() + (-1)*(beforeX - event.getX()));
+                bottomRight.setX(bottomRight.getX() + (-1)*(beforeX - event.getX()));
+                beforeX = event.getX();
+            }
+            else if(right_line)
+            {
+
+                topRight.setX(topRight.getX() + (-1)*(beforeX - event.getX()));
+                bottomRight.setX(bottomRight.getX() + (-1)*(beforeX - event.getX()));
+                beforeX = event.getX();
+            }
             invalidate();
         }
         else if(event.getAction() == MotionEvent.ACTION_UP)
@@ -193,6 +240,21 @@ public class DrawActivity extends View{
             {
                 b_Right = false;
             }
+            else if(left_line)
+            {
+                left_line = false;
+                beforeX = 0;
+            }
+            else if(top_line)
+            {
+                top_line = false;
+                beforeX = 0;
+            }
+            else if(right_line)
+            {
+                right_line = false;
+                beforeX = 0;
+            }
         }
         return super.onTouchEvent(event);
 
@@ -203,6 +265,24 @@ public class DrawActivity extends View{
     {
         Point start;
         Point end;
+
+        public Line(Point start, Point end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public boolean IsOnLine(float checkPointX, float checkPointY)
+        {
+            float bet_startcheck = (float)Math.sqrt(Math.pow(Math.abs(start.x - checkPointX), 2) + Math.pow(Math.abs(start.y - checkPointY), 2));//distance a
+            float bet_startend = (float)Math.sqrt(Math.pow(Math.abs(start.x - end.x), 2) + Math.pow(Math.abs(start.y - end.y), 2));// distance c
+            float bet_endcheck = (float)Math.sqrt(Math.pow(Math.abs(end.x - checkPointX), 2) + Math.pow(Math.abs(end.y - checkPointY), 2));//distance b
+
+            double calc = (Math.pow(bet_endcheck, 2) + Math.pow(bet_startend,2) - Math.pow(bet_startcheck,2))/(2*bet_startend*bet_endcheck);
+            if(Math.acos(calc) < 0.15)
+                    return true;
+
+            return false;
+        }
 
     }
 
@@ -238,7 +318,7 @@ public class DrawActivity extends View{
         }
 
         public boolean checkPoint(float x, float y){
-            if((x - (this.x + this.radius)) * (x - (this.x + this.radius)) + (y - (this.y + this.radius)) * (y - (this.y + this.radius)) <= this.radius * this.radius)
+            if((x - (this.x + this.radius)) * (x - (this.x + this.radius)) + (y - (this.y + this.radius)) * (y - (this.y + this.radius)) <= (this.radius+10) * (this.radius+10))
             {
                 return true;
             }
