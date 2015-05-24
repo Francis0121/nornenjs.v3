@@ -60,6 +60,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         this.metadata1 = metadata1;
         this.metadata2 = metadata2;
         this.activity = activity;
+        volumelist_Page = new VolumeList();
     }
 
 
@@ -148,7 +149,13 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
         if(thumbnails1.size() > position)
         {
-            view.imgViewFlag.setImageBitmap(thumbnails1.get(position));
+            final Bitmap bitmap = volumelist_Page.getBitmapFromMemCache(""+pns1.get(position));//+pns1.get(position)
+            if(bitmap != null){
+                view.imgViewFlag.setImageBitmap(bitmap);
+                //Log.d(TAG, "cached image use");
+            }
+            else
+                view.imgViewFlag.setImageBitmap(thumbnails1.get(position));
         }
 
         if(titles2.get(position).length() > 10)
@@ -162,8 +169,17 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
         view.imgViewFlag2.setTag(pns2.get(position));
 
-        if(thumbnails2.size() > position) {
-            view.imgViewFlag2.setImageBitmap(thumbnails2.get(position));
+        if(thumbnails2.size() > position)
+        {
+            final Bitmap bitmap = volumelist_Page.getBitmapFromMemCache(""+pns2.get(position));//+pns1.get(position)
+            if(bitmap != null){
+                view.imgViewFlag2.setImageBitmap(bitmap);
+                //Log.d(TAG, "cached image use");
+            }
+            else
+                view.imgViewFlag2.setImageBitmap(thumbnails2.get(position));
+
+
         }
         convertView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {

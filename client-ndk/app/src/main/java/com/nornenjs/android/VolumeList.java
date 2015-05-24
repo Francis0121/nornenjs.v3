@@ -7,20 +7,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import com.nornenjs.android.dto.ResponseVolume;
 import com.nornenjs.android.dto.Volume;
 import com.nornenjs.android.dto.VolumeFilter;
 import com.nornenjs.android.dynamicview.PoppyViewHelper;
+import com.nornenjs.android.util.Pagination;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Text;
@@ -30,6 +34,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +44,7 @@ public class VolumeList extends Activity {
 
     private static String TAG="VolumeList";
 
+    static LruCache<String, Bitmap> mMemoryCache;
     private VolumeFilter volumeFilter;
 
     private ImageAdapter mAdapter;
@@ -73,13 +79,16 @@ public class VolumeList extends Activity {
 
     private PoppyViewHelper mPoppyViewHelper;
 
-    private int CurrentPage = 1;
-    private int totalPage;
+    public static int CurrentPage = 1;
+    public static int totalPage;
 
     private BottomSheet sheet;
     public boolean bottom = false;
 
     //View v;
+    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+    final int cacheSize = maxMemory / 8;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +97,21 @@ public class VolumeList extends Activity {
 
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
+
+//        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+//        final int cacheSize = maxMemory / 8;
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                return bitmap.getByteCount() / 1024;
+            }
+        };
+        Log.d(TAG,"create func");
+
+//        if(mMemoryCache == null)
+//            Log.d(TAG, "mMemoryCacheis null");
+
 
         titles1 = new ArrayList<String>();
         titles2 = new ArrayList<String>();
@@ -117,8 +141,6 @@ public class VolumeList extends Activity {
         mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, date1, date2, metadata1, metadata2, VolumeList.this);
         searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, backupdate1, backupdate2, backupmetadata1, backupmetadata2, VolumeList.this);
 
-        // mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, VolumeList.this);
-        //searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, VolumeList.this);
 
         imagelist = (ListView) findViewById(R.id.imagelist);
         imagelist.setAdapter(mAdapter);
@@ -127,6 +149,17 @@ public class VolumeList extends Activity {
         progressBar = (RelativeLayout) findViewById(R.id.progress_layout);
 
         alert = (TextView) findViewById(R.id.alert);
+
+        mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
+        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.imagelist, R.layout.poppyview, new AbsListView.OnScrollListener() {
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
 
         new PostVolumeTask().execute("none");
 
@@ -142,16 +175,41 @@ public class VolumeList extends Activity {
         Log.d(TAG, "searchRequest() called");
         imagelist.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
-        alert.setVisibility(View.GONE);
+        //alert.setVisibility(View.GONE);//??이거 뭐였더라? loding view가 안보이지 없어도되듯.
         new PostVolumeTask().execute("search", keyword);
         imagelist.setAdapter(searchAdapter);
     }
 
     public void getPage()
     {
-        Log.d(TAG, "request next page.. : " + CurrentPage);
-        new PostVolumeTask().execute("page");
+        Log.d(TAG, "request next page.. CurrentPage : " + CurrentPage + "totalPage : " + totalPage);
+        if(CurrentPage < totalPage)
+        {
+            new PostVolumeTask().execute("page");
+        }
+
     }
+
+    //memory caching--
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (mMemoryCache.get(key) == null) {
+            Log.d(TAG, "func addBitmapToMemoryCache put");
+            mMemoryCache.put(key, bitmap);
+            //Log.d(TAG, "getBitmapFromMemCache get : " + key + ", mMemoryCache.get(key) : " + mMemoryCache.get(key));//여기선 출력 잘됨
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        //Log.d(TAG,"getBitmapFromMemCache func. key: " + key);
+//        if(mMemoryCache == null)
+//            Log.d(TAG,"getBitmapFromMemCache func. key: " + key + "mMemoryCache is null");
+//        else
+//            Log.d(TAG,"getBitmapFromMemCache func. key: " + key + "mMemoryCache is not null");
+
+        return mMemoryCache.get(key);
+//        return null;
+    }
+    //---
 
 
     private class PostVolumeTask extends AsyncTask<String, Void, ResponseVolume> {
@@ -168,6 +226,8 @@ public class VolumeList extends Activity {
         protected ResponseVolume doInBackground(String... params) {
 
             request = params[0];
+
+            Log.d(TAG, "request : " + request);
             try {
                 // The URL for making the POST request
                 final String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/list";
@@ -188,7 +248,13 @@ public class VolumeList extends Activity {
                     response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
                 }else
                 {//page 요청이면
-                    volumeFilter.setPage(CurrentPage + 1);//임의 값...
+                    //Log.d(TAG, "before set..CurrentPage : " + CurrentPage);
+                    volumeFilter.setPage(2);//+1을 했는데도 증가하지 않고 계속 1값임.
+                    //volumeFilter.setPagination();
+                    Pagination p = new Pagination();
+                    p.setCurrentPage(2);
+                    volumeFilter.setPagination(p);
+                    //Log.d(TAG, "after set..CurrentPage : " + volumeFilter.getPage());
                     response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
                 }
 
@@ -217,18 +283,44 @@ public class VolumeList extends Activity {
 
             if("none".equals(request))
             {
-                Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
-                Log.d(TAG, "volumeFilterMap.toString()" + volumeFilterMap.toString());
-                Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
-                totalPage = num.get("numPages");
-                Log.d(TAG, "numPages" + num.get("numPages"));
-                CurrentPage = num.get("requestedPage");
+                try
+                {
+                    Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
+                    Log.d(TAG, "volumeFilterMap.toString()" + volumeFilterMap.toString());
+                    Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
+                    totalPage = num.get("numPages");
+                    Log.d(TAG, "numPages" + num.get("numPages"));
+                    CurrentPage = num.get("requestedPage");
+                }catch(NullPointerException e)
+                {
+                    //alert
+                    SweetAlertDialog pDialog = new SweetAlertDialog(VolumeList.this, SweetAlertDialog.WARNING_TYPE);
+                    pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));//A5DC86
+                    pDialog.getProgressHelper().setRimColor(Color.parseColor("#33485c"));
+                    pDialog.setTitleText("서버에 접속할 수 없습니다.");
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+
+                    View view = findViewById(R.id.blank);
+                    progressBar.setVisibility(View.GONE);
+
+                    pDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            finish();
+                        }
+                    });
+                    e.printStackTrace();
+                }
             }
             else if("page".equals(request))
             {
                 Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
                 Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
-                CurrentPage = num.get("requestedPage");
+                //CurrentPage = num.get("requestedPage");
+                CurrentPage = CurrentPage + 1;
+                Log.d(TAG, "num.get() : " + num.get("requestedPage"));
+                Log.d(TAG, "currentPage : " + CurrentPage);
             }
 
             if(volumes == null)
@@ -280,20 +372,9 @@ public class VolumeList extends Activity {
                     }
 
                     Log.d(TAG, "volume.getThumbnailPnList().get(0) : " + volume.getThumbnailPnList().get(0));
-                    //thumbnails.add(R.drawable.head);
+
 
                 }
-
-                mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
-                View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.imagelist, R.layout.poppyview, new AbsListView.OnScrollListener() {
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-                    }
-
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                    }
-                });
 
             }
         }
@@ -310,7 +391,11 @@ public class VolumeList extends Activity {
             request = params[1];
             Log.d("one Image", "In doInBackground params0 : " + params[0]);
             Bitmap data = downloadImage(getString(R.string.tomcat) + "/data/thumbnail/" + params[0]);
+            //pns
+            //addBitmapToMemoryCache(String.valueOf(params[0]), data);
             Log.d("one Image", "after downloadImage(): ");
+
+            getBitmapFromMemCache("call from VolumeActivity");
             return data;
 
         }
@@ -326,10 +411,16 @@ public class VolumeList extends Activity {
                     if(thumbnails1.size() == thumbnails2.size())
                     {
                         thumbnails1.add(bytes);//image1.setImageBitmap(bytes);
+                        addBitmapToMemoryCache(String.valueOf(pns1.get(thumbnails1.size() - 1)), bytes);
+                        //getBitmapFromMemCache("" + pns1.get(thumbnails1.size() - 1));//test
+                        Log.d(TAG, "addBitmapToMemoryCache : " + pns1.get(thumbnails1.size() - 1));
                     }
                     else if(thumbnails1.size() > thumbnails2.size())
                     {
                         thumbnails2.add(bytes);//image1.setImageBitmap(bytes);
+                        addBitmapToMemoryCache(String.valueOf(pns2.get(thumbnails2.size() - 1)), bytes);
+                        //getBitmapFromMemCache(""+pns2.get(thumbnails2.size()-1));//test
+                        Log.d(TAG, "addBitmapToMemoryCache" + pns2.get(thumbnails1.size()-1));
                     }
 
                     mAdapter.notifyDataSetChanged();
@@ -384,7 +475,13 @@ public class VolumeList extends Activity {
             Log.d("one Image", "getContentLength : " + con.getContentLength());
 
             InputStream is = con.getInputStream();
-            bitmap = BitmapFactory.decodeStream(is);
+
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 16;
+
+//            bitmap = BitmapFactory.decodeStream(is);
+
+            bitmap = BitmapFactory.decodeStream(is, null, options);
 
             con.disconnect();
         }
@@ -419,7 +516,8 @@ public class VolumeList extends Activity {
 
         if(keyCode == 82)
         {
-            new BottomSheet.Builder(this).title("").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+            //new BottomSheet.Builder(this).title("").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+            new BottomSheet.Builder(this).sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     switch (which) {

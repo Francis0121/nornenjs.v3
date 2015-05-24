@@ -87,6 +87,7 @@ public class JniGLActivity extends Activity{
     WebView wv;
     DrawActivity da;
 
+    boolean menuFlag = false;
     //private SlidingViewHelper mSlidingViewHelper;
 
     public int volumeWidth, volumeHeight, volumeDepth;
@@ -105,7 +106,7 @@ public class JniGLActivity extends Activity{
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        volumeWidth=  intent.getIntExtra("width",256);
+        volumeWidth=  intent.getIntExtra("width", 256);
         volumeHeight = intent.getIntExtra("height", 256);
         volumeDepth = intent.getIntExtra("depth", 255);
         volumeSavePath = intent.getStringExtra("savepath");
@@ -113,9 +114,11 @@ public class JniGLActivity extends Activity{
 
         Log.d("emitTag", "emit JNIActivity : " + datatype);
 
-        String host = getString(R.string.host);
+        String host = getString(R.string.host);//host맞나요?tomcat 아니구?
         setContentView(R.layout.loding);
         Log.d(TAG, "before create TouchSurfaceView");
+
+        //setView();
         mGLSurfaceView = new TouchSurfaceView(this, host);
         Log.d("emitTag","make CudaRenderer");
         mRenderer = new CudaRenderer(this, host);
@@ -133,15 +136,15 @@ public class JniGLActivity extends Activity{
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == 82)
         {
-            //sliding view
 
-            View slidingView;
-            LayoutInflater mLayoutInflater;
-            mLayoutInflater = LayoutInflater.from(this);
-            //slidingView = mLayoutInflater.inflate(R.id., null);
-
-            //com.nineoldandroids.view.ViewPropertyAnimator.animate()
-
+            if(!menuFlag) {
+                ViewPropertyAnimator.animate(da).translationY(da.getHeight()).setDuration(300);
+                Log.d(TAG, "da.getHeight() : " + da.getHeight());
+            }
+            else {
+                ViewPropertyAnimator.animate(da).translationY(0).setDuration(300);
+            }
+            menuFlag = !menuFlag;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -172,7 +175,7 @@ public class JniGLActivity extends Activity{
     public boolean onTouchEvent(MotionEvent event) {
         //모든 이벤트는 이 액티비티가 받고 있음.
 
-        if(mGLSurfaceView.isShown()) {
+        if(mGLSurfaceView != null && mGLSurfaceView.isShown()) {
 
 
             int act = event.getAction();
@@ -313,12 +316,6 @@ public class JniGLActivity extends Activity{
         }
 
     }
-//    void setRenderingView()
-//    {
-//        setContentView(mGLSurfaceView);
-//
-//    }
-
 
 
     /** load irrlicht.so */
@@ -343,7 +340,6 @@ public class JniGLActivity extends Activity{
 
     //@Override
     public void setView() {
-        //setContentView(mGLSurfaceView);
         if(!mGLSurfaceView.isShown())
         {
             Log.d(TAG, "setView() called");
@@ -407,6 +403,7 @@ public class JniGLActivity extends Activity{
             da = (DrawActivity) findViewById(R.id.canvas);
             da.bringToFront();
             da.invalidate();
+            Log.d(TAG, "da.getHeight() : " + da.getHeight());
             da.otf_width = da.getWidth();
             da.otf_height = da.getHeight();
 
@@ -544,10 +541,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                         byteArray = (byte[]) info.get("data");
                         width = (Integer) info.get("width");
                         height = (Integer) info.get("height");
-                        mActivity.setView();
-
-
                         imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        mActivity.setView();
 
 //                        Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
 //                        Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
@@ -622,7 +617,17 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
     public void onDrawFrame(GL10 gl) {
 
-//        if(byteArray!=null) {
+        if(byteArray!=null) {
+
+            //Log.d("Jni", "width.intValue() : " + width.intValue() + "imgPanda.getWidth() : " + imgPanda.getWidth());
+
+            int[] pixels = new int[256*256];
+            imgPanda.getPixels(pixels, 0, 256, 0, 0, 256, 256);
+            mActivity.nativeSetTextureData(pixels, 256, 256);
+            mActivity.draw++;
+        }
+
+//        if(byteArray!=null) {//byteArray
 //        //if(imgPanda!=null) {
 //
 ////            if(imgPanda != null)
@@ -631,27 +636,33 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 ////                imgPanda = null;
 ////            }
 //
+//            Log.d("Jni", "width.intValue() : " + width.intValue() + "imgPanda.getWidth() : ");
 //
-//            int[] pixels;// = new int[width.intValue()*height.intValue()];
-//            if(imgPanda.getWidth() == width.intValue())
-//            {
-//                pixels = new int[width.intValue()*height.intValue()];
-//                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
-//                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
-//            }
-//            else
-//            {
-//                Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
-//                pixels = new int[imgPanda.getWidth()*imgPanda.getHeight()];
-//                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
-//                mActivity.nativeSetTextureData(pixels, imgPanda.getWidth(), imgPanda.getHeight());
-//            }
+//            imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+//
+//            int[] pixels = new int[width.intValue()*height.intValue()];
+//            pixels = new int[width.intValue()*height.intValue()];
+//            imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
+//            mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
+////            if(imgPanda.getWidth() == width.intValue())
+////            {
+////                pixels = new int[width.intValue()*height.intValue()];
+////                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
+////                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
+////            }
+////            else
+////            {
+////                Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
+////                pixels = new int[imgPanda.getWidth()*imgPanda.getHeight()];
+////                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
+////                mActivity.nativeSetTextureData(pixels, imgPanda.getWidth(), imgPanda.getHeight());
+////            }
 //            mActivity.draw++;
 //
 //        }
 //        else
 //            Log.d("Jni", "byteArray is null");
-//        mActivity.nativeDrawIteration(0, 0);
+        mActivity.nativeDrawIteration(0, 0);
 
     }
 
@@ -749,7 +760,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     @Override
     public void BackToPreview() {
         Log.e("emitTag", "Back to PreViewActivity..");
-        if(socket.connected())
+        if(socket != null && socket.connected())
         {
             socket.disconnect();
             socket.off("loadCudaMemory");
@@ -766,16 +777,10 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                     if("VOL".equals(mActivity.togglebtn.getText())) {
                         mip = true;
                         mActivity.togglebtn.setText("MIP");
-                        Log.d("Animation", "mActivity.da.getHeight() before : " + mActivity.da.getY());
-                        ViewPropertyAnimator.animate(mActivity.da).translationY(mActivity.da.getHeight()).setDuration(300);//translationY
-                        Log.d("Animation", "mActivity.da.getHeight() after : " + mActivity.da.getY());
                     }
                     else {
                         mip = false;
                         mActivity.togglebtn.setText("VOL");
-                        Log.d("Animation", "mActivity.da.getHeight() before : " + mActivity.da.getY());
-                        ViewPropertyAnimator.animate(mActivity.da).translationY(-mActivity.da.getHeight()).setDuration(300);//translationY
-                        Log.d("Animation", "mActivity.da.getHeight() after : " + mActivity.da.getY());
                     }
 
                     GetPng();

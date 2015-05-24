@@ -7,6 +7,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
+import com.github.nkzawa.socketio.client.On;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.nornenjs.android.VolumeList;
 
@@ -60,13 +61,14 @@ public class PoppyViewHelper {
 		public View createPoppyViewOnListView(int editViewId, int listViewId, int poppyViewResId, OnScrollListener onScrollListener) {
 
 		editView = (EditText) mActivity.findViewById(editViewId);//editview가 아니라 poppyViewResId를 터치했을때...
-		editView.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Log.d(TAG, "setOnClickListener called : " + v.getId() + ", editViewId : " + editView.getId() +  ", mPoppyView : " + mPoppyView.getId());
-				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
-			}
-		});
+//		editView.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				Log.d(TAG, "setOnClickListener called : " + v.getId() + ", editViewId : " + editView.getId() + ", mPoppyView : " + mPoppyView.getId());
+//				//ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
+//				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(mPoppyView.getHeight());
+//			}
+//		});
 
 		editView.setOnEditorActionListener(new EditText.OnEditorActionListener(){
 			@Override
@@ -92,7 +94,17 @@ public class PoppyViewHelper {
 			throw new IllegalArgumentException("poppyview library doesn't support listview with toggle");
 		}
 
+		Log.d(TAG, "createPoppyViewOnListView called");
 		mPoppyView = mLayoutInflater.inflate(poppyViewResId, null);
+
+			mPoppyView.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Log.d(TAG, "mPoppyView clicked");
+					ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
+				}
+			});
+
 		initPoppyViewOnListView(editView, listView, onScrollListener);
 
 		return mPoppyView;
@@ -139,6 +151,7 @@ public class PoppyViewHelper {
 		}
 		if(newScrollDirection != mScrollDirection) {
 			mScrollDirection = newScrollDirection;
+			Log.d(TAG, "onScrollPositionChanged");
 			translateYPoppyView(ScrollDirection);
 		}
 		//Log.d(TAG, "oldScrollPosition : " + oldScrollPosition + "newScrollPosition : " + newScrollPosition);
@@ -165,7 +178,7 @@ public class PoppyViewHelper {
 						break;
 				}
 
-				Log.d(TAG, "animate view!");
+				Log.d(TAG, "animate view! translationY : " + translationY);
 				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(translationY);//translationY
 			}
 		});
@@ -197,6 +210,7 @@ public class PoppyViewHelper {
 
 	// for ListView
 
+	int beforeCount = 0;
 	private void initPoppyViewOnListView(EditText editView, ListView listView, final OnScrollListener onScrollListener) {
 		setPoppyViewOnView(editView);
 		Log.d(TAG,"editView.getheight : " + editView.getHeight());
@@ -228,16 +242,18 @@ public class PoppyViewHelper {
 
 				mScrollPosition = newScrollPosition;
 
-
-				if((firstVisibleItem + visibleItemCount) ==  totalItemCount)
+				Log.d(TAG, "totalItemCount : " + totalItemCount + ", beforeCount : " + beforeCount);
+				if(totalItemCount >= 5 && (firstVisibleItem + visibleItemCount) ==  totalItemCount)
 				{
-					Log.i("Info", "Scroll Bottom");
-					if(!volumePage.bottom)
+					//if(volumePage.CurrentPage < volumePage.totalPage)
+
+					//if(!volumePage.bottom)//bottom이 제대로 될까..
+					if(beforeCount != totalItemCount)//bottom이 제대로 될까..
 					{
-						Log.d(TAG,"getPage, bottom : " + volumePage.bottom);
-						volumePage.bottom = true;
+						Log.i("Info", "Scroll Bottom" );
 						volumePage.getPage();
 					}
+					beforeCount = totalItemCount;
 					//Log.i("Info", "Scroll Bottom" );
 				}
 
@@ -267,7 +283,7 @@ public class PoppyViewHelper {
 //						//bottom = false;
 //					}
 //				}
-
+//
 //				if (listView.getLastVisiblePosition() == listView.getAdapter().getCount() - 1
 //						&& listView.getChildAt(listView.getChildCount() - 1).getBottom() <= list.getHeight()) {
 //

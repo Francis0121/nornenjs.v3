@@ -476,7 +476,7 @@ public class MprActivity extends Activity {
         @Override
         public void BackToPreview() {
             Log.e("emitTag", "Back to PreViewActivity..");
-            if(socket.connected())
+            if(socket != null && socket.connected())
             {
                 socket.disconnect();
                 socket.off("loadCudaMemory");
