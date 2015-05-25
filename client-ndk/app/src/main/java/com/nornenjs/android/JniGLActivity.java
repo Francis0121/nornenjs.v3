@@ -494,6 +494,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     private Socket socket;
 
     Bitmap imgPanda;
+    Bitmap imgPanda2;
 
     private boolean mip = false;
 
@@ -539,13 +540,15 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
                     try {
                         byteArray = (byte[]) info.get("data");
+                        imgPanda2 = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                        imgPanda = imgPanda2;
                         width = (Integer) info.get("width");
                         height = (Integer) info.get("height");
-                        imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+
                         mActivity.setView();
 
-//                        Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
-//                        Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
+                        Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
+                        Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -613,55 +616,35 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     }
 
 
-    //int[] pixels2 = new int[512*512];
-
+    int[] pixels2 = new int[512*512];
+    int[] pixels = new int[256*256];
     public void onDrawFrame(GL10 gl) {
 
-        if(byteArray!=null) {
+        //Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
+        if(imgPanda!=null) {
 
             //Log.d("Jni", "width.intValue() : " + width.intValue() + "imgPanda.getWidth() : " + imgPanda.getWidth());
 
-            int[] pixels = new int[256*256];
-            imgPanda.getPixels(pixels, 0, 256, 0, 0, 256, 256);
-            mActivity.nativeSetTextureData(pixels, 256, 256);
-            mActivity.draw++;
-        }
+            if(width.intValue() == 512)
+            {
+                //Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
+                imgPanda.getPixels(pixels2, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
+                mActivity.nativeSetTextureData(pixels2, width.intValue(), height.intValue());
+            }
+            else
+            {
+                //Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
+                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
+                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
+            }
 
-//        if(byteArray!=null) {//byteArray
-//        //if(imgPanda!=null) {
-//
-////            if(imgPanda != null)
-////            {
-////                imgPanda.recycle();
-////                imgPanda = null;
-////            }
-//
-//            Log.d("Jni", "width.intValue() : " + width.intValue() + "imgPanda.getWidth() : ");
-//
-//            imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-//
-//            int[] pixels = new int[width.intValue()*height.intValue()];
-//            pixels = new int[width.intValue()*height.intValue()];
-//            imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
-//            mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
-////            if(imgPanda.getWidth() == width.intValue())
-////            {
-////                pixels = new int[width.intValue()*height.intValue()];
-////                imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
-////                mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
-////            }
-////            else
-////            {
-////                Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
-////                pixels = new int[imgPanda.getWidth()*imgPanda.getHeight()];
-////                imgPanda.getPixels(pixels, 0, imgPanda.getWidth(), 0, 0, imgPanda.getWidth(), imgPanda.getHeight());
-////                mActivity.nativeSetTextureData(pixels, imgPanda.getWidth(), imgPanda.getHeight());
-////            }
+//            imgPanda.getPixels(pixels2, 0, 256, 0, 0, 256, 256);
+//            mActivity.nativeSetTextureData(pixels2, 256, 256);
 //            mActivity.draw++;
-//
-//        }
-//        else
-//            Log.d("Jni", "byteArray is null");
+        }
+        else
+            Log.d("Jni", "byteArray is null");
+
         mActivity.nativeDrawIteration(0, 0);
 
     }

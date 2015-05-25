@@ -62,8 +62,8 @@ Encoding.prototype.Androidjpeg = function(cudaRender, socket){
  */
 Encoding.prototype.Androidpng = function(cudaRender, socket){
     var hrStart = process.hrtime();
-    cudaRender.imageWidth = 256;
-    cudaRender.imageHeight = 256;
+    cudaRender.imageWidth = 512;
+    cudaRender.imageHeight = 512;
     cudaRender.start();
     var hrCuda = process.hrtime(hrStart);
     logger.debug('Make start finish frame png compress execution time (hr) : %dms', hrCuda[1]/1000000);
