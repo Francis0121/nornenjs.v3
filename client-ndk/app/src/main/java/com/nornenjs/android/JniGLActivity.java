@@ -127,6 +127,7 @@ public class JniGLActivity extends Activity{
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
+        mGLSurfaceView.setRenderMode(mGLSurfaceView.RENDERMODE_WHEN_DIRTY);
         //mSlidingViewHelper = new SlidingViewHelper(JniGLActivity.this);
 
 
@@ -544,7 +545,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                         imgPanda = imgPanda2;
                         width = (Integer) info.get("width");
                         height = (Integer) info.get("height");
-
+                        mActivity.mGLSurfaceView.requestRender();
                         mActivity.setView();
 
                         Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
