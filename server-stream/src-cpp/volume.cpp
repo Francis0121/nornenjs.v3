@@ -5,7 +5,6 @@
 Volume::Volume(void)
 {
 	    m_density = NULL;
-
 }
 
 Volume::Volume(int dim[3], char *filename)

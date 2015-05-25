@@ -22,6 +22,14 @@ class TransferFunction
         TF *otf_table;
         int tf_size;
 
+        float maximumColorR;
+        float maximumColorG;
+        float maximumColorB;
+
+        float minimumColorR;
+        float minimumColorG;
+        float minimumColorB;
+
     public:
 
         void Set_TF_table(unsigned int tf_start, unsigned int tf_middle1, unsigned int tf_middle2, unsigned int tf_end, int tf_size);
