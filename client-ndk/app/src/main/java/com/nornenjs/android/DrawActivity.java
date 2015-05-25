@@ -15,6 +15,9 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+import org.json.JSONObject;
 
 import java.util.jar.Attributes;
 
@@ -25,6 +28,8 @@ public class DrawActivity extends View{
     private final Path figure = new Path();
     private final Path bg = new Path();
     private final Path line = new Path();
+
+    private Socket socket;
 
     public float tr_x = 550, tr_y = 100, tl_x = 350, tl_y =100, br_x = 650, br_y, bl_x = 250, bl_y;
     //tr_y, tl_y 고정
@@ -43,13 +48,13 @@ public class DrawActivity extends View{
 
     DashPathEffect dashPath = new DashPathEffect(new float[]{5,5}, 2);
 
+    JniGLActivity jniGLActivity;
     public DrawActivity(Context context) {
         super(context);
     }
 
     public DrawActivity(Context context, AttributeSet att) {
         super(context, att);
-
         cPaint.setStyle(Paint.Style.FILL);
         cPaint.setColor(Color.DKGRAY);
         cPaint.setStrokeWidth(3);
@@ -284,10 +289,20 @@ public class DrawActivity extends View{
                 }
             }
             //여기서 네개의 좌표 보내기.
-            Log.d(TAG, "TopLeft : " + calc(topLeft.x));
-            Log.d(TAG, "TopRight : " + calc(topRight.x));
-            Log.d(TAG, "bottomLeft : " + calc(bottomLeft.x));
-            Log.d(TAG, "bottomRight " + calc(bottomRight.x));
+            try{
+                if(jniGLActivity.myEventListener == null)
+                    Log.d("DrawActivity","jniGLActivity.myEventListener is null");
+                jniGLActivity.myEventListener.OtfEvent(calc(bottomLeft.x), calc(topLeft.x), calc(topRight.x), calc(bottomRight.x), 1);
+            }
+            catch(NullPointerException e)
+            {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "otf TopLeft : " + calc(topLeft.x));
+            Log.d(TAG, "otf TopRight : " + calc(topRight.x));
+            Log.d(TAG, "otf bottomLeft : " + calc(bottomLeft.x));
+            Log.d(TAG, "otf bottomRight " + calc(bottomRight.x));
             invalidate();
         }
         else if(event.getAction() == MotionEvent.ACTION_UP)
@@ -323,6 +338,7 @@ public class DrawActivity extends View{
                 right_line = false;
                 beforeX = 0;
             }
+            jniGLActivity.myEventListener.OtfEvent(calc(bottomLeft.x), calc(topLeft.x), calc(topRight.x), calc(bottomRight.x), 2);
         }
         return super.onTouchEvent(event);
 
@@ -333,6 +349,7 @@ public class DrawActivity extends View{
     {
         return (int)((temp * 255)/((otf_end-5)-(otf_start+5)))-39;
     }
+
     class Line
     {
         Point start;

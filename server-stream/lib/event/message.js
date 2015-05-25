@@ -9,7 +9,8 @@ var EVENT_MESSAGE = {
         TRANSLATION : 'translation',
         PINCHZOOM : 'pinchZoom',
         PNG : 'androidPng',
-        MPR : 'mpr'
+        MPR : 'mpr',
+        OTF : 'OTF'
     },
     
     WEB : {

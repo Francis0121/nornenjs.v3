@@ -474,6 +474,9 @@ public class MprActivity extends Activity {
         public void GetPng() {}
 
         @Override
+        public void OtfEvent(int start, int middle1, int middle2, int end, int flag) {}
+
+        @Override
         public void BackToPreview() {
             Log.e("emitTag", "Back to PreViewActivity..");
             if(socket != null && socket.connected())

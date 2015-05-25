@@ -157,20 +157,33 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             else
                 view.imgViewFlag.setImageBitmap(thumbnails1.get(position));
         }
-
-        if(titles2.get(position).length() > 10)
-            titleText = titles2.get(position).substring(0, 10) + "...";
-        else
-            titleText = titles2.get(position);
-
-        view.title2.setText(titleText);
-        view.date2.setText(date2.get(position));
-        view.metadata2.setText(metadata2.get(position));
-
-        view.imgViewFlag2.setTag(pns2.get(position));
+//try{~~~~
+//        if(titles2.get(position).length() > 10)
+//            titleText = titles2.get(position).substring(0, 10) + "...";
+//        else
+//            titleText = titles2.get(position);
+//
+//        view.title2.setText(titleText);
+//        view.date2.setText(date2.get(position));
+//        view.metadata2.setText(metadata2.get(position));
+//
+//        view.imgViewFlag2.setTag(pns2.get(position));
 
         if(thumbnails2.size() > position)
         {
+
+            if(titles2.get(position).length() > 10)
+                titleText = titles2.get(position).substring(0, 10) + "...";
+            else
+                titleText = titles2.get(position);
+
+
+            view.title2.setText(titleText);
+            view.date2.setText(date2.get(position));
+            view.metadata2.setText(metadata2.get(position));
+
+            view.imgViewFlag2.setTag(pns2.get(position));
+
             final Bitmap bitmap = volumelist_Page.getBitmapFromMemCache(""+pns2.get(position));//+pns1.get(position)
             if(bitmap != null){
                 view.imgViewFlag2.setImageBitmap(bitmap);

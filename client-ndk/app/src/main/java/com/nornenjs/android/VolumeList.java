@@ -200,14 +200,7 @@ public class VolumeList extends Activity {
     }
 
     public Bitmap getBitmapFromMemCache(String key) {
-        //Log.d(TAG,"getBitmapFromMemCache func. key: " + key);
-//        if(mMemoryCache == null)
-//            Log.d(TAG,"getBitmapFromMemCache func. key: " + key + "mMemoryCache is null");
-//        else
-//            Log.d(TAG,"getBitmapFromMemCache func. key: " + key + "mMemoryCache is not null");
-
         return mMemoryCache.get(key);
-//        return null;
     }
     //---
 
@@ -219,7 +212,6 @@ public class VolumeList extends Activity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-
         }
         String request;
         @Override
@@ -230,7 +222,7 @@ public class VolumeList extends Activity {
             Log.d(TAG, "request : " + request);
             try {
                 // The URL for making the POST request
-                final String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/list";
+                String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/list";
 
 
                 // Create a new RestTemplate instance
@@ -240,21 +232,19 @@ public class VolumeList extends Activity {
                 ResponseEntity<ResponseVolume> response;
                 if("none".equals(params[0]))
                 {//첫 요청
+                    url+="/1";
                     response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
                 }
                 else if("search".equals(params[0]))
                 {//검색할때 요청
+                    url+="/1";
                     volumeFilter.setTitle(params[1]);
                     response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
                 }else
                 {//page 요청이면
-                    //Log.d(TAG, "before set..CurrentPage : " + CurrentPage);
-                    volumeFilter.setPage(2);//+1을 했는데도 증가하지 않고 계속 1값임.
-                    //volumeFilter.setPagination();
-                    Pagination p = new Pagination();
-                    p.setCurrentPage(2);
-                    volumeFilter.setPagination(p);
-                    //Log.d(TAG, "after set..CurrentPage : " + volumeFilter.getPage());
+                    Log.d(TAG,"page request");
+                    url+="/" + (CurrentPage + 1);
+                    //volumeFilter.setPage(2);//+1을 했는데도 증가하지 않고 계속 1값임.
                     response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
                 }
 
@@ -317,8 +307,7 @@ public class VolumeList extends Activity {
             {
                 Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
                 Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
-                //CurrentPage = num.get("requestedPage");
-                CurrentPage = CurrentPage + 1;
+                CurrentPage = num.get("requestedPage");
                 Log.d(TAG, "num.get() : " + num.get("requestedPage"));
                 Log.d(TAG, "currentPage : " + CurrentPage);
             }

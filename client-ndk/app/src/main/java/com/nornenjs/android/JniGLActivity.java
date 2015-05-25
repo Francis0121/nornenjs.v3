@@ -80,7 +80,7 @@ public class JniGLActivity extends Activity{
     public boolean translationPng = false;
     public boolean pinchzoomPng = false;
 
-    private MyEventListener myEventListener;
+    MyEventListener myEventListener;
     GLSurfaceView mGLSurfaceView;
     CudaRenderer mRenderer;
 
@@ -114,30 +114,25 @@ public class JniGLActivity extends Activity{
 
         Log.d("emitTag", "emit JNIActivity : " + datatype);
 
-        String host = getString(R.string.host);//host맞나요?tomcat 아니구?
+        String host = getString(R.string.host);
         setContentView(R.layout.loding);
-        Log.d(TAG, "before create TouchSurfaceView");
 
-        //setView();
         mGLSurfaceView = new TouchSurfaceView(this, host);
-        Log.d("emitTag","make CudaRenderer");
-        mRenderer = new CudaRenderer(this, host);
-        mGLSurfaceView.setRenderer(mRenderer);
+//        mRenderer = new CudaRenderer(this, host);
+//        mGLSurfaceView.setRenderer(mRenderer);
         Log.d(TAG, "setcontentView mGLSurfaceView");
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
         mGLSurfaceView.setRenderMode(mGLSurfaceView.RENDERMODE_WHEN_DIRTY);
-        //mSlidingViewHelper = new SlidingViewHelper(JniGLActivity.this);
 
 
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == 82)
+        if(mGLSurfaceView.isShown() && keyCode == 82)
         {
-
             if(!menuFlag) {
                 ViewPropertyAnimator.animate(da).translationY(da.getHeight()).setDuration(300);
                 Log.d(TAG, "da.getHeight() : " + da.getHeight());
@@ -160,6 +155,7 @@ public class JniGLActivity extends Activity{
     protected void onPause() {
         super.onPause();
         Log.d("bmp", "onPause");
+
     }
 
     @Override
@@ -381,20 +377,6 @@ public class JniGLActivity extends Activity{
 
             setContentView(R.layout.toggle);
             togglebtn = (Button) findViewById(R.id.toggleBtn);
-
-//            wv = (WebView) findViewById(R.id.otf);
-//
-//            //wv.setVisibility(View.GONE);
-//            wv.getSettings().setJavaScriptEnabled(true);
-//            wv.addJavascriptInterface(new AndroidBridge(), "nornenjs");
-//
-//            wv.loadUrl("file:///android_asset/svg.html");
-//            //wv.setWebViewClient(new WebViewClient());
-//            wv.setWebChromeClient(new WebChromeClient());
-//
-//            WebView.setWebContentsDebuggingEnabled(true);
-
-
             togglebtn.setOnClickListener(mRenderer);
 
             ViewParent parent = togglebtn.getParent();
@@ -404,20 +386,9 @@ public class JniGLActivity extends Activity{
             da = (DrawActivity) findViewById(R.id.canvas);
             da.bringToFront();
             da.invalidate();
-            Log.d(TAG, "da.getHeight() : " + da.getHeight());
             da.otf_width = da.getWidth();
             da.otf_height = da.getHeight();
-
-
-            //group.addView(wv);
-
-//            wv.bringToFront();
-//            wv.invalidate();
-
-            //wv.setY(mGLSurfaceView.getHeight());
-            //ViewPropertyAnimator.animate(wv).translationYBy(300).setDuration(300);//translationY
-            //여기에서 webview 추가
-
+            da.jniGLActivity = JniGLActivity.this;
             togglebtn.bringToFront();
             togglebtn.invalidate();
 
@@ -426,24 +397,6 @@ public class JniGLActivity extends Activity{
         }
 
     };
-
-    final Handler handler1 = new Handler();
-
-    private class AndroidBridge
-    {
-        @SuppressLint("JavascriptInterface")
-        public void callHyok(final String arg)
-        {
-
-            handler1.post(new Runnable() {
-                @Override
-                public void run() {
-                    Log.d("AndroidBridge", arg.toString());
-                }
-            });
-        }
-
-    }
 
 
 }
@@ -467,6 +420,8 @@ class TouchSurfaceView extends GLSurfaceView {
         this.host = host;
         this.mContext = context;
         this.mActivity = (JniGLActivity) context;
+        mRenderer = new CudaRenderer(mActivity, host);
+        setRenderer(mRenderer);
 
     }
 
@@ -548,8 +503,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                         mActivity.mGLSurfaceView.requestRender();
                         mActivity.setView();
 
-                        Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
-                        Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
+                        //Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
+                        //Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -621,20 +576,15 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     int[] pixels = new int[256*256];
     public void onDrawFrame(GL10 gl) {
 
-        //Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
         if(imgPanda!=null) {
-
-            //Log.d("Jni", "width.intValue() : " + width.intValue() + "imgPanda.getWidth() : " + imgPanda.getWidth());
 
             if(width.intValue() == 512)
             {
-                //Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
                 imgPanda.getPixels(pixels2, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
                 mActivity.nativeSetTextureData(pixels2, width.intValue(), height.intValue());
             }
             else
             {
-                //Log.d("Render", "imgPanda.getWidth() : " + imgPanda.getWidth() + ", width.intValue() :" + width.intValue());
                 imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
                 mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
             }
@@ -740,6 +690,26 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         Log.d("GETPng", "GETPng");
 
     }
+
+    @Override
+    public void OtfEvent(int start, int middle1, int middle2, int end, int flag) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("start", start);
+            jsonObject.put("middle1", middle1);
+            jsonObject.put("middle2", middle2);
+            jsonObject.put("end", end);
+            jsonObject.put("flag", flag);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("error", "Make json object");
+        }
+
+        socket.emit("OTF", jsonObject);
+    }
+
 
     @Override
     public void BackToPreview() {
