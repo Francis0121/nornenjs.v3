@@ -9,7 +9,9 @@
                 "src-cpp/device.cpp",
                 "src-cpp/function.cpp",
                 "src-cpp/mem.cpp",
-                "src-cpp/module.cpp"
+                "src-cpp/module.cpp",
+                "src-cpp/volume.cpp",
+                "src-cpp/tf.cpp"
             ],
             'conditions': [
                 [ 'OS=="mac"', {
