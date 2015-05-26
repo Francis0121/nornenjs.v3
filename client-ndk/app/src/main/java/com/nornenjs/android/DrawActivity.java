@@ -138,7 +138,7 @@ public class DrawActivity extends View{
 
     public void drawBackground(Canvas canvas) {
         //점선
-        canvas.drawLine(otf_start-LEFT_MARGIN_VALUE, otfHeightStart - TOP_MARGIN_VALUE, otf_end+LEFT_MARGIN_VALUE, otfHeightStart, bg_Paint);
+        canvas.drawLine(otf_start-LEFT_MARGIN_VALUE+20, otfHeightStart, otf_end+LEFT_MARGIN_VALUE, otfHeightStart, bg_Paint);
 
         //기준선 2개
         bg_LinePaint.setColor(Color.BLACK);
