@@ -29,18 +29,22 @@ public class MobileVolumeController {
     @Autowired
     private ActorService actorService;
 
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
+    @RequestMapping(value = "/list/{page}", method = RequestMethod.POST)
     public Map<String, Object> listPage(@RequestBody VolumeFilter volumeFilter,
-                                        @PathVariable("username") String username){
+                                        @PathVariable("username") String username,
+                                        @PathVariable("page") Integer page){
         Map<String, Object> response = new HashMap<String, Object>();
         if(!actorService.selectUsernameExist(username)) {
             response.put("volumes", null);
             return response;
         }
         logger.debug(volumeFilter.toString());
+        volumeFilter.setPage(page);
         volumeFilter.setUsername(username);
+        volumeFilter.setFrom("1800-01-01");
 
         List<Volume> volumes = volumeService.selectList(volumeFilter);
+
         response.put("volumes", volumes);
         response.put("volumeFilter", volumeFilter);
         logger.debug(volumes.toString());

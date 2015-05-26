@@ -1,4 +1,4 @@
-package com.nornenjs.android;
+package com.nornenjs.android.dynamicview;
 
 import android.content.Context;
 import android.util.AttributeSet;

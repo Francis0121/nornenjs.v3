@@ -36,7 +36,6 @@ import java.util.Map;
  * Created by Francis on 2015-04-30.
  */
 @Controller
-@PreAuthorize("hasRole('ROLE_DOCTOR')")
 @RequestMapping(value = "/data")
 public class DataController {
     
@@ -52,6 +51,7 @@ public class DataController {
     private ApplicationContext appContext;
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public Data upload(@ModelAttribute MultipartFile multipartFile, WebRequest request){
         if(multipartFile.getFiledata() == null || multipartFile.getFiledata().getSize() == 0){
@@ -67,6 +67,7 @@ public class DataController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value= "/thumbnail", method = RequestMethod.POST)
     public Map<String, Object> publish(@RequestBody Volume volume){
         // ~ STEP 02 섬네일 생성 요청을 한다.
@@ -91,6 +92,7 @@ public class DataController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @RequestMapping(value="/polling/{dataPn}", method =RequestMethod.GET)
     public List<Integer> polling(@PathVariable("dataPn") Integer dataPn){
         List<Integer> thumbnailPns = dataService.selectVolumeThumbnailPn(new Thumbnail(dataPn));

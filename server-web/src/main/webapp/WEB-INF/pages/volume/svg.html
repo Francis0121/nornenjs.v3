@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
+
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
+
     <title></title>
     <style type="text/css">
 
@@ -60,25 +62,25 @@
 
         <g>
             <!-- Top -->
-            <line x1="90" y1="40" x2="110" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9; cursor: move;" id="otfTopLine"/>
+            <line x1="90" y1="40" x2="110" y2="40" style="stroke:rgb(75,75,75);stroke-width:10; opacity: .9; cursor: move;" id="otfTopLine"/>
             <!-- Left Line -->
-            <line x1="75" y1="110" x2="90" y2="40" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9;" id="otfLeftDashLine" class="otfDashLine"/>
+            <line x1="75" y1="110" x2="90" y2="40" style="stroke:rgb(75,75,75);stroke-width:10; opacity: .9;" id="otfLeftDashLine" class="otfDashLine"/>
             <!-- Bottom -->
-            <line x1="0" y1="110" x2="265" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9;" id="otfBottomLine"/>
+            <line x1="0" y1="110" x2="265" y2="110" style="stroke:rgb(75,75,75);stroke-width:10; opacity: .9;" id="otfBottomLine"/>
             <!-- Right Line -->
-            <line x1="110" y1="40" x2="130" y2="110" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9; " id="otfRightDashLine" class="otfDashLine"/>
+            <line x1="110" y1="40" x2="130" y2="110" style="stroke:rgb(75,75,75);stroke-width:10; opacity: .9; " id="otfRightDashLine" class="otfDashLine"/>
 
-            <line x1="10" y1="20" x2="10" y2="123" style="stroke:rgb(75,75,75);stroke-width:6; opacity: .9; " id="otfRightDashLine" class="otfDashLine"/>
+            <line x1="10" y1="20" x2="10" y2="123" style="stroke:rgb(75,75,75);stroke-width:10; opacity: .9; " id="otfRightDashLine" class="otfDashLine"/>
 
             <!-- Left Top Circle-->
-            <circle cx="90" cy="40" r="6" fill="rgb(0,0,0)" id="otfLeftTopCircle" class="otfCircle"/>
+            <circle cx="90" cy="40" r="10" fill="rgb(0,0,0)" id="otfLeftTopCircle" class="otfCircle"/>
             <!-- Left Bottom Circle -->
-            <circle cx="75" cy="110" r="6" fill="rgb(0,0,0)" id="otfLeftBottomCircle" class="otfCircle"/>
+            <circle cx="75" cy="110" r="10" fill="rgb(0,0,0)" id="otfLeftBottomCircle" class="otfCircle"/>
 
             <!-- Right Top Circle-->
-            <circle cx="110" cy="40" r="6" fill="rgb(0,0,0)" id="otfRightTopCircle" class="otfCircle"/>
+            <circle cx="110" cy="40" r="10" fill="rgb(0,0,0)" id="otfRightTopCircle" class="otfCircle"/>
             <!-- Right Bottom Circle -->
-            <circle cx="130" cy="110" r="6" fill="rgb(0,0,0)" id="otfRightBottomCircle" class="otfCircle"/>
+            <circle cx="130" cy="110" r="10" fill="rgb(0,0,0)" id="otfRightBottomCircle" class="otfCircle"/>
         </g>
     </svg>
 
@@ -150,9 +152,9 @@
         $('#rightTopText').text($('#otfRightTopCircle').attr('cx')-OTF_OFFSET_VALUE)
     }
 
-    function move(event){
+    function move(pageX){
         if(isLeftTopCircle){
-            if(event.pageX >= beforeX){ // +
+            if(pageX >= beforeX){ // +
                 var cx = Number($('#otfLeftTopCircle').attr('cx'))+1;
                 if(cx > $('#otfRightTopCircle').attr('cx')){
                     return;
@@ -187,7 +189,7 @@
         }
 
         if(isLeftBottomCircle){
-            if(event.pageX >= beforeX){ // +
+            if(pageX >= beforeX){ // +
                 var cx = Number($('#otfLeftBottomCircle').attr('cx'))+1;
                 if(cx > $('#otfLeftTopCircle').attr('cx')){
                     return;
@@ -222,7 +224,7 @@
         }
 
         if(isLeftDashLine){
-            if(event.pageX >= beforeX){ // +
+            if(pageX >= beforeX){ // +
                 var cxTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
                 var cxBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2;
                 if(cxTop > $('#otfRightTopCircle').attr('cx')){
@@ -269,7 +271,7 @@
         }
 
         if(isRightTopCircle){
-            if(event.pageX >= beforeX){ // +
+            if(pageX >= beforeX){ // +
                 var cx = Number($('#otfRightTopCircle').attr('cx'))+1;
                 if(cx > $('#otfRightBottomCircle').attr('cx')){
                     return;
@@ -305,7 +307,7 @@
         }
 
         if(isRightBottomCircle){
-            if(event.pageX >= beforeX){ // +
+            if(pageX >= beforeX){ // +
                 var cx = Number($('#otfRightBottomCircle').attr('cx'))+1;
                 if(cx > OTF_MAX_VALUE){
                     return;
@@ -340,7 +342,7 @@
         }
 
         if(isRightDashLine){
-            if(event.pageX >= beforeX){ // +
+            if(pageX >= beforeX){ // +
                 var cxTop = Number($('#otfRightTopCircle').attr('cx'))+2;
                 var cxBottom = Number($('#otfRightBottomCircle').attr('cx'))+2;
                 if(cxBottom > OTF_MAX_VALUE){
@@ -386,7 +388,7 @@
         }
 
         if(isOtfTopLine){
-            if(event.pageX >= beforeX){ // +
+            if(pageX >= beforeX){ // +
                 var cxLeftTop = Number($('#otfLeftTopCircle').attr('cx'))+2;
                 var cxRightTop = Number($('#otfRightTopCircle').attr('cx'))+2;
                 var cxLeftBottom = Number($('#otfLeftBottomCircle').attr('cx'))+2;
@@ -453,11 +455,13 @@
             }
         }
 
-        beforeX = event.pageX;
+        beforeX = pageX;
         polygonResize();
     }
 
-    function up(event){
+
+
+    function up(){
         if(isLeftTopCircle || isLeftBottomCircle || isLeftDashLine ||
                 isRightTopCircle || isRightBottomCircle || isRightDashLine ||
                 isOtfTopLine){
@@ -486,12 +490,12 @@
         var touches = event.changedTouches;
 
         if(touches.length == 1) {
-            move(event);
+            move(touches[0].pageX);
         }
     });
 
     window.addEventListener('mousemove', function(event){
-        move(event);
+        move(event.pageX);
     });
 
 
@@ -500,12 +504,21 @@
         var touches = event.changedTouches;
 
         if(touches.length == 1) {
-            up(event);
+            up();
+        }
+    });
+
+    window.addEventListener('touchcancel', function(event){
+        event.preventDefault();
+        var touches = event.changedTouches;
+
+        if(touches.length == 1) {
+            up();
         }
     });
 
     window.addEventListener('mouseup', function(event){
-        up(event);
+        up();
     });
 
     // ~ Left top circle
@@ -516,7 +529,7 @@
 
         if(touches.length == 1) {
             isLeftTopCircle = true;
-            beforeX = event.pageX;
+            beforeX = touches[0].pageX;
         }
     });
 
@@ -533,7 +546,7 @@
 
         if(touches.length == 1) {
             isLeftBottomCircle = true;
-            beforeX = event.pageX;
+            beforeX = touches[0].pageX;
         }
     });
 
@@ -550,7 +563,7 @@
 
         if(touches.length == 1) {
             isLeftDashLine = true;
-            beforeX = event.pageX;
+            beforeX = touches[0].pageX;
         }
     });
 
@@ -570,7 +583,7 @@
 
         if(touches.length == 1) {
             isRightTopCircle = true;
-            beforeX = event.pageX;
+            beforeX = touches[0].pageX;
         }
     });
 
@@ -587,7 +600,7 @@
 
         if(touches.length == 1) {
             isRightBottomCircle = true;
-            beforeX = event.pageX;
+            beforeX = touches[0].pageX;
         }
     });
 
@@ -604,7 +617,7 @@
 
         if(touches.length == 1) {
             isRightDashLine = true;
-            beforeX = event.pageX;
+            beforeX = touches[0].pageX;
         }
     });
 
@@ -622,7 +635,7 @@
 
         if(touches.length == 1) {
             isOtfTopLine = true;
-            beforeX = event.pageX;
+            beforeX = touches[0].pageX;
         }
     });
 
