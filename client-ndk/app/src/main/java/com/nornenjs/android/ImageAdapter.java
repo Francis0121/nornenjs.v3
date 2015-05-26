@@ -117,6 +117,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view.metadata = (TextView) convertView.findViewById(R.id.textView3);
             view.imgViewFlag = (ImageView) convertView.findViewById(R.id.imageView1);
 
+
             view.title2 = (TextView) convertView.findViewById(R.id.textView2_1);
             view.date2 = (TextView) convertView.findViewById(R.id.textView2_2);
             view.metadata2 = (TextView) convertView.findViewById(R.id.textView2_3);
@@ -192,7 +193,10 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             else
                 view.imgViewFlag2.setImageBitmap(thumbnails2.get(position));
 
-
+        }
+        else
+        {
+            Log.d(TAG, "thumbnails2.size() <= position");
         }
         convertView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
