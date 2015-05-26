@@ -59,8 +59,8 @@ android {
     }
 }
 dependencies {
+
     compile 'com.android.support:support-v4:22.1.1'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.nkzawa:socket.io-client:0.4.2'
     compile files('src/main/libs/nineoldandroids-2.4.0.jar')
     compile files('src/main/libs/jackson-annotations-2.5.0.jar')
