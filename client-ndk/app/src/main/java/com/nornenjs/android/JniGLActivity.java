@@ -123,10 +123,10 @@ public class JniGLActivity extends Activity{
         if(mGLSurfaceView.isShown() && !mRenderer.mip && keyCode == 82)
         {
             if(!menuFlag) {
-                ViewPropertyAnimator.animate(otf_table).translationY(otf_table.getHeight()).setDuration(400);
+                ViewPropertyAnimator.animate(otf_table).translationY(otf_table.getHeight()).setDuration(550);
             }
             else {
-                ViewPropertyAnimator.animate(otf_table).translationY(0).setDuration(400);
+                ViewPropertyAnimator.animate(otf_table).translationY(0).setDuration(550);
             }
             menuFlag = !menuFlag;
         }
@@ -776,7 +776,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                     v.setBackgroundResource(R.drawable.mri);
                     //이때는 otf 테이블 안되게!
                     if(!mActivity.menuFlag) {
-                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(400);
+                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
                         mActivity.menuFlag = !mActivity.menuFlag;
                         }
                 }

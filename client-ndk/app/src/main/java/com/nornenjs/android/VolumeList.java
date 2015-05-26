@@ -51,26 +51,16 @@ public class VolumeList extends Activity {
     private ImageAdapter searchAdapter;
 
     private List<String> titles1;
-    private List<String> titles2;
     private List<Bitmap> thumbnails1;
-    private List<Bitmap> thumbnails2;
     private List<Integer> pns1;
-    private List<Integer> pns2;
     private List<String> date1;
-    private List<String> date2;
     private List<String> metadata1;
-    private List<String> metadata2;
 
     private List<String> backuptitles1;
-    private List<String> backuptitles2;
     private List<Bitmap> backupthumbnails1;
-    private List<Bitmap> backupthumbnails2;
     private List<Integer> backuppns1;
-    private List<Integer> backuppns2;
     private List<String> backupdate1;
-    private List<String> backupdate2;
     private List<String> backupmetadata1;
-    private List<String> backupmetadata2;
 
     private ListView imagelist;
 
@@ -114,32 +104,22 @@ public class VolumeList extends Activity {
 
 
         titles1 = new ArrayList<String>();
-        titles2 = new ArrayList<String>();
         thumbnails1 = new ArrayList<Bitmap>();
-        thumbnails2 = new ArrayList<Bitmap>();
         pns1 = new ArrayList<Integer>();
-        pns2 = new ArrayList<Integer>();
 
         backuptitles1 = new ArrayList<String>();
-        backuptitles2 = new ArrayList<String>();
         backupthumbnails1 = new ArrayList<Bitmap>();
-        backupthumbnails2 = new ArrayList<Bitmap>();
         backuppns1 = new ArrayList<Integer>();
-        backuppns2 = new ArrayList<Integer>();
 
 
         date1 = new ArrayList<String>();
-        date2 = new ArrayList<String>();
         metadata1 = new ArrayList<String>();
-        metadata2 = new ArrayList<String>();
 
         backupdate1 = new ArrayList<String>();
-        backupdate2 = new ArrayList<String>();
         backupmetadata1 = new ArrayList<String>();
-        backupmetadata2 = new ArrayList<String>();
 
-        mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, date1, date2, metadata1, metadata2, VolumeList.this);
-        searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, backupdate1, backupdate2, backupmetadata1, backupmetadata2, VolumeList.this);
+        mAdapter = new ImageAdapter(titles1, thumbnails1, pns1, date1, metadata1, VolumeList.this);
+        searchAdapter = new ImageAdapter(backuptitles1, backupthumbnails1, backuppns1, backupdate1, backupmetadata1, VolumeList.this);
 
 
         imagelist = (ListView) findViewById(R.id.imagelist);
@@ -179,15 +159,10 @@ public class VolumeList extends Activity {
         //alert.setVisibility(View.GONE);//??이거 뭐였더라? loding view가 안보이지 없어도되듯.
         new PostVolumeTask().execute("search", keyword);
         backuptitles1.clear();
-        backuptitles2.clear();
         backupthumbnails1.clear();
-        backupthumbnails2.clear();
         backuppns1.clear();
-        backuppns2.clear();
         backupdate1.clear();
-        backupdate2.clear();
         backupmetadata1.clear();
-        backupmetadata2.clear();
         imagelist.setAdapter(searchAdapter);
 
 //                    searchAdapter.notifyDataSetChanged();
@@ -347,38 +322,18 @@ public class VolumeList extends Activity {
                     if("none".equals(request) || "page".equals(request))
                     {
                         Log.d(TAG, request + "에 대해 받음.");
-                        if(titles1.size() == titles2.size())
-                        {
-                            titles1.add(volume.getTitle());
-                            date1.add(volume.getInputDate().substring(0, 10));
-                            metadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-                            pns1.add(volume.getPn());
-                        }
-                        else if(titles1.size() > titles2.size())
-                        {
-                            titles2.add(volume.getTitle());
-                            date2.add(volume.getInputDate().substring(0,10));
-                            metadata2.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-                            pns2.add(volume.getPn());
-                        }
+                        titles1.add(volume.getTitle());
+                        date1.add(volume.getInputDate().substring(0, 10));
+                        metadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
+                        pns1.add(volume.getPn());
                         new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"none");
                     }
                     else if("search".equals(request))
                     {
-                        if(backuptitles1.size() == backuptitles2.size())
-                        {
-                            backuptitles1.add(volume.getTitle());
-                            backupdate1.add(volume.getInputDate().substring(0, 10));
-                            backupmetadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-                            backuppns1.add(volume.getPn());
-                        }
-                        else if(backuptitles1.size() > backuptitles2.size())
-                        {
-                            backuptitles2.add(volume.getTitle());
-                            backupdate2.add(volume.getInputDate().substring(0,10));
-                            backupmetadata2.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() + "x" + volume.getDepth().toString());
-                            backuppns2.add(volume.getPn());
-                        }
+                        backuptitles1.add(volume.getTitle());
+                        backupdate1.add(volume.getInputDate().substring(0, 10));
+                        backupmetadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
+                        backuppns1.add(volume.getPn());
                         new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"search");
                     }
 
@@ -419,20 +374,10 @@ public class VolumeList extends Activity {
                 if("none".equals(request))
                 {
                     Log.d(TAG, "get none thumbnails");
-                    if(thumbnails1.size() == thumbnails2.size())
-                    {
-                        thumbnails1.add(bytes);//image1.setImageBitmap(bytes);
-                        addBitmapToMemoryCache(String.valueOf(pns1.get(thumbnails1.size() - 1)), bytes);
-                        //getBitmapFromMemCache("" + pns1.get(thumbnails1.size() - 1));//test
-                        Log.d(TAG, "addBitmapToMemoryCache : " + pns1.get(thumbnails1.size() - 1));
-                    }
-                    else if(thumbnails1.size() > thumbnails2.size())
-                    {
-                        thumbnails2.add(bytes);//image1.setImageBitmap(bytes);
-                        addBitmapToMemoryCache(String.valueOf(pns2.get(thumbnails2.size() - 1)), bytes);
-                        //getBitmapFromMemCache(""+pns2.get(thumbnails2.size()-1));//test
-                        Log.d(TAG, "addBitmapToMemoryCache" + pns2.get(thumbnails1.size()-1));
-                    }
+                    thumbnails1.add(bytes);//image1.setImageBitmap(bytes);
+                    addBitmapToMemoryCache(String.valueOf(pns1.get(thumbnails1.size() - 1)), bytes);
+                    //getBitmapFromMemCache("" + pns1.get(thumbnails1.size() - 1));//test
+                    Log.d(TAG, "addBitmapToMemoryCache : " + pns1.get(thumbnails1.size() - 1));
 
                     mAdapter.notifyDataSetChanged();
                     if(count == 10) {
@@ -445,14 +390,7 @@ public class VolumeList extends Activity {
                 else if("search".equals(request))
                 {
                     Log.d(TAG, "get search thumbnails");
-                    if(backupthumbnails1.size() == backupthumbnails2.size())
-                    {
-                        backupthumbnails1.add(bytes);//image1.setImageBitmap(bytes);
-                    }
-                    else if(backupthumbnails1.size() > backupthumbnails2.size())
-                    {
-                        backupthumbnails2.add(bytes);//image1.setImageBitmap(bytes);
-                    }
+                    backupthumbnails1.add(bytes);//image1.setImageBitmap(bytes);
                     searchAdapter.notifyDataSetChanged();
 
                 }

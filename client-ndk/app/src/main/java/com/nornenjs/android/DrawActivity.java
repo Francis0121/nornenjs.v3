@@ -1,28 +1,28 @@
 package com.nornenjs.android;
 
-import android.app.Activity;
+
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.*;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
-import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import org.json.JSONObject;
-
-import java.util.jar.Attributes;
-
 
 public class DrawActivity extends View{
+
+    private static final Integer TRANSFER_MAX_VALUE = 255;
+
+    private static final Integer TRANSFER_START = 65;
+    private static final Integer TRANSFER_MID1 = 80;
+    private static final Integer TRANSFER_MID2 = 100;
+    private static final Integer TRANSFER_END = 120;
+
+    private static final Integer TOP_MARGIN_VALUE = 30;
+    private static final Integer LEFT_MARGIN_VALUE = 50;
+    private static final Integer WIDTH_DIFF = 80;
 
     private final String TAG="DrawActivity";
     private final Path figure = new Path();
@@ -31,10 +31,11 @@ public class DrawActivity extends View{
 
     private Socket socket;
 
-    public float tr_x = 550, tr_y = 100, tl_x = 350, tl_y =100, br_x = 650, br_y, bl_x = 250, bl_y;
-    //tr_y, tl_y 고정
-    public float otf_width, otf_height;
-    public float otf_start = 125, otf_end;
+    public float tr_x, tr_y, tl_x, tl_y, br_x, br_y, bl_x, bl_y;
+
+    public Integer otf_width, otf_height;
+    public Integer otf_start = WIDTH_DIFF, otf_end;
+    public Integer otfHeightStart, otfHeightEnd;
 
     Point bottomLeft ,bottomRight, topRight, topLeft;
     boolean b_Left ,b_Right, t_Right, t_Left;
@@ -49,26 +50,44 @@ public class DrawActivity extends View{
     DashPathEffect dashPath = new DashPathEffect(new float[]{5,5}, 2);
 
     JniGLActivity jniGLActivity;
+    private Context mContext;
+
     public DrawActivity(Context context) {
         super(context);
+        this.mContext = context;
     }
 
     public DrawActivity(Context context, AttributeSet att) {
         super(context, att);
+        this.mContext = context;
+    }
+
+    private void setInitRelativePosition(Integer otfStart, Integer otfEnd){
+
         cPaint.setStyle(Paint.Style.FILL);
         cPaint.setColor(Color.DKGRAY);
-        cPaint.setStrokeWidth(3);
+        cPaint.setStrokeWidth(convertPixelsToDp(3));
 
         bg_Paint.setStyle(Paint.Style.STROKE);
         bg_Paint.setPathEffect(dashPath);
-        bg_Paint.setStrokeWidth(3);
+        bg_Paint.setStrokeWidth(convertPixelsToDp(3));
 
         bg_LinePaint.setStyle(Paint.Style.STROKE);
         bg_LinePaint.setColor(Color.BLACK);
-        bg_LinePaint.setStrokeWidth(30);
+        bg_LinePaint.setStrokeWidth(convertPixelsToDp(30));
 
-        topLeft = new Point(tl_x, tl_y);//기본값...이 기본값은 유지, 재사용이되야함
-        topRight = new Point(tr_x,tr_y);
+
+        // ~ TODO 해당 수식이 맞는지 확인 필요
+        Double diffDistance = new Double(otfEnd - otfStart);
+        Double onePoint = diffDistance / new Double(TRANSFER_MAX_VALUE);
+
+        tl_x = Double.valueOf(onePoint * TRANSFER_MID1).intValue();
+        tr_x = Double.valueOf(onePoint * TRANSFER_MID2).intValue();
+        bl_x = Double.valueOf(onePoint * TRANSFER_START).intValue();
+        br_x = Double.valueOf(onePoint * TRANSFER_END).intValue();
+
+        topLeft = new Point(tl_x, tl_y);
+        topRight = new Point(tr_x, tr_y);
         bottomLeft = new Point(bl_x, bl_y);
         bottomRight = new Point(br_x, br_y);
 
@@ -76,16 +95,12 @@ public class DrawActivity extends View{
         top = new Line(topLeft, topRight);
         right = new Line(topRight, bottomRight);
 
-
-        figure.addCircle(topLeft.x, topLeft.y, topLeft.radius, Path.Direction.CW);
-        figure.addCircle(topRight.x, topRight.y, topRight.radius, Path.Direction.CW);
-        figure.addCircle(bottomLeft.x, bottomLeft.y, bottomLeft.radius, Path.Direction.CW);
-        figure.addCircle(bottomRight.x, bottomRight.y, bottomRight.radius, Path.Direction.CW);//점 4개
-
-
-
-
+        figure.addCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), Path.Direction.CW);
+        figure.addCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), Path.Direction.CW);
+        figure.addCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), Path.Direction.CW);
+        figure.addCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), Path.Direction.CW);//점 4개
     }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -98,44 +113,57 @@ public class DrawActivity extends View{
 
             otf_width = layoutMainView.getWidth();
             otf_height = layoutMainView.getHeight();
+            otf_end = otf_width - WIDTH_DIFF;
 
-            otf_end = otf_width - 95;
+            setInitRelativePosition(otf_start, otf_end);
 
-            bottomLeft.setY(otf_height - 100);
-            bottomRight.setY(otf_height - 100);
+            otfHeightStart = TOP_MARGIN_VALUE + TOP_MARGIN_VALUE;
+            otfHeightEnd = otf_height - TOP_MARGIN_VALUE - TOP_MARGIN_VALUE ;
+
+            topLeft.setY(otfHeightStart);
+            topRight.setY(otfHeightStart);
+            bottomLeft.setY(otfHeightEnd);
+            bottomRight.setY(otfHeightEnd);
         }
+
         drawBackground(canvas);
-
-
     }
 
+    private float convertPixelsToDp(float px){
+        Resources resources = mContext.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        float dp = px / (metrics.densityDpi / 160f);
+        return dp;
+    }
 
-
-    public void drawBackground(Canvas canvas)
-    {
-
+    public void drawBackground(Canvas canvas) {
         //점선
-        canvas.drawLine(70, 100, otf_width - 70, 100, bg_Paint);
+        canvas.drawLine(otf_start-LEFT_MARGIN_VALUE+20, otfHeightStart, otf_end+LEFT_MARGIN_VALUE, otfHeightStart, bg_Paint);
 
         //기준선 2개
         bg_LinePaint.setColor(Color.BLACK);
-        bg_LinePaint.setStrokeWidth(15);
-        canvas.drawLine(100, 30, 100, otf_height - 30, bg_LinePaint);//세
-        canvas.drawLine(50, otf_height - 100, otf_width - 70, otf_height - 100, bg_LinePaint);//가로
+        bg_LinePaint.setStrokeWidth(convertPixelsToDp(15));
+        canvas.drawLine(otf_start, otfHeightStart - TOP_MARGIN_VALUE, otf_start, otfHeightEnd + TOP_MARGIN_VALUE, bg_LinePaint); //세로
+        canvas.drawLine(otf_start-LEFT_MARGIN_VALUE+20, otfHeightEnd, otf_end+LEFT_MARGIN_VALUE, otfHeightEnd, bg_LinePaint);//가로
 
         //사다리꼴 3개 라인
         bg_LinePaint.setColor(Color.LTGRAY);
-        bg_LinePaint.setStrokeWidth(30);
+        bg_LinePaint.setStrokeWidth(convertPixelsToDp(30));
         canvas.drawLine(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y, bg_LinePaint);
         canvas.drawLine(topLeft.x, topLeft.y, topRight.x, topRight.y, bg_LinePaint);
         canvas.drawLine(topRight.x, topRight.y, bottomRight.x, bottomRight.y, bg_LinePaint);
 
         //꼭지점 4개
-        canvas.drawCircle(topLeft.x, topLeft.y, topLeft.radius, cPaint);
-        canvas.drawCircle(topRight.x, topRight.y, topRight.radius, cPaint);
-        canvas.drawCircle(bottomLeft.x, bottomLeft.y, bottomLeft.radius, cPaint);
-        canvas.drawCircle(bottomRight.x, bottomRight.y, bottomRight.radius, cPaint);
 
+        canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+        canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+        canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+        canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+
+        Log.d(TAG, "otf TopLeft : " + calc(topLeft.x));
+        Log.d(TAG, "otf TopRight : " + calc(topRight.x));
+        Log.d(TAG, "otf bottomLeft : " + calc(bottomLeft.x));
+        Log.d(TAG, "otf bottomRight " + calc(bottomRight.x));
     }
 
     float beforeX;
@@ -145,44 +173,27 @@ public class DrawActivity extends View{
     public boolean onTouchEvent(MotionEvent event) {
 
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
-
             eventCount = 0;
 
             Log.d(TAG,"topLeft.x : " + topLeft.x + "event.getX() : " + event.getX());
-            if(topLeft.checkPoint(event.getX(), event.getY()))
-            {
+            if(topLeft.checkPoint(event.getX(), event.getY())) {
                 Log.d(TAG,"topLeft true");
                 t_Left = true;
-            }
-            else if(topRight.checkPoint(event.getX(), event.getY()))
-            {
-
+            } else if(topRight.checkPoint(event.getX(), event.getY())) {
                 t_Right = true;
-            }
-            else if(bottomLeft.checkPoint(event.getX(), event.getY()))
-            {
-
+            } else if(bottomLeft.checkPoint(event.getX(), event.getY())) {
                 b_Left = true;
-            }
-            else if(bottomRight.checkPoint(event.getX(), event.getY()))
-            {
-
+            } else if(bottomRight.checkPoint(event.getX(), event.getY())) {
                 b_Right = true;
-            }
-            else if(left.IsOnLine(event.getX(), event.getY()))
-            {
+            } else if(left.IsOnLine(event.getX(), event.getY())) {
                 beforeX = event.getX();
                 left_line = true;
                 Log.d("IsOnLine","left line clicked");
-            }
-            else if(right.IsOnLine(event.getX(), event.getY()))
-            {
+            } else if(right.IsOnLine(event.getX(), event.getY())) {
                 beforeX = event.getX();
                 right_line = true;
                 Log.d("IsOnLine","right line clicked");
-            }
-            else if(top.IsOnLine(event.getX(), event.getY()))
-            {
+            } else if(top.IsOnLine(event.getX(), event.getY())) {
                 beforeX = event.getX();
                 top_line = true;
                 Log.d("IsOnLine","top line clicked");
@@ -190,80 +201,52 @@ public class DrawActivity extends View{
             return true;
         }else if(event.getAction() == MotionEvent.ACTION_MOVE) {
 
-
-            if(t_Left)
-            {
+            if(t_Left) {
                 if(event.getX() >= bottomLeft.x && event.getX() >= otf_start && event.getX() <= topRight.x)
                     topLeft.setX(event.getX());
-            }
-            else if(t_Right)
-            {
-
+            } else if(t_Right) {
                 if(event.getX() <= bottomRight.x && event.getX() <= otf_end && event.getX() >= topLeft.x)
                     topRight.setX(event.getX());
-            }
-            else if(b_Left)
-            {
+            } else if(b_Left) {
                 if(event.getX() <= topLeft.x && event.getX() >= otf_start)
                     bottomLeft.setX(event.getX());
-            }
-            else if(b_Right)
-            {
+            } else if(b_Right) {
                 Log.d(TAG, "otf_end : " + otf_end);
                 if(event.getX() >= topRight.x && event.getX() <= otf_end)
                     bottomRight.setX(event.getX());
-            }
-            else if(left_line)
-            {
-                if(bottomLeft.x >= otf_start)
-                {
-                    if(bottomLeft.getX() + (-1)*(beforeX - event.getX()) < otf_start + 5)
-                    {
+            } else if(left_line) {
+                if(bottomLeft.x >= otf_start) {
+                    if(bottomLeft.getX() + (-1)*(beforeX - event.getX()) < otf_start + 5) {
                         bottomLeft.setX(otf_start + 5);
                         topLeft.setX(otf_start + 5 + topLeft.getX() - bottomLeft.getX());
-                    }
-                    else
-                    {
+                    } else {
                         bottomLeft.setX(bottomLeft.getX() + (-1)*(beforeX - event.getX()));
                         topLeft.setX(topLeft.getX() + (-1)*(beforeX - event.getX()));
                     }
                     beforeX = event.getX();
                 }
 
-            }
-            else if(top_line)
-            {
+            } else if(top_line) {
                 Log.d(TAG, "bottomLeft.x : " + bottomLeft.x + ", otf_start : " + otf_start);
-                if(bottomLeft.x >= otf_start && bottomRight.x <= otf_end)
-                {
-
-                    if(!flag2)
-                    {
-                        if(bottomLeft.getX() + (-1)*(beforeX - event.getX()) < otf_start + 5)
-                        {
+                if(bottomLeft.x >= otf_start && bottomRight.x <= otf_end) {
+                    if(!flag2) {
+                        if(bottomLeft.getX() + (-1)*(beforeX - event.getX()) < otf_start + 5) {
                             flag1 = true;
                             bottomLeft.setX(otf_start + 5);
                             topLeft.setX(otf_start + 5 + topLeft.getX() - bottomLeft.getX());
-                        }
-                        else
-                        {
+                        } else {
                             flag1 = false;
                             bottomLeft.setX(bottomLeft.getX() + (-1)*(beforeX - event.getX()));
                             topLeft.setX(topLeft.getX() + (-1)*(beforeX - event.getX()));
                         }
                     }
 
-
-                    if(!flag1)
-                    {
-                        if(bottomRight.getX() + (-1)*(beforeX - event.getX()) > otf_end - 5)
-                        {
+                    if(!flag1) {
+                        if(bottomRight.getX() + (-1)*(beforeX - event.getX()) > otf_end - 5) {
                             flag2 = true;
                             bottomRight.setX(otf_end - 5);
                             topRight.setX(otf_end - 5 + topRight.getX() - bottomRight.getX());
-                        }
-                        else
-                        {
+                        } else {
                             flag2 = false;
                             bottomRight.setX(bottomRight.getX() + (-1)*(beforeX - event.getX()));
                             topRight.setX(topRight.getX() + (-1)*(beforeX - event.getX()));
@@ -272,19 +255,12 @@ public class DrawActivity extends View{
 
                     beforeX = event.getX();
                 }
-            }
-            else if(right_line)
-            {
-
-                if(bottomRight.x <= otf_end)
-                {
-                    if(bottomRight.getX() + (-1)*(beforeX - event.getX()) > otf_end - 5)
-                    {
+            } else if(right_line) {
+                if(bottomRight.x <= otf_end) {
+                    if(bottomRight.getX() + (-1)*(beforeX - event.getX()) > otf_end - 5) {
                         bottomRight.setX(otf_end - 5);
                         topRight.setX(otf_end - 5 + topRight.getX() - bottomRight.getX());//padding 5
-                    }
-                    else
-                    {
+                    } else {
                         bottomRight.setX(bottomRight.getX() + (-1)*(beforeX - event.getX()));
                         topRight.setX(topRight.getX() + (-1)*(beforeX - event.getX()));
                     }
@@ -306,37 +282,22 @@ public class DrawActivity extends View{
             Log.d(TAG, "otf bottomLeft : " + calc(bottomLeft.x));
             Log.d(TAG, "otf bottomRight " + calc(bottomRight.x));
             invalidate();
-        }
-        else if(event.getAction() == MotionEvent.ACTION_UP)
-        {
-            if(t_Left)
-            {
+        } else if(event.getAction() == MotionEvent.ACTION_UP) {
+            if(t_Left) {
                 t_Left = false;
-            }
-            else if(t_Right)
-            {
+            } else if(t_Right) {
                 t_Right = false;
-            }
-            else if(b_Left)
-            {
+            } else if(b_Left) {
                 b_Left = false;
-            }
-            else if(b_Right)
-            {
+            } else if(b_Right) {
                 b_Right = false;
-            }
-            else if(left_line)
-            {
+            } else if(left_line) {
                 left_line = false;
                 beforeX = 0;
-            }
-            else if(top_line)
-            {
+            } else if(top_line) {
                 top_line = false;
                 beforeX = 0;
-            }
-            else if(right_line)
-            {
+            } else if(right_line) {
                 right_line = false;
                 beforeX = 0;
             }
@@ -346,10 +307,9 @@ public class DrawActivity extends View{
 
     }
 
-
-    int calc(float temp)
-    {
-        return (int)(((temp - (otf_start + 5)) * 255)/((otf_end-5)-(otf_start+5)));
+    private int calc(float temp) {
+        int value = (int)(((temp - (otf_start+5)) * 255)/((otf_end-5)-(otf_start+5)));
+        return value < 0 ? 0 : value;
     }
 
     class Line
@@ -379,13 +339,14 @@ public class DrawActivity extends View{
 
     class Point
     {
-        float x,y;
-        int radius;
+        private float x;
+        private float y;
+        private int radius;
 
         public Point(float x, float y) {
             this.x = x;
             this.y = y;
-            radius = 25;
+            this.radius = 25;
         }
 
         public float getX() {

@@ -27,15 +27,10 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
 
     private List<String> titles1;
-    private List<String> titles2;
     private List<Bitmap> thumbnails1;
-    private List<Bitmap> thumbnails2;
     private List<Integer> pns1;
-    private List<Integer> pns2;
     private List<String> date1;
-    private List<String> date2;
     private List<String> metadata1;
-    private List<String> metadata2;
     private Map<Integer, Integer> pnMap;
 
     private Activity activity;
@@ -46,37 +41,24 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 //        mContext = c;
 //    }
 
-    public ImageAdapter(List<String> titles1, List<String> titles2, List<Bitmap> thumbnails1, List<Bitmap> thumbnails2, List<Integer> pns1, List<Integer> pns2, List<String> date1, List<String> date2, List<String> metadata1, List<String> metadata2, Activity activity) {
+    public ImageAdapter(List<String> titles1, List<Bitmap> thumbnails1, List<Integer> pns1, List<String> date1, List<String> metadata1, Activity activity) {
 
         Log.d(TAG, "ImageAdapter called");
         this.titles1 = titles1;
-        this.titles2 = titles2;
         this.thumbnails1 = thumbnails1;
-        this.thumbnails2 = thumbnails2;
         this.pns1 = pns1;
-        this.pns2 = pns2;
         this.date1 = date1;
-        this.date2 = date2;
         this.metadata1 = metadata1;
-        this.metadata2 = metadata2;
         this.activity = activity;
         volumelist_Page = new VolumeList();
     }
 
 
-//    public ImageAdapter(List<String> titles, List<String> titles2, List<Bitmap> thumbnails, List<Bitmap> thumbnails2, List<Integer> pns, List<Integer> pns2, Activity activity) {
-//        this.titles1 = titles;
-//        this.titles2 = titles2;
-//        this.thumbnails1 = thumbnails;
-//        this.thumbnails2 = thumbnails2;
-//        this.pns1 = pns;
-//        this.pns2 = pns2;
-//        this.activity = activity;
-//        this.pnMap = new HashMap<Integer, Integer>();
-//    }
-
     public int getCount() {
-        return thumbnails1.size();//더 짧은 오른쪽을 기준
+        if(thumbnails1.size() % 2 == 0)
+            return thumbnails1.size() / 2;
+        else
+            return (thumbnails1.size() / 2)+1;
         //return titles.size();
     }
 
@@ -136,74 +118,73 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
         Log.d(TAG + " getView","position : " + position);
 
+
+        int pos = position * 2;
         //여기서 문자열 처
         String titleText;
-        if(titles1.get(position).length() > 10)
-            titleText = titles1.get(position).substring(0, 10) + "...";
+        if(titles1.get(pos).length() > 10)
+            titleText = titles1.get(pos).substring(0, 10) + "...";
         else
-            titleText = titles1.get(position);
+            titleText = titles1.get(pos);
 
-        view.title.setText(titleText);
-        view.date.setText(date1.get(position));
-        view.metadata.setText(metadata1.get(position));
+        view.imgViewFlag.setTag(pns1.get(pos));
 
-        view.imgViewFlag.setTag(pns1.get(position));
-
-        if(thumbnails1.size() > position)
+        if(thumbnails1.size() > pos)
         {
-            final Bitmap bitmap = volumelist_Page.getBitmapFromMemCache(""+pns1.get(position));//+pns1.get(position)
+            final Bitmap bitmap = volumelist_Page.getBitmapFromMemCache(""+pns1.get(pos));//+pns1.get(position)
             if(bitmap != null){
                 view.imgViewFlag.setImageBitmap(bitmap);
                 //Log.d(TAG, "cached image use");
             }
             else
-                view.imgViewFlag.setImageBitmap(thumbnails1.get(position));
+                view.imgViewFlag.setImageBitmap(thumbnails1.get(pos));
         }
-//try{~~~~
-//        if(titles2.get(position).length() > 10)
-//            titleText = titles2.get(position).substring(0, 10) + "...";
-//        else
-//            titleText = titles2.get(position);
-//
-//        view.title2.setText(titleText);
-//        view.date2.setText(date2.get(position));
-//        view.metadata2.setText(metadata2.get(position));
-//
-//        view.imgViewFlag2.setTag(pns2.get(position));
 
-        //Log.d(TAG + " set", "thumbnails2.size() : " + thumbnails2.size() + ", position : " + position);
-        if(thumbnails2.size() > position)
+        view.title.setText(titleText);
+        view.date.setText(date1.get(pos));
+        view.metadata.setText(metadata1.get(pos));
+
+        //------------------------left side-------------------
+
+        try
         {
 
-            if(titles2.get(position).length() > 10)
-                titleText = titles2.get(position).substring(0, 10) + "...";
-            else
-                titleText = titles2.get(position);
+            if(thumbnails1.size() > pos+1)
+            {
+                if(titles1.get(pos+1).length() > 10)
+                    titleText = titles1.get(pos+1).substring(0, 10) + "...";
+                else
+                    titleText = titles1.get(pos+1);
 
+                view.imgViewFlag2.setTag(pns1.get(pos + 1));
 
-            view.title2.setText(titleText);
-            view.date2.setText(date2.get(position));
-            view.metadata2.setText(metadata2.get(position));
+                final Bitmap bitmap = volumelist_Page.getBitmapFromMemCache(""+pns1.get(pos+1));//+pns1.get(position)
+                if(bitmap != null){
+                    view.imgViewFlag2.setImageBitmap(bitmap);
+                    //Log.d(TAG, "cached image use");
+                }
+                else
+                    view.imgViewFlag2.setImageBitmap(thumbnails1.get(pos+1));
 
-            view.imgViewFlag2.setTag(pns2.get(position));
-
-            final Bitmap bitmap = volumelist_Page.getBitmapFromMemCache(""+pns2.get(position));//+pns1.get(position)
-            if(bitmap != null){
-                view.imgViewFlag2.setImageBitmap(bitmap);
-                //Log.d(TAG, "cached image use");
+                view.title2.setText(titleText);
+                view.date2.setText(date1.get(pos+1));
+                view.metadata2.setText(metadata1.get(pos+1));
             }
             else
-                view.imgViewFlag2.setImageBitmap(thumbnails2.get(position));
+            {
+                Log.d(TAG + " getView()","pos + 1 : " + (pos + 1) + ", thumbnails1.size() : " + thumbnails1.size());
+//                view.title2.setVisibility(View.GONE);
+//                view.date2.setVisibility(View.GONE);
+//                view.metadata2.setVisibility(View.GONE);
+//                view.imgViewFlag2.setVisibility(View.GONE);
+            }
 
-        }
-        else
+        }catch(IndexOutOfBoundsException e)
         {
-//            view.title2.setVisibility(View.GONE);
-//            view.date2.setVisibility(View.GONE);
-//            view.metadata2.setVisibility(View.GONE);
-//            view.imgViewFlag2.setVisibility(View.GONE);
-            Log.d(TAG, "thumbnails2.size() <= position");
+            e.printStackTrace();
         }
+
+
         convertView.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
