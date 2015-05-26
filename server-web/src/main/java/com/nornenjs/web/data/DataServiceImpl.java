@@ -114,4 +114,14 @@ public class DataServiceImpl extends SqlSessionDaoSupport implements DataService
         }
         return savePaths;
     }
+
+    @Override
+    public Data selectVolumeSavePath(Integer pn) {
+        return getSqlSession().selectOne("data.selectVolumeSavePath", pn);
+    }
+
+    @Override
+    public List<String> selectThumbnailSavePath(Integer pn) {
+        return getSqlSession().selectList("data.selectThumbnailSavePath", pn);
+    }
 }

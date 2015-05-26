@@ -12,7 +12,7 @@
         </header>
         
         <sec:authentication property="principal.username" var="username"/>
-        <form:form commandName="actorInfo" action="${cp}/myInfo/${username}" method="post" htmlEscape="true" cssClass="actorUpdateForm">
+        <form:form commandName="actorInfo" action="${cp}/myInfo/${username}" method="post" cssClass="actorUpdateForm">
             <form:hidden path="updateDate"/>
             <ul>
                 <li>
@@ -30,8 +30,8 @@
                 </lI>
                 <li>
                     <form:label path="lastName">성</form:label>
-                    <form:errors path="lastName" cssClass="error"/>
                     <form:input path="lastName" placeholder="성을 입력해주세요." maxlength="20"/>
+                    <form:errors path="lastName" cssClass="error"/>
                 </li>
                 <li>
                     <form:label path="firstName">이름</form:label>
@@ -62,7 +62,7 @@
                     <form:errors path="changePassword" cssClass="error"/>
                 </li>
                 <li>
-                    <label for="confirmPassword">비밀번호 확인</label>
+                    <label for="confirmPassword">비밀번호확인</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="동일한 비밀번호를 입력해주세요."/>
                 </li>
                 <li class="actorUpdateBtn">

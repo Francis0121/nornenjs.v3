@@ -17,12 +17,11 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Francis on 2015-04-26.
@@ -42,19 +41,24 @@ public class VolumeController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String maxVolumeRenderingPage(){
-        Integer maxVolumePn = volumeService.selectMaxVolume();
-        return "redirect:/volume/"+maxVolumePn;
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer maxVolumePn = volumeService.selectMaxVolume(user.getUsername());
+        if(maxVolumePn == null){
+            return "redirect:/volume/list";
+        }
+        return "redirect:/volume/pn/"+maxVolumePn;
     }
     
-    @RequestMapping(value = "/{volumePn}", method = RequestMethod.GET)
+    @RequestMapping(value = "/pn/{volumePn}", method = RequestMethod.GET)
     public String renderingPage(Model model, @PathVariable Integer volumePn){
         model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
         return "volume/one";
     }
     
     @RequestMapping(value = "/page/{volumePn}", method = RequestMethod.GET)
-    public String volumeUpadatePage(Model model, @PathVariable Integer volumePn){
+    public String volumeUpdatePage(Model model, @PathVariable Integer volumePn){
         model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
+        model.addAttribute("deleteVolume", new Volume(volumePn));
         return "volume/update";
     }
 
@@ -63,7 +67,10 @@ public class VolumeController {
                                    @ModelAttribute Volume volume, BindingResult result) {
         new VolumeValidator().validate(volume, result);
         if(result.hasErrors()){
-            model.addAllAttributes(volumeService.selectVolumeInformation(volumePn));
+            Map<String, Object> infoMap = volumeService.selectVolumeInformation(volumePn);
+            infoMap.remove("volume");
+            model.addAllAttributes(infoMap);
+            model.addAttribute("deleteVolume", new Volume(volumePn));
             return "volume/update";
         }else {
             volumeService.update(volume);
@@ -71,18 +78,62 @@ public class VolumeController {
             return "redirect:/volume/page/" + volumePn;
         }
     }
+
+    @RequestMapping(value="/delete", method = RequestMethod.POST)
+    public String volumeListPage(@ModelAttribute Volume volume, BindingResult result){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        volume.setUsername(user.getUsername());
+        new Validator(){
+            @Override
+            public boolean supports(Class<?> aClass) {
+                return Volume.class.isAssignableFrom(aClass);
+            }
+
+            @Override
+            public void validate(Object object, Errors errors) {
+                Volume volume = (Volume) object;
+
+                if(!volumeService.selectVolumeIsExist(volume)){
+                    errors.rejectValue("volumePn", "volume.delete.notExist");
+                }
+            }
+        }.validate(volume, result);
+
+        if(result.hasErrors()){
+            return "redirect:/noPermission";
+        }else{
+            volumeService.deleteVolumeAndFile(volume);
+            return "redirect:/volume/list";
+        }
+    }
+
     
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public String listPage(Model model, @ModelAttribute VolumeFilter volumeFilter){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = user.getUsername();
         volumeFilter.setUsername(username);
-        
+
         List<Volume> volumes = volumeService.selectList(volumeFilter);
         model.addAttribute("volumes", volumes);
         return "volume/list";
     }
-    
+
+    @ResponseBody
+    @RequestMapping(value = "/list/json", method = RequestMethod.POST)
+    public Map<String, Object> listAjax(@RequestBody VolumeFilter volumeFilter){
+        logger.debug(volumeFilter.toString());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = user.getUsername();
+        volumeFilter.setUsername(username);
+
+        List<Volume> volumes = volumeService.selectList(volumeFilter);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("volumes", volumes);
+        map.put("volumeFilter", volumeFilter);
+        return map;
+    }
+
     @RequestMapping(value = "/upload", method = RequestMethod.GET)
     public String uploadPage(Model model){
         model.addAttribute("volume", new Volume());
@@ -94,8 +145,10 @@ public class VolumeController {
         new VolumeValidator().validate(volume, result);
         
         if (result.hasErrors()) {
-            model.addAttribute("data", dataService.selectOne(volume.getVolumeDataPn()));
-            model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
+            if(volume.getVolumeDataPn() != null) {
+                model.addAttribute("data", dataService.selectOne(volume.getVolumeDataPn()));
+                model.addAttribute("thumbnails", dataService.selectVolumeThumbnailPn(new Thumbnail(volume.getVolumeDataPn())));
+            }
             return "volume/upload";
         }else{
             User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

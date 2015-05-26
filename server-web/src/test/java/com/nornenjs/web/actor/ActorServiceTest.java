@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
  * Created by Francis on 2015-04-23.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("file:src/test/resources/spring/root-context.xml")
+@ContextConfiguration("file:src/main/resources/spring/root-context.xml")
 public class ActorServiceTest {
 
     private static Logger logger = LoggerFactory.getLogger(ActorServiceTest.class);
@@ -30,9 +30,9 @@ public class ActorServiceTest {
     
     @Before
     public void Before(){
-        logger.debug("Initial actor service");
-        actorService.insert(actor1);
-        actorService.insert(actor2);
+        //logger.debug("Initial actor service");
+        //actorService.insert(actor1);
+        //actorService.insert(actor2);
     }
 
     @Test
@@ -72,6 +72,16 @@ public class ActorServiceTest {
         
         getActor = actorService.selectOne(actor2.getPn());
         Compare.actor(actor2, getActor);
+    }
+
+    @Test
+    public void 사용자_비밀번호_초기화()throws Exception{
+        Actor actor = new Actor();
+        actor.setEnabled(true);
+        actor.setUsername("nornenjs");
+        actor.setChangePassword("1q2w3e4r!");
+
+        actorService.updatePassword(actor);
     }
 
 }

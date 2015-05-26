@@ -20,13 +20,23 @@ public class MockVolumeServiceImpl implements VolumeService{
     }
 
     @Override
-    public Integer selectMaxVolume() {
+    public Integer selectMaxVolume(String username) {
         return null;
     }
 
     @Override
     public Map<String, Object> selectVolumeInformation(Integer volumePn) {
         return null;
+    }
+
+    @Override
+    public Boolean selectVolumeIsExist(Volume volume) {
+        return null;
+    }
+
+    @Override
+    public void deleteVolumeAndFile(Volume volume) {
+
     }
 
     @Override

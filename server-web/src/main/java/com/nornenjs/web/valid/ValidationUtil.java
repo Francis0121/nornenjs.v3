@@ -24,5 +24,9 @@ public class ValidationUtil {
     public static Boolean isChar(String str){
         return !str.matches("^[\\w]{1,20}$");
     }
+
+    public static Boolean isName(String str){
+        return !str.matches("^[가-힣a-zA-Z]{1,20}$");
+    }
     
 }

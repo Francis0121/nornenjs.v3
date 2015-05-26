@@ -84,6 +84,7 @@ Encoding.prototype.Androidpng = function(cudaRender, socket){
  *  cudaRender object 
  * @param socket
  *  socket.io object
+ *  
  */
 Encoding.prototype.jpeg = function(cudaRender, socket, type){
     var hrStart = process.hrtime();

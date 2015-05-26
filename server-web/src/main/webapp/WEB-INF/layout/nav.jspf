@@ -1,30 +1,39 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<nav class="navigation">
-  
+<nav class="${fn:contains(rp, '/volume/pn/') ? 'navigationSmall' : 'navigation'}" id="navigation">
+
+    <ul class="navigationWrap">
+        <li>
+            <button id="navigationBtn" class="menuIcon">MENU</button>
+        </li>
+        <li>
+            <span><sec:authentication property="principal.username"/></span>
+        </li>
+    </ul>
+
     <header>
         <a href="#"><h1>Nornen<span class="colorOrange">js</span></h1></a>
         <h2>Volume Rendering System</h2>
     </header>
-  
+
     <ul class="menu">
         <li class="title">
-            <a href="#">MYPAGE</a>
+            <a href="#" class="titleUserIcon ${fn:contains(rp, '/dashboard') or fn:contains(rp, '/myInfo') or fn:contains(rp, '/setting') ? 'active' : ''}">MYPAGE</a>
         </li>
         <li>
-            <ul class="submenu">
+            <ul class="submenu" ${fn:contains(rp, '/dashboard') or fn:contains(rp, '/myInfo') or fn:contains(rp, '/setting') ? 'style="display:block;"' : ''}>
                 <li>
-                    <a href="/dashboard" class="dashboard">Dash Board</a>
+                    <a href="/dashboard" class="dashboardIcon dashboard ${fn:contains(rp, '/dashboard') ? 'active dashboardIconActive' : ''}">Dash Board</a>
                 </li>
                 <li>
                     <sec:authentication property="principal.username" var="username"/>
-                    <a href="/myInfo/<c:out value="${username}"/>">My Info</a>
+                    <a href="/myInfo/<c:out value="${username}"/>" class="infoIcon ${fn:contains(rp, '/myInfo/') ? 'active infoIconActive' : ''}">My Info</a>
                 </li>
                 <li>
-                    <a href="/setting">Setting</a>
+                    <a href="/setting" class="settingIcon ${fn:contains(rp, '/setting') ? 'active settingIconActive' : ''}">Setting</a>
                 </li>
                 <li>
-                    <a href="/signOut">Log Out</a>
+                    <a href="/signOut" class="logOutIcon">Log Out</a>
                 </li>
             </ul>
         </li>
@@ -32,40 +41,40 @@
   
     <ul class="menu">
         <li class="title">
-            <a href="#">VOLUME</a>
+            <a href="#" class="titleVolumeIcon ${fn:contains(rp, '/volume') ? 'active' : ''}">VOLUME</a>
         </li>
         <li>
-            <ul class="submenu">
+            <ul class="submenu" ${fn:contains(rp, '/volume') ? 'style="display:block;"' : ''}>
                 <li>
-                    <a href="${cp}/volume/list">List</a>
+                    <a href="${cp}/volume/list" class="docListIcon ${fn:contains(rp, '/volume/list') ? 'active docListIconActive' : ''}">List</a>
                 </li>
                 <li>
-                    <a href="${cp}/volume/upload">Upload</a>
+                    <a href="${cp}/volume/upload" class="docUploadIcon ${fn:contains(rp, '/volume/upload') ? 'active docUploadIconActive' : ''}">Upload</a>
                 </li>
                 <li>
-                    <a href="${cp}/volume">Rendering</a>
-                </li>
-            </ul>
-        </li>
-        
-    </ul>
-  
-    <ul class="menu">
-        <li class="title">
-            <a href="#">HELP</a>
-        </li>
-        <li>
-            <ul class="submenu">
-                <li>
-                    <a href="#">List Page</a>
-                </li>
-                <li>
-                    <a href="#">Upload Page</a>
-                </li>
-                <li>
-                    <a href="#">Rendering Page</a>
+                    <a href="${cp}/volume" class="docRenderIcon ${fn:contains(rp, '/volume/pn/') ? 'active docRenderIconActive' : ''}">Rendering</a>
                 </li>
             </ul>
         </li>
     </ul>
+
+    <!-- TODO Help page -->
+    <%--<ul class="menu">--%>
+        <%--<li class="title">--%>
+            <%--<a href="#">HELP</a>--%>
+        <%--</li>--%>
+        <%--<li>--%>
+            <%--<ul class="submenu">--%>
+                <%--<li>--%>
+                    <%--<a href="#">List Page</a>--%>
+                <%--</li>--%>
+                <%--<li>--%>
+                    <%--<a href="#">Upload Page</a>--%>
+                <%--</li>--%>
+                <%--<li>--%>
+                    <%--<a href="#">Rendering Page</a>--%>
+                <%--</li>--%>
+            <%--</ul>--%>
+        <%--</li>--%>
+    <%--</ul>--%>
 </nav>

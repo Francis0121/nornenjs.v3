@@ -40,7 +40,8 @@
     "winston" : "~0.9.0",
     "redis" : "0.12.1",
     "hiredis" : "0.2.0",
-    "mysql" : "2.6.2"
+    "mysql" : "2.6.2",
+    "sudo" : "1.0.3"
   },
 
   "main": "./lib/server.js",

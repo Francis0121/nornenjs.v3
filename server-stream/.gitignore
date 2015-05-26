@@ -80,3 +80,6 @@ build/Release
 node_modules
 
 
+# Redis
+*.rdb
+*.rdb

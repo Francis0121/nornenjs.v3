@@ -19,30 +19,29 @@
 
 .volumeListArticle{ width: 100%;}
 
-.volumeListArticle .list{ width: 100%; }
-.volumeListArticle .list .one{ width: 25%; float: left;}
+.volumeListArticle .list{ padding:  0 20px 30px 20px; float: left;}
+.volumeListArticle .list .one{ float: left; width: 300px; border-radius: 8px 8px 6px 6px; border: 1px solid #e5e5e5; margin: 4px 8px 20px 8px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.22);}
 
-.volumeListArticle figure{ width: 86%; float: left; padding: 10px 7%;}
-.volumeListArticle figcaption{ width: 100%; border-left: 8px solid #ccc; border-right: 8px solid #ccc; padding: 5px 0 10px 0; margin: 0 0 12px 0; background: #ccc;}
-.volumeListArticle figcaption span{ font-size: 75%; line-height: 1.2;}
-.volumeListArticle figcaption a.name{ font-weight: bold; font-size: 75%; color: #000;}
-.volumeListArticle figcaption span.number{ margin-right: 5px; }
-.volumeListArticle figcaption span.date{ margin-left: 5px; }
-
-.volumeListSlider img{ width: 100%; }
-.volumeListSlider canvas{ width: 100%; }
-.volumeListSlider { width: 100%; max-height: 290px; overflow: hidden; border-left: 8px solid #ccc; border-right: 8px solid #ccc; border-top: 8px solid #ccc; }
+.volumeListArticle figure{ float: left; }
+.volumeListArticle figcaption{ width: 100%; float: left; height: 110px;}
+.volumeListArticle figcaption span{ font-size: 75%; line-height: 2;}
+.volumeListArticle figcaption p.volumeTitle{ font-size: 81.25%; color: #000; width: 260px; padding: 10px 20px; float: left; border-bottom: 1px solid #e5e5e5;}
+.volumeListArticle figcaption p.number{ float: left; padding: 3px 20px 2.5px 20px; font-size: 75%; width: 260px;}
+.volumeListArticle figcaption p.date{ float: left; padding: 10px 20px 5px 20px; font-size: 75%; width: 260px;}
+.volumeListArticle figcaption span.label{ float: left; width: 40px; font-size: 100%; height: 24px; line-height: 24px;}
+.volumeListArticle figcaption span.text{ float: left; font-size: 100%; height: 24px; line-height: 24px;}
 
 
-.volumeUpdateBtn{ font-size: 62.5%; color: #fff;}
-.volumeUpdateBtn:hover{ color: #f2f2f2;}
+
+.volumeUpdateBtn{ font-size: 62.5%; color: #808080;}
+.volumeUpdateBtn:hover{ color: #000;}
 
 /**
 * Volume form
 */
 
 .volumeForm{ padding: 20px 30px; }
-.volumeForm ul{ width: 260px; float: left;}
+.volumeForm ul{ width: 300px; float: left; padding-bottom: 30px;}
 
 .volumeForm li>label{ width: 100%; display: block; font-size: 75%; padding: 10px 0;}
 .volumeForm li>textarea{ width: 88%; height: 50px; border: 2px solid #ccc; padding: 6px; font-size: 75%; border-radius: 5px; resize: none;}
@@ -52,17 +51,16 @@
 .volumeForm li span.success{ width: 100%; font-size: 68.75%; color: #0099FF; display: block; padding: 3px 0 10px 0;}
 .volumeForm input.text:focus{ border: 2px solid #777777;}
 
-.volumeBtnWrap{ width: 585px; clear: left; padding-top: 15px; text-align: center;}
+.volumeBtnWrap{ padding-top: 15px; }
 .volumeDataBtn{ width: 124px; height: 34px; }
+.volumeDelBtn{ width: 124px; height: 34px; margin-left: 15px;}
+.volumeUploadTextWrap{ font-size: 75%; color: #4d4d4d; font-weight: bold; line-height: 2;}
+.volumeUploadTextWrap span.emphasize{ color: #e04836;}
 
-.volumeRenderingSampleWrap{ width: 340px; float: left; padding: 10px 30px; }
-.volumeRenderingSampleWrap figure{ width: 150px; float: left; padding: 10px 10px 0 10px; background: #000000;}
-.volumeRenderingSampleWrap figure:nth-child(1){ border-radius: 5px 0 0 0; }
-.volumeRenderingSampleWrap figure:nth-child(2){ border-radius: 0 5px 0 0; }
-.volumeRenderingSampleWrap figure:nth-child(3){ border-radius: 0 0 0 5px; padding-bottom: 10px;}
-.volumeRenderingSampleWrap figure:nth-child(4){ border-radius: 0 0 5px 0; padding-bottom: 10px;}
-.volumeRenderingSampleWrap figure img{ width: 150px; }
-.volumeRenderingSampleWrap figure figcaption{ width: 150px; height: 20px; font-size: 75%; line-height: 20px; text-align: center; color: #fafafa;}
+.volumeRenderingSampleWrap{ width: 480px; float: left; padding: 10px 10px; margin: 20px 0; border: 2px solid #ccc; border-radius: 5px; }
+.volumeRenderingSampleWrap figure{ width: 100px; float: left; padding: 10px 10px 0 10px; }
+.volumeRenderingSampleWrap figure img{ width: 100px; }
+.volumeRenderingSampleWrap figure figcaption{ width: 100px; height: 20px; font-size: 75%; line-height: 20px; text-align: center; color: #000;}
 
 /**
 * Volume Rendering page
@@ -80,17 +78,63 @@
 .layoutContentSection .title>span{ display: block; padding: 8px 10px; float: left; border-bottom: 1px solid #808080; border-right: 1px solid #808080;}
 .layoutContentSection img{ z-index: 10;}
 
-.layoutContentSection .event{ position: relative; color: #fff; font-size: 75%; z-index: 1; right: 2px; width: 70px; float: right;}
-.layoutContentSection .event button{ float: right;}
-.layoutContentSection .event .eventPartition{ position: absolute;}
+.layoutContentSection .sliderWrap{ position: relative; z-index: 1; width: 40px; float: right; right: 5px; top: 5px; bottom: 5px;}
+.layoutContentSection .volumeRenderIcon{ border: 0px; width: 40px; height: 40px; background: url("../image/icon/btnIcon.png") no-repeat 0px 0px; text-indent: -9999px;}
+.socketCanvas{ margin-left: 40px;}
+.mprPlus{ background-position: 0px -40px !important;}
+.mprMinus{ background-position: -40px -40px !important;}
+.sliderVerticalMPR{ margin: 0 auto;}
+.sliderVerticalBright{ margin: 0 auto;}
+.brightPlus{ background-position: -40px 0px !important;}
+.brightMinus{ background-position: 0px 0px !important;}
+.volumeBtnActive{ background-position: -80px -80px !important; }
+.volumeBtnNoneActive{ background-position: -120px -80px !important;}
+.volumeBtnNoneActive:hover{  background-position: -80px -80px !important;}
+
+.mipBtnActive{ background-position: -80px -40px !important; }
+.mipBtnNoneActive{ background-position: -120px -40px !important; }
+.mipBtnNoneActive:hover{ background-position: -80px -40px !important; }
+
+.qualityBtnActive{ background-position: 0px -80px !important;}
+.qualityBtnNoneActive{ background-position: -40px -80px !important;}
+.qualityBtnNoneActive:hover{background-position: 0px -80px !important; }
+
+.otfBtnActive{ background-position: -80px 0px !important;}
+.otfBtnNoneActive{background-position: -120px 0px !important;}
+.otfBtnNoneActive:hover{background-position: -80px 0px !important;}
+
+.layoutContentSection .activeBtnWrap{ position: relative; z-index: 1; width: 80px; float: left; top: 40px; left: -90px;}
+.layoutContentSection .activeBtnWrap>button{ float: left; margin-bottom: 4px;}
+
 
 .renderingExpandBtn{ background: #000 url("../image/icon/expand.png") no-repeat 5px 5px; width: 20px; height: 20px; padding: 15px; margin: 0; text-indent: 9999px; border-top: 0px; border-left: 0px; float: left;}
 .renderingReduceBtn{ background: #000 url("../image/icon/reduce.png") no-repeat 5px 5px; width: 20px; height: 20px; padding: 15px; margin: 0; text-indent: 9999px; border-top: 0px; border-left: 0px; float: left;}
 
-.volumeRenderingOTF{float: left; padding: 0 10px; border-left: 2px solid #ccc; border-right: 2px solid #ccc;}
+.volumeRenderingOTF{ position: absolute; border: 2px solid #ccc;display: none; background: #fff; z-index: 2; }
+.volumeRenderingOTF>div{ float: left; height: 150px; width: 37.5px;}
+.volumeRenderingOTF>svg{margin: 0 0; float: left;}
+
+.otfNumberChangeWrap{ position: absolute; font-weight: bold;}
+.otfNumberChangeWrap>span{ display: block; width: 20px; text-align: center; font-size: 75%;}
+.otfNumberChangeWrap>a{ display: block; width: 20px; text-align: center; font-size: 100%;}
+.otfNumberChangeWrap>a:focus{ outline: 0; border: 0;}
+
+#leftTopTextWrap{ top: 26px; left:17px; }
+#leftBottomTextWrap{ position: absolute; top: 96px; left:17px; }
+
+#rightTopTextWrap{ position: absolute; top: 26px; right:13px; }
+#rightBottomTextWrap{ position: absolute; top: 96px; right:13px; }
+
 
 /**
 * Volume otf
 */
 .otfCircle{ cursor: move;}
 .otfDashLine{ cursor: move;}
+
+
+.volumeLoadingWrapHide{ display: none !important;}
+.volumeLoadingWrap{ position: fixed; display: block; width: 100%; min-height: 100%; max-height: 100%; top: 0; background: #fff; z-index: 99; opacity: .8; }
+.volumeLoadingWrap div.size{ position: absolute; left: 50%; top: 50%; width: 250px; height: 100px; margin-left: -105px; margin-top: -44px; }
+.volumeLoadingWrap div.center{ display: table-cell; text-align: center; vertical-align: middle; width: 250px; height: 100px;}
+.volumeLoadingWrap span.text{ font-weight: bold; font-size: 75%;}

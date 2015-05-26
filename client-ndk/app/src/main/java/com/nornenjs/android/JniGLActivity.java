@@ -1,10 +1,6 @@
 package com.nornenjs.android;
 
-
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
@@ -19,24 +15,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import com.cocosw.bottomsheet.BottomSheet;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import com.nineoldandroids.view.*;
 import com.nineoldandroids.view.ViewPropertyAnimator;
-import com.nornenjs.android.dynamicview.PoppyViewHelper;
-import com.nornenjs.android.dynamicview.SlidingViewHelper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.net.URISyntaxException;
-import java.util.Map;
 
 
 public class JniGLActivity extends Activity{
@@ -409,6 +398,7 @@ class TouchSurfaceView extends GLSurfaceView {
         Log.d("bmp", "surfaceDestoryed");
     }
 
+
     private CudaRenderer mRenderer;
     private JniGLActivity mActivity;
     private Context mContext;
@@ -693,6 +683,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
     @Override
     public void OtfEvent(int start, int middle1, int middle2, int end, int flag) {
+        Log.d("OTF", "EventConfirm");
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("start", start);
@@ -725,21 +716,21 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
     @Override
     public void onClick(View v) {
-            switch (v.getId())
-            {
-                case R.id.toggleBtn :
-                    if("VOL".equals(mActivity.togglebtn.getText())) {
-                        mip = true;
-                        mActivity.togglebtn.setText("MIP");
-                    }
-                    else {
-                        mip = false;
-                        mActivity.togglebtn.setText("VOL");
-                    }
+        switch (v.getId())
+        {
+            case R.id.toggleBtn :
+                if("VOL".equals(mActivity.togglebtn.getText())) {
+                    mip = true;
+                    mActivity.togglebtn.setText("MIP");
+                }
+                else {
+                    mip = false;
+                    mActivity.togglebtn.setText("VOL");
+                }
 
-                    GetPng();
-                    break;
-            }
+                GetPng();
+                break;
+        }
     }
 
 
