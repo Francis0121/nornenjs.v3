@@ -74,7 +74,7 @@ public class VolumeList extends Activity {
 
     private ListView imagelist;
 
-    private RelativeLayout progressBar;
+    private RelativeLayout progressBar, emptydata;
     private TextView alert;
 
     private PoppyViewHelper mPoppyViewHelper;
@@ -147,7 +147,8 @@ public class VolumeList extends Activity {
 
 
         progressBar = (RelativeLayout) findViewById(R.id.progress_layout);
-
+        emptydata = (RelativeLayout) findViewById(R.id.emptydata);
+        emptydata.setVisibility(View.GONE);
         alert = (TextView) findViewById(R.id.alert);
 
         mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
@@ -177,7 +178,20 @@ public class VolumeList extends Activity {
         progressBar.setVisibility(View.VISIBLE);
         //alert.setVisibility(View.GONE);//??이거 뭐였더라? loding view가 안보이지 없어도되듯.
         new PostVolumeTask().execute("search", keyword);
+        backuptitles1.clear();
+        backuptitles2.clear();
+        backupthumbnails1.clear();
+        backupthumbnails2.clear();
+        backuppns1.clear();
+        backuppns2.clear();
+        backupdate1.clear();
+        backupdate2.clear();
+        backupmetadata1.clear();
+        backupmetadata2.clear();
         imagelist.setAdapter(searchAdapter);
+
+//                    searchAdapter.notifyDataSetChanged();
+
     }
 
     public void getPage()
@@ -237,6 +251,7 @@ public class VolumeList extends Activity {
                 }
                 else if("search".equals(params[0]))
                 {//검색할때 요청
+
                     url+="/1";
                     volumeFilter.setTitle(params[1]);
                     response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
@@ -279,8 +294,9 @@ public class VolumeList extends Activity {
                     Log.d(TAG, "volumeFilterMap.toString()" + volumeFilterMap.toString());
                     Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
                     totalPage = num.get("numPages");
-                    Log.d(TAG, "numPages" + num.get("numPages"));
+                    Log.d(TAG, "numPages : " + num.get("numPages"));
                     CurrentPage = num.get("requestedPage");
+
                 }catch(NullPointerException e)
                 {
                     //alert
@@ -312,19 +328,25 @@ public class VolumeList extends Activity {
                 Log.d(TAG, "currentPage : " + CurrentPage);
             }
 
-            if(volumes == null)
+            if(volumes == null || volumes.size() == 0)
             {//통신이 안된 경우
                 //Toast.makeText(톧ㅅ녀ㅣ시ㅏ!나!ㅅ니시나사니시나사니시나사니시나ㅏthis, );
+
+                progressBar.setVisibility(View.GONE);
+                emptydata.setVisibility(View.VISIBLE);
                 Log.d(TAG, "통신이 안된 경우");
             }
             else
             {
+                Log.d(TAG, request + "에 대해 받음.");
+                Log.d(TAG, "받은 volumes size : " + volumes.size());
                 for(Volume volume : volumes)
                 {
                     Log.d(TAG, volume.toString());
 
                     if("none".equals(request) || "page".equals(request))
                     {
+                        Log.d(TAG, request + "에 대해 받음.");
                         if(titles1.size() == titles2.size())
                         {
                             titles1.add(volume.getTitle());
@@ -489,6 +511,11 @@ public class VolumeList extends Activity {
     public void onBackPressed() {
         if(imagelist.getAdapter().equals(searchAdapter))
         {
+            if(emptydata.isShown())
+            {
+                emptydata.setVisibility(View.GONE);
+                imagelist.setVisibility(View.VISIBLE);
+            }
             imagelist.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
             mPoppyViewHelper.editView.setText("");

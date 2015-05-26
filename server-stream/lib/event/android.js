@@ -41,6 +41,7 @@ Android.prototype.addSocketEventListener = function(socket){
     this.pngEventListener();
     this.volumeMPRListener();
     this.otfEventListener();
+    this.brightnessEventListener();
 };
 
 /**
@@ -113,6 +114,19 @@ Android.prototype.pinchzoomtouchEventListener = function(){
             cudaRender.type = ENUMS.RENDERING_TYPE.MIP;
 
         cudaRender.positionZ = option.positionZ;
+
+        $this.encoding.Androidjpeg(cudaRender, socket);
+    });
+
+};
+Android.prototype.brightnessEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.ANDROID.BRIGHT, function(option){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+
+        cudaRender.brightness = option.brightness;
 
         $this.encoding.Androidjpeg(cudaRender, socket);
     });

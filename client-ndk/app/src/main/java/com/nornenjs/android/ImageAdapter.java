@@ -116,24 +116,25 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view.date = (TextView) convertView.findViewById(R.id.textView2);
             view.metadata = (TextView) convertView.findViewById(R.id.textView3);
             view.imgViewFlag = (ImageView) convertView.findViewById(R.id.imageView1);
+            view.metadata.setOnClickListener(this);
+            view.imgViewFlag.setOnClickListener(this);
 
 
+            //Log.d(TAG + " getView", "thumbnails2.size() : " + thumbnails2.size() + ", position : " + position);
             view.title2 = (TextView) convertView.findViewById(R.id.textView2_1);
             view.date2 = (TextView) convertView.findViewById(R.id.textView2_2);
             view.metadata2 = (TextView) convertView.findViewById(R.id.textView2_3);
             view.imgViewFlag2 = (ImageView) convertView.findViewById(R.id.imageView2);
-
-            view.metadata.setOnClickListener(this);
-            view.imgViewFlag.setOnClickListener(this);
             view.metadata2.setOnClickListener(this);
             view.imgViewFlag2.setOnClickListener(this);
-
             convertView.setTag(view);
         }
         else
         {
             view = (ViewHolder) convertView.getTag();
         }
+
+        Log.d(TAG + " getView","position : " + position);
 
         //여기서 문자열 처
         String titleText;
@@ -170,6 +171,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 //
 //        view.imgViewFlag2.setTag(pns2.get(position));
 
+        //Log.d(TAG + " set", "thumbnails2.size() : " + thumbnails2.size() + ", position : " + position);
         if(thumbnails2.size() > position)
         {
 
@@ -196,6 +198,10 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         }
         else
         {
+//            view.title2.setVisibility(View.GONE);
+//            view.date2.setVisibility(View.GONE);
+//            view.metadata2.setVisibility(View.GONE);
+//            view.imgViewFlag2.setVisibility(View.GONE);
             Log.d(TAG, "thumbnails2.size() <= position");
         }
         convertView.setOnTouchListener(new View.OnTouchListener() {

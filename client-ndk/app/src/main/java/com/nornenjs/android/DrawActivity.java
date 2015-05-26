@@ -140,10 +140,13 @@ public class DrawActivity extends View{
 
     float beforeX;
     boolean flag1 = false, flag2 = false;
+    int eventCount;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         if(event.getAction() == MotionEvent.ACTION_DOWN) {
+
+            eventCount = 0;
 
             Log.d(TAG,"topLeft.x : " + topLeft.x + "event.getX() : " + event.getX());
             if(topLeft.checkPoint(event.getX(), event.getY()))
@@ -290,9 +293,8 @@ public class DrawActivity extends View{
             }
             //여기서 네개의 좌표 보내기.
             try{
-                if(jniGLActivity.myEventListener == null)
-                    Log.d("DrawActivity","jniGLActivity.myEventListener is null");
-                jniGLActivity.myEventListener.OtfEvent(calc(bottomLeft.x), calc(topLeft.x), calc(topRight.x), calc(bottomRight.x), 1);
+                if(++eventCount%3 == 0)
+                    jniGLActivity.myEventListener.OtfEvent(calc(bottomLeft.x), calc(topLeft.x), calc(topRight.x), calc(bottomRight.x), 1);
             }
             catch(NullPointerException e)
             {
@@ -347,7 +349,7 @@ public class DrawActivity extends View{
 
     int calc(float temp)
     {
-        return (int)((temp * 255)/((otf_end-5)-(otf_start+5)))-39;
+        return (int)(((temp - (otf_start + 5)) * 255)/((otf_end-5)-(otf_start+5)));
     }
 
     class Line

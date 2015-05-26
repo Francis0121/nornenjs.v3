@@ -10,7 +10,8 @@ var EVENT_MESSAGE = {
         PINCHZOOM : 'pinchZoom',
         PNG : 'androidPng',
         MPR : 'mpr',
-        OTF : 'OTF'
+        OTF : 'OTF',
+        BRIGHT : 'Brightness'
     },
     
     WEB : {
