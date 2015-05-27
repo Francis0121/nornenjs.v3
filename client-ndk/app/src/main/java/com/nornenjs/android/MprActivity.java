@@ -198,6 +198,7 @@ public class MprActivity extends Activity {
             setContentView(R.layout.activity_mpr);
 
             sb = (SeekBar) findViewById(R.id.player_seek_horizontal);
+            sb.setProgress(50);
             sb.setOnSeekBarChangeListener(mRenderer);
             //sb.setOnSeekBarChangeList.getRenderMode());
 
@@ -475,6 +476,11 @@ public class MprActivity extends Activity {
 
         @Override
         public void OtfEvent(int start, int middle1, int middle2, int end, int flag) {}
+
+        @Override
+        public void BrightnessEvent(float brightness) {
+
+        }
 
         @Override
         public void BackToPreview() {

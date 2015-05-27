@@ -17,7 +17,9 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -73,8 +75,7 @@ public class JniGLActivity extends Activity{
     GLSurfaceView mGLSurfaceView;
     CudaRenderer mRenderer;
 
-    WebView wv;
-    DrawActivity da;
+    RelativeLayout otf_table;
 
     boolean menuFlag = false;
     //private SlidingViewHelper mSlidingViewHelper;
@@ -107,9 +108,8 @@ public class JniGLActivity extends Activity{
         setContentView(R.layout.loding);
 
         mGLSurfaceView = new TouchSurfaceView(this, host);
-//        mRenderer = new CudaRenderer(this, host);
-//        mGLSurfaceView.setRenderer(mRenderer);
-        Log.d(TAG, "setcontentView mGLSurfaceView");
+        mRenderer = new CudaRenderer(this, host);
+        mGLSurfaceView.setRenderer(mRenderer);
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
@@ -120,14 +120,13 @@ public class JniGLActivity extends Activity{
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(mGLSurfaceView.isShown() && keyCode == 82)
+        if(mGLSurfaceView.isShown() && !mRenderer.mip && keyCode == 82)
         {
             if(!menuFlag) {
-                ViewPropertyAnimator.animate(da).translationY(da.getHeight()).setDuration(300);
-                Log.d(TAG, "da.getHeight() : " + da.getHeight());
+                ViewPropertyAnimator.animate(otf_table).translationY(otf_table.getHeight()).setDuration(550);
             }
             else {
-                ViewPropertyAnimator.animate(da).translationY(0).setDuration(300);
+                ViewPropertyAnimator.animate(otf_table).translationY(0).setDuration(550);
             }
             menuFlag = !menuFlag;
         }
@@ -149,14 +148,15 @@ public class JniGLActivity extends Activity{
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         Log.d("bmp", "onDestroy");
         //조건부
         if(mGLSurfaceView != null)
             myEventListener.BackToPreview();
+        super.onDestroy();
     }
 
 
+    int touchCount;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         //모든 이벤트는 이 액티비티가 받고 있음.
@@ -173,6 +173,7 @@ public class JniGLActivity extends Activity{
                         beforeX = event.getX();  //posX1
                         beforeY = event.getY();  //posY1
                         mode = DRAG;
+                        touchCount = 0;
                     }
                     break;
 
@@ -186,7 +187,8 @@ public class JniGLActivity extends Activity{
                         beforeX = event.getX();
                         beforeY = event.getY();
 
-                        myEventListener.RotationEvent(rotationX, rotationY);
+                        if((++touchCount)%3 == 0)
+                            myEventListener.RotationEvent(rotationX, rotationY);
                         rotation++;
 
                     } else if (event.getPointerCount() == 2) { //multi touch
@@ -211,7 +213,8 @@ public class JniGLActivity extends Activity{
                             oldMidVectorY = newMidVectorY;
 
                             translationPng = false;
-                            myEventListener.TranslationEvent(translationX, translationY);
+                            if((++touchCount)%3 == 0)
+                                myEventListener.TranslationEvent(translationX, translationY);
                             move++;
 
                         } else { // multi touch pinch zoom
@@ -226,7 +229,8 @@ public class JniGLActivity extends Activity{
                                     div = 0.2f;
                                 }
                                 pinchzoomPng = false;
-                                myEventListener.PinchZoomEvent(div);
+                                if((++touchCount)%3 == 0)
+                                    myEventListener.PinchZoomEvent(div);
                                 pinch++;
 
                             } else if (oldDist - newDist > 15) { // zoom out
@@ -238,7 +242,8 @@ public class JniGLActivity extends Activity{
                                     div = 10.0f;
                                 }
                                 pinchzoomPng = false;
-                                myEventListener.PinchZoomEvent(div);
+                                if((++touchCount)%3 == 0)
+                                    myEventListener.PinchZoomEvent(div);
                                 pinch++;
                             }
                         }
@@ -249,6 +254,7 @@ public class JniGLActivity extends Activity{
                     mode = NONE;
                     Log.d("emitTag", "Event ended");
                     myEventListener.GetPng();
+                    touchCount = 0;
                     break;
 
                 case MotionEvent.ACTION_POINTER_UP:
@@ -367,17 +373,48 @@ public class JniGLActivity extends Activity{
             setContentView(R.layout.toggle);
             togglebtn = (Button) findViewById(R.id.toggleBtn);
             togglebtn.setOnClickListener(mRenderer);
+//            togglebtn.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Log.d("TAG", "togglebtn is pressed");
+//
+//                }
+//            });
 
             ViewParent parent = togglebtn.getParent();
             ViewGroup group = (ViewGroup)parent;
             group.addView(mGLSurfaceView);
 
-            da = (DrawActivity) findViewById(R.id.canvas);
-            da.bringToFront();
-            da.invalidate();
-            da.otf_width = da.getWidth();
-            da.otf_height = da.getHeight();
-            da.jniGLActivity = JniGLActivity.this;
+            otf_table = (RelativeLayout) findViewById(R.id.otf_table);
+
+            DrawActivity drawView;
+            drawView = (DrawActivity) findViewById(R.id.canvas);
+            drawView.otf_width = drawView.getWidth();
+            drawView.otf_height = drawView.getHeight();
+            drawView.jniGLActivity = JniGLActivity.this;
+
+            SeekBar sb = (SeekBar) findViewById(R.id.brightseek);
+            sb.setProgress(200);
+            sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    myEventListener.BrightnessEvent(progress);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    myEventListener.GetPng();
+
+                }
+            });
+            otf_table.bringToFront();
+            otf_table.invalidate();
+
             togglebtn.bringToFront();
             togglebtn.invalidate();
 
@@ -399,7 +436,7 @@ class TouchSurfaceView extends GLSurfaceView {
     }
 
 
-    private CudaRenderer mRenderer;
+    public CudaRenderer mRenderer;
     private JniGLActivity mActivity;
     private Context mContext;
     private String host;
@@ -409,9 +446,9 @@ class TouchSurfaceView extends GLSurfaceView {
         super(context);
         this.host = host;
         this.mContext = context;
-        this.mActivity = (JniGLActivity) context;
-        mRenderer = new CudaRenderer(mActivity, host);
-        setRenderer(mRenderer);
+//        this.mActivity = (JniGLActivity) context;
+//        mRenderer = new CudaRenderer(mActivity, host);
+//        setRenderer(mRenderer);
 
     }
 
@@ -442,7 +479,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     Bitmap imgPanda;
     Bitmap imgPanda2;
 
-    private boolean mip = false;
+    public boolean mip = false;
 
     public void bindSocket(String ipAddress, String port, String deviceNumber){
         try {
@@ -715,19 +752,39 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     }
 
     @Override
+    public void BrightnessEvent(float brightness) {
+        Log.d("BrightnessEvent", "BrightnessEvent : " + brightness + "calc : " + (brightness/100.0));
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("brightness", (brightness/100.0));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e("error", "Make json object");
+        }
+
+        socket.emit("Brightness", jsonObject);
+    }
+
+    @Override
     public void onClick(View v) {
+        Log.d("click", "btn click");
         switch (v.getId())
         {
             case R.id.toggleBtn :
-                if("VOL".equals(mActivity.togglebtn.getText())) {
-                    mip = true;
-                    mActivity.togglebtn.setText("MIP");
+                if(!mip) {
+                    //volume일때 mip로 바꿈
+                    v.setBackgroundResource(R.drawable.mri);
+                    //이때는 otf 테이블 안되게!
+                    if(!mActivity.menuFlag) {
+                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
+                        mActivity.menuFlag = !mActivity.menuFlag;
+                        }
                 }
                 else {
-                    mip = false;
-                    mActivity.togglebtn.setText("VOL");
+                    v.setBackgroundResource(R.drawable.volume);
                 }
-
+                mip = !mip;
                 GetPng();
                 break;
         }

@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import com.nornenjs.android.dto.ResponseVolume;
@@ -51,33 +52,24 @@ public class VolumeList extends Activity {
     private ImageAdapter searchAdapter;
 
     private List<String> titles1;
-    private List<String> titles2;
     private List<Bitmap> thumbnails1;
-    private List<Bitmap> thumbnails2;
     private List<Integer> pns1;
-    private List<Integer> pns2;
     private List<String> date1;
-    private List<String> date2;
     private List<String> metadata1;
-    private List<String> metadata2;
 
     private List<String> backuptitles1;
-    private List<String> backuptitles2;
     private List<Bitmap> backupthumbnails1;
-    private List<Bitmap> backupthumbnails2;
     private List<Integer> backuppns1;
-    private List<Integer> backuppns2;
     private List<String> backupdate1;
-    private List<String> backupdate2;
     private List<String> backupmetadata1;
-    private List<String> backupmetadata2;
 
-    private ListView imagelist;
+    private GridView gridlist;
 
-    private RelativeLayout progressBar;
+    private RelativeLayout progressBar, emptydata;
     private TextView alert;
 
     private PoppyViewHelper mPoppyViewHelper;
+    private EditText editview;
 
     public static int CurrentPage = 1;
     public static int totalPage;
@@ -98,60 +90,56 @@ public class VolumeList extends Activity {
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
-//        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-//        final int cacheSize = maxMemory / 8;
-
         mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
                 return bitmap.getByteCount() / 1024;
             }
         };
-        Log.d(TAG,"create func");
-
-//        if(mMemoryCache == null)
-//            Log.d(TAG, "mMemoryCacheis null");
-
 
         titles1 = new ArrayList<String>();
-        titles2 = new ArrayList<String>();
         thumbnails1 = new ArrayList<Bitmap>();
-        thumbnails2 = new ArrayList<Bitmap>();
         pns1 = new ArrayList<Integer>();
-        pns2 = new ArrayList<Integer>();
 
         backuptitles1 = new ArrayList<String>();
-        backuptitles2 = new ArrayList<String>();
         backupthumbnails1 = new ArrayList<Bitmap>();
-        backupthumbnails2 = new ArrayList<Bitmap>();
         backuppns1 = new ArrayList<Integer>();
-        backuppns2 = new ArrayList<Integer>();
 
 
         date1 = new ArrayList<String>();
-        date2 = new ArrayList<String>();
         metadata1 = new ArrayList<String>();
-        metadata2 = new ArrayList<String>();
 
         backupdate1 = new ArrayList<String>();
-        backupdate2 = new ArrayList<String>();
         backupmetadata1 = new ArrayList<String>();
-        backupmetadata2 = new ArrayList<String>();
 
-        mAdapter = new ImageAdapter(titles1, titles2, thumbnails1, thumbnails2, pns1, pns2, date1, date2, metadata1, metadata2, VolumeList.this);
-        searchAdapter = new ImageAdapter(backuptitles1, backuptitles2, backupthumbnails1, backupthumbnails2, backuppns1, backuppns2, backupdate1, backupdate2, backupmetadata1, backupmetadata2, VolumeList.this);
+        mAdapter = new ImageAdapter(titles1, thumbnails1, pns1, date1, metadata1, VolumeList.this);
 
+        gridlist = (GridView) findViewById(R.id.gridlist);
 
-        imagelist = (ListView) findViewById(R.id.imagelist);
-        imagelist.setAdapter(mAdapter);
+        gridlist.setAdapter(mAdapter);
 
 
         progressBar = (RelativeLayout) findViewById(R.id.progress_layout);
-
+        emptydata = (RelativeLayout) findViewById(R.id.emptydata);
+        emptydata.setVisibility(View.GONE);
         alert = (TextView) findViewById(R.id.alert);
 
+        editview = (EditText) findViewById(R.id.searchbar);
+        editview.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    //performSearch();
+                    Log.d(TAG, "setOnEditorActionListener called");
+                    searchRequest(editview.getText().toString());
+                    //return true;
+                }
+                return false;
+            }
+        });
+
         mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
-        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.imagelist, R.layout.poppyview, new AbsListView.OnScrollListener() {
+        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.title_bar, R.id.gridlist, R.layout.poppyview, new AbsListView.OnScrollListener() {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
             }
@@ -167,17 +155,25 @@ public class VolumeList extends Activity {
 
     public void setView() {
         Log.d(TAG, "setView() called");
-        imagelist.setVisibility(View.VISIBLE);
+        gridlist.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
     }
 
     public void searchRequest(String keyword) {
         Log.d(TAG, "searchRequest() called");
-        imagelist.setVisibility(View.INVISIBLE);
+        gridlist.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         //alert.setVisibility(View.GONE);//??이거 뭐였더라? loding view가 안보이지 없어도되듯.
         new PostVolumeTask().execute("search", keyword);
-        imagelist.setAdapter(searchAdapter);
+        backuptitles1.clear();
+        backupthumbnails1.clear();
+        backuppns1.clear();
+        backupdate1.clear();
+        backupmetadata1.clear();
+        searchAdapter = new ImageAdapter(backuptitles1, backupthumbnails1, backuppns1, backupdate1, backupmetadata1, VolumeList.this);
+        gridlist.setAdapter(searchAdapter);
+
+
     }
 
     public void getPage()
@@ -233,10 +229,11 @@ public class VolumeList extends Activity {
                 if("none".equals(params[0]))
                 {//첫 요청
                     url+="/1";
-                    response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
+                    response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);//try catch..내부망이 다른 경우!
                 }
                 else if("search".equals(params[0]))
                 {//검색할때 요청
+
                     url+="/1";
                     volumeFilter.setTitle(params[1]);
                     response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
@@ -279,8 +276,15 @@ public class VolumeList extends Activity {
                     Log.d(TAG, "volumeFilterMap.toString()" + volumeFilterMap.toString());
                     Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
                     totalPage = num.get("numPages");
-                    Log.d(TAG, "numPages" + num.get("numPages"));
+                    Log.d(TAG, "numPages : " + num.get("numPages"));
                     CurrentPage = num.get("requestedPage");
+
+                    if(volumes.size() == 0)
+                    {
+                        progressBar.setVisibility(View.GONE);
+                        emptydata.setVisibility(View.VISIBLE);
+                    }
+
                 }catch(NullPointerException e)
                 {
                     //alert
@@ -319,50 +323,30 @@ public class VolumeList extends Activity {
             }
             else
             {
-                for(Volume volume : volumes)
+                Log.d(TAG, request + "에 대해 받음.");
+                Log.d(TAG, "받은 volumes size : " + volumes.size());
+
+                if("none".equals(request) || "page".equals(request))
                 {
-                    Log.d(TAG, volume.toString());
-
-                    if("none".equals(request) || "page".equals(request))
-                    {
-                        if(titles1.size() == titles2.size())
-                        {
-                            titles1.add(volume.getTitle());
-                            date1.add(volume.getInputDate().substring(0, 10));
-                            metadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-                            pns1.add(volume.getPn());
-                        }
-                        else if(titles1.size() > titles2.size())
-                        {
-                            titles2.add(volume.getTitle());
-                            date2.add(volume.getInputDate().substring(0,10));
-                            metadata2.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-                            pns2.add(volume.getPn());
-                        }
-                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"none");
+                    for(Volume volume : volumes) {
+                        Log.d(TAG, request + "에 대해 받음.");
+                        titles1.add(volume.getTitle());
+                        Log.d(TAG, "title : " + volume.getTitle());
+                        date1.add(volume.getInputDate().substring(0, 10));
+                        metadata1.add(volume.getWidth().toString() + "x" + volume.getHeight().toString() + "x" + volume.getDepth().toString());
+                        pns1.add(volume.getPn());
+                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0), "none");
                     }
-                    else if("search".equals(request))
-                    {
-                        if(backuptitles1.size() == backuptitles2.size())
-                        {
-                            backuptitles1.add(volume.getTitle());
-                            backupdate1.add(volume.getInputDate().substring(0, 10));
-                            backupmetadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-                            backuppns1.add(volume.getPn());
-                        }
-                        else if(backuptitles1.size() > backuptitles2.size())
-                        {
-                            backuptitles2.add(volume.getTitle());
-                            backupdate2.add(volume.getInputDate().substring(0,10));
-                            backupmetadata2.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() + "x" + volume.getDepth().toString());
-                            backuppns2.add(volume.getPn());
-                        }
-                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"search");
+                }
+                else if("search".equals(request))
+                {
+                    for(Volume volume : volumes) {
+                        backuptitles1.add(volume.getTitle());
+                        backupdate1.add(volume.getInputDate().substring(0, 10));
+                        backupmetadata1.add(volume.getWidth().toString() + "x" + volume.getHeight().toString() + "x" + volume.getDepth().toString());
+                        backuppns1.add(volume.getPn());
+                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0), "search");
                     }
-
-                    Log.d(TAG, "volume.getThumbnailPnList().get(0) : " + volume.getThumbnailPnList().get(0));
-
-
                 }
 
             }
@@ -397,20 +381,10 @@ public class VolumeList extends Activity {
                 if("none".equals(request))
                 {
                     Log.d(TAG, "get none thumbnails");
-                    if(thumbnails1.size() == thumbnails2.size())
-                    {
-                        thumbnails1.add(bytes);//image1.setImageBitmap(bytes);
-                        addBitmapToMemoryCache(String.valueOf(pns1.get(thumbnails1.size() - 1)), bytes);
-                        //getBitmapFromMemCache("" + pns1.get(thumbnails1.size() - 1));//test
-                        Log.d(TAG, "addBitmapToMemoryCache : " + pns1.get(thumbnails1.size() - 1));
-                    }
-                    else if(thumbnails1.size() > thumbnails2.size())
-                    {
-                        thumbnails2.add(bytes);//image1.setImageBitmap(bytes);
-                        addBitmapToMemoryCache(String.valueOf(pns2.get(thumbnails2.size() - 1)), bytes);
-                        //getBitmapFromMemCache(""+pns2.get(thumbnails2.size()-1));//test
-                        Log.d(TAG, "addBitmapToMemoryCache" + pns2.get(thumbnails1.size()-1));
-                    }
+                    thumbnails1.add(bytes);//image1.setImageBitmap(bytes);
+                    addBitmapToMemoryCache(String.valueOf(pns1.get(thumbnails1.size() - 1)), bytes);
+                    //getBitmapFromMemCache("" + pns1.get(thumbnails1.size() - 1));//test
+                    Log.d(TAG, "addBitmapToMemoryCache : " + pns1.get(thumbnails1.size() - 1));
 
                     mAdapter.notifyDataSetChanged();
                     if(count == 10) {
@@ -423,20 +397,13 @@ public class VolumeList extends Activity {
                 else if("search".equals(request))
                 {
                     Log.d(TAG, "get search thumbnails");
-                    if(backupthumbnails1.size() == backupthumbnails2.size())
-                    {
-                        backupthumbnails1.add(bytes);//image1.setImageBitmap(bytes);
-                    }
-                    else if(backupthumbnails1.size() > backupthumbnails2.size())
-                    {
-                        backupthumbnails2.add(bytes);//image1.setImageBitmap(bytes);
-                    }
+                    backupthumbnails1.add(bytes);//image1.setImageBitmap(bytes);
                     searchAdapter.notifyDataSetChanged();
 
                 }
 
 
-                if(!imagelist.isShown())
+                if(!gridlist.isShown())
                     setView();
 
             }
@@ -466,7 +433,7 @@ public class VolumeList extends Activity {
             InputStream is = con.getInputStream();
 
             BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 16;
+            options.inSampleSize = 4;
 
 //            bitmap = BitmapFactory.decodeStream(is);
 
@@ -487,13 +454,18 @@ public class VolumeList extends Activity {
 
     @Override
     public void onBackPressed() {
-        if(imagelist.getAdapter().equals(searchAdapter))
+        if(gridlist.getAdapter().equals(searchAdapter))
         {
-            imagelist.setAdapter(mAdapter);
+            if(emptydata.isShown())
+            {
+                emptydata.setVisibility(View.GONE);
+                gridlist.setVisibility(View.VISIBLE);
+            }
+            gridlist.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
-            mPoppyViewHelper.editView.setText("");
+            //mPoppyViewHelper.editView.setText("");
         }
-        else if(imagelist.getAdapter().equals(mAdapter))
+        else if(gridlist.getAdapter().equals(mAdapter))
         {
             super.onBackPressed();
         }
