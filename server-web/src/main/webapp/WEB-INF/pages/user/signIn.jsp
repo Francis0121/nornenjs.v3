@@ -21,7 +21,7 @@
                     <form:errors path="password" cssClass="error"/>
                 </li>
                 <li class="divide">
-                    <div>
+                    <div style="display: none;">
                         <input class="checkbox" type="checkbox" name="nornenjsRememberme" id="nornenjsRememberme"/>
                         <label for="nornenjsRememberme" class="colorGray size">자동 로그인</label>
                     </div>
