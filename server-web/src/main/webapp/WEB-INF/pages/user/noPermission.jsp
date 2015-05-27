@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html lang="kr">
 <head>
-    <title>Eikids</title>
+    <title>Nornenjs</title>
 
     <link rel="image_src" href="${cp }/resources/image/favicon.ico" />
     <link rel="shortcut icon" type="image/x-icon" href="${cp }/resources/image/favicon.ico"/>
