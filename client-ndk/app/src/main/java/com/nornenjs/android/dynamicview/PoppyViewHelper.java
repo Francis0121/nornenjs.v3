@@ -1,6 +1,7 @@
 package com.nornenjs.android.dynamicview;
 
 import android.app.Activity;
+import android.media.Image;
 import android.util.Log;
 import android.view.*;
 import android.view.ViewGroup.LayoutParams;
@@ -9,6 +10,7 @@ import android.widget.*;
 import android.widget.AbsListView.OnScrollListener;
 import com.github.nkzawa.socketio.client.On;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.nornenjs.android.R;
 import com.nornenjs.android.VolumeList;
 
 
@@ -59,24 +61,9 @@ public class PoppyViewHelper {
 
 
 	//for searchbar
-		public View createPoppyViewOnListView(int titleview, int gridViewId, int poppyViewResId, OnScrollListener onScrollListener) {
+	public View createPoppyViewOnListView(int titleview, int gridViewId, int poppyViewResId, OnScrollListener onScrollListener) {
 
-			title_bar = (LinearLayout) mActivity.findViewById(titleview);//editview가 아니라 poppyViewResId를 터치했을때...
-
-//		editView.setOnEditorActionListener(new EditText.OnEditorActionListener(){
-//			@Override
-//			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-//				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-//					//performSearch();
-//					Log.d(TAG, "setOnEditorActionListener called");
-//					volumePage.searchRequest(editView.getText().toString());
-//					//return true;
-//				}
-//				return false;
-//			}
-//		});
-
-
+		title_bar = (LinearLayout) mActivity.findViewById(titleview);
 
 		final GridView gridView = (GridView)mActivity.findViewById(gridViewId);
 
@@ -90,17 +77,28 @@ public class PoppyViewHelper {
 		Log.d(TAG, "createPoppyViewOnListView called");
 		mPoppyView = mLayoutInflater.inflate(poppyViewResId, null);
 
-			mPoppyView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Log.d(TAG, "mPoppyView clicked");
-					ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
-				}
-			});
+		mPoppyView.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "mPoppyView clicked");
+				setImageSize(mPoppyView.getHeight());
+				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
+			}
+		});
 
 		initPoppyViewOnListView(title_bar, gridView, onScrollListener);
 
 		return mPoppyView;
+	}
+
+	public void setImageSize(int ParentSize)
+	{
+		if(ParentSize != 0)
+		{
+			ImageView search_icon = (ImageView)mActivity.findViewById(R.id.search_image_icon);
+			search_icon.getLayoutParams().width = ParentSize;
+			search_icon.requestLayout();
+		}
 	}
 
 
@@ -109,6 +107,7 @@ public class PoppyViewHelper {
 	}
 
 	private void setPoppyViewOnView(View view) {
+
 		LayoutParams lp = view.getLayoutParams();
 		ViewParent parent = view.getParent();
 		ViewGroup group = (ViewGroup)parent;
@@ -145,6 +144,8 @@ public class PoppyViewHelper {
 	}
 
 	private void translateYPoppyView(int ScrollLocation) {
+		setImageSize(mPoppyView.getHeight());
+
 		mPoppyView.post(new Runnable() {
 
 			//@Override
@@ -174,6 +175,7 @@ public class PoppyViewHelper {
 	int beforeCount = 0;
 	private void initPoppyViewOnListView(LinearLayout title_bar, GridView gridView, final OnScrollListener onScrollListener) {
 		setPoppyViewOnView(title_bar);
+
 		gridView.setOnScrollListener(new OnScrollListener() {
 
 
