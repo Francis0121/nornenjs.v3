@@ -96,6 +96,7 @@ redisClient.on('message', function(channel, message) {
             cudaRender.transferScaleX = thumbnailOption.transferScaleX;
             cudaRender.transferScaleY = thumbnailOption.transferScaleY;
             cudaRender.transferScaleZ = thumbnailOption.transferScaleZ;
+            cudaRender.brightness = thumbnailOption.brightness;
 
             var savePath = savePaths[i];
             encoding.thumbnail(cudaRender, savePath);
