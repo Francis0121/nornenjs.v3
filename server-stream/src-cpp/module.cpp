@@ -11,6 +11,11 @@ using namespace NodeCuda;
 Persistent<FunctionTemplate> Module::constructor_template;
 extern "C" void setTextureFilterMode();
 
+unsigned int pre_tf_start;
+unsigned int pre_tf_middle1;
+unsigned int pre_tf_middle2;
+unsigned int pre_tf_end;
+
 void Module::Initialize(Handle<Object> target) {
       HandleScope scope;
 
@@ -212,12 +217,32 @@ Handle<Value> Module::OTFTextureAlloc(const Arguments& args) {
        unsigned int tf_size    =  256;
 
        TransferFunction *m_TF_table = new TransferFunction;
-       m_TF_table->Set_TF_table(tf_start, tf_middle1, tf_middle2, tf_end, tf_size);
 
-       TF *input_float_1D = m_TF_table->GetTablePointer();
-       int real_tf_size = m_TF_table->GetTableSize();
+       if(tf_start<0 || tf_middle1<0 || tf_middle2<0 || tf_end<0 ||
+          tf_start>255 || tf_start>255 || tf_start>255 || tf_end>255){
 
-       otfTableTextureLoad(input_float_1D, real_tf_size, pmodule);  //otf 생성.
+            m_TF_table->Set_TF_table(pre_tf_start, pre_tf_middle1, pre_tf_middle2, pre_tf_end, tf_size);
+
+            TF *input_float_1D = m_TF_table->GetTablePointer();
+            int real_tf_size = m_TF_table->GetTableSize();
+
+            otfTableTextureLoad(input_float_1D, real_tf_size, pmodule);  //otf 생성.
+
+       }else{
+
+           m_TF_table->Set_TF_table(tf_start, tf_middle1, tf_middle2, tf_end, tf_size);
+
+           TF *input_float_1D = m_TF_table->GetTablePointer();
+           int real_tf_size = m_TF_table->GetTableSize();
+
+           otfTableTextureLoad(input_float_1D, real_tf_size, pmodule);  //otf 생성.
+       }
+
+       pre_tf_start = tf_start;
+       pre_tf_middle1 = tf_middle1;
+       pre_tf_middle2 = tf_middle2;
+       pre_tf_end = tf_end;
+
        delete m_TF_table;
 
        return scope.Close(result);

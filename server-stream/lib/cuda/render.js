@@ -178,6 +178,7 @@ function iDivUp(a, b) {
                 }
                 // OTF TextureBinding
                 logger.debug('[INFO_CUDA] TEXTURE memory COPY');
+
                 var error = this.cuModule.memOTFTextureAlloc(this.transferStart, this.transferMiddle1,this.transferMiddle2, this.transferEnd);
                 //logger.debug('[INFO_CUDA] _cuModule.memOTFTextureAlloc', error);
                 this.make2Dtable();
