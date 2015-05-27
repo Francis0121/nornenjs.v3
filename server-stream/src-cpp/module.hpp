@@ -3,7 +3,7 @@
 
 #include <cuda.h>
 #include <cuda_runtime_api.h>
-
+#include <stdio.h>
 #include "volume.hpp"
 #include "tf.hpp"
 #include "bindings.hpp"

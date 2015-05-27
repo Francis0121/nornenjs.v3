@@ -59,5 +59,3 @@ Volume *Volume::GetVolume(void)
 
         return pVol;
 }
-
-

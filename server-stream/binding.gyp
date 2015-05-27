@@ -11,6 +11,7 @@
                 "src-cpp/mem.cpp",
                 "src-cpp/module.cpp",
                 "src-cpp/volume.cpp",
+                "src-cpp/volume.hpp",
                 "src-cpp/tf.cpp"
             ],
             'conditions': [
