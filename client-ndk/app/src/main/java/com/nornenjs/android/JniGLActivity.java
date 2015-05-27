@@ -394,6 +394,7 @@ public class JniGLActivity extends Activity{
             drawView.jniGLActivity = JniGLActivity.this;
 
             SeekBar sb = (SeekBar) findViewById(R.id.brightseek);
+            sb.setProgress(200);
             sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -751,11 +752,11 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     }
 
     @Override
-    public void BrightnessEvent(int brightness) {
-        Log.d("BrightnessEvent", "BrightnessEvent : " + brightness);
+    public void BrightnessEvent(float brightness) {
+        Log.d("BrightnessEvent", "BrightnessEvent : " + brightness + "calc : " + (brightness/100.0));
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("brightness", brightness);
+            jsonObject.put("brightness", (brightness/100.0));
 
         } catch (JSONException e) {
             e.printStackTrace();

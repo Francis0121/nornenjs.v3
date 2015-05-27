@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import com.nornenjs.android.dto.ResponseVolume;
@@ -68,6 +69,7 @@ public class VolumeList extends Activity {
     private TextView alert;
 
     private PoppyViewHelper mPoppyViewHelper;
+    private EditText editview;
 
     public static int CurrentPage = 1;
     public static int totalPage;
@@ -88,20 +90,12 @@ public class VolumeList extends Activity {
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
-//        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-//        final int cacheSize = maxMemory / 8;
-
         mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
                 return bitmap.getByteCount() / 1024;
             }
         };
-        Log.d(TAG,"create func");
-
-//        if(mMemoryCache == null)
-//            Log.d(TAG, "mMemoryCacheis null");
-
 
         titles1 = new ArrayList<String>();
         thumbnails1 = new ArrayList<Bitmap>();
@@ -130,8 +124,22 @@ public class VolumeList extends Activity {
         emptydata.setVisibility(View.GONE);
         alert = (TextView) findViewById(R.id.alert);
 
+        editview = (EditText) findViewById(R.id.searchbar);
+        editview.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    //performSearch();
+                    Log.d(TAG, "setOnEditorActionListener called");
+                    searchRequest(editview.getText().toString());
+                    //return true;
+                }
+                return false;
+            }
+        });
+
         mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
-        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.gridlist, R.layout.poppyview, new AbsListView.OnScrollListener() {
+        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.title_bar, R.id.gridlist, R.layout.poppyview, new AbsListView.OnScrollListener() {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
             }
@@ -165,7 +173,6 @@ public class VolumeList extends Activity {
         searchAdapter = new ImageAdapter(backuptitles1, backupthumbnails1, backuppns1, backupdate1, backupmetadata1, VolumeList.this);
         gridlist.setAdapter(searchAdapter);
 
-//                    searchAdapter.notifyDataSetChanged();
 
     }
 
@@ -342,35 +349,6 @@ public class VolumeList extends Activity {
                     }
                 }
 
-//                for(Volume volume : volumes)
-//                {
-//                    Log.d(TAG, volume.toString());
-//
-//                    if("none".equals(request) || "page".equals(request))
-//                    {
-//                        Log.d(TAG, request + "에 대해 받음.");
-//                        titles1.add(volume.getTitle());
-//                        Log.d(TAG, "title : " + volume.getTitle());
-//                        date1.add(volume.getInputDate().substring(0, 10));
-//                        metadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-//                        pns1.add(volume.getPn());
-//                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"none");
-//                    }
-//                    else if("search".equals(request))
-//                    {
-//                        backuptitles1.add(volume.getTitle());
-//                        backupdate1.add(volume.getInputDate().substring(0, 10));
-//                        backupmetadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
-//                        backuppns1.add(volume.getPn());
-//                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"search");
-//                    }
-//
-//                    Log.d(TAG, "volume.getThumbnailPnList().get(0) : " + volume.getThumbnailPnList().get(0));
-//
-//
-//                }
-                //mAdapter.notifyDataSetChanged();
-
             }
         }
 
@@ -485,7 +463,7 @@ public class VolumeList extends Activity {
             }
             gridlist.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
-            mPoppyViewHelper.editView.setText("");
+            //mPoppyViewHelper.editView.setText("");
         }
         else if(gridlist.getAdapter().equals(mAdapter))
         {

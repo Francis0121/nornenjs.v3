@@ -10,5 +10,5 @@ public interface MyEventListener {
     void GetPng();
     void BackToPreview();
     void OtfEvent(int start, int middle1, int middle2, int end, int flag);
-    void BrightnessEvent(int brightness);
+    void BrightnessEvent(float brightness);
 }

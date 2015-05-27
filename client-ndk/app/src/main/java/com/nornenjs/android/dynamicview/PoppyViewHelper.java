@@ -20,6 +20,8 @@ public class PoppyViewHelper {
 		TOP, BOTTOM
 	};
 
+	private static final int MAX_NUM_PER_PAGE = 10;
+
 	private static final int SCROLL_TO_TOP = - 1;
 
 	private static final int SCROLL_TO_BOTTOM = 1;
@@ -32,7 +34,7 @@ public class PoppyViewHelper {
 
 	private View mPoppyView;
 
-	public EditText editView;
+	public LinearLayout title_bar;
 
 	private int mScrollDirection = 0;
 
@@ -57,22 +59,22 @@ public class PoppyViewHelper {
 
 
 	//for searchbar
-		public View createPoppyViewOnListView(int editViewId, int gridViewId, int poppyViewResId, OnScrollListener onScrollListener) {
+		public View createPoppyViewOnListView(int titleview, int gridViewId, int poppyViewResId, OnScrollListener onScrollListener) {
 
-		editView = (EditText) mActivity.findViewById(editViewId);//editview가 아니라 poppyViewResId를 터치했을때...
+			title_bar = (LinearLayout) mActivity.findViewById(titleview);//editview가 아니라 poppyViewResId를 터치했을때...
 
-		editView.setOnEditorActionListener(new EditText.OnEditorActionListener(){
-			@Override
-			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-					//performSearch();
-					Log.d(TAG, "setOnEditorActionListener called");
-					volumePage.searchRequest(editView.getText().toString());
-					//return true;
-				}
-				return false;
-			}
-		});
+//		editView.setOnEditorActionListener(new EditText.OnEditorActionListener(){
+//			@Override
+//			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+//				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+//					//performSearch();
+//					Log.d(TAG, "setOnEditorActionListener called");
+//					volumePage.searchRequest(editView.getText().toString());
+//					//return true;
+//				}
+//				return false;
+//			}
+//		});
 
 
 
@@ -96,7 +98,7 @@ public class PoppyViewHelper {
 				}
 			});
 
-		initPoppyViewOnListView(editView, gridView, onScrollListener);
+		initPoppyViewOnListView(title_bar, gridView, onScrollListener);
 
 		return mPoppyView;
 	}
@@ -114,14 +116,9 @@ public class PoppyViewHelper {
 
 		final FrameLayout newContainer = new FrameLayout(mActivity);//FrameLayout
 
-
 		group.removeView(view);
-
 		group.addView(newContainer, index, lp);
-
 		newContainer.addView(view);
-
-		Log.d(TAG, "addView called");
 
 		final FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.gravity = mPoppyViewPosition == PoppyViewPosition.BOTTOM ? Gravity.BOTTOM : Gravity.TOP;
@@ -142,15 +139,12 @@ public class PoppyViewHelper {
 		}
 		if(newScrollDirection != mScrollDirection) {
 			mScrollDirection = newScrollDirection;
-			Log.d(TAG, "onScrollPositionChanged");
 			translateYPoppyView(ScrollDirection);
 		}
 		//Log.d(TAG, "oldScrollPosition : " + oldScrollPosition + "newScrollPosition : " + newScrollPosition);
 	}
 
 	private void translateYPoppyView(int ScrollLocation) {
-		final int a = ScrollLocation;
-		System.out.println("in translateYPoppyView : " + ScrollLocation);
 		mPoppyView.post(new Runnable() {
 
 			//@Override
@@ -169,7 +163,6 @@ public class PoppyViewHelper {
 						break;
 				}
 
-				Log.d(TAG, "animate view! translationY : " + translationY);
 				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(translationY);//translationY
 			}
 		});
@@ -179,9 +172,8 @@ public class PoppyViewHelper {
 	// for ListView
 
 	int beforeCount = 0;
-	private void initPoppyViewOnListView(EditText editView, GridView gridView, final OnScrollListener onScrollListener) {
-		setPoppyViewOnView(editView);
-		Log.d(TAG,"editView.getheight : " + editView.getHeight());
+	private void initPoppyViewOnListView(LinearLayout title_bar, GridView gridView, final OnScrollListener onScrollListener) {
+		setPoppyViewOnView(title_bar);
 		gridView.setOnScrollListener(new OnScrollListener() {
 
 
@@ -211,18 +203,14 @@ public class PoppyViewHelper {
 				mScrollPosition = newScrollPosition;
 
 				Log.d(TAG, "totalItemCount : " + totalItemCount + ", beforeCount : " + beforeCount);
-				if(totalItemCount >= 5 && (firstVisibleItem + visibleItemCount) ==  totalItemCount)
+				if(totalItemCount >= MAX_NUM_PER_PAGE && (firstVisibleItem + visibleItemCount) ==  totalItemCount)
 				{
-					//if(volumePage.CurrentPage < volumePage.totalPage)
-
-					//if(!volumePage.bottom)//bottom이 제대로 될까..
 					if(beforeCount != totalItemCount)//bottom이 제대로 될까..
 					{
 						Log.i("Info", "Scroll Bottom" );
 						volumePage.getPage();
 					}
 					beforeCount = totalItemCount;
-					//Log.i("Info", "Scroll Bottom" );
 				}
 
 			}

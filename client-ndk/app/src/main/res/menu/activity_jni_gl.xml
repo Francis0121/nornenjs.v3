@@ -5,6 +5,6 @@
 
     <item android:id="@+id/share" android:title="@string/logout" android:icon="@drawable/perm_group_system_tools"/>
     <group android:id="@+id/helpgroup">
-        <item android:id="@+id/help" android:title="@string/help" android:icon="@drawable/perm_group_messages"/>
+        <item android:id="@+id/help" android:title="@string/help" android:icon="@drawable/perm_group_messeages"/>
     </group>
 </menu>

@@ -138,7 +138,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
                     Intent intent = new Intent(LoginActivity.this, VolumeList.class);
                     startActivity(intent);
-                    //finish();
+                    finish();
                 }
                 else
                 {//error

@@ -70,11 +70,11 @@ public class DrawActivity extends View{
 
         bg_Paint.setStyle(Paint.Style.STROKE);
         bg_Paint.setPathEffect(dashPath);
-        bg_Paint.setStrokeWidth(convertPixelsToDp(3));
+        bg_Paint.setStrokeWidth(convertPixelsToDp(1));//3
 
         bg_LinePaint.setStyle(Paint.Style.STROKE);
         bg_LinePaint.setColor(Color.BLACK);
-        bg_LinePaint.setStrokeWidth(convertPixelsToDp(30));
+        bg_LinePaint.setStrokeWidth(convertPixelsToDp(10));//30
 
 
         // ~ TODO 해당 수식이 맞는지 확인 필요
@@ -133,7 +133,8 @@ public class DrawActivity extends View{
         //해상도별로 해도 잘 안됨. 폰마다 굵기가 다르게 나옴.
         Resources resources = mContext.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
-        float dp = px / (metrics.densityDpi / 160f);
+        Log.d(TAG, "metrics.densityDpi : "+ metrics.densityDpi);//내꺼 480일때, 성근 320
+        float dp = px * (metrics.densityDpi / 160f);
         return dp;
     }
 
@@ -143,13 +144,13 @@ public class DrawActivity extends View{
 
         //기준선 2개
         bg_LinePaint.setColor(Color.BLACK);
-        bg_LinePaint.setStrokeWidth(convertPixelsToDp(15));
+        bg_LinePaint.setStrokeWidth(convertPixelsToDp(5));//15
         canvas.drawLine(otf_start, otfHeightStart - TOP_MARGIN_VALUE, otf_start, otfHeightEnd + TOP_MARGIN_VALUE, bg_LinePaint); //세로
         canvas.drawLine(otf_start-LEFT_MARGIN_VALUE+20, otfHeightEnd, otf_end+LEFT_MARGIN_VALUE, otfHeightEnd, bg_LinePaint);//가로
 
         //사다리꼴 3개 라인
         bg_LinePaint.setColor(Color.LTGRAY);
-        bg_LinePaint.setStrokeWidth(convertPixelsToDp(30));
+        bg_LinePaint.setStrokeWidth(convertPixelsToDp(8));//30
         canvas.drawLine(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y, bg_LinePaint);
         canvas.drawLine(topLeft.x, topLeft.y, topRight.x, topRight.y, bg_LinePaint);
         canvas.drawLine(topRight.x, topRight.y, bottomRight.x, bottomRight.y, bg_LinePaint);
@@ -347,7 +348,7 @@ public class DrawActivity extends View{
         public Point(float x, float y) {
             this.x = x;
             this.y = y;
-            this.radius = 25;
+            this.radius = 8;//25
         }
 
         public float getX() {

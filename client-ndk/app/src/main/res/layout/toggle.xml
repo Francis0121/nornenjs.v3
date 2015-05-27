@@ -22,7 +22,7 @@
         <com.nornenjs.android.DrawActivity
                 android:id="@+id/canvas"
                 android:layout_width="match_parent"
-                android:background="@android:color/white"
+                android:background="#80ffffff"
                 android:layout_height="160dp"
                 android:layout_above="@+id/brightness"/>
         <LinearLayout
@@ -45,7 +45,8 @@
                     android:paddingRight="10dp"
                     android:maxHeight="2dp"
                     android:thumb="@drawable/thumb"
-                    android:max="200"
+
+                    android:max="800"
                     android:layout_gravity="center_vertical"/>
 
         </LinearLayout>

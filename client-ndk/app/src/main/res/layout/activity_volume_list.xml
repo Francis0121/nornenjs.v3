@@ -13,18 +13,35 @@
               android:padding="15dp"
               android:visibility="invisible"
               android:textSize="19sp" />
-    <EditText xmlns:android="http://schemas.android.com/apk/res/android"
-              android:id="@+id/searchbar"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:imeOptions="actionSearch"
-              android:inputType="text"
-              android:background="@drawable/selector_poppyview"
-              android:clickable="true"
-              android:fontFamily="sans-serif-thin"
-              android:padding="15dp"
-              android:textColor="@android:color/white"
-              android:textSize="19sp" />
+    <LinearLayout
+            android:id="@+id/title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#33485c">
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:src="@drawable/search"
+                android:background="@drawable/selector_poppyview"
+                />
+
+        <EditText xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/searchbar"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:imeOptions="actionSearch"
+                  android:inputType="text"
+                  android:background="@drawable/selector_poppyview"
+                  android:clickable="true"
+                  android:fontFamily="sans-serif-thin"
+                  android:padding="15dp"
+                  android:textColor="@android:color/white"
+                  android:textSize="19sp" />
+
+    </LinearLayout>
 
 
     <LinearLayout
@@ -61,13 +78,22 @@
             android:id="@+id/emptydata"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone">
+            android:visibility="gone"
+            >
+        <ImageView
+                android:id="@+id/nodata"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/please_file_upload"
+                android:layout_centerInParent="true"
+                />
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
-                android:text="데이터가 존재하지 않습니다."
-                android:layout_centerInParent="true"
+                android:text="서버에서 파일을 등록해 주세요."
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/nodata"
                 android:textColor="@android:color/black"
                 />
 
