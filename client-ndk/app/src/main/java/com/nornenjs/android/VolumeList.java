@@ -62,7 +62,7 @@ public class VolumeList extends Activity {
     private List<String> backupdate1;
     private List<String> backupmetadata1;
 
-    private ListView imagelist;
+    private GridView gridlist;
 
     private RelativeLayout progressBar, emptydata;
     private TextView alert;
@@ -119,11 +119,10 @@ public class VolumeList extends Activity {
         backupmetadata1 = new ArrayList<String>();
 
         mAdapter = new ImageAdapter(titles1, thumbnails1, pns1, date1, metadata1, VolumeList.this);
-        searchAdapter = new ImageAdapter(backuptitles1, backupthumbnails1, backuppns1, backupdate1, backupmetadata1, VolumeList.this);
 
+        gridlist = (GridView) findViewById(R.id.gridlist);
 
-        imagelist = (ListView) findViewById(R.id.imagelist);
-        imagelist.setAdapter(mAdapter);
+        gridlist.setAdapter(mAdapter);
 
 
         progressBar = (RelativeLayout) findViewById(R.id.progress_layout);
@@ -132,7 +131,7 @@ public class VolumeList extends Activity {
         alert = (TextView) findViewById(R.id.alert);
 
         mPoppyViewHelper = new PoppyViewHelper(VolumeList.this);
-        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.imagelist, R.layout.poppyview, new AbsListView.OnScrollListener() {
+        View poppyView = mPoppyViewHelper.createPoppyViewOnListView(R.id.searchbar, R.id.gridlist, R.layout.poppyview, new AbsListView.OnScrollListener() {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
 
             }
@@ -148,13 +147,13 @@ public class VolumeList extends Activity {
 
     public void setView() {
         Log.d(TAG, "setView() called");
-        imagelist.setVisibility(View.VISIBLE);
+        gridlist.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
     }
 
     public void searchRequest(String keyword) {
         Log.d(TAG, "searchRequest() called");
-        imagelist.setVisibility(View.INVISIBLE);
+        gridlist.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.VISIBLE);
         //alert.setVisibility(View.GONE);//??이거 뭐였더라? loding view가 안보이지 없어도되듯.
         new PostVolumeTask().execute("search", keyword);
@@ -163,7 +162,8 @@ public class VolumeList extends Activity {
         backuppns1.clear();
         backupdate1.clear();
         backupmetadata1.clear();
-        imagelist.setAdapter(searchAdapter);
+        searchAdapter = new ImageAdapter(backuptitles1, backupthumbnails1, backuppns1, backupdate1, backupmetadata1, VolumeList.this);
+        gridlist.setAdapter(searchAdapter);
 
 //                    searchAdapter.notifyDataSetChanged();
 
@@ -222,7 +222,7 @@ public class VolumeList extends Activity {
                 if("none".equals(params[0]))
                 {//첫 요청
                     url+="/1";
-                    response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
+                    response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);//try catch..내부망이 다른 경우!
                 }
                 else if("search".equals(params[0]))
                 {//검색할때 요청
@@ -272,6 +272,12 @@ public class VolumeList extends Activity {
                     Log.d(TAG, "numPages : " + num.get("numPages"));
                     CurrentPage = num.get("requestedPage");
 
+                    if(volumes.size() == 0)
+                    {
+                        progressBar.setVisibility(View.GONE);
+                        emptydata.setVisibility(View.VISIBLE);
+                    }
+
                 }catch(NullPointerException e)
                 {
                     //alert
@@ -303,44 +309,67 @@ public class VolumeList extends Activity {
                 Log.d(TAG, "currentPage : " + CurrentPage);
             }
 
-            if(volumes == null || volumes.size() == 0)
+            if(volumes == null)
             {//통신이 안된 경우
                 //Toast.makeText(톧ㅅ녀ㅣ시ㅏ!나!ㅅ니시나사니시나사니시나사니시나ㅏthis, );
-
-                progressBar.setVisibility(View.GONE);
-                emptydata.setVisibility(View.VISIBLE);
                 Log.d(TAG, "통신이 안된 경우");
             }
             else
             {
                 Log.d(TAG, request + "에 대해 받음.");
                 Log.d(TAG, "받은 volumes size : " + volumes.size());
-                for(Volume volume : volumes)
-                {
-                    Log.d(TAG, volume.toString());
 
-                    if("none".equals(request) || "page".equals(request))
-                    {
+                if("none".equals(request) || "page".equals(request))
+                {
+                    for(Volume volume : volumes) {
                         Log.d(TAG, request + "에 대해 받음.");
                         titles1.add(volume.getTitle());
+                        Log.d(TAG, "title : " + volume.getTitle());
                         date1.add(volume.getInputDate().substring(0, 10));
-                        metadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
+                        metadata1.add(volume.getWidth().toString() + "x" + volume.getHeight().toString() + "x" + volume.getDepth().toString());
                         pns1.add(volume.getPn());
-                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"none");
+                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0), "none");
                     }
-                    else if("search".equals(request))
-                    {
+                }
+                else if("search".equals(request))
+                {
+                    for(Volume volume : volumes) {
                         backuptitles1.add(volume.getTitle());
                         backupdate1.add(volume.getInputDate().substring(0, 10));
-                        backupmetadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
+                        backupmetadata1.add(volume.getWidth().toString() + "x" + volume.getHeight().toString() + "x" + volume.getDepth().toString());
                         backuppns1.add(volume.getPn());
-                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"search");
+                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0), "search");
                     }
-
-                    Log.d(TAG, "volume.getThumbnailPnList().get(0) : " + volume.getThumbnailPnList().get(0));
-
-
                 }
+
+//                for(Volume volume : volumes)
+//                {
+//                    Log.d(TAG, volume.toString());
+//
+//                    if("none".equals(request) || "page".equals(request))
+//                    {
+//                        Log.d(TAG, request + "에 대해 받음.");
+//                        titles1.add(volume.getTitle());
+//                        Log.d(TAG, "title : " + volume.getTitle());
+//                        date1.add(volume.getInputDate().substring(0, 10));
+//                        metadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
+//                        pns1.add(volume.getPn());
+//                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"none");
+//                    }
+//                    else if("search".equals(request))
+//                    {
+//                        backuptitles1.add(volume.getTitle());
+//                        backupdate1.add(volume.getInputDate().substring(0, 10));
+//                        backupmetadata1.add(volume.getWidth().toString() +"x"+ volume.getHeight().toString() +"x"+ volume.getDepth().toString());
+//                        backuppns1.add(volume.getPn());
+//                        new GetThumbnail().execute("" + volume.getThumbnailPnList().get(0),"search");
+//                    }
+//
+//                    Log.d(TAG, "volume.getThumbnailPnList().get(0) : " + volume.getThumbnailPnList().get(0));
+//
+//
+//                }
+                //mAdapter.notifyDataSetChanged();
 
             }
         }
@@ -396,7 +425,7 @@ public class VolumeList extends Activity {
                 }
 
 
-                if(!imagelist.isShown())
+                if(!gridlist.isShown())
                     setView();
 
             }
@@ -447,18 +476,18 @@ public class VolumeList extends Activity {
 
     @Override
     public void onBackPressed() {
-        if(imagelist.getAdapter().equals(searchAdapter))
+        if(gridlist.getAdapter().equals(searchAdapter))
         {
             if(emptydata.isShown())
             {
                 emptydata.setVisibility(View.GONE);
-                imagelist.setVisibility(View.VISIBLE);
+                gridlist.setVisibility(View.VISIBLE);
             }
-            imagelist.setAdapter(mAdapter);
+            gridlist.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
             mPoppyViewHelper.editView.setText("");
         }
-        else if(imagelist.getAdapter().equals(mAdapter))
+        else if(gridlist.getAdapter().equals(mAdapter))
         {
             super.onBackPressed();
         }

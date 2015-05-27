@@ -26,21 +26,23 @@
               android:textColor="@android:color/white"
               android:textSize="19sp" />
 
+
     <LinearLayout
-            android:id="@+id/ListView"
+            android:id="@+id/Gridview"
             android:layout_below="@+id/searchbar_back"
             android:layout_width="match_parent" android:layout_height="match_parent">
-        <ListView
-                android:id="@+id/imagelist"
+        <GridView
+                android:id="@+id/gridlist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:dividerHeight="0px"
                 android:divider="#ffffff"
                 android:visibility="invisible"
+                android:numColumns="2"
                 android:overScrollMode="never"
                 >
 
-        </ListView>
+        </GridView>
     </LinearLayout>
     <RelativeLayout
             android:id="@+id/progress_layout"
@@ -58,7 +60,8 @@
     <RelativeLayout
             android:id="@+id/emptydata"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:visibility="gone">
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

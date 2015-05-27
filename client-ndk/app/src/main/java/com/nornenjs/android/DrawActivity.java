@@ -130,6 +130,7 @@ public class DrawActivity extends View{
     }
 
     private float convertPixelsToDp(float px){
+        //해상도별로 해도 잘 안됨. 폰마다 굵기가 다르게 나옴.
         Resources resources = mContext.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         float dp = px / (metrics.densityDpi / 160f);

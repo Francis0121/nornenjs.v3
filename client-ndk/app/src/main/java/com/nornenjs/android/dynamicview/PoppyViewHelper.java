@@ -44,7 +44,6 @@ public class PoppyViewHelper {
 
 	//boolean bottom;
 
-	//public PoppyViewHelper(Activity activity, PoppyViewPosition position) {
 	public PoppyViewHelper(Activity activity, PoppyViewPosition position) {
 		mActivity = activity;//mActivity 대체할 수도...
 		volumePage = (VolumeList) activity;
@@ -58,17 +57,9 @@ public class PoppyViewHelper {
 
 
 	//for searchbar
-		public View createPoppyViewOnListView(int editViewId, int listViewId, int poppyViewResId, OnScrollListener onScrollListener) {
+		public View createPoppyViewOnListView(int editViewId, int gridViewId, int poppyViewResId, OnScrollListener onScrollListener) {
 
 		editView = (EditText) mActivity.findViewById(editViewId);//editview가 아니라 poppyViewResId를 터치했을때...
-//		editView.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Log.d(TAG, "setOnClickListener called : " + v.getId() + ", editViewId : " + editView.getId() + ", mPoppyView : " + mPoppyView.getId());
-//				//ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(-mPoppyView.getHeight());
-//				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(mPoppyView.getHeight());
-//			}
-//		});
 
 		editView.setOnEditorActionListener(new EditText.OnEditorActionListener(){
 			@Override
@@ -85,14 +76,14 @@ public class PoppyViewHelper {
 
 
 
-		final ListView listView = (ListView)mActivity.findViewById(listViewId);
+		final GridView gridView = (GridView)mActivity.findViewById(gridViewId);
 
-		if(listView.getHeaderViewsCount() != 0) {
-			throw new IllegalArgumentException("use createPoppyViewOnListView with headerResId parameter");
-		}
-		if(listView.getFooterViewsCount() != 0) {
-			throw new IllegalArgumentException("poppyview library doesn't support listview with toggle");
-		}
+//		if(gridView.getHeaderViewsCount() != 0) {
+//			throw new IllegalArgumentException("use createPoppyViewOnListView with headerResId parameter");
+//		}
+//		if(gridView.getFooterViewsCount() != 0) {
+//			throw new IllegalArgumentException("poppyview library doesn't support listview with toggle");
+//		}
 
 		Log.d(TAG, "createPoppyViewOnListView called");
 		mPoppyView = mLayoutInflater.inflate(poppyViewResId, null);
@@ -105,14 +96,14 @@ public class PoppyViewHelper {
 				}
 			});
 
-		initPoppyViewOnListView(editView, listView, onScrollListener);
+		initPoppyViewOnListView(editView, gridView, onScrollListener);
 
 		return mPoppyView;
 	}
 
 
-	public View createPoppyViewOnListView(int editViewId,int listViewId, int poppyViewResId) {
-		return createPoppyViewOnListView(editViewId,listViewId, poppyViewResId, null);
+	public View createPoppyViewOnListView(int editViewId,int gridViewId, int poppyViewResId) {
+		return createPoppyViewOnListView(editViewId,gridViewId, poppyViewResId, null);
 	}
 
 	private void setPoppyViewOnView(View view) {
@@ -184,37 +175,14 @@ public class PoppyViewHelper {
 		});
 	}
 
-//	private void translateYSearchView() {
-//		mPoppyView.post(new Runnable() {
-//
-//			//@Override
-//			public void run() {
-//				if(mPoppyViewHeight <= 0) {
-//					mPoppyViewHeight = mPoppyView.getHeight();
-//				}
-//
-//				int translationY = 0;
-//				switch (mPoppyViewPosition) {
-//					case BOTTOM:
-//						translationY = mScrollDirection == SCROLL_TO_TOP ? 0 : mPoppyViewHeight;
-//						break;
-//					case TOP:
-//						translationY = mScrollDirection == SCROLL_TO_TOP ? -mPoppyViewHeight : 0;
-//						break;
-//				}
-//
-//				ViewPropertyAnimator.animate(mPoppyView).setDuration(300).translationY(translationY);
-//			}
-//		});
-//	}
 
 	// for ListView
 
 	int beforeCount = 0;
-	private void initPoppyViewOnListView(EditText editView, ListView listView, final OnScrollListener onScrollListener) {
+	private void initPoppyViewOnListView(EditText editView, GridView gridView, final OnScrollListener onScrollListener) {
 		setPoppyViewOnView(editView);
 		Log.d(TAG,"editView.getheight : " + editView.getHeight());
-		listView.setOnScrollListener(new OnScrollListener() {
+		gridView.setOnScrollListener(new OnScrollListener() {
 
 
 			int mScrollPosition;
@@ -256,39 +224,6 @@ public class PoppyViewHelper {
 					beforeCount = totalItemCount;
 					//Log.i("Info", "Scroll Bottom" );
 				}
-
-//				Log.i("Info", "Height...newScrollPosition : " + newScrollPosition );
-//				if(topChild != null) {
-//					//Log.d(TAG, "lastest item's bottom : " + view.getChildAt(totalItemCount-1).getBottom());
-//					Log.d(TAG, "view's Height : " + view.getHeight());
-//					Log.d(TAG, "child's Height : " + view.getChildAt(0).getHeight());
-//					Log.d(TAG, "Height..totalItemCount : " + totalItemCount);
-//					Log.d(TAG, "calc total Height" + totalItemCount * view.getChildAt(0).getHeight());
-//
-//				}
-//
-//				if(topChild != null)
-//				{
-//					if((view.getHeight() - newScrollPosition) < 100 && (view.getHeight() - newScrollPosition) > 20) {
-//						Log.i("Info", "Scroll Bottom");
-//						if(!volumePage.bottom)
-//						{
-//							Log.d(TAG,"getPage, bottom : " + volumePage.bottom);
-//							volumePage.bottom = true;
-//							volumePage.getPage();
-//						}
-//					}
-//					else
-//					{
-//						//bottom = false;
-//					}
-//				}
-//
-//				if (listView.getLastVisiblePosition() == listView.getAdapter().getCount() - 1
-//						&& listView.getChildAt(listView.getChildCount() - 1).getBottom() <= list.getHeight()) {
-//
-//					Log.i("Info", "Scroll Bottom" );
-//				}
 
 			}
 
