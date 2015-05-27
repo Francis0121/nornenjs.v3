@@ -1,21 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<script type="text/javascript" src="http://112.108.40.166:5000/socket.io/socket.io.js"></script>
-<script type="text/javascript">
-    var relayAddr = "http://112.108.40.166:5000";
-    var init = {
-        savePath : '<c:out value="${data.savePath}"/>',
-        width : <c:out value="${volume.width}"/>,
-        height : <c:out value="${volume.height}"/>,
-        depth : <c:out value="${volume.depth}"/>
-    };
-    var renderImgUrl = '${cp}/data/thumbnail/${thumbnails[0] eq null ? -1 : thumbnails[0]}';
-    var mprXImgUrl = '${cp}/data/thumbnail/${thumbnails[1] eq null ? -1 : thumbnails[1]}';
-    var mprYImgUrl = '${cp}/data/thumbnail/${thumbnails[2] eq null ? -1 : thumbnails[2]}';
-    var mprZImgUrl = '${cp}/data/thumbnail/${thumbnails[3] eq null ? -1 : thumbnails[3]}';
-</script>
 <script type="text/javascript" src="${cp}/resources/javascript/layout.js"></script>
-<script type="text/javascript" src="${cp}/resources/javascript/socket.js"></script>
 
 </body>
 </html>
