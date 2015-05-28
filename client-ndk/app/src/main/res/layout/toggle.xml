@@ -5,14 +5,34 @@
                 android:gravity="center">
 
     <Button
-            android:id="@+id/toggleBtn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/toggleVol"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:background="@drawable/volume"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"/>
+    <Button
+            android:id="@+id/toggleMip"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/mri"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/toggleVol"/>
+
+    <Button
+            android:id="@+id/toggleMenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/mri"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/toggleMip"
+            />
     
 
     <RelativeLayout

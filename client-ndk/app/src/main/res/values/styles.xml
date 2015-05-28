@@ -1,6 +1,12 @@
 <resources>
 
-    <style name="AppTheme" parent="android:Theme.Light" />
+    <style name="AppTheme" parent="android:Theme.Light">
+        <item name="android:typeface">monospace</item>
+    </style>
+    <style name="MyTheme" parent="android:Theme.NoTitleBar.Fullscreen">
+        <item name="android:typeface">monospace</item>
+    </style>
+
 
     <style name="mySeekBar">
     <item name="android:indeterminateOnly">false</item>
@@ -10,6 +16,7 @@
     <item name="android:maxHeight">10dip</item>
     <item name="android:thumbOffset">4dp</item>
     <item name="android:focusable">true</item>
+
     </style>
 
 </resources>

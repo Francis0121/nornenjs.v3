@@ -1,6 +1,7 @@
 package com.nornenjs.android;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
@@ -84,7 +85,7 @@ public class JniGLActivity extends Activity{
     public String volumeSavePath = "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8";//일단 상수 박아줌
     public int datatype;//4는 MIP
 
-    Button togglebtn;
+    Button togglebtn, toggleMip, toggleMenu;
 
     public void setMyEventListener(MyEventListener myEventListener) {
         this.myEventListener = myEventListener;
@@ -118,20 +119,20 @@ public class JniGLActivity extends Activity{
 
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(mGLSurfaceView.isShown() && !mRenderer.mip && keyCode == 82)
-        {
-            if(!menuFlag) {
-                ViewPropertyAnimator.animate(otf_table).translationY(otf_table.getHeight()).setDuration(550);
-            }
-            else {
-                ViewPropertyAnimator.animate(otf_table).translationY(0).setDuration(550);
-            }
-            menuFlag = !menuFlag;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if(mGLSurfaceView.isShown() && !mRenderer.mip && keyCode == 82)
+//        {
+//            if(!menuFlag) {
+//                ViewPropertyAnimator.animate(otf_table).translationY(otf_table.getHeight()).setDuration(550);
+//            }
+//            else {
+//                ViewPropertyAnimator.animate(otf_table).translationY(0).setDuration(550);
+//            }
+//            menuFlag = !menuFlag;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
     @Override
     protected void onResume() {
@@ -371,15 +372,14 @@ public class JniGLActivity extends Activity{
             newContainer.setLayoutParams(layoutParams);
 
             setContentView(R.layout.toggle);
-            togglebtn = (Button) findViewById(R.id.toggleBtn);
+            togglebtn = (Button) findViewById(R.id.toggleVol);
+            toggleMip = (Button) findViewById(R.id.toggleMip);
+            toggleMenu = (Button) findViewById(R.id.toggleMenu);
+
             togglebtn.setOnClickListener(mRenderer);
-//            togglebtn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Log.d("TAG", "togglebtn is pressed");
-//
-//                }
-//            });
+            toggleMip.setOnClickListener(mRenderer);
+            toggleMenu.setOnClickListener(mRenderer);
+
 
             ViewParent parent = togglebtn.getParent();
             ViewGroup group = (ViewGroup)parent;
@@ -417,6 +417,10 @@ public class JniGLActivity extends Activity{
 
             togglebtn.bringToFront();
             togglebtn.invalidate();
+            toggleMip.bringToFront();
+            toggleMip.invalidate();
+            toggleMenu.bringToFront();
+            toggleMenu.invalidate();
 
             setContentView(group);
 
@@ -771,21 +775,37 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         Log.d("click", "btn click");
         switch (v.getId())
         {
-            case R.id.toggleBtn :
-                if(!mip) {
-                    //volume일때 mip로 바꿈
-                    v.setBackgroundResource(R.drawable.mri);
-                    //이때는 otf 테이블 안되게!
+            case R.id.toggleVol :
+                mip = false;
+
+                //v.setBackgroundResource(R.drawable.mri);버튼들 음영으로 바꿈
+
+                GetPng();
+                break;
+
+            case R.id.toggleMip :
+                mip = true;
+
+                //v.setBackgroundResource(R.drawable.mri);버튼들 음영으로 바꿈
+                if(!mActivity.menuFlag)
+                    ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
+                GetPng();
+                break;
+
+            case R.id.toggleMenu :
+                //이 이미지는 selector를 사용하는게 좋겠음.
+
+                if(!mActivity.mRenderer.mip)
+                {
                     if(!mActivity.menuFlag) {
                         ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
-                        mActivity.menuFlag = !mActivity.menuFlag;
-                        }
+                    }
+                    else {
+                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(0).setDuration(550);
+                    }
+                    mActivity.menuFlag = !mActivity.menuFlag;
                 }
-                else {
-                    v.setBackgroundResource(R.drawable.volume);
-                }
-                mip = !mip;
-                GetPng();
+
                 break;
         }
     }

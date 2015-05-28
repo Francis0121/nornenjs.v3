@@ -2,14 +2,15 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/previewbold"
+                android:paddingBottom="10dp"
                 tools:context="com.nornenjs.android.VolumeList">
 
     <LinearLayout
             android:id="@+id/object2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="7dp"
+            android:padding="7dp"
+            android:background="@android:color/white"
             android:orientation="vertical">
             <TextView
                     android:id="@+id/thumbText"
