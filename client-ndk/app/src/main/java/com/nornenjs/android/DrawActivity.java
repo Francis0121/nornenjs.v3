@@ -124,6 +124,9 @@ public class DrawActivity extends View{
             topRight.setY(otfHeightStart);
             bottomLeft.setY(otfHeightEnd);
             bottomRight.setY(otfHeightEnd);
+
+            jniGLActivity.otf_table.setTranslationY(jniGLActivity.otf_table.getHeight());
+
         }
 
         drawBackground(canvas);

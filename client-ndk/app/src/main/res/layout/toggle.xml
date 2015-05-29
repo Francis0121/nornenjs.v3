@@ -8,7 +8,7 @@
             android:id="@+id/toggleVol"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/volume"
+            android:background="@drawable/volume_on"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
@@ -17,7 +17,7 @@
             android:id="@+id/toggleMip"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/mri"
+            android:background="@drawable/mip_off"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
@@ -27,7 +27,7 @@
             android:id="@+id/toggleMenu"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/mri"
+            android:background="@drawable/option_off"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
@@ -38,7 +38,9 @@
     <RelativeLayout
             android:id="@+id/otf_table"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
+
         <com.nornenjs.android.DrawActivity
                 android:id="@+id/canvas"
                 android:layout_width="match_parent"
