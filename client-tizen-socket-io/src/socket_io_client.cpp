@@ -79,7 +79,7 @@ extern "C" {
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
 		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
 		h.set_fail_listener(std::bind(&connection_listener::on_fail, &l));
-		h.connect("http://112.108.40.164:5000");
+		h.connect("http://112.108.40.166:5000");
 
 		_lock.lock();
 		if(!connect_finish)
@@ -89,10 +89,24 @@ extern "C" {
 		_lock.unlock();
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io connect finish");
 
-		h.emit("init", "");
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "Emit \"init\" message\n");
+		// ~ CUDA Memory Initialize
+		h.emit("tizenInit", "");
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "Emit \"tizenInit\" message\n");
 
-		h.bind_event("stream_buf", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+		// ~ After Memory Init. Do First tizen request image
+		h.bind_event("loadCudaMemory",[&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+			_lock.lock();
+
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "Launched load cuda memory \n");
+
+			// ~ Tizen Requset
+			h.emit("tizenRequest", "");
+
+			_lock.unlock();
+		});
+
+
+		h.bind_event("tizenJpeg", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
 			_lock.lock();
 
 			dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind event \"stream_buf\"\n");

@@ -12,6 +12,7 @@ var cu = require('./cuda/load');
 
 var Android = require('./event/android').Android;
 var Web = require('./event/web').Web;
+var Tizen = require('./event/tizen').Tizen;
 
 // ~ Import module (Nodejs)
 var path = require('path');
@@ -51,6 +52,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
 
     this.android = new Android(this.cudaRenderMap);
     this.web = new Web(this.cudaRenderMap);
+    this.tizen = new Tizen(this.cudaRenderMap);
 
     // Exec Redis Server create
     if(typeof isMaster !== 'boolean'){
@@ -411,6 +413,9 @@ NornenjsServer.prototype.socketIoCuda = function(){
         $this.android.addSocketEventListener(socket);
 
         $this.web.addSocketEventListener(socket);
+
+        $this.tizen.addSocketEventListener(socket);
+
         /**
          * Init cudaRenderObject
          */
@@ -426,6 +431,24 @@ NornenjsServer.prototype.socketIoCuda = function(){
                 $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
 
             logger.info('[Stream]           Device Number', deviceCount);
+            cudaRender.init();
+
+            $this.cudaRenderMap.set(clientId, cudaRender);
+
+            socket.emit('loadCudaMemory');
+        });
+
+        socket.on('tizenInit', function(){
+            var clientId = socket.id;
+            var deviceCount = deviceMap.get(socket.id);
+            logger.debug('[Tizen Stream] Register CUDA module ');
+
+            var cudaRender = new CudaRender(
+                ENUMS.RENDERING_TYPE.VOLUME, '/storage/data/8770d870-43f1-4dca-81ef-b15d855fab8e',
+                256, 256, 225,
+                $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
+
+            logger.info('[Tizen Stream]           Device Number', deviceCount);
             cudaRender.init();
 
             $this.cudaRenderMap.set(clientId, cudaRender);

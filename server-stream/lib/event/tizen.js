@@ -1,0 +1,56 @@
+/**
+ * Created by pi on 15. 5. 31.
+ */
+var EVENT_MESSAGE = require('./message');
+var ENUMS = require('../enums');
+var logger = require('../logger');
+var Encoding = require('../cuda/encoding').Encoding;
+
+
+/**
+ * Tizen Event Handler
+ *
+ * @param cudaRenderMap
+ *  적제된 쿠다 모듈이 있는 Hash map Object
+ *  TODO 적제되어 있는 모듈에 대한것을 파라미터로 넘겨주는 상황이 별로 좋지 않아 보임*
+ * @constructor
+ */
+var Tizen = function(cudaRenderMap){
+    if(typeof cudaRenderMap !== 'object'){
+        throw new Error('Tizen event handler require client HashMap Object');
+    }
+
+    this.encoding = new Encoding();
+    this.cudaRenderMap = cudaRenderMap;
+    this.socket = null;
+};
+
+/**
+ * Add socket event handler
+ * @param socket
+ *  socket object
+ */
+Tizen.prototype.addSocketEventListener = function(socket){
+    if(typeof socket !== 'object'){
+        throw new Error('Tizen event handler need socket client object');
+    }
+
+    this.socket = socket;
+    this.imageEventListener();
+};
+
+/**
+ * Last encoding image is type
+ * @param socket
+ */
+Tizen.prototype.imageEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.TIZEN.REQUEST, function(){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+        $this.encoding.tizenJpeg(cudaRender, socket);
+    });
+};
+
+module.exports.Tizen = Tizen;

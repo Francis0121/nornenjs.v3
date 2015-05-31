@@ -153,7 +153,7 @@ void draw_gl(Evas_Object *obj)
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
+	// dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
 	if(image != NULL){
 
 		pthread_mutex_lock(&mutex);
