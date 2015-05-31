@@ -15,41 +15,68 @@
 
 // ~ Mouse event
 static void
-mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info)
-{
+mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 	ad->mouse_down = EINA_TRUE;
-	ad->touchCount = 0;
-	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "mouse down on");
+	ad->requestCount = 0;
 }
 
 static void
-mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info)
-{
+mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	Evas_Event_Mouse_Move *ev;
 	ev = (Evas_Event_Mouse_Move *)event_info;
 	appdata_s *ad = data;
 
-	if(ad->mouse_down) {
+	if(ad->mouse_down && !ad->multi_mouse_down) {
 
 		ad->rotationX += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
 		ad->rotationY += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
 
-		if((ad->touchCount++) %3 == 0){
-
-			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Rotation %f %f", ad->rotationX, ad->rotationY);
+		if((ad->requestCount++)%3 == 0){
 			emit_jpeg(ad->rotationX, ad->rotationY);
+		}
+	}
+}
+
+static void
+mouse_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
+	appdata_s *ad = data;
+	ad->mouse_down = EINA_FALSE;
+}
+
+
+// ~ Multi Mouse event
+static void
+multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
+	appdata_s *ad = data;
+	ad->multi_mouse_down = EINA_TRUE;
+	ad->requestCount = 0;
+	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse down");
+}
+
+static void
+multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
+
+	Evas_Event_Multi_Move *ev = (Evas_Event_Mouse_Move *) event_info;
+	appdata_s *ad = data;
+
+	if(ad->multi_mouse_down) {
+
+		if((ad->requestCount++)%3 == 0){
+			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse move 01 %i %i %i", ev->radius_x, ev->radius_y, ev->radius);
+			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse move 02 %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
+			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse move 03 %f %f", ev->cur.canvas.xsub, ev->cur.canvas.ysub);
+
 		}
 
 	}
 }
 
 static void
-mouse_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_info)
-{
+multi_mouse_up_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
-	ad->mouse_down = EINA_FALSE;
-	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "mouse down up");
+	ad->multi_mouse_down = EINA_FALSE;
+	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "mutil mouse up");
 }
 
 static pthread_t thread_id;
@@ -174,11 +201,15 @@ app_create(void *data)
 	   ad->anim = ecore_animator_add(_anim_cb, ad);
 	   evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
 
-
-	    // mouse event add
+	    // ~ touch event add
 		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_DOWN, mouse_down_cb, ad);
 		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_UP, mouse_up_cb, ad);
 		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_MOVE, mouse_move_cb, ad);
+
+		// ~ multi touch event
+		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_DOWN, multi_mouse_down_cb, ad);
+		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_MOVE, multi_mouse_move_cb, ad);
+		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_UP, multi_mouse_up_cb, ad);
 
 	   int status = 0;
 

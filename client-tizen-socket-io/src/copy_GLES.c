@@ -109,10 +109,10 @@ static void draw_cube(Evas_Object *obj)
 
    static const float VERTICES[] =
    {
-		   -1.0f	, -1.0f, 0.0f,	// 3, Left Bottom
-		   1.0f	, -1.0f, 0.0f,	// 2, Right Bottom
-		   -1.0f	, 1.0f	, 0.0f, 	// 0, Left Top
-		   1.0f	, 1.0f	, 0.0f		// 1, Right Top
+		   -2.0f	, -2.0f, 0.0f,	// 3, Left Bottom
+		   2.0f	, -2.0f, 0.0f,	// 2, Right Bottom
+		   -2.0f	, 2.0f	, 0.0f, 	// 0, Left Top
+		   2.0f	, 2.0f	, 0.0f		// 1, Right Top
    };
 
    static const float TEXTURE_COORD[] =

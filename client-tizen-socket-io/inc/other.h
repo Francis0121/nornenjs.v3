@@ -31,15 +31,15 @@ typedef struct appdata
    GLuint g_textureName;
    int current_tex_index;
 
-   // ~ Mouse
+   int requestCount;
+   // ~ Touch
    Eina_Bool mouse_down : 1;
-   float xangle;
-   float yangle;
-
    float rotationX;
    float rotationY;
-   int touchCount;
 
+   // ~ Multi Touch
+   Eina_Bool multi_mouse_down : 1;
+   float positionZ;
 
 } appdata_s;
 //add

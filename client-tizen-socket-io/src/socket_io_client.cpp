@@ -8,7 +8,7 @@
 #include <string>
 #include <pthread.h>
 #include <unistd.h>
-
+#include <sstream>
 #include <image_util.h>
 
 #define QSIZE 5
@@ -67,6 +67,10 @@ extern "C" {
 }
 
 extern "C" {
+	sio::client h;
+}
+
+extern "C" {
 
 	void socket_io_client(void *object)
 	{
@@ -74,7 +78,6 @@ extern "C" {
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function start");
 
 		Evas_Object *evas_object = (Evas_Object *)object;
-		sio::client h;
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
 		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
@@ -148,6 +151,24 @@ extern "C" {
 
 	}
 }
+
+
+
+
+
+extern "C" {
+	void emit_jpeg(float rotationX, float rotationY){
+		std::ostringstream rotationXbuf;
+		rotationXbuf << rotationX;
+
+		std::ostringstream rotationYbuf;
+		rotationYbuf << rotationY;
+
+		std::string json = "{ \"rotationX\" : \"" + rotationXbuf.str() +"\", \"rotationY\" : \"" + rotationYbuf.str() + "\" } ";
+		h.emit("tizenRotation", json);
+	}
+}
+
 extern "C" {
 	void fresh_que()
 	{
@@ -174,3 +195,4 @@ extern "C" {
 		}
 	}
 }
+

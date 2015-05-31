@@ -48,27 +48,3 @@ extern "C" {
 	}
 }
 
-//void on_message(websocketpp::connection_hdl, server::message_ptr msg) {
-//	std::cout << msg->get_payload() << std::endl;
-//	//dlog_print(DLOG_FATAL, "socket.c", "Websocketpp Message::%s", msg->get_payload());
-//}
-//
-//extern "C" {
-//
-//	char * websocket_test() {
-//
-//		dlog_print(DLOG_FATAL, "socket.c", "Websocketpp Test::");
-//
-//		server print_server;
-//
-//		print_server.set_message_handler(&on_message);
-//
-//		print_server.init_asio();
-//		print_server.listen(9002);
-//		print_server.start_accept();
-//
-//		dlog_print(DLOG_FATAL, "socket.c", "Websocketpp Accept::");
-//
-//		return "Websocketpp include success";
-//	}
-//}
