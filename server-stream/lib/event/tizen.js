@@ -36,14 +36,14 @@ Tizen.prototype.addSocketEventListener = function(socket){
     }
 
     this.socket = socket;
-    this.imageEventListener();
+    this.jpegEventListener();
+    this.rotationTouchEventListener();
 };
 
 /**
  * Last encoding image is type
- * @param socket
  */
-Tizen.prototype.imageEventListener = function(){
+Tizen.prototype.jpegEventListener = function(){
     var $this = this,
         socket = this.socket;
 
@@ -52,5 +52,27 @@ Tizen.prototype.imageEventListener = function(){
         $this.encoding.tizenJpeg(cudaRender, socket);
     });
 };
+
+
+/**
+ * Tizen Roation Touch Event Listner
+ */
+Tizen.prototype.rotationTouchEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.TIZEN.ROTATION, function(strOption){
+        var option = JSON.parse(strOption);
+        logger.debug('TIZEN '+ option);
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+
+        cudaRender.rotationX = option.rotationX;
+        cudaRender.rotationY = option.rotationY;
+
+        $this.encoding.tizenJpeg(cudaRender, socket);
+    });
+
+};
+
 
 module.exports.Tizen = Tizen;

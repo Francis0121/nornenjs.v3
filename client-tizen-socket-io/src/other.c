@@ -1,3 +1,5 @@
+#include <app.h>
+
 #include <tizen.h>
 #include "socket.hpp"
 #include "socket_io_client.hpp"
@@ -10,6 +12,45 @@
 #include "copy_GLES.h"
 
 #define LOG_TAG_SOCKET_IO "socket.io"
+
+// ~ Mouse event
+static void
+mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info)
+{
+	appdata_s *ad = data;
+	ad->mouse_down = EINA_TRUE;
+	ad->touchCount = 0;
+	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "mouse down on");
+}
+
+static void
+mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info)
+{
+	Evas_Event_Mouse_Move *ev;
+	ev = (Evas_Event_Mouse_Move *)event_info;
+	appdata_s *ad = data;
+
+	if(ad->mouse_down) {
+
+		ad->rotationX += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
+		ad->rotationY += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
+
+		if((ad->touchCount++) %3 == 0){
+
+			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Rotation %f %f", ad->rotationX, ad->rotationY);
+			emit_jpeg(ad->rotationX, ad->rotationY);
+		}
+
+	}
+}
+
+static void
+mouse_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_info)
+{
+	appdata_s *ad = data;
+	ad->mouse_down = EINA_FALSE;
+	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "mouse down up");
+}
 
 static pthread_t thread_id;
 
@@ -133,6 +174,12 @@ app_create(void *data)
 	   ad->anim = ecore_animator_add(_anim_cb, ad);
 	   evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
 
+
+	    // mouse event add
+		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_DOWN, mouse_down_cb, ad);
+		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_UP, mouse_up_cb, ad);
+		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_MOVE, mouse_move_cb, ad);
+
 	   int status = 0;
 
 	   	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
@@ -219,6 +266,7 @@ ui_app_low_memory(app_event_info_h event_info, void *user_data)
 {
 	/*APP_EVENT_LOW_MEMORY*/
 }
+
 
 int
 main(int argc, char *argv[])
