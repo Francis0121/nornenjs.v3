@@ -17,7 +17,6 @@ static void
 mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 	ad->mouse_down = EINA_TRUE;
-	ad->requestCount = 0;
 }
 
 static void
@@ -26,17 +25,12 @@ mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 
 	if(ad->mouse_down && !ad->multi_mouse_down) {
-
 		ad->rotationX += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
 		ad->rotationY += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
-
-		if((ad->requestCount++)%3 == 0){
-			emit_jpeg(ad->rotationX, ad->rotationY);
-		}
+		emit_jpeg(ad->rotationX, ad->rotationY);
 	}
 
-	if(ad->multi_mouse_down && !ad->multi_mouse_start){
-		ad->multi_mouse_start = EINA_TRUE;
+	if(ad->multi_mouse_down){
 		dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch start point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
 	}
 }
@@ -52,7 +46,6 @@ static void
 multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 	ad->multi_mouse_down = EINA_TRUE;
-	ad->requestCount = 0;
 }
 
 static void
@@ -61,9 +54,7 @@ multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 
 	if(ad->multi_mouse_down) {
-		if((ad->requestCount++)%3 == 0){
-			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch move point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
-		}
+		dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch move point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
 	}
 }
 
@@ -71,7 +62,6 @@ static void
 multi_mouse_up_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 	ad->multi_mouse_down = EINA_FALSE;
-	ad->multi_mouse_start = EINA_FALSE;
 }
 
 static Evas_Object*

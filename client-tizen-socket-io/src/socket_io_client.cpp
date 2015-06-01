@@ -151,7 +151,18 @@ extern "C" {
 
 
 extern "C" {
+	int requestCount = 0;
+
 	void emit_jpeg(float rotationX, float rotationY){
+		if(requestCount == 100){
+			requestCount = 0;
+			return;
+		}
+
+		if( (requestCount++)%3 != 0 ){
+			return;
+		}
+
 		std::ostringstream rotationXbuf;
 		rotationXbuf << rotationX;
 

@@ -20,32 +20,31 @@
 
 typedef struct appdata
 {
-   Evas_Object *table, *bg;
-   Evas_Object *win;
-   Evas_Object *glview;
-   Ecore_Animator *anim;
-   Evas_Object *conform;
+	Evas_Object *table;
+	Evas_Object *bg;
+	Evas_Object *win;
+	Evas_Object *glview;
+	Evas_Object *conform;
+	Ecore_Animator *anim;
 
-   Evas_Object *label;//add
-   GLuint tex_ids[2];
-   GLuint g_textureName;
-   int current_tex_index;
+	// ~ socekt.io Event handl variable
 
-   int requestCount;
-   // ~ Touch
-   Eina_Bool mouse_down : 1;
-   float rotationX;
-   float rotationY;
+	/**
+	* Touch event - 3d object rotation
+	*/
+	Eina_Bool mouse_down : 1;
+	float rotationX;
+	float rotationY;
 
-   // ~ Multi Touch
-   Eina_Bool multi_mouse_start : 1;
-   Eina_Bool multi_mouse_down : 1;
-   float positionZ;
+	/**
+	* Multi touch event - 3d object resize
+	*/
+	Eina_Bool multi_mouse_down : 1;
+	float positionZ;
 
 } appdata_s;
 
 void login_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* __other_H__ */
-
 
