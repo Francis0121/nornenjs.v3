@@ -102,7 +102,7 @@ extern "C" {
 			dlog_print(DLOG_VERBOSE, LOG_TAG, "Launched load cuda memory \n");
 
 			// ~ Tizen Requset
-			h.emit("tizenRequest", "");
+			h.emit("tizenQuality", "");
 
 			_lock.unlock();
 		});
@@ -147,7 +147,11 @@ extern "C" {
 }
 
 
-
+extern "C" {
+	void emit_quality(){
+		h.emit("tizenQuality", "");
+	}
+}
 
 
 extern "C" {

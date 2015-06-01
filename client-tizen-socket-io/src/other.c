@@ -4,7 +4,6 @@
 #include <pthread.h>
 #include <math.h>
 #include "other.h"
-#include "socket.hpp"
 #include "socket_io_client.hpp"
 #include "copy_GLES.h"
 
@@ -53,7 +52,11 @@ mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 static void
 mouse_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
-	ad->mouse_down = EINA_FALSE;
+
+	if(ad->mouse_down){
+		emit_quality();
+		ad->mouse_down = EINA_FALSE;
+	}
 }
 
 // ~ Multi Mouse event
@@ -120,7 +123,10 @@ multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 static void
 multi_mouse_up_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
-	ad->multi_mouse_down = EINA_FALSE;
+	if(ad->multi_mouse_down){
+		ad->multi_mouse_down = EINA_FALSE;
+		emit_quality();
+	}
 }
 
 static Evas_Object*
@@ -170,7 +176,7 @@ _win_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_geometry_get(ad->win, NULL, NULL, &w, &h);
    evas_object_resize(ad->table, w, h);
    evas_object_resize(ad->bg, w, h);
-}//add
+}
 
 static void
 btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)

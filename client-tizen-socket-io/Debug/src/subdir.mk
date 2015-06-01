@@ -6,7 +6,6 @@
 CPP_SRCS += \
 ../src/sio_client.cpp \
 ../src/sio_packet.cpp \
-../src/socket.cpp \
 ../src/socket_io_client.cpp 
 
 C_SRCS += \
@@ -20,7 +19,6 @@ OBJS += \
 ./src/other.o \
 ./src/sio_client.o \
 ./src/sio_packet.o \
-./src/socket.o \
 ./src/socket_io_client.o 
 
 C_DEPS += \
@@ -31,7 +29,6 @@ C_DEPS += \
 CPP_DEPS += \
 ./src/sio_client.d \
 ./src/sio_packet.d \
-./src/socket.d \
 ./src/socket_io_client.d 
 
 

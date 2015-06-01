@@ -223,9 +223,8 @@ src/copy_GLES.d: ../src/copy_GLES.c \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/image_util_type.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/media_packet.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/media_format.h \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp \
- /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
  /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp \
+ /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
  /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/other.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_control.h \
@@ -684,11 +683,9 @@ src/copy_GLES.d: ../src/copy_GLES.c \
 
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/media/media_format.h:
 
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp:
+/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp:
 
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
-
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp:
 
 /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/other.h:
 

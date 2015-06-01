@@ -17,18 +17,14 @@
 #include <math.h>
 #include <Elementary_GL_Helpers.h>
 #include <image_util.h>
-
-#include "socket.hpp"
-#include "socket_io_client.hpp"
-#include "other.h"
 #include <pthread.h>
 
+#include "socket_io_client.hpp"
+#include "other.h"
 
 pthread_mutex_t  mutex = PTHREAD_MUTEX_INITIALIZER; // 쓰레드 초기화
 
 #define LOG_TAG "socket.io.opengl"
-#define SAMPLE_FILENAME "/tmp/dog.jpg"
-
 
 #define ONEP  +1.0
 #define ONEN  -1.0

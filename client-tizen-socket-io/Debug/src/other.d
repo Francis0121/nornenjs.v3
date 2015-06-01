@@ -226,7 +226,6 @@ src/other.d: ../src/other.c \
  /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/other.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/system/system_settings.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp \
  /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp \
  /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/copy_GLES.h
 
@@ -683,8 +682,6 @@ src/other.d: ../src/other.c \
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/system/system_settings.h:
 
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
-
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp:
 
 /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp:
 

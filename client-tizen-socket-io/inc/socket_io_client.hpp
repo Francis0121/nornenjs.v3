@@ -26,6 +26,11 @@ char* texture_getter();
 #ifdef __cplusplus
 extern "C"
 #endif
+void emit_quality();
+
+#ifdef __cplusplus
+extern "C"
+#endif
 void emit_rotation(float rotationX, float rotationY);
 
 #ifdef __cplusplus

@@ -36,9 +36,20 @@ Tizen.prototype.addSocketEventListener = function(socket){
     }
 
     this.socket = socket;
+    this.qualityEventListener();
     this.jpegEventListener();
     this.rotationTouchEventListener();
     this.zoomTouchEventListener();
+};
+
+Tizen.prototype.qualityEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.TIZEN.QUALITY, function(){
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+        $this.encoding.tizenQuality(cudaRender, socket);
+    });
 };
 
 /**
@@ -75,6 +86,9 @@ Tizen.prototype.rotationTouchEventListener = function(){
 };
 
 
+/**
+ * Zoom touch event listener
+ */
 Tizen.prototype.zoomTouchEventListener = function(){
     var $this = this,
         socket = this.socket;

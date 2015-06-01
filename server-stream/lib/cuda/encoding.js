@@ -128,8 +128,8 @@ Encoding.prototype.png = function(cudaRender, socket, type){
 Encoding.prototype.tizenJpeg = function(cudaRender, socket){
     var hrStart = process.hrtime();
 
-    cudaRender.imageWidth = 512;
-    cudaRender.imageHeight = 512;
+    cudaRender.imageWidth = 256;
+    cudaRender.imageHeight = 256;
     cudaRender.brightness = 4.0;
     cudaRender.start();
 
@@ -144,6 +144,32 @@ Encoding.prototype.tizenJpeg = function(cudaRender, socket){
                                     buffer : buffer
                                 }
                             });
+    cudaRender.end();
+
+    var hrEnd = process.hrtime(hrStart);
+    logger.debug('Tizen Make start finish frame jpeg compress execution time (hr) : %dms', hrEnd[1]/1000000);
+};
+
+Encoding.prototype.tizenQuality = function(cudaRender, socket) {
+
+    var hrStart = process.hrtime();
+
+    cudaRender.imageWidth = 512;
+    cudaRender.imageHeight = 512;
+    cudaRender.brightness = 4.0;
+    cudaRender.start();
+
+    var hrCuda = process.hrtime(hrStart);
+    logger.debug('Tizen Make start finish frame jpeg compress execution time (hr) : %dms', hrCuda[1]/1000000);
+
+    var jpeg = new Jpeg(cudaRender.d_outputBuffer, cudaRender.imageWidth, cudaRender.imageHeight , 'rgba');
+    var buffer = jpeg.turboencodeSync();
+    socket.emit('tizenJpeg', {
+        stream :{
+            size : buffer.length,
+            buffer : buffer
+        }
+    });
     cudaRender.end();
 
     var hrEnd = process.hrtime(hrStart);
