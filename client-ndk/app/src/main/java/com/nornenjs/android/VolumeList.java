@@ -8,10 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.os.*;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.KeyEvent;
@@ -21,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import com.github.nkzawa.socketio.client.On;
 import com.nornenjs.android.dto.ResponseVolume;
 import com.nornenjs.android.dto.Volume;
 import com.nornenjs.android.dto.VolumeFilter;
@@ -81,6 +79,7 @@ public class VolumeList extends Activity {
     final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
     final int cacheSize = maxMemory / 8;
 
+    private ImageView menuBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +122,39 @@ public class VolumeList extends Activity {
         emptydata = (RelativeLayout) findViewById(R.id.emptydata);
         emptydata.setVisibility(View.GONE);
         alert = (TextView) findViewById(R.id.alert);
+
+        menuBtn = (ImageView) findViewById(R.id.menuBtn);
+
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            menuBtn.setVisibility(View.VISIBLE);
+
+        menuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new BottomSheet.Builder(VolumeList.this).sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case R.id.help:
+
+                                break;
+                            case R.id.logout:
+                                SharedPreferences pref = getSharedPreferences("userInfo", 0);
+                                SharedPreferences.Editor prefEdit = pref.edit();
+
+                                prefEdit.putString("username", "");
+                                Intent intent = new Intent(VolumeList.this, LoginActivity.class);
+
+                                startActivity(intent);
+                                finish();
+                                break;
+                        }
+                    }
+                }).show();
+
+            }
+        });
 
         editview = (EditText) findViewById(R.id.searchbar);
         editview.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -447,10 +479,7 @@ public class VolumeList extends Activity {
         return bitmap;
     }
 
-    private void getData()
-    {
-        //
-    }
+
 
     @Override
     public void onBackPressed() {

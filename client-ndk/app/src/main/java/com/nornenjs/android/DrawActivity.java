@@ -124,6 +124,9 @@ public class DrawActivity extends View{
             topRight.setY(otfHeightStart);
             bottomLeft.setY(otfHeightEnd);
             bottomRight.setY(otfHeightEnd);
+
+            jniGLActivity.otf_table.setTranslationY(jniGLActivity.otf_table.getHeight());
+
         }
 
         drawBackground(canvas);
@@ -150,7 +153,7 @@ public class DrawActivity extends View{
 
         //사다리꼴 3개 라인
         bg_LinePaint.setColor(Color.LTGRAY);
-        bg_LinePaint.setStrokeWidth(convertPixelsToDp(8));//30
+        bg_LinePaint.setStrokeWidth(convertPixelsToDp(6));//30
         canvas.drawLine(topLeft.x, topLeft.y, bottomLeft.x, bottomLeft.y, bg_LinePaint);
         canvas.drawLine(topLeft.x, topLeft.y, topRight.x, topRight.y, bg_LinePaint);
         canvas.drawLine(topRight.x, topRight.y, bottomRight.x, bottomRight.y, bg_LinePaint);
@@ -217,13 +220,18 @@ public class DrawActivity extends View{
                 if(event.getX() >= topRight.x && event.getX() <= otf_end)
                     bottomRight.setX(event.getX());
             } else if(left_line) {
+
                 if(bottomLeft.x >= otf_start) {
+
                     if(bottomLeft.getX() + (-1)*(beforeX - event.getX()) < otf_start + 5) {
                         bottomLeft.setX(otf_start + 5);
                         topLeft.setX(otf_start + 5 + topLeft.getX() - bottomLeft.getX());
                     } else {
-                        bottomLeft.setX(bottomLeft.getX() + (-1)*(beforeX - event.getX()));
-                        topLeft.setX(topLeft.getX() + (-1)*(beforeX - event.getX()));
+                        if(topLeft.getX() + (-1)*(beforeX - event.getX()) <= topRight.x)
+                        {
+                            bottomLeft.setX(bottomLeft.getX() + (-1)*(beforeX - event.getX()));
+                            topLeft.setX(topLeft.getX() + (-1)*(beforeX - event.getX()));
+                        }
                     }
                     beforeX = event.getX();
                 }
@@ -259,12 +267,16 @@ public class DrawActivity extends View{
                 }
             } else if(right_line) {
                 if(bottomRight.x <= otf_end) {
+
                     if(bottomRight.getX() + (-1)*(beforeX - event.getX()) > otf_end - 5) {
                         bottomRight.setX(otf_end - 5);
                         topRight.setX(otf_end - 5 + topRight.getX() - bottomRight.getX());//padding 5
                     } else {
-                        bottomRight.setX(bottomRight.getX() + (-1)*(beforeX - event.getX()));
-                        topRight.setX(topRight.getX() + (-1)*(beforeX - event.getX()));
+                        if(topRight.getX() + (-1)*(beforeX - event.getX()) >= topLeft.x)
+                        {
+                            bottomRight.setX(bottomRight.getX() + (-1)*(beforeX - event.getX()));
+                            topRight.setX(topRight.getX() + (-1)*(beforeX - event.getX()));
+                        }
                     }
                     beforeX = event.getX();
                 }

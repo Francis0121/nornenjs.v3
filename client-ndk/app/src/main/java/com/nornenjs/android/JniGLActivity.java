@@ -1,6 +1,7 @@
 package com.nornenjs.android;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
@@ -84,7 +85,7 @@ public class JniGLActivity extends Activity{
     public String volumeSavePath = "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8";//일단 상수 박아줌
     public int datatype;//4는 MIP
 
-    Button togglebtn;
+    Button togglebtn, toggleMip, toggleMenu;
 
     public void setMyEventListener(MyEventListener myEventListener) {
         this.myEventListener = myEventListener;
@@ -118,20 +119,20 @@ public class JniGLActivity extends Activity{
 
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(mGLSurfaceView.isShown() && !mRenderer.mip && keyCode == 82)
-        {
-            if(!menuFlag) {
-                ViewPropertyAnimator.animate(otf_table).translationY(otf_table.getHeight()).setDuration(550);
-            }
-            else {
-                ViewPropertyAnimator.animate(otf_table).translationY(0).setDuration(550);
-            }
-            menuFlag = !menuFlag;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if(mGLSurfaceView.isShown() && !mRenderer.mip && keyCode == 82)
+//        {
+//            if(!menuFlag) {
+//                ViewPropertyAnimator.animate(otf_table).translationY(otf_table.getHeight()).setDuration(550);
+//            }
+//            else {
+//                ViewPropertyAnimator.animate(otf_table).translationY(0).setDuration(550);
+//            }
+//            menuFlag = !menuFlag;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
     @Override
     protected void onResume() {
@@ -155,6 +156,16 @@ public class JniGLActivity extends Activity{
         super.onDestroy();
     }
 
+
+    @Override
+    public void onBackPressed() {
+        if(mGLSurfaceView.isShown())
+            super.onBackPressed();
+        else
+        {
+            //흠..
+        }
+    }
 
     int touchCount;
     @Override
@@ -354,77 +365,99 @@ public class JniGLActivity extends Activity{
 
     }
 
-    final Handler handler = new Handler()
+    final Handler handler;
+
     {
+        handler = new Handler() {
 
-        public void handleMessage(Message msg)
+            public void handleMessage(Message msg)
 
-        {
+            {
 
-            Log.d(TAG, "handleMessage() called");
+                Log.d(TAG, "handleMessage() called");
 
-            final RelativeLayout newContainer = new RelativeLayout(JniGLActivity.this);//FrameLayout
+                final RelativeLayout newContainer = new RelativeLayout(JniGLActivity.this);//FrameLayout
 
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT );
+                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT);
 
-            newContainer.setLayoutParams(layoutParams);
+                newContainer.setLayoutParams(layoutParams);
 
-            setContentView(R.layout.toggle);
-            togglebtn = (Button) findViewById(R.id.toggleBtn);
-            togglebtn.setOnClickListener(mRenderer);
-//            togglebtn.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Log.d("TAG", "togglebtn is pressed");
+                setContentView(R.layout.toggle);
+                togglebtn = (Button) findViewById(R.id.toggleVol);
+                toggleMip = (Button) findViewById(R.id.toggleMip);
+                toggleMenu = (Button) findViewById(R.id.toggleMenu);
+
+                togglebtn.setOnClickListener(mRenderer);
+                toggleMip.setOnClickListener(mRenderer);
+                toggleMenu.setOnClickListener(mRenderer);
+
+
+                ViewParent parent = togglebtn.getParent();
+                ViewGroup group = (ViewGroup) parent;
+                group.addView(mGLSurfaceView);
+
+                otf_table = (RelativeLayout) findViewById(R.id.otf_table);
+
+
+
+                DrawActivity drawView;
+                drawView = (DrawActivity) findViewById(R.id.canvas);
+                drawView.otf_width = drawView.getWidth();
+                drawView.otf_height = drawView.getHeight();
+                drawView.jniGLActivity = JniGLActivity.this;
+
+                SeekBar sb = (SeekBar) findViewById(R.id.brightseek);
+                sb.setProgress(200);
+                sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        myEventListener.BrightnessEvent(progress);
+                    }
+
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+
+                    }
+
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                        myEventListener.GetPng();
+
+                    }
+                });
+
+                //otf_table.setY(otf_table.getHeight());
+                otf_table.bringToFront();
+                otf_table.invalidate();
+
+                togglebtn.bringToFront();
+                togglebtn.invalidate();
+                toggleMip.bringToFront();
+                toggleMip.invalidate();
+                toggleMenu.bringToFront();
+                toggleMenu.invalidate();
+
+                setContentView(group);
+
+//            Log.d("Onclick", "otf_table.getHeight()1 : " + otf_table.getHeight());
 //
-//                }
-//            });
+//            otf_table.setTranslationY(otf_table.getHeight());
+//            Log.d("Onclick", "otf_table.getHeight()2 : " + otf_table.getHeight());
 
-            ViewParent parent = togglebtn.getParent();
-            ViewGroup group = (ViewGroup)parent;
-            group.addView(mGLSurfaceView);
+            }
 
-            otf_table = (RelativeLayout) findViewById(R.id.otf_table);
-
-            DrawActivity drawView;
-            drawView = (DrawActivity) findViewById(R.id.canvas);
-            drawView.otf_width = drawView.getWidth();
-            drawView.otf_height = drawView.getHeight();
-            drawView.jniGLActivity = JniGLActivity.this;
-
-            SeekBar sb = (SeekBar) findViewById(R.id.brightseek);
-            sb.setProgress(200);
-            sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    myEventListener.BrightnessEvent(progress);
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    myEventListener.GetPng();
-
-                }
-            });
-            otf_table.bringToFront();
-            otf_table.invalidate();
-
-            togglebtn.bringToFront();
-            togglebtn.invalidate();
-
-            setContentView(group);
-
-        }
-
-    };
+        };
+    }
 
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if(otf_table != null)
+            Log.d("Onclick", "otf_table.getHeight()1 : " + otf_table.getHeight());
+        Log.d("Onclick", "onWindowFocusChanged ");
+        super.onWindowFocusChanged(hasFocus);
+    }
 }
 
 class TouchSurfaceView extends GLSurfaceView {
@@ -507,7 +540,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                     JSONObject jsonObject = new JSONObject();
                     socket.emit("androidPng", jsonObject);
 
-                    Log.d("emitTag","VOLUME emit");
+                    Log.d("emitTag", "VOLUME emit");
 
 
                 }
@@ -529,13 +562,12 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                         height = (Integer) info.get("height");
                         mActivity.mGLSurfaceView.requestRender();
                         mActivity.setView();
-
                         //Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
                         //Log.d("pixels", "width.intValue()1 : " + width + ", height.intValue() : " + height);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.e("ByteBuffer", e.getMessage(),e);
+                        Log.e("ByteBuffer", e.getMessage(), e);
                     }
 
                     mActivity.count++;
@@ -747,7 +779,19 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             socket.disconnect();
             socket.off("loadCudaMemory");
             socket.off("stream");
+            socket = null;
             Log.e("emitTag", "socket.disconnect()");
+        }
+
+        if(relay != null && relay.connected())
+        {
+            Log.e("emitTag", "relay.disconnect()");
+            relay.disconnect();
+            relay.off("getInfoClient");
+        }
+        else
+        {
+            Log.e("emitTag", "relay is null or unconnect");
         }
     }
 
@@ -766,26 +810,53 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         socket.emit("Brightness", jsonObject);
     }
 
+
     @Override
     public void onClick(View v) {
         Log.d("click", "btn click");
         switch (v.getId())
         {
-            case R.id.toggleBtn :
-                if(!mip) {
-                    //volume일때 mip로 바꿈
-                    v.setBackgroundResource(R.drawable.mri);
-                    //이때는 otf 테이블 안되게!
-                    if(!mActivity.menuFlag) {
-                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
-                        mActivity.menuFlag = !mActivity.menuFlag;
-                        }
-                }
-                else {
-                    v.setBackgroundResource(R.drawable.volume);
-                }
-                mip = !mip;
+            case R.id.toggleVol :
+                mip = false;
+                v.setBackgroundResource(R.drawable.volume_on);
+                mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
+                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                 GetPng();
+                break;
+
+            case R.id.toggleMip :
+                mip = true;
+
+                mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
+                v.setBackgroundResource(R.drawable.mip_on);
+                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+
+                if(!mActivity.menuFlag)
+                    ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
+                GetPng();
+                break;
+
+            case R.id.toggleMenu :
+                //이 이미지는 selector를 사용하는게 좋겠음.
+
+                if(!mActivity.mRenderer.mip)
+                {
+                    if(!mActivity.menuFlag) {
+                        Log.d("Onclick", "otf_table.getHeight()3 : " + mActivity.otf_table.getHeight());
+                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
+                        mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                    }
+                    else {
+                        Log.d("Onclick", "otf_table.getHeight()4 : " + mActivity.otf_table.getHeight());
+                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(0).setDuration(550);
+                        mActivity.toggleMenu.setBackgroundResource(R.drawable.option_on);
+                    }
+                    mActivity.menuFlag = !mActivity.menuFlag;
+
+                }
+                else
+                    Log.d("Onclick","mActivity.mRenderer.mip : " + mActivity.mRenderer.mip);
+
                 break;
         }
     }
