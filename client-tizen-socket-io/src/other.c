@@ -249,10 +249,13 @@ app_create(void *data)
 	ad->anim = ecore_animator_add(_anim_cb, ad);
 	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
 
+
+	// ~ Slider add
+
 	ad->brightSlider = o = elm_slider_add(ad->win);
 	elm_table_pack(t, o, 1, 1, 1, 1);
 	evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
+	evas_object_size_hint_weight_set(o, 1, 0.00001);
 	elm_slider_indicator_format_set(o, "%1.0f");
 	elm_slider_min_max_set(o, 0, 600);
 	elm_slider_value_set(o, 200);
