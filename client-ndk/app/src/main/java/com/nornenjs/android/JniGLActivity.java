@@ -157,16 +157,6 @@ public class JniGLActivity extends Activity{
     }
 
 
-    @Override
-    public void onBackPressed() {
-        if(mGLSurfaceView.isShown())
-            super.onBackPressed();
-        else
-        {
-            //흠..
-        }
-    }
-
     int touchCount;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -455,6 +445,8 @@ public class JniGLActivity extends Activity{
     public void onWindowFocusChanged(boolean hasFocus) {
         if(otf_table != null)
             Log.d("Onclick", "otf_table.getHeight()1 : " + otf_table.getHeight());
+        Log.d("Onclick", "onWindowFocusChanged ");
+
         Log.d("Onclick", "onWindowFocusChanged ");
         super.onWindowFocusChanged(hasFocus);
     }

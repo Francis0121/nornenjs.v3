@@ -9,12 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.*;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.LruCache;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.view.inputmethod.EditorInfo;
 import android.widget.*;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -183,12 +181,15 @@ public class VolumeList extends Activity {
 
         new PostVolumeTask().execute("none");
 
+
+
     }
 
     public void setView() {
         Log.d(TAG, "setView() called");
         gridlist.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
+
     }
 
     public void searchRequest(String keyword) {
