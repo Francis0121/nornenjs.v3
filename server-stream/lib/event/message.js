@@ -32,7 +32,8 @@ var EVENT_MESSAGE = {
         ROTATION : 'tizenRotation',
         ZOOM : 'tizenZoom',
         QUALITY : 'tizenQuality',
-        BRIGHTNESS : 'tizenBrightness'
+        BRIGHTNESS : 'tizenBrightness',
+        OTF : 'tizenOtf'
     }
 };
 

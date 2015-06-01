@@ -154,6 +154,26 @@ extern "C" {
 }
 
 extern "C"{
+	void emit_otf(float otf){
+		std::ostringstream otfbuf;
+		otfbuf << otf;
+
+		std::string json = "{ \"otf\" : \"" + otfbuf.str()+ "\", \"transferFlag\" : \"1\" }";
+		h.emit("tizenOtf", json);
+	}
+}
+
+extern "C" {
+	void emit_otf_end(float otf){
+		std::ostringstream otfbuf;
+		otfbuf << otf;
+
+		std::string json = "{ \"otf\" : \"" + otfbuf.str()+ "\", \"transferFlag\" : \"2\" }";
+		h.emit("tizenOtf", json);
+	}
+}
+
+extern "C"{
 	void emit_brightness(float brightness){
 		std::ostringstream brightnessbuf;
 		brightnessbuf << brightness;

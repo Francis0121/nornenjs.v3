@@ -31,6 +31,16 @@ void emit_quality();
 #ifdef __cplusplus
 extern "C"
 #endif
+void emit_otf(float otf);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void emit_otf_end(float otf);
+
+#ifdef __cplusplus
+extern "C"
+#endif
 void emit_brightness(float brightness);
 
 #ifdef __cplusplus

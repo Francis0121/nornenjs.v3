@@ -25,7 +25,6 @@ typedef struct appdata
 	Evas_Object *win;
 	Evas_Object *glview;
 	Evas_Object *conform;
-	Evas_Object *brightSlider;
 
 	Ecore_Animator *anim;
 
@@ -49,6 +48,18 @@ typedef struct appdata
 	float newDist;
 	float oldDist;
 	float div;
+
+	/**
+	 * Brightness
+	 */
+	Eina_Bool is_brightness : 1;
+	Evas_Object *brightSlider;
+
+	/**
+	 * OTF
+	 */
+	Eina_Bool is_otf : 1;
+	Evas_Object *otfSlider;
 
 } appdata_s;
 

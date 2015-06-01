@@ -12,12 +12,44 @@
 static pthread_t thread_id;
 
 static void
-slider_move_cb(void *data, Evas_Object *obj, void *event_info){
+otf_changed_cb(void *data, Evas_Object *obj, void *event_info){
 
 	appdata_s *ad = data;
-	double brightness = elm_slider_value_get(ad->brightSlider);
+	ad->is_otf = EINA_TRUE;
+	double otf = elm_slider_value_get(ad->otfSlider);
+	emit_otf((float) otf);
+}
 
+static void
+otf_mouseup_cb(void *data, Evas_Object *obj, void *event_info){
+
+	appdata_s *ad = data;
+	if(ad->is_otf){
+		ad->is_otf = EINA_FALSE;
+		double otf = elm_slider_value_get(ad->otfSlider);
+		emit_otf_end((float) otf);
+	}
+}
+
+// ~ Brightness
+static void
+brightness_changed_cb(void *data, Evas_Object *obj, void *event_info){
+
+	appdata_s *ad = data;
+
+	ad->is_brightness = EINA_TRUE;
+	double brightness = elm_slider_value_get(ad->brightSlider);
 	emit_brightness((float) (brightness/100.0));
+}
+
+static void
+brightness_mouseup_cb(void *data, Evas_Object *obj, void *event_info){
+
+	appdata_s *ad = data;
+	if(ad->is_brightness){
+		ad->is_brightness = EINA_FALSE;
+		emit_quality();
+	}
 }
 
 // ~ Mouse event
@@ -139,7 +171,7 @@ _glview_create(appdata_s *ad){
 
    /* Create a GLView with an OpenGL-ES 1.1 context */
    obj = elm_glview_version_add(ad->win, EVAS_GL_GLES_1_X);
-   elm_table_pack(ad->table, obj, 1, 1, 1, 1);
+   elm_table_pack(ad->table, obj, 1, 2, 1, 1);
    evas_object_data_set(obj, APPDATA_KEY, ad);
 
    elm_glview_mode_set(obj, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
@@ -218,13 +250,25 @@ app_create(void *data)
 	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
 
 	ad->brightSlider = o = elm_slider_add(ad->win);
-	elm_table_pack(t, o, 1, 2, 1, 1);
+	elm_table_pack(t, o, 1, 1, 1, 1);
 	evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
 	evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
 	elm_slider_indicator_format_set(o, "%1.0f");
 	elm_slider_min_max_set(o, 0, 600);
 	elm_slider_value_set(o, 200);
-	evas_object_smart_callback_add(ad->brightSlider, "changed", slider_move_cb, ad);
+	evas_object_smart_callback_add(ad->brightSlider, "changed", brightness_changed_cb, ad);
+	evas_object_event_callback_add(ad->brightSlider, EVAS_CALLBACK_MOUSE_UP, brightness_mouseup_cb, ad);
+	evas_object_show(o);
+
+	ad->otfSlider = o = elm_slider_add(ad->win);
+	elm_table_pack(t, o, 1, 3, 1, 1);
+	evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
+	elm_slider_indicator_format_set(o, "%1.0f");
+	elm_slider_min_max_set(o, 0, 165);
+	elm_slider_value_set(o, 65);
+	evas_object_smart_callback_add(ad->otfSlider, "changed", otf_changed_cb, ad);
+	evas_object_event_callback_add(ad->otfSlider, EVAS_CALLBACK_MOUSE_UP, otf_mouseup_cb, ad);
 	evas_object_show(o);
 
 	// ~ touch event add

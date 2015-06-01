@@ -40,6 +40,7 @@ Tizen.prototype.addSocketEventListener = function(socket){
     this.rotationTouchEventListener();
     this.zoomTouchEventListener();
     this.brightnessEventListener();
+    this.otfEventListener();
 };
 
 /**
@@ -116,6 +117,36 @@ Tizen.prototype.brightnessEventListener = function(){
         var cudaRender = $this.cudaRenderMap.get(socket.id);
         cudaRender.brightness = parseFloat(option.brightness);
         $this.encoding.tizenJpeg(cudaRender, socket);
+    });
+};
+
+
+/**
+ * Brightness Event Listener
+ */
+Tizen.prototype.otfEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    var START = 65, MID1 = 80, MID2 = 100, END = 120;
+
+    socket.on(EVENT_MESSAGE.TIZEN.OTF, function(strOption){
+        var option = JSON.parse(strOption);
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+
+        var diff = parseInt(option.otf) - START;
+        cudaRender.transferStart = START + diff;
+        cudaRender.transferMiddle1 = MID1 + diff;
+        cudaRender.transferMiddle2 = MID2 + diff;
+        cudaRender.transferEnd = END + diff;
+        cudaRender.transferFlag = option.transferFlag;
+        logger.debug(cudaRender.transferStart, cudaRender.transferMiddle1, cudaRender.transferMiddle2, cudaRender.transferEnd);
+
+        if(option.transferFlag == 1) {
+            $this.encoding.tizenJpeg(cudaRender, socket);
+        }else if(option.transferFlag == 2) {
+            $this.encoding.tizenQuality(cudaRender, socket);
+        }
     });
 };
 
