@@ -27,7 +27,7 @@
             android:id="@+id/toggleMenu"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/option_off"
+            android:background="@drawable/option_on"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"

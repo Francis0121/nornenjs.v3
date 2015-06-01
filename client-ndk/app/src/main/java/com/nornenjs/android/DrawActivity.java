@@ -4,12 +4,18 @@ package com.nornenjs.android;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.*;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import com.github.nkzawa.socketio.client.Socket;
+
+import java.lang.reflect.Method;
 
 public class DrawActivity extends View{
 
@@ -108,9 +114,9 @@ public class DrawActivity extends View{
 
         if(otf_width == 0 || otf_width == 0.0f)
         {
+            //jniGLActivity.otf_table.setY(jniGLActivity.otf_table.getY() + jniGLActivity.otf_table.getHeight());
             Log.d("onDraw", "otf_width is 0");
             View layoutMainView = (View)this.findViewById(R.id.canvas);
-
             otf_width = layoutMainView.getWidth();
             otf_height = layoutMainView.getHeight();
             otf_end = otf_width - WIDTH_DIFF;
@@ -125,12 +131,12 @@ public class DrawActivity extends View{
             bottomLeft.setY(otfHeightEnd);
             bottomRight.setY(otfHeightEnd);
 
-            jniGLActivity.otf_table.setTranslationY(jniGLActivity.otf_table.getHeight());
-
         }
 
         drawBackground(canvas);
     }
+
+
 
     private float convertPixelsToDp(float px){
         //해상도별로 해도 잘 안됨. 폰마다 굵기가 다르게 나옴.
