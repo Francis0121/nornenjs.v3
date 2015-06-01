@@ -2,7 +2,7 @@
 #include <efl_extension.h>
 #include <tizen.h>
 #include <pthread.h>
-
+#include <math.h>
 #include "other.h"
 #include "socket.hpp"
 #include "socket_io_client.hpp"
@@ -15,8 +15,18 @@ static pthread_t thread_id;
 // ~ Mouse event
 static void
 mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
+	Evas_Event_Mouse_Move *ev = (Evas_Event_Mouse_Move *)event_info;
 	appdata_s *ad = data;
+
 	ad->mouse_down = EINA_TRUE;
+
+	ad->oldVectorX1 = ev->cur.canvas.x;
+	ad->oldVectorY1 = ev->cur.canvas.y;
+
+	if(ad->multi_mouse_down){
+		   dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "single Down");
+
+	}
 }
 
 static void
@@ -27,11 +37,16 @@ mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	if(ad->mouse_down && !ad->multi_mouse_down) {
 		ad->rotationX += (ev->cur.canvas.x - ev->prev.canvas.x) / 10.0;
 		ad->rotationY += (ev->cur.canvas.y - ev->prev.canvas.y) / 10.0;
-		emit_jpeg(ad->rotationX, ad->rotationY);
+		emit_rotation(ad->rotationX, ad->rotationY);
 	}
 
 	if(ad->multi_mouse_down){
-		dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch start point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
+		//dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch first point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
+		dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "single move");
+
+		ad->oldVectorX1 = ev->cur.canvas.x;
+		ad->oldVectorY1 = ev->cur.canvas.y;
+
 	}
 }
 
@@ -42,19 +57,63 @@ mouse_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 }
 
 // ~ Multi Mouse event
+static float
+spacing(float x1,float y1, float x2, float y2) {
+
+    float x = x1- x2;
+    float y = y1 - y2;
+
+    return sqrt(x * x + y * y);
+}
+
 static void
 multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
+	Evas_Event_Multi_Move *ev = (Evas_Event_Multi_Move *) event_info;
 	appdata_s *ad = data;
+
 	ad->multi_mouse_down = EINA_TRUE;
+	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi down");
+
+	ad->oldVectorX2 = ev->cur.canvas.x;
+	ad->oldVectorY2 = ev->cur.canvas.y;
+
+	ad->oldDist = spacing(ad->oldVectorX1,ad->oldVectorY1,ad->oldVectorX2,ad->oldVectorY2);
 }
 
 static void
 multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
+
 	Evas_Event_Multi_Move *ev = (Evas_Event_Multi_Move *) event_info;
 	appdata_s *ad = data;
 
 	if(ad->multi_mouse_down) {
-		dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch move point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
+
+		ad->oldVectorX2 = ev->cur.canvas.x;
+		ad->oldVectorY2 = ev->cur.canvas.y;
+
+		ad->newDist = spacing(ad->oldVectorX1,ad->oldVectorY1,ad->oldVectorX2,ad->oldVectorY2);
+
+		// zoom in
+		if (ad->newDist - ad->oldDist > 15) {
+
+			ad->oldDist = ad->newDist;
+			ad->div -= (((ad->newDist / ad->oldDist) / 50) * 10);
+
+			if (ad->div <= 0.2f) {
+				ad->div = 0.2f;
+			}
+
+			emit_zoom(ad->div);
+		// zoom out
+		}else if (ad->oldDist - ad->newDist > 15) {
+
+			ad->oldDist = ad->newDist;
+			ad->div += (((ad->newDist / ad->oldDist) / 50) * 10);
+			if (ad->div >= 10.0f) {
+				ad->div = 10.0f;
+			}
+			emit_zoom(ad->div);
+        }
 	}
 }
 
@@ -126,6 +185,7 @@ app_create(void *data)
 	Evas_Object *o, *t, *btn;
 	appdata_s *ad = (appdata_s*)data;
 
+	ad->div = 2.0f;
 	/* Force OpenGL engine */
 	elm_config_accel_preference_set("opengl");
 
@@ -153,15 +213,6 @@ app_create(void *data)
 
 	ad->anim = ecore_animator_add(_anim_cb, ad);
 	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
-
-	// ~ evas object add button
-	btn = elm_button_add(ad->win);
-	elm_object_text_set(btn, "Login");
-	elm_table_pack(t, btn, 1, 9, 3, 1);
-	evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	evas_object_size_hint_weight_set(btn, 0.00001, 0.00001);
-	evas_object_smart_callback_add(btn, "clicked", btn_clicked_cb, (void *)4);
-	evas_object_show(btn);
 
 	// ~ touch event add
 	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_DOWN, mouse_down_cb, ad);

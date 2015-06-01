@@ -151,15 +151,15 @@ extern "C" {
 
 
 extern "C" {
-	int requestCount = 0;
+	int rotationRequestCount = 0;
 
-	void emit_jpeg(float rotationX, float rotationY){
-		if(requestCount == 100){
-			requestCount = 0;
+	void emit_rotation(float rotationX, float rotationY){
+		if(rotationRequestCount == 100){
+			rotationRequestCount = 0;
 			return;
 		}
 
-		if( (requestCount++)%3 != 0 ){
+		if( (rotationRequestCount++)%3 != 0 ){
 			return;
 		}
 
@@ -171,6 +171,28 @@ extern "C" {
 
 		std::string json = "{ \"rotationX\" : \"" + rotationXbuf.str() +"\", \"rotationY\" : \"" + rotationYbuf.str() + "\" } ";
 		h.emit("tizenRotation", json);
+	}
+}
+
+
+extern "C" {
+	int zoomRequestCount = 0;
+
+	void emit_zoom(float positionZ){
+		if(zoomRequestCount == 100){
+			zoomRequestCount = 0;
+			return;
+		}
+
+		if( (zoomRequestCount++)%3 != 0 ){
+			return;
+		}
+
+		std::ostringstream positionZbuf;
+		positionZbuf << positionZ;
+
+		std::string json = "{ \"positionZ\" : \"" + positionZbuf.str() +"\" } ";
+		h.emit("tizenZoom", json);
 	}
 }
 

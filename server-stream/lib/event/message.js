@@ -29,7 +29,8 @@ var EVENT_MESSAGE = {
 
     TIZEN : {
         REQUEST : 'tizenRequest',
-        ROTATION : 'tizenRotation'
+        ROTATION : 'tizenRotation',
+        ZOOM : 'tizenZoom'
     }
 };
 

@@ -26,7 +26,12 @@ char* texture_getter();
 #ifdef __cplusplus
 extern "C"
 #endif
-void emit_jpeg(float rotationX, float rotationY);
+void emit_rotation(float rotationX, float rotationY);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void emit_zoom(float positionZ);
 
 #ifdef __cplusplus
 extern "C"

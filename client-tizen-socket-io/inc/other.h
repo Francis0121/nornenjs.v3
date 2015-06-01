@@ -40,7 +40,13 @@ typedef struct appdata
 	* Multi touch event - 3d object resize
 	*/
 	Eina_Bool multi_mouse_down : 1;
-	float positionZ;
+	float oldVectorX1;
+	float oldVectorY1;
+	float oldVectorX2;
+	float oldVectorY2;
+	float newDist;
+	float oldDist;
+	float div;
 
 } appdata_s;
 
