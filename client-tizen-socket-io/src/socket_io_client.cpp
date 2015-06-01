@@ -153,6 +153,15 @@ extern "C" {
 	}
 }
 
+extern "C"{
+	void emit_brightness(float brightness){
+		std::ostringstream brightnessbuf;
+		brightnessbuf << brightness;
+
+		std::string json = "{ \"brightness\" : \"" + brightnessbuf.str()+ "\" } ";
+		h.emit("tizenBrightness", json);
+	}
+}
 
 extern "C" {
 	int rotationRequestCount = 0;

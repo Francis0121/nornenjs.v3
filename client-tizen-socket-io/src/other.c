@@ -11,6 +11,15 @@
 
 static pthread_t thread_id;
 
+static void
+slider_move_cb(void *data, Evas_Object *obj, void *event_info){
+
+	appdata_s *ad = data;
+	double brightness = elm_slider_value_get(ad->brightSlider);
+
+	emit_brightness((float) (brightness/100.0));
+}
+
 // ~ Mouse event
 static void
 mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
@@ -21,11 +30,6 @@ mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 
 	ad->oldVectorX1 = ev->cur.canvas.x;
 	ad->oldVectorY1 = ev->cur.canvas.y;
-
-	if(ad->multi_mouse_down){
-		   dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "single Down");
-
-	}
 }
 
 static void
@@ -135,7 +139,7 @@ _glview_create(appdata_s *ad){
 
    /* Create a GLView with an OpenGL-ES 1.1 context */
    obj = elm_glview_version_add(ad->win, EVAS_GL_GLES_1_X);
-   elm_table_pack(ad->table, obj, 1, 1, 3, 1);
+   elm_table_pack(ad->table, obj, 1, 1, 1, 1);
    evas_object_data_set(obj, APPDATA_KEY, ad);
 
    elm_glview_mode_set(obj, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
@@ -178,17 +182,10 @@ _win_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    evas_object_resize(ad->bg, w, h);
 }
 
-static void
-btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Click event move view");
-
-}
-
 static bool
 app_create(void *data)
 {
-	Evas_Object *o, *t, *btn;
+	Evas_Object *o, *t;
 	appdata_s *ad = (appdata_s*)data;
 
 	ad->div = 2.0f;
@@ -219,6 +216,16 @@ app_create(void *data)
 
 	ad->anim = ecore_animator_add(_anim_cb, ad);
 	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
+
+	ad->brightSlider = o = elm_slider_add(ad->win);
+	elm_table_pack(t, o, 1, 2, 1, 1);
+	evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
+	elm_slider_indicator_format_set(o, "%1.0f");
+	elm_slider_min_max_set(o, 0, 600);
+	elm_slider_value_set(o, 200);
+	evas_object_smart_callback_add(ad->brightSlider, "changed", slider_move_cb, ad);
+	evas_object_show(o);
 
 	// ~ touch event add
 	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_DOWN, mouse_down_cb, ad);

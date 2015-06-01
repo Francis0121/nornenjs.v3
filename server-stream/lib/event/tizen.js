@@ -6,7 +6,6 @@ var ENUMS = require('../enums');
 var logger = require('../logger');
 var Encoding = require('../cuda/encoding').Encoding;
 
-
 /**
  * Tizen Event Handler
  *
@@ -40,8 +39,12 @@ Tizen.prototype.addSocketEventListener = function(socket){
     this.jpegEventListener();
     this.rotationTouchEventListener();
     this.zoomTouchEventListener();
+    this.brightnessEventListener();
 };
 
+/**
+ * Tizen quality image
+ */
 Tizen.prototype.qualityEventListener = function(){
     var $this = this,
         socket = this.socket;
@@ -75,7 +78,6 @@ Tizen.prototype.rotationTouchEventListener = function(){
 
     socket.on(EVENT_MESSAGE.TIZEN.ROTATION, function(strOption){
         var option = JSON.parse(strOption);
-        logger.debug('TIZEN '+ option);
         var cudaRender = $this.cudaRenderMap.get(socket.id);
 
         cudaRender.rotationX = option.rotationX;
@@ -95,11 +97,24 @@ Tizen.prototype.zoomTouchEventListener = function(){
 
     socket.on(EVENT_MESSAGE.TIZEN.ZOOM, function(strOption){
         var option = JSON.parse(strOption);
-        logger.debug('TIZEN '+ option);
         var cudaRender = $this.cudaRenderMap.get(socket.id);
-
         cudaRender.positionZ = option.positionZ;
 
+        $this.encoding.tizenJpeg(cudaRender, socket);
+    });
+};
+
+/**
+ * Brightness Event Listener
+ */
+Tizen.prototype.brightnessEventListener = function(){
+    var $this = this,
+        socket = this.socket;
+
+    socket.on(EVENT_MESSAGE.TIZEN.BRIGHTNESS, function(strOption){
+        var option = JSON.parse(strOption);
+        var cudaRender = $this.cudaRenderMap.get(socket.id);
+        cudaRender.brightness = parseFloat(option.brightness);
         $this.encoding.tizenJpeg(cudaRender, socket);
     });
 };

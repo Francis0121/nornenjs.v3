@@ -25,6 +25,8 @@ typedef struct appdata
 	Evas_Object *win;
 	Evas_Object *glview;
 	Evas_Object *conform;
+	Evas_Object *brightSlider;
+
 	Ecore_Animator *anim;
 
 	// ~ socekt.io Event handl variable

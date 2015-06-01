@@ -130,7 +130,7 @@ Encoding.prototype.tizenJpeg = function(cudaRender, socket){
 
     cudaRender.imageWidth = 256;
     cudaRender.imageHeight = 256;
-    cudaRender.brightness = 4.0;
+
     cudaRender.start();
 
     var hrCuda = process.hrtime(hrStart);
@@ -156,7 +156,7 @@ Encoding.prototype.tizenQuality = function(cudaRender, socket) {
 
     cudaRender.imageWidth = 512;
     cudaRender.imageHeight = 512;
-    cudaRender.brightness = 4.0;
+
     cudaRender.start();
 
     var hrCuda = process.hrtime(hrStart);
