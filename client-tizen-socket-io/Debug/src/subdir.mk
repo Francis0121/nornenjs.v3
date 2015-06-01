@@ -11,10 +11,12 @@ CPP_SRCS += \
 
 C_SRCS += \
 ../src/copy_GLES.c \
+../src/login.c \
 ../src/other.c 
 
 OBJS += \
 ./src/copy_GLES.o \
+./src/login.o \
 ./src/other.o \
 ./src/sio_client.o \
 ./src/sio_packet.o \
@@ -23,6 +25,7 @@ OBJS += \
 
 C_DEPS += \
 ./src/copy_GLES.d \
+./src/login.d \
 ./src/other.d 
 
 CPP_DEPS += \

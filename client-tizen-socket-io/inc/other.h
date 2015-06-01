@@ -10,9 +10,9 @@
 #ifdef  LOG_TAG
 #undef  LOG_TAG
 #endif
-#define LOG_TAG "other"
+#define LOG_TAG "nornenjs"
 
-#define APPDATA_KEY "AppData"//add
+#define APPDATA_KEY "AppData" //add
 
 #if !defined(PACKAGE)
 #define PACKAGE "org.tizen.other"
@@ -38,11 +38,13 @@ typedef struct appdata
    float rotationY;
 
    // ~ Multi Touch
+   Eina_Bool multi_mouse_start : 1;
    Eina_Bool multi_mouse_down : 1;
    float positionZ;
 
 } appdata_s;
-//add
+
+void login_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* __other_H__ */
 

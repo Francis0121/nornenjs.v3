@@ -24,7 +24,6 @@ bool connect_finish = false;
 unsigned char * deprecated[6];
 int count = -1;
 
-
 class connection_listener
 {
     sio::client &handler;
@@ -108,11 +107,8 @@ extern "C" {
 			_lock.unlock();
 		});
 
-
 		h.bind_event("tizenJpeg", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
 			_lock.lock();
-
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind event \"stream_buf\"\n");
 
 			int size = data->get_map()["stream"]->get_map()["size"]->get_int();
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
@@ -147,8 +143,6 @@ extern "C" {
 		while(LOOP_FLAG){}
 
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function close");
-
-
 	}
 }
 

@@ -4,11 +4,11 @@
 <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"></SignatureMethod>
 <Reference URI="author-signature.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>ff/vm+fPceFYooq/L9RVDG7nj+7Xf13eLiG1Mbho4LQ=</DigestValue>
+<DigestValue>Cj51vxgf8ViMcAsKTG/tsyKiOpmG8JOKSlqnSQ1qejk=</DigestValue>
 </Reference>
 <Reference URI="bin%2Fother">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>n5dYBJ8zW3LLEgC8nJ/d9wp0H6jWsNAeHA0ugJyEodo=</DigestValue>
+<DigestValue>EJaJQmc4COJaabvD7ZGriDyaGBqPs4PKWzNyZvgOqE4=</DigestValue>
 </Reference>
 <Reference URI="lib%2Flibboost_system.so">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
@@ -18,13 +18,13 @@
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
 <DigestValue>YQ2PprhIGS1zyOVuAujWimsRyH4O3Xjmw6kxLVQKvSA=</DigestValue>
 </Reference>
-<Reference URI="shared%2Fres%2Fother.png">
+<Reference URI="shared%2Fres%2Ffavicon.png">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>1d0oEZHqPn+QzNzGIHwj9ODby6x9ggFs9uOsav6jPNs=</DigestValue>
+<DigestValue>xj2pngin8R80yiBRunYKTbiPRB6fdEtaPt0E5/nhSy8=</DigestValue>
 </Reference>
 <Reference URI="tizen-manifest.xml">
 <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></DigestMethod>
-<DigestValue>HzxwIKY6lgI1KaeVdxDw7ZEM2fpmiRkruemlCTpbBNc=</DigestValue>
+<DigestValue>5EHy/Uenrt4u0rqa6gkSOVMwY/5s2zxtCBn+DLQOjVA=</DigestValue>
 </Reference>
 <Reference URI="#prop">
 <Transforms>
@@ -35,9 +35,9 @@
 </Reference>
 </SignedInfo>
 <SignatureValue>
-i7N9bU60KeJuomsLI01J4mf+WydsZzFSR2NDV0SqeV5tv0vT2f6oizdm8WdI1ypfbf36Cn4A+cA7
-5zZdssBt94ppXZ+K7IFQPMAZj9xHgyS/1GB/fQMgoyHeehbQRjepoHYiYR0IvoH5pQcSP//XssWU
-0FgzDVTt8k3VRFVkLak=
+Nm7OhijzMNIBSMx2+ZsXTo6jafte2nZKuON+VR69RT/cERfbKUz3GGrmcoMo2QBCaHitsTf7CZ8P
+WT9CrVStxRQlUOwjPHV5LgPeEOSpzXj/VTx+KtJs7ZSTrhPWCEQEkA89LVjdCNNTJHx0I8JbZ6UA
+7XluTP2iPTYn876/snI=
 </SignatureValue>
 <KeyInfo>
 <X509Data>

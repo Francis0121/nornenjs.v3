@@ -4,9 +4,8 @@ src/other.d: ../src/other.c \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_common.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_types.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_i18n.h \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp \
- /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp \
+ /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension.h \
+ /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension_events.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/Elementary.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/eina-1/Eina.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/eina-1/eina_config.h \
@@ -226,8 +225,9 @@ src/other.d: ../src/other.c \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/elm_deprecated.h \
  /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/other.h \
  /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/system/system_settings.h \
- /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension.h \
- /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension_events.h \
+ /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
+ /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp \
+ /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp \
  /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/copy_GLES.h
 
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app.h:
@@ -240,11 +240,9 @@ src/other.d: ../src/other.c \
 
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/appfw/app_i18n.h:
 
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp:
+/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension.h:
 
-/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
-
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp:
+/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension_events.h:
 
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/elementary-1/Elementary.h:
 
@@ -684,8 +682,10 @@ src/other.d: ../src/other.c \
 
 /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/system/system_settings.h:
 
-/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension.h:
+/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
-/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/efl-extension/efl_extension_events.h:
+/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket.hpp:
+
+/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/socket_io_client.hpp:
 
 /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/copy_GLES.h:

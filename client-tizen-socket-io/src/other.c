@@ -1,17 +1,16 @@
 #include <app.h>
-
+#include <efl_extension.h>
 #include <tizen.h>
-#include "socket.hpp"
-#include "socket_io_client.hpp"
-#include "other.h"
 #include <pthread.h>
 
-//add
-#include <app.h>
-#include <efl_extension.h>
+#include "other.h"
+#include "socket.hpp"
+#include "socket_io_client.hpp"
 #include "copy_GLES.h"
 
 #define LOG_TAG_SOCKET_IO "socket.io"
+
+static pthread_t thread_id;
 
 // ~ Mouse event
 static void
@@ -23,8 +22,7 @@ mouse_down_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 
 static void
 mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
-	Evas_Event_Mouse_Move *ev;
-	ev = (Evas_Event_Mouse_Move *)event_info;
+	Evas_Event_Mouse_Move *ev = (Evas_Event_Mouse_Move *)event_info;
 	appdata_s *ad = data;
 
 	if(ad->mouse_down && !ad->multi_mouse_down) {
@@ -36,6 +34,11 @@ mouse_move_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 			emit_jpeg(ad->rotationX, ad->rotationY);
 		}
 	}
+
+	if(ad->multi_mouse_down && !ad->multi_mouse_start){
+		ad->multi_mouse_start = EINA_TRUE;
+		dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch start point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
+	}
 }
 
 static void
@@ -44,31 +47,23 @@ mouse_up_cb(void *data, Evas *e , Evas_Object *obj , void *event_info){
 	ad->mouse_down = EINA_FALSE;
 }
 
-
 // ~ Multi Mouse event
 static void
 multi_mouse_down_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 	ad->multi_mouse_down = EINA_TRUE;
 	ad->requestCount = 0;
-	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse down");
 }
 
 static void
 multi_mouse_move_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
-
-	Evas_Event_Multi_Move *ev = (Evas_Event_Mouse_Move *) event_info;
+	Evas_Event_Multi_Move *ev = (Evas_Event_Multi_Move *) event_info;
 	appdata_s *ad = data;
 
 	if(ad->multi_mouse_down) {
-
 		if((ad->requestCount++)%3 == 0){
-			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse move 01 %i %i %i", ev->radius_x, ev->radius_y, ev->radius);
-			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse move 02 %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
-			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "multi mouse move 03 %f %f", ev->cur.canvas.xsub, ev->cur.canvas.ysub);
-
+			dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Multi touch move point %i %i", ev->cur.canvas.x, ev->cur.canvas.y);
 		}
-
 	}
 }
 
@@ -76,14 +71,11 @@ static void
 multi_mouse_up_cb(void *data, Evas *e, Evas_Object *obj , void *event_info){
 	appdata_s *ad = data;
 	ad->multi_mouse_down = EINA_FALSE;
-	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "mutil mouse up");
+	ad->multi_mouse_start = EINA_FALSE;
 }
 
-static pthread_t thread_id;
-
 static Evas_Object*
-_glview_create(appdata_s *ad)
-{
+_glview_create(appdata_s *ad){
    Evas_Object *obj;
 
    /* Create a GLView with an OpenGL-ES 1.1 context */
@@ -101,42 +93,28 @@ _glview_create(appdata_s *ad)
    elm_glview_render_func_set(obj, draw_gl);
 
    return obj;
-}//add
+}
 
 static Eina_Bool
-_anim_cb(void *data)
-{
+_anim_cb(void *data){
    appdata_s *ad = data;
-
    elm_glview_changed_set(ad->glview);
    return ECORE_CALLBACK_RENEW;
-}//add
+}
 
 static void
-_destroy_anim(void *data, Evas *evas, Evas_Object *obj, void *event_info)
-{
+_destroy_anim(void *data, Evas *evas, Evas_Object *obj, void *event_info){
    Ecore_Animator *ani = data;
    ecore_animator_del(ani);
-}//add
+}
 
 static void
-_close_cb(void *data EINA_UNUSED,
-          Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
+_close_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED){
    ui_app_exit();
-}//add
-
-static void _btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-
-
-}//add
-
+}
 
 static void
-_win_resize_cb(void *data, Evas *e EINA_UNUSED,
-               Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
+_win_resize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED){
    int w, h;
    appdata_s *ad = data;
 
@@ -145,114 +123,101 @@ _win_resize_cb(void *data, Evas *e EINA_UNUSED,
    evas_object_resize(ad->bg, w, h);
 }//add
 
+static void
+btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
+{
+	dlog_print(DLOG_VERBOSE, LOG_TAG_SOCKET_IO, "Click event move view");
+
+}
+
 static bool
 app_create(void *data)
 {
-	Evas_Object *o, *t;
-	   appdata_s *ad = (appdata_s*)data;
+	Evas_Object *o, *t, *btn;
+	appdata_s *ad = (appdata_s*)data;
 
-	   /* Force OpenGL engine */
-	   elm_config_accel_preference_set("opengl");
+	/* Force OpenGL engine */
+	elm_config_accel_preference_set("opengl");
 
-	   /* Add a window */
-	   ad->win = o = elm_win_add(NULL,"glview", ELM_WIN_BASIC);
-	   evas_object_smart_callback_add(o, "delete,request", _close_cb, ad);
-	   evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _win_resize_cb, ad);
-	   eext_object_event_callback_add(o, EEXT_CALLBACK_BACK, _close_cb, ad);
-	   evas_object_show(o);
+	/* Add a window */
+	ad->win = o = elm_win_add(NULL,"glview", ELM_WIN_BASIC);
+	evas_object_smart_callback_add(o, "delete,request", _close_cb, ad);
+	evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _win_resize_cb, ad);
+	eext_object_event_callback_add(o, EEXT_CALLBACK_BACK, _close_cb, ad);
+	evas_object_show(o);
 
-	   /* Add a background */
-	   ad->bg = o = elm_bg_add(ad->win);
-	   elm_win_resize_object_add(ad->win, ad->bg);
-	   elm_bg_color_set(o, 68, 68, 68);
-	   evas_object_show(o);
+	/* Add a resize conformant */
+	ad->conform = o = elm_conformant_add(ad->win);
+	elm_win_resize_object_add(ad->win, ad->conform);
+	evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_show(o);
 
-	   /* Add a resize conformant */
-	   ad->conform = o = elm_conformant_add(ad->win);
-	   elm_win_resize_object_add(ad->win, ad->conform);
-	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	   evas_object_show(o);
+	ad->table = t = elm_table_add(ad->win);
+	evas_object_show(t);
 
-	   ad->table = t = elm_table_add(ad->win);
-	   evas_object_show(t);
+	ad->glview = o = _glview_create(ad);
+	evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	evas_object_show(o);
 
-	   o = elm_label_add(ad->win);
-	   elm_object_text_set(o, "Gles 1.1 Cube");
-	   elm_table_pack(t, o, 1, 0, 3, 1);
-	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	   evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
-	   evas_object_show(o);
+	ad->anim = ecore_animator_add(_anim_cb, ad);
+	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
 
-	   o = elm_button_add(ad->win);
-	   elm_object_text_set(o, "Quit");
-	   //evas_object_smart_callback_add(o, "clicked", _close_cb, ad);
-	   evas_object_smart_callback_add(o, "clicked", _btn_clicked_cb, ad);
-	   elm_table_pack(t, o, 1, 9, 3, 1);
-	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	   evas_object_size_hint_weight_set(o, 0.00001, 0.00001);
-	   evas_object_show(o);
+	// ~ evas object add button
+	btn = elm_button_add(ad->win);
+	elm_object_text_set(btn, "Login");
+	elm_table_pack(t, btn, 1, 9, 3, 1);
+	evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+	evas_object_size_hint_weight_set(btn, 0.00001, 0.00001);
+	evas_object_smart_callback_add(btn, "clicked", btn_clicked_cb, (void *)4);
+	evas_object_show(btn);
 
-	   ad->glview = o = _glview_create(ad);
-	   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
-	   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	   evas_object_show(o);
+	// ~ touch event add
+	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_DOWN, mouse_down_cb, ad);
+	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_UP, mouse_up_cb, ad);
+	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_MOVE, mouse_move_cb, ad);
 
-	   ad->anim = ecore_animator_add(_anim_cb, ad);
-	   evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_DEL, _destroy_anim, ad->anim);
+	// ~ multi touch event
+	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_DOWN, multi_mouse_down_cb, ad);
+	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_MOVE, multi_mouse_move_cb, ad);
+	evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_UP, multi_mouse_up_cb, ad);
 
-	    // ~ touch event add
-		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_DOWN, mouse_down_cb, ad);
-		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_UP, mouse_up_cb, ad);
-		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MOUSE_MOVE, mouse_move_cb, ad);
+   int status = 0;
 
-		// ~ multi touch event
-		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_DOWN, multi_mouse_down_cb, ad);
-		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_MOVE, multi_mouse_move_cb, ad);
-		evas_object_event_callback_add(ad->glview, EVAS_CALLBACK_MULTI_UP, multi_mouse_up_cb, ad);
+	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
 
-	   int status = 0;
+	int threadError = 0;
 
-	   	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_start");
+	if( (threadError = pthread_create(&thread_id, NULL, socket_io_client,(void *)o ) ) ){
+		dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
+	}
 
-	   	int threadError = 0;
-
-	   	if ((threadError = pthread_create(&thread_id, NULL, socket_io_client, (void *)o))){
-	   			perror("pthread_create!\n");
-	   			dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "thread_error %d", threadError);
-	   	}
-
-	   	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
-
-	   return true;
+	dlog_print(DLOG_FATAL, LOG_TAG_SOCKET_IO, "finish %d", status);
+   return true;
 }
 
 static void
-app_control(app_control_h app_control, void *data)
-{
-
+app_control(app_control_h app_control, void *data){
 
 	/* Show window after base gui is set up */
 
 	/* Handle the launch request. */
-
 }
 
 static void
-app_pause(void *data)
-{
+app_pause(void *data){
 	/* Take necessary actions when application becomes invisible. */
+
 }
 
 static void
-app_resume(void *data)
-{
+app_resume(void *data){
 	/* Take necessary actions when application becomes visible. */
 }
 
 static void
-app_terminate(void *data)
-{
+app_terminate(void *data){
 	/* Release all resources. */
 	turn_off_flag();
 
@@ -263,8 +228,7 @@ app_terminate(void *data)
 }
 
 static void
-ui_app_lang_changed(app_event_info_h event_info, void *user_data)
-{
+ui_app_lang_changed(app_event_info_h event_info, void *user_data){
 	/*APP_EVENT_LANGUAGE_CHANGED*/
 	char *locale = NULL;
 	system_settings_get_value_string(SYSTEM_SETTINGS_KEY_LOCALE_LANGUAGE, &locale);
@@ -274,40 +238,33 @@ ui_app_lang_changed(app_event_info_h event_info, void *user_data)
 }
 
 static void
-ui_app_orient_changed(app_event_info_h event_info, void *user_data)
-{
+ui_app_orient_changed(app_event_info_h event_info, void *user_data){
 	/*APP_EVENT_DEVICE_ORIENTATION_CHANGED*/
 	return;
 }
 
 static void
-ui_app_region_changed(app_event_info_h event_info, void *user_data)
-{
+ui_app_region_changed(app_event_info_h event_info, void *user_data){
 	/*APP_EVENT_REGION_FORMAT_CHANGED*/
 }
 
 static void
-ui_app_low_battery(app_event_info_h event_info, void *user_data)
-{
+ui_app_low_battery(app_event_info_h event_info, void *user_data){
 	/*APP_EVENT_LOW_BATTERY*/
 }
 
 static void
-ui_app_low_memory(app_event_info_h event_info, void *user_data)
-{
+ui_app_low_memory(app_event_info_h event_info, void *user_data){
 	/*APP_EVENT_LOW_MEMORY*/
 }
 
-
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]){
 	appdata_s ad = {0,};
 	int ret = 0;
 
 	ui_app_lifecycle_callback_s event_callback = {0,};
 	app_event_handler_h handlers[5] = {NULL, };
-
 
 	event_callback.create = app_create;
 	event_callback.terminate = app_terminate;
@@ -315,7 +272,7 @@ main(int argc, char *argv[])
 	event_callback.resume = app_resume;
 	event_callback.app_control = app_control;
 
-
+	// ~ Why declare these event handler ?
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_BATTERY], APP_EVENT_LOW_BATTERY, ui_app_low_battery, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_LOW_MEMORY], APP_EVENT_LOW_MEMORY, ui_app_low_memory, &ad);
 	ui_app_add_event_handler(&handlers[APP_EVENT_DEVICE_ORIENTATION_CHANGED], APP_EVENT_DEVICE_ORIENTATION_CHANGED, ui_app_orient_changed, &ad);
@@ -326,9 +283,7 @@ main(int argc, char *argv[])
 	ret = ui_app_main(argc, argv, &event_callback, &ad);
 
 	int thread_return;
-
-	pthread_join(thread_id,&thread_return);
-
+	pthread_join(thread_id, &thread_return);
 	if (ret != APP_ERROR_NONE) {
 		dlog_print(DLOG_ERROR, LOG_TAG, "app_main() is failed. err = %d", ret);
 	}
