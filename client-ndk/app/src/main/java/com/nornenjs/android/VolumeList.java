@@ -123,8 +123,8 @@ public class VolumeList extends Activity {
 
         menuBtn = (ImageView) findViewById(R.id.menuBtn);
 
-        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-            menuBtn.setVisibility(View.VISIBLE);
+//        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+//            menuBtn.setVisibility(View.VISIBLE);
 
         menuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -501,36 +501,5 @@ public class VolumeList extends Activity {
             super.onBackPressed();
         }
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d(TAG, "keyCode : " + keyCode);
-
-        if(keyCode == 82)
-        {
-            //new BottomSheet.Builder(this).title("").sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
-            new BottomSheet.Builder(this).sheet(R.menu.list).listener(new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case R.id.help:
-
-                            break;
-                        case R.id.logout:
-                            SharedPreferences pref = getSharedPreferences("userInfo", 0);
-                            SharedPreferences.Editor prefEdit = pref.edit();
-
-                            prefEdit.putString("username", "");
-                            Intent intent = new Intent(VolumeList.this, LoginActivity.class);
-
-                            startActivity(intent);
-                            finish();
-                            break;
-                    }
-                }
-            }).show();
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
+    
 }

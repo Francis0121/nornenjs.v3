@@ -38,11 +38,11 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
     private Activity activity;
     private VolumeList volumelist_Page;
 
-    private Context mContext;
+    //private Context mContext;
 
-    public ImageAdapter(Context c) {
-        mContext = c;
-    }
+//    public ImageAdapter(Context c) {
+//        mContext = c;
+//    }
     private ConvertDisplay display;
 
     public ImageAdapter(List<String> titles1, List<Bitmap> thumbnails1, List<Integer> pns1, List<String> date1, List<String> metadata1, Activity activity) {
