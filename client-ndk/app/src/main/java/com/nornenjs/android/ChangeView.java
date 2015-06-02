@@ -1,8 +1,10 @@
 package com.nornenjs.android;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,18 +78,43 @@ public class ChangeView {
 
                 jniActivity.setContentView(R.layout.toggle);
                 jniActivity.togglebtn = (Button) jniActivity.findViewById(R.id.toggleVol);
+                jniActivity.togglebtn.setWidth(40);//(int) display.GetDipsFromPixel(40)
+                jniActivity.togglebtn.invalidate();
+                jniActivity.togglebtn.setHeight(40);//(int) display.GetDipsFromPixel(40)
+                jniActivity.togglebtn.invalidate();
+
+
                 jniActivity.toggleMip = (Button) jniActivity.findViewById(R.id.toggleMip);
                 jniActivity.toggleMenu = (Button) jniActivity.findViewById(R.id.toggleMenu);
                 jniActivity.positionX = (Button) jniActivity.findViewById(R.id.positionX);
                 jniActivity.positionY = (Button) jniActivity.findViewById(R.id.positionY);
                 jniActivity.positionZ = (Button) jniActivity.findViewById(R.id.positionZ);
 
+                RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(80, 80);
+                RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(80, 80);
+                RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(80, 80);
+                RelativeLayout.LayoutParams layoutParams4 = new RelativeLayout.LayoutParams(80, 80);
+                RelativeLayout.LayoutParams layoutParams5 = new RelativeLayout.LayoutParams(80, 80);
+
+                jniActivity.togglebtn.setLayoutParams (new RelativeLayout.LayoutParams(80, 80));
+                layoutParams1.addRule(RelativeLayout.RIGHT_OF, R.id.toggleVol);
+                jniActivity.toggleMip.setLayoutParams(layoutParams1);
+                layoutParams1.addRule(RelativeLayout.RIGHT_OF, R.id.toggleMip);
+                jniActivity.toggleMenu.setLayoutParams(layoutParams2);
+                layoutParams2.addRule(RelativeLayout.RIGHT_OF, R.id.toggleMenu);
+                jniActivity.positionX.setLayoutParams(layoutParams3);
+                layoutParams3.addRule(RelativeLayout.RIGHT_OF, R.id.positionX);
+                jniActivity.positionY.setLayoutParams(layoutParams4);
+                layoutParams4.addRule(RelativeLayout.RIGHT_OF, R.id.positionY);
+                jniActivity.positionZ.setLayoutParams(layoutParams5);
+                layoutParams5.addRule(RelativeLayout.RIGHT_OF, R.id.positionZ);
+
                 jniActivity.togglebtn.setOnClickListener(jniActivity.mRenderer);
                 jniActivity.toggleMip.setOnClickListener(jniActivity.mRenderer);
                 jniActivity.toggleMenu.setOnClickListener(jniActivity.mRenderer);
                 jniActivity.positionX.setOnClickListener(jniActivity.mRenderer);
                 jniActivity.positionY.setOnClickListener(jniActivity.mRenderer);
-                jniActivity. positionZ.setOnClickListener(jniActivity.mRenderer);
+                jniActivity.positionZ.setOnClickListener(jniActivity.mRenderer);
 
                 ViewParent parent = jniActivity.togglebtn.getParent();
                 ViewGroup group = (ViewGroup) parent;
@@ -189,6 +216,14 @@ public class ChangeView {
 
     }
 
+    private float convertPixelsToDp(float px){
+        //해상도별로 해도 잘 안됨. 폰마다 굵기가 다르게 나옴.
+        Resources resources = jniActivity.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        Log.d("", "metrics.densityDpi : "+ metrics.densityDpi);//내꺼 480일때, 성근 320
+        float dp = px * (metrics.densityDpi / 160f);
+        return dp;
+    }
     final Handler mprhandler = new Handler()
     {
 

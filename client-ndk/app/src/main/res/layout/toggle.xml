@@ -6,8 +6,8 @@
 
     <Button
             android:id="@+id/toggleVol"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/volume_on"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
@@ -15,54 +15,49 @@
             android:layout_alignParentLeft="true"/>
     <Button
             android:id="@+id/toggleMip"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/mip_off"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/toggleVol"/>
+            android:layout_alignParentTop="true"/>
 
     <Button
             android:id="@+id/toggleMenu"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/option_on"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/toggleMip"
             />
 
     <Button
             android:id="@+id/positionX"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/mprx_off"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/toggleMenu"
             />
     <Button
             android:id="@+id/positionY"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/mpry_off"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/positionX"
             />
     <Button
             android:id="@+id/positionZ"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/mprz_off"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/positionY"
             />
     
 
