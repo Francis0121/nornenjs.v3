@@ -80,6 +80,8 @@ public class MprActivity extends Activity {
         this.myEventListener = myEventListener;
     }
 
+    public ChangeView changeView;
+
 
     String host;
 
@@ -89,7 +91,7 @@ public class MprActivity extends Activity {
         setContentView(R.layout.loding);
 
         Intent intent = getIntent();
-        volumeWidth=  intent.getIntExtra("width",256);
+        volumeWidth=  intent.getIntExtra("width", 256);
         volumeHeight = intent.getIntExtra("height", 256);
         volumeDepth = intent.getIntExtra("depth", 255);
         volumeSavePath = intent.getStringExtra("savepath");
@@ -103,13 +105,20 @@ public class MprActivity extends Activity {
         Log.d(TAG, "before create TouchSurfaceView");
         mGLSurfaceView = new TouchSurfaceView(this, host);
         Log.d(TAG, "setcontentView mGLSurfaceView");
+
         mRenderer = new MPRRenderer(this, host);
-        Log.d("emitTag","make CudaRenderer");
+//        if(intent.getStringExtra("step").equals("preview"))
+//            mRenderer = new MPRRenderer(this, host);
+//        else
+//            mRenderer = new MPRRenderer(this);
+//        Log.d("emitTag","make CudaRenderer");
+
         mGLSurfaceView.setRenderer(this.mRenderer);
 
         mGLSurfaceView.requestFocus();
         mGLSurfaceView.setFocusableInTouchMode(true);
 
+        changeView = new ChangeView(MprActivity.this);
         //GLSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
     }
@@ -158,82 +167,7 @@ public class MprActivity extends Activity {
     public static native void nativeSetTextureData(int[] pixels, int width, int height);
 
     //@Override
-    public void setView() {
-        if(!mGLSurfaceView.isShown())
-        {
-            Log.d(TAG, "setView() called");
-            new Thread()
 
-            {
-
-                public void run()
-
-                {
-
-                    Message msg = handler.obtainMessage();
-
-                    handler.sendMessage(msg);
-
-                }
-
-            }.start();
-        }
-
-    }
-
-    final Handler handler = new Handler()
-    {
-
-        public void handleMessage(Message msg)
-
-        {
-            Log.d(TAG, "handleMessage() called");
-
-
-//            RelativeLayout loadingView = (RelativeLayout) findViewById(R.id.loding);
-//            loadingView.setVisibility(View.GONE);
-//            RelativeLayout surfaceVuew = (RelativeLayout) findViewById(R.id.renderview);
-//            surfaceVuew.setVisibility(View.VISIBLE);
-
-            setContentView(R.layout.activity_mpr);
-
-            sb = (SeekBar) findViewById(R.id.player_seek_horizontal);
-            sb.setProgress(50);
-            sb.setOnSeekBarChangeListener(mRenderer);
-            //sb.setOnSeekBarChangeList.getRenderMode());
-
-            //final RelativeLayout newContainer = (RelativeLayout) findViewById(R.id.group);
-            final RelativeLayout newContainer = new RelativeLayout(MprActivity.this);//FrameLayout
-
-            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT );
-
-            newContainer.setLayoutParams(layoutParams);
-
-            ViewParent parent = sb.getParent();
-            ViewGroup group = (ViewGroup)parent;
-            group.addView(mGLSurfaceView);
-
-            sb.bringToFront();
-            sb.invalidate();
-
-            //setContentView(newContainer);
-            //layoutParams.addRule(RelativeLayout.BELOW, mGLSurfaceView);
-            //newContainer.setLayoutParams(layoutParams);
-            //newContainer.addView(mGLSurfaceView);
-            //TextView tv = new TextView(getApplicationContext());
-
-            //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, R.id.ttt);
-            //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, R.id.ttt);
-            //newContainer.addView(tv);
-
-            //setContentView(newContainer);
-
-            //newContainer.invalidate();
-
-        }
-
-    };
 
 
     class TouchSurfaceView extends GLSurfaceView {
@@ -358,7 +292,7 @@ public class MprActivity extends Activity {
                             byteArray = (byte[]) info.get("data");
                             width = (Integer) info.get("width");
                             height = (Integer) info.get("height");
-                            mActivity.setView();
+                            changeView.setMprView();
                             imgPanda = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
                             Log.d("pixels", "getWidth()1 : " + imgPanda.getWidth() + ", getHeight() : " + imgPanda.getHeight());
@@ -380,6 +314,14 @@ public class MprActivity extends Activity {
 
             }
         }
+
+        public MPRRenderer(Context activity)
+        {
+            mActivity = (MprActivity) activity;
+            mActivity.setMyEventListener(this);
+
+        }
+
 
         //public MPRRenderer(MprActivity activity, String host) {
         public MPRRenderer(Context activity, String host) {
@@ -431,23 +373,30 @@ public class MprActivity extends Activity {
         }
 
 
+
+        int[] pixels2 = new int[512*512];
+        int[] pixels = new int[256*256];
+
         public void onDrawFrame(GL10 gl) {
 
-            if(byteArray!=null) {
+            if(imgPanda!=null) {
 
-                //사이즈를 조건문으로 생성해주면 검은걸 잡을수도있을거같아.
-
-                int[] pixels = new int[width.intValue()*height.intValue()];
-                if(imgPanda.getWidth() == width.intValue())
+                if(width.intValue() == 512)
+                {
+                    imgPanda.getPixels(pixels2, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
+                    mActivity.nativeSetTextureData(pixels2, width.intValue(), height.intValue());
+                }
+                else
                 {
                     imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
                     mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
-                    mActivity.draw++;
-                    mActivity.nativeDrawIteration(0, 0);
                 }
-
+                
             }
+            else
+                Log.d("Jni", "byteArray is null");
 
+            mActivity.nativeDrawIteration(0, 0);
 
         }
 

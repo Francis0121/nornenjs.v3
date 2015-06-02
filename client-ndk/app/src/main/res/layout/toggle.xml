@@ -33,6 +33,37 @@
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@+id/toggleMip"
             />
+
+    <Button
+            android:id="@+id/positionX"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/option_on"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/toggleMenu"
+            />
+    <Button
+            android:id="@+id/positionY"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/option_on"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/positionX"
+            />
+    <Button
+            android:id="@+id/positionZ"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/option_on"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/positionY"
+            />
     
 
     <RelativeLayout
@@ -67,11 +98,29 @@
                     android:paddingRight="10dp"
                     android:maxHeight="2dp"
                     android:thumb="@drawable/thumb"
-
                     android:max="800"
                     android:layout_gravity="center_vertical"/>
 
         </LinearLayout>
     </RelativeLayout>
+        <SeekBar
 
+                android:id="@+id/player_seek_horizontal"
+                style="@style/mySeekBar"
+                android:layout_gravity="center_vertical"
+                android:max="100"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/round_background"
+                android:maxHeight="18dp"
+                android:minHeight="18dp"
+                android:paddingRight="4dp"
+                android:paddingLeft="4dp"
+                android:layout_marginBottom="30dp"
+                android:thumb="@drawable/thumbimg"
+
+
+                />
 </RelativeLayout>

@@ -84,18 +84,28 @@ public class DrawActivity extends View{
 
 
         // ~ TODO 해당 수식이 맞는지 확인 필요
+        Log.d(TAG, "otfEnd : " + otfEnd + ", otfStart : " + otfStart);
         Double diffDistance = new Double(otfEnd - otfStart);
+        Log.d(TAG, "diffDistance : " + diffDistance);
         Double onePoint = diffDistance / new Double(TRANSFER_MAX_VALUE);
 
-        tl_x = Double.valueOf(onePoint * TRANSFER_MID1).intValue();
-        tr_x = Double.valueOf(onePoint * TRANSFER_MID2).intValue();
-        bl_x = Double.valueOf(onePoint * TRANSFER_START).intValue();
-        br_x = Double.valueOf(onePoint * TRANSFER_END).intValue();
+
+        Log.d(TAG, "topleft : " + onePoint * TRANSFER_MID1);
+        Log.d(TAG, "topright : " + onePoint * TRANSFER_MID2);
+        Log.d(TAG, "bottomleft : " + onePoint * TRANSFER_START);
+        Log.d(TAG, "bottomright : " + onePoint * TRANSFER_END);
+
+        tl_x = Double.valueOf((onePoint * TRANSFER_MID1) + otf_start).intValue();
+        tr_x = Double.valueOf(onePoint * TRANSFER_MID2 + otf_start).intValue();
+        bl_x = Double.valueOf(onePoint * TRANSFER_START + otf_start).intValue();
+        br_x = Double.valueOf(onePoint * TRANSFER_END + otf_start).intValue();
 
         topLeft = new Point(tl_x, tl_y);
         topRight = new Point(tr_x, tr_y);
         bottomLeft = new Point(bl_x, bl_y);
         bottomRight = new Point(br_x, br_y);
+
+
 
         left = new Line(topLeft, bottomLeft);
         top = new Line(topLeft, topRight);
@@ -149,13 +159,13 @@ public class DrawActivity extends View{
 
     public void drawBackground(Canvas canvas) {
         //점선
-        canvas.drawLine(otf_start-LEFT_MARGIN_VALUE+20, otfHeightStart, otf_end+LEFT_MARGIN_VALUE, otfHeightStart, bg_Paint);
+        canvas.drawLine(otf_start - LEFT_MARGIN_VALUE + 20, otfHeightStart, otf_end + LEFT_MARGIN_VALUE, otfHeightStart, bg_Paint);
 
         //기준선 2개
         bg_LinePaint.setColor(Color.BLACK);
         bg_LinePaint.setStrokeWidth(convertPixelsToDp(5));//15
         canvas.drawLine(otf_start, otfHeightStart - TOP_MARGIN_VALUE, otf_start, otfHeightEnd + TOP_MARGIN_VALUE, bg_LinePaint); //세로
-        canvas.drawLine(otf_start-LEFT_MARGIN_VALUE+20, otfHeightEnd, otf_end+LEFT_MARGIN_VALUE, otfHeightEnd, bg_LinePaint);//가로
+        canvas.drawLine(otf_start - LEFT_MARGIN_VALUE + 20, otfHeightEnd, otf_end + LEFT_MARGIN_VALUE, otfHeightEnd, bg_LinePaint);//가로
 
         //사다리꼴 3개 라인
         bg_LinePaint.setColor(Color.LTGRAY);
@@ -166,15 +176,88 @@ public class DrawActivity extends View{
 
         //꼭지점 4개
 
+        cPaint.setColor(Color.DKGRAY);
         canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
         canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
         canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
         canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
 
-        Log.d(TAG, "otf TopLeft : " + calc(topLeft.x));
-        Log.d(TAG, "otf TopRight : " + calc(topRight.x));
-        Log.d(TAG, "otf bottomLeft : " + calc(bottomLeft.x));
-        Log.d(TAG, "otf bottomRight " + calc(bottomRight.x));
+
+        if(t_Left)
+        {
+            //cPaint.setColor(4f1515);//4f1515
+            cPaint.setColor(Color.parseColor("#701d1d"));
+            canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+            cPaint.setColor(Color.DKGRAY);
+            canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+            canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+            canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+        }
+
+        if(t_Right)
+        {
+            cPaint.setColor(Color.parseColor("#701d1d"));
+            canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+            cPaint.setColor(Color.DKGRAY);
+            canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+            canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+            canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+        }
+
+        if(b_Left)
+        {
+            cPaint.setColor(Color.parseColor("#701d1d"));
+            canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+            cPaint.setColor(Color.DKGRAY);
+            canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+            canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+            canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+
+        }
+        if(b_Right)
+        {
+            cPaint.setColor(Color.parseColor("#701d1d"));
+            canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+
+            cPaint.setColor(Color.DKGRAY);
+            canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+            canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+            canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+        }
+        if(left_line)
+        {
+
+            cPaint.setColor(Color.parseColor("#701d1d"));
+            canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+            canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+            cPaint.setColor(Color.DKGRAY);
+            canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+            canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+
+        }
+
+        if(right_line)
+        {
+            cPaint.setColor(Color.parseColor("#701d1d"));
+            canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+            canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+            cPaint.setColor(Color.DKGRAY);
+            canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+            canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+        }
+
+        if(top_line)
+        {
+            cPaint.setColor(Color.parseColor("#701d1d"));//4f1515
+            canvas.drawCircle(topRight.getX(), topRight.getY(), convertPixelsToDp(topRight.getRadius()), cPaint);
+            canvas.drawCircle(bottomRight.getX(), bottomRight.getY(), convertPixelsToDp(bottomRight.getRadius()), cPaint);
+            canvas.drawCircle(topLeft.getX(), topLeft.getY(), convertPixelsToDp(topLeft.getRadius()), cPaint);
+            canvas.drawCircle(bottomLeft.getX(), bottomLeft.getY(), convertPixelsToDp(bottomLeft.getRadius()), cPaint);
+        }
+
+//        Log.d(TAG, "test calc1 : " + calc(otf_start));
+//        Log.d(TAG, "test calc2 : " + calc(otf_end));
+
     }
 
     float beforeX;
@@ -297,10 +380,10 @@ public class DrawActivity extends View{
                 e.printStackTrace();
             }
 
-            Log.d(TAG, "otf TopLeft : " + calc(topLeft.x));
-            Log.d(TAG, "otf TopRight : " + calc(topRight.x));
-            Log.d(TAG, "otf bottomLeft : " + calc(bottomLeft.x));
-            Log.d(TAG, "otf bottomRight " + calc(bottomRight.x));
+            Log.d(TAG, "after otf TopLeft : " + calc(topLeft.x));
+            Log.d(TAG, "after otf TopRight : " + calc(topRight.x));
+            Log.d(TAG, "after otf bottomLeft : " + calc(bottomLeft.x));
+            Log.d(TAG, "after otf bottomRight " + calc(bottomRight.x));
             invalidate();
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
             if(t_Left) {
@@ -321,6 +404,7 @@ public class DrawActivity extends View{
                 right_line = false;
                 beforeX = 0;
             }
+            invalidate();
             jniGLActivity.myEventListener.OtfEvent(calc(bottomLeft.x), calc(topLeft.x), calc(topRight.x), calc(bottomRight.x), 2);
         }
         return super.onTouchEvent(event);
@@ -328,7 +412,9 @@ public class DrawActivity extends View{
     }
 
     private int calc(float temp) {
-        int value = (int)(((temp - (otf_start+5)) * 255)/((otf_end-5)-(otf_start+5)));
+        Log.d("calc fun", "otf_start : " + otf_start + "otf_end : " + otf_end);
+        int value = (int)(((temp - (otf_start)) * 255)/((otf_end)-(otf_start)));//int가 아니라 반올림해주자.
+        Log.d("calc fun", "temp : " +temp + "value : " + value);
         return value < 0 ? 0 : value;
     }
 
@@ -390,7 +476,7 @@ public class DrawActivity extends View{
         }
 
         public boolean checkPoint(float x, float y){
-            if((x - (this.x + this.radius)) * (x - (this.x + this.radius)) + (y - (this.y + this.radius)) * (y - (this.y + this.radius)) <= (this.radius+10) * (this.radius+10))
+            if((x - (this.x + this.radius)) * (x - (this.x + this.radius)) + (y - (this.y + this.radius)) * (y - (this.y + this.radius)) <= (this.radius+20) * (this.radius+20))
             {
                 return true;
             }

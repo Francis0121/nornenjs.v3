@@ -87,7 +87,7 @@ public class PreviewActivity extends Activity {
                 intent.putExtra("height", height);
                 intent.putExtra("depth", depth);
                 intent.putExtra("savepath", savepath);
-
+                intent.putExtra("step", "preview");
                 intent.putExtra("datatype", position-1);
                 startActivity(intent);
             }

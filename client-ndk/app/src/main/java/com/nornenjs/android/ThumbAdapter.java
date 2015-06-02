@@ -67,12 +67,12 @@ public class ThumbAdapter extends BaseAdapter{
             view.thumbnailText = (TextView) convertView.findViewById(R.id.thumbText);
             view.thumbnailText.setVisibility(View.VISIBLE);
             view.thumbnailText.setText(text);
-            view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumbImg);
+            view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumb);
             view.thumbnailImage.setVisibility(View.GONE);
         }
         else
         {
-            view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumbImg);
+            view.thumbnailImage = (SquareImageView) convertView.findViewById(R.id.thumb);
             view.thumbnailImage.setImageBitmap(thumbnails.get(position-1));
             view.thumbnailImage.getLayoutParams().height = view.thumbnailImage.getLayoutParams().width;
             convertView.setTag(view);

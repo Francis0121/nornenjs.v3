@@ -465,12 +465,13 @@ public class VolumeList extends Activity {
 
             InputStream is = con.getInputStream();
 
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inSampleSize = 4;
-
-//            bitmap = BitmapFactory.decodeStream(is);
-
-            bitmap = BitmapFactory.decodeStream(is, null, options);
+            bitmap = BitmapFactory.decodeStream(is);
+//            BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inSampleSize = 4;
+//
+////            bitmap = BitmapFactory.decodeStream(is);
+//
+//            bitmap = BitmapFactory.decodeStream(is, null, options);
 
             con.disconnect();
         }
