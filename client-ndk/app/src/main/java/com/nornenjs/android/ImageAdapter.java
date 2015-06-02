@@ -7,16 +7,15 @@ package com.nornenjs.android;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.view.*;
+import android.widget.*;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +25,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
     private static final String TAG = "ImageAdapter";
 
+    private static final double RATIO = (170.0 / 1920.0);
 
     private List<String> titles1;
     private List<Bitmap> thumbnails1;
@@ -80,11 +80,11 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         public TextView metadata;
     }
 
+    public ViewHolder view;
 
     //@Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // TODO Auto-generated method stub
-        ViewHolder view;
         LayoutInflater inflator = activity.getLayoutInflater();
         int pos = position;// * 2;
         if(convertView==null)//list의 끝이면....
@@ -130,6 +130,13 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         else
             view.imgViewFlag.setImageBitmap(thumbnails1.get(pos));
 
+        view.imgViewFlag.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+        view.imgViewFlag.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)GetDipsFromPixel(170)));
+
+        Log.d(TAG, "width : " + view.imgViewFlag.getWidth());
+        Log.d(TAG, "height : " + view.imgViewFlag.getHeight());
+
         view.title.setText(titleText);
         view.date.setText(date1.get(pos));
         view.metadata.setText(metadata1.get(pos));
@@ -142,6 +149,44 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         });
 
         return convertView;
+    }
+
+    public double GetDipsFromPixel(float pixels)
+    {
+
+        Display display = activity.getWindowManager().getDefaultDisplay();//context.getWindowManager().getDefaultDisplay();
+        int realWidth;
+        int realHeight;
+
+        if (Build.VERSION.SDK_INT >= 17){
+            DisplayMetrics realMetrics = new DisplayMetrics();
+            display.getRealMetrics(realMetrics);
+            realWidth = realMetrics.widthPixels;
+            realHeight = realMetrics.heightPixels;
+
+        } else if (Build.VERSION.SDK_INT >= 14) {
+            try {
+                Method mGetRawH = Display.class.getMethod("getRawHeight");
+                Method mGetRawW = Display.class.getMethod("getRawWidth");
+                realWidth = (Integer) mGetRawW.invoke(display);
+                realHeight = (Integer) mGetRawH.invoke(display);
+
+            } catch (Exception e) {
+                realWidth = display.getWidth();
+                realHeight = display.getHeight();
+                Log.e("Display Info", "Couldn't use reflection to get the real display metrics.");
+            }
+
+        } else {
+
+            realWidth = display.getWidth();
+            realHeight = display.getHeight();
+        }
+        //int dp = Math.round(pixels / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+
+        //Log.d(TAG, "realWidth : " + (pixels / (realHeight / DisplayMetrics.DENSITY_DEFAULT)) + ", realHeight : " + realHeight);
+        Log.d(TAG, "realWidth : " + realHeight +", calced : " + 3 * realHeight * RATIO);
+        return 3 * realHeight * RATIO;//(int)(pixels * (realHeight / 0.0885));
     }
 
 

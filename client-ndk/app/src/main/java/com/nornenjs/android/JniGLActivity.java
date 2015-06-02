@@ -78,7 +78,7 @@ public class JniGLActivity extends Activity{
 
     RelativeLayout otf_table;
 
-    boolean menuFlag = false;
+    boolean menuFlag = true;
     //private SlidingViewHelper mSlidingViewHelper;
 
     public int volumeWidth, volumeHeight, volumeDepth;
@@ -156,16 +156,11 @@ public class JniGLActivity extends Activity{
         super.onDestroy();
     }
 
-
-    @Override
-    public void onBackPressed() {
-        if(mGLSurfaceView.isShown())
-            super.onBackPressed();
-        else
-        {
-            //흠..
-        }
+    void setVisible()
+    {
+        otf_table.setVisibility(View.VISIBLE);
     }
+
 
     int touchCount;
     @Override
@@ -427,9 +422,6 @@ public class JniGLActivity extends Activity{
                     }
                 });
 
-                //otf_table.setY(otf_table.getHeight());
-                otf_table.bringToFront();
-                otf_table.invalidate();
 
                 togglebtn.bringToFront();
                 togglebtn.invalidate();
@@ -437,6 +429,9 @@ public class JniGLActivity extends Activity{
                 toggleMip.invalidate();
                 toggleMenu.bringToFront();
                 toggleMenu.invalidate();
+
+                otf_table.bringToFront();
+                otf_table.invalidate();
 
                 setContentView(group);
 
@@ -455,6 +450,8 @@ public class JniGLActivity extends Activity{
     public void onWindowFocusChanged(boolean hasFocus) {
         if(otf_table != null)
             Log.d("Onclick", "otf_table.getHeight()1 : " + otf_table.getHeight());
+        Log.d("Onclick", "onWindowFocusChanged ");
+
         Log.d("Onclick", "onWindowFocusChanged ");
         super.onWindowFocusChanged(hasFocus);
     }
@@ -813,7 +810,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
     @Override
     public void onClick(View v) {
-        Log.d("click", "btn click");
+        Log.d("click", "btn click : ");
         switch (v.getId())
         {
             case R.id.toggleVol :
@@ -831,25 +828,27 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 v.setBackgroundResource(R.drawable.mip_on);
                 mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
 
-                if(!mActivity.menuFlag)
+                if(mActivity.menuFlag)
                     ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
                 GetPng();
                 break;
 
             case R.id.toggleMenu :
-                //이 이미지는 selector를 사용하는게 좋겠음.
-
+                Log.d("click", "mip click : " + mActivity.mRenderer.mip);
                 if(!mActivity.mRenderer.mip)
                 {
+                    Log.d("click", "mip click mActivity.menuFlag : " + mActivity.menuFlag);
                     if(!mActivity.menuFlag) {
                         Log.d("Onclick", "otf_table.getHeight()3 : " + mActivity.otf_table.getHeight());
-                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(550);
-                        mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                        Log.d("Onclick", "otf_table.getY()3 : " + mActivity.otf_table.getY());
+                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(0).setDuration(800);
+                        mActivity.toggleMenu.setBackgroundResource(R.drawable.option_on);
                     }
                     else {
                         Log.d("Onclick", "otf_table.getHeight()4 : " + mActivity.otf_table.getHeight());
-                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(0).setDuration(550);
-                        mActivity.toggleMenu.setBackgroundResource(R.drawable.option_on);
+                        Log.d("Onclick", "otf_table.getY()4 : " + mActivity.otf_table.getY());
+                        ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(800);
+                        mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                     }
                     mActivity.menuFlag = !mActivity.menuFlag;
 

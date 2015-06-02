@@ -1,24 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bold"
                 tools:context="com.nornenjs.android.VolumeList"
-                android:orientation="horizontal"
-        >
-    <LinearLayout
-            android:id="@+id/object1"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="@drawable/bold"
-            android:gravity="center"
-            android:layout_margin="7dp"
-            android:orientation="vertical">
+                android:orientation="vertical">
+
 
             <ImageView
                     android:id="@+id/imageView1"
-                    android:layout_width="170dp"
-                    android:layout_height="170dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true">
@@ -62,6 +54,3 @@
     </LinearLayout>
 
 
-
-
-</LinearLayout>
