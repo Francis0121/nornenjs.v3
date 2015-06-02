@@ -20,12 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.nornenjs.android.ConvertDisplay;
 
 public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
     private static final String TAG = "ImageAdapter";
 
-    private static final double RATIO = (170.0 / 1920.0);
+    //private static final double RATIO = (170.0 / 1920.0);
 
     private List<String> titles1;
     private List<Bitmap> thumbnails1;
@@ -37,11 +38,12 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
     private Activity activity;
     private VolumeList volumelist_Page;
 
-    private Context mContext;
+    //private Context mContext;
 
-    public ImageAdapter(Context c) {
-        mContext = c;
-    }
+//    public ImageAdapter(Context c) {
+//        mContext = c;
+//    }
+    private ConvertDisplay display;
 
     public ImageAdapter(List<String> titles1, List<Bitmap> thumbnails1, List<Integer> pns1, List<String> date1, List<String> metadata1, Activity activity) {
 
@@ -55,6 +57,8 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         this.metadata1 = metadata1;
         this.activity = activity;
         volumelist_Page = new VolumeList();
+
+        display = new ConvertDisplay(activity);
     }
 
 
@@ -101,7 +105,6 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view.imgViewFlag.setOnClickListener(this);
 
 
-            //Log.d(TAG + " getView", "thumbnails2.size() : " + thumbnails2.size() + ", position : " + position);
             convertView.setTag(view);
         }
         else
@@ -132,7 +135,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
         view.imgViewFlag.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        view.imgViewFlag.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int)GetDipsFromPixel(170)));
+        view.imgViewFlag.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) display.GetDipsFromPixel(170)));
 
         Log.d(TAG, "width : " + view.imgViewFlag.getWidth());
         Log.d(TAG, "height : " + view.imgViewFlag.getHeight());
@@ -150,46 +153,6 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
         return convertView;
     }
-
-    public double GetDipsFromPixel(float pixels)
-    {
-
-        Display display = activity.getWindowManager().getDefaultDisplay();//context.getWindowManager().getDefaultDisplay();
-        int realWidth;
-        int realHeight;
-
-        if (Build.VERSION.SDK_INT >= 17){
-            DisplayMetrics realMetrics = new DisplayMetrics();
-            display.getRealMetrics(realMetrics);
-            realWidth = realMetrics.widthPixels;
-            realHeight = realMetrics.heightPixels;
-
-        } else if (Build.VERSION.SDK_INT >= 14) {
-            try {
-                Method mGetRawH = Display.class.getMethod("getRawHeight");
-                Method mGetRawW = Display.class.getMethod("getRawWidth");
-                realWidth = (Integer) mGetRawW.invoke(display);
-                realHeight = (Integer) mGetRawH.invoke(display);
-
-            } catch (Exception e) {
-                realWidth = display.getWidth();
-                realHeight = display.getHeight();
-                Log.e("Display Info", "Couldn't use reflection to get the real display metrics.");
-            }
-
-        } else {
-
-            realWidth = display.getWidth();
-            realHeight = display.getHeight();
-        }
-        //int dp = Math.round(pixels / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-
-        //Log.d(TAG, "realWidth : " + (pixels / (realHeight / DisplayMetrics.DENSITY_DEFAULT)) + ", realHeight : " + realHeight);
-        Log.d(TAG, "realWidth : " + realHeight +", calced : " + 3 * realHeight * RATIO);
-        return 3 * realHeight * RATIO;//(int)(pixels * (realHeight / 0.0885));
-    }
-
-
 
     public void onClick(View v) {
 
