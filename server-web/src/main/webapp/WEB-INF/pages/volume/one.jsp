@@ -157,9 +157,9 @@
 </section>
 
 
-<script type="text/javascript" src="http://112.108.40.164:5000/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="http://112.108.40.166:5000/socket.io/socket.io.js"></script>
 <script type="text/javascript">
-    var relayAddr = "http://112.108.40.164:5000";
+    var relayAddr = "http://112.108.40.166:5000";
     var init = {
         savePath : '<c:out value="${data.savePath}"/>',
         width : <c:out value="${volume.width}"/>,

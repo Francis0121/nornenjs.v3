@@ -444,7 +444,7 @@ NornenjsServer.prototype.socketIoCuda = function(){
             logger.debug('[Tizen Stream] Register CUDA module ');
 
             var cudaRender = new CudaRender(
-                ENUMS.RENDERING_TYPE.VOLUME, '/storage/data/8770d870-43f1-4dca-81ef-b15d855fab8e',
+                ENUMS.RENDERING_TYPE.VOLUME, '/storage/data/6ca3600c-fc0c-4af7-b804-7d94fb4db779',
                 256, 256, 225,
                 $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
 
