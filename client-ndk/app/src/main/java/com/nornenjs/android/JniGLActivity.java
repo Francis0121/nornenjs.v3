@@ -241,8 +241,8 @@ public class JniGLActivity extends Activity{
                     oldDist = spacing(event);
 
                     oldVectorX1 = event.getX(0);
-                    oldVectorX2 = event.getX(1);
                     oldVectorY1 = event.getY(0);
+                    oldVectorX2 = event.getX(1);
                     oldVectorY2 = event.getY(1);
 
                     oldMidVectorX = midPoint(oldVectorX1, oldVectorX2);

@@ -25,8 +25,16 @@ var EVENT_MESSAGE = {
         TRANSFER_SCALE_X_EVENT : 'transferScaleXEvent',
         TRANSFER_SCALE_Y_EVENT : 'transferScaleYEvent',
         TRANSFER_SCALE_Z_EVENT : 'transferScaleZEvent'
+    },
+
+    TIZEN : {
+        REQUEST : 'tizenRequest',
+        ROTATION : 'tizenRotation',
+        ZOOM : 'tizenZoom',
+        QUALITY : 'tizenQuality',
+        BRIGHTNESS : 'tizenBrightness',
+        OTF : 'tizenOtf'
     }
-    
 };
 
 module.exports = EVENT_MESSAGE;

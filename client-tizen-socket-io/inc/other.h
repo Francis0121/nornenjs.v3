@@ -10,9 +10,9 @@
 #ifdef  LOG_TAG
 #undef  LOG_TAG
 #endif
-#define LOG_TAG "other"
+#define LOG_TAG "nornenjs"
 
-#define APPDATA_KEY "AppData"//add
+#define APPDATA_KEY "AppData" //add
 
 #if !defined(PACKAGE)
 #define PACKAGE "org.tizen.other"
@@ -20,19 +20,50 @@
 
 typedef struct appdata
 {
-   Evas_Object *table, *bg;
-   Evas_Object *win;
-   Evas_Object *glview;
-   Ecore_Animator *anim;
-   Evas_Object *conform;
+	Evas_Object *table;
+	Evas_Object *bg;
+	Evas_Object *win;
+	Evas_Object *glview;
+	Evas_Object *conform;
 
-   Evas_Object *label;//add
-   GLuint tex_ids[2];
-   GLuint g_textureName;
-   int current_tex_index;
+	Ecore_Animator *anim;
+
+	// ~ socekt.io Event handl variable
+
+	/**
+	* Touch event - 3d object rotation
+	*/
+	Eina_Bool mouse_down : 1;
+	float rotationX;
+	float rotationY;
+
+	/**
+	* Multi touch event - 3d object resize
+	*/
+	Eina_Bool multi_mouse_down : 1;
+	float oldVectorX1;
+	float oldVectorY1;
+	float oldVectorX2;
+	float oldVectorY2;
+	float newDist;
+	float oldDist;
+	float div;
+
+	/**
+	 * Brightness
+	 */
+	Eina_Bool is_brightness : 1;
+	Evas_Object *brightSlider;
+
+	/**
+	 * OTF
+	 */
+	Eina_Bool is_otf : 1;
+	Evas_Object *otfSlider;
+
 } appdata_s;
-//add
+
+void login_cb(void *data, Evas_Object *obj, void *event_info);
 
 #endif /* __other_H__ */
-
 

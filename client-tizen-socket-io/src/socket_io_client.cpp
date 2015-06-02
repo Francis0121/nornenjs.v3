@@ -8,7 +8,7 @@
 #include <string>
 #include <pthread.h>
 #include <unistd.h>
-
+#include <sstream>
 #include <image_util.h>
 
 #define QSIZE 5
@@ -23,7 +23,6 @@ bool connect_finish = false;
 
 unsigned char * deprecated[6];
 int count = -1;
-
 
 class connection_listener
 {
@@ -67,6 +66,10 @@ extern "C" {
 }
 
 extern "C" {
+	sio::client h;
+}
+
+extern "C" {
 
 	void socket_io_client(void *object)
 	{
@@ -74,12 +77,11 @@ extern "C" {
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function start");
 
 		Evas_Object *evas_object = (Evas_Object *)object;
-		sio::client h;
 		connection_listener l(h);
 		h.set_connect_listener(std::bind(&connection_listener::on_connected, &l));
 		h.set_close_listener(std::bind(&connection_listener::on_close, &l,std::placeholders::_1));
 		h.set_fail_listener(std::bind(&connection_listener::on_fail, &l));
-		h.connect("http://112.108.40.164:5000");
+		h.connect("http://112.108.40.166:5000");
 
 		_lock.lock();
 		if(!connect_finish)
@@ -89,13 +91,24 @@ extern "C" {
 		_lock.unlock();
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io connect finish");
 
-		h.emit("init", "");
-		dlog_print(DLOG_VERBOSE, LOG_TAG, "Emit \"init\" message\n");
+		// ~ CUDA Memory Initialize
+		h.emit("tizenInit", "");
+		dlog_print(DLOG_VERBOSE, LOG_TAG, "Emit \"tizenInit\" message\n");
 
-		h.bind_event("stream_buf", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+		// ~ After Memory Init. Do First tizen request image
+		h.bind_event("loadCudaMemory",[&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
 			_lock.lock();
 
-			dlog_print(DLOG_VERBOSE, LOG_TAG, "Bind event \"stream_buf\"\n");
+			dlog_print(DLOG_VERBOSE, LOG_TAG, "Launched load cuda memory \n");
+
+			// ~ Tizen Requset
+			h.emit("tizenQuality", "");
+
+			_lock.unlock();
+		});
+
+		h.bind_event("tizenJpeg", [&](string const& name, message::ptr const& data, bool isAck,message::ptr &ack_resp){//message
+			_lock.lock();
 
 			int size = data->get_map()["stream"]->get_map()["size"]->get_int();
 			shared_ptr<const string> s_binary = data->get_map()["stream"]->get_map()["buffer"]->get_binary();
@@ -130,10 +143,92 @@ extern "C" {
 		while(LOOP_FLAG){}
 
 		dlog_print(DLOG_VERBOSE, LOG_TAG, "Socket.io function close");
-
-
 	}
 }
+
+
+extern "C" {
+	void emit_quality(){
+		h.emit("tizenQuality", "");
+	}
+}
+
+extern "C"{
+	void emit_otf(float otf){
+		std::ostringstream otfbuf;
+		otfbuf << otf;
+
+		std::string json = "{ \"otf\" : \"" + otfbuf.str()+ "\", \"transferFlag\" : \"1\" }";
+		h.emit("tizenOtf", json);
+	}
+}
+
+extern "C" {
+	void emit_otf_end(float otf){
+		std::ostringstream otfbuf;
+		otfbuf << otf;
+
+		std::string json = "{ \"otf\" : \"" + otfbuf.str()+ "\", \"transferFlag\" : \"2\" }";
+		h.emit("tizenOtf", json);
+	}
+}
+
+extern "C"{
+	void emit_brightness(float brightness){
+		std::ostringstream brightnessbuf;
+		brightnessbuf << brightness;
+
+		std::string json = "{ \"brightness\" : \"" + brightnessbuf.str()+ "\" } ";
+		h.emit("tizenBrightness", json);
+	}
+}
+
+extern "C" {
+	int rotationRequestCount = 0;
+
+	void emit_rotation(float rotationX, float rotationY){
+		if(rotationRequestCount == 100){
+			rotationRequestCount = 0;
+			return;
+		}
+
+		if( (rotationRequestCount++)%3 != 0 ){
+			return;
+		}
+
+		std::ostringstream rotationXbuf;
+		rotationXbuf << rotationX;
+
+		std::ostringstream rotationYbuf;
+		rotationYbuf << rotationY;
+
+		std::string json = "{ \"rotationX\" : \"" + rotationXbuf.str() +"\", \"rotationY\" : \"" + rotationYbuf.str() + "\" } ";
+		h.emit("tizenRotation", json);
+	}
+}
+
+
+extern "C" {
+	int zoomRequestCount = 0;
+
+	void emit_zoom(float positionZ){
+		if(zoomRequestCount == 100){
+			zoomRequestCount = 0;
+			return;
+		}
+
+		if( (zoomRequestCount++)%3 != 0 ){
+			return;
+		}
+
+		std::ostringstream positionZbuf;
+		positionZbuf << positionZ;
+
+		std::string json = "{ \"positionZ\" : \"" + positionZbuf.str() +"\" } ";
+		h.emit("tizenZoom", json);
+	}
+}
+
 extern "C" {
 	void fresh_que()
 	{
@@ -160,3 +255,4 @@ extern "C" {
 		}
 	}
 }
+

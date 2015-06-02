@@ -26,6 +26,36 @@ char* texture_getter();
 #ifdef __cplusplus
 extern "C"
 #endif
+void emit_quality();
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void emit_otf(float otf);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void emit_otf_end(float otf);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void emit_brightness(float brightness);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void emit_rotation(float rotationX, float rotationY);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+void emit_zoom(float positionZ);
+
+#ifdef __cplusplus
+extern "C"
+#endif
 void free_que();
 
 #ifdef __cplusplus

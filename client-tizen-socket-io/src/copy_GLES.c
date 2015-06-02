@@ -17,18 +17,14 @@
 #include <math.h>
 #include <Elementary_GL_Helpers.h>
 #include <image_util.h>
-
-#include "socket.hpp"
-#include "socket_io_client.hpp"
-#include "other.h"
 #include <pthread.h>
 
+#include "socket_io_client.hpp"
+#include "other.h"
 
 pthread_mutex_t  mutex = PTHREAD_MUTEX_INITIALIZER; // 쓰레드 초기화
 
 #define LOG_TAG "socket.io.opengl"
-#define SAMPLE_FILENAME "/tmp/dog.jpg"
-
 
 #define ONEP  +1.0
 #define ONEN  -1.0
@@ -51,9 +47,8 @@ void
 init_gles(Evas_Object *obj)
 {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "INIT_GLES function (init_gles)");
-	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
-	ad = evas_object_data_get(obj, APPDATA_KEY);
+	evas_object_data_get(obj, APPDATA_KEY);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -71,23 +66,9 @@ init_gles(Evas_Object *obj)
 void destroy_gles(Evas_Object *obj)
 {
 	dlog_print(DLOG_VERBOSE, LOG_TAG, "destroy_gles");
-   appdata_s *ad;
 
    ELEMENTARY_GLVIEW_USE(obj);
-   ad = evas_object_data_get(obj, APPDATA_KEY);
-
-   if (ad->tex_ids[0])
-   {
-      glDeleteTextures(1, &(ad->tex_ids[0]));
-      ad->tex_ids[0] = 0;
-   }
-
-   if (ad->tex_ids[1])
-   {
-      glDeleteTextures(1, &(ad->tex_ids[1]));
-      ad->tex_ids[1] = 0;
-   }
-
+   evas_object_data_get(obj, APPDATA_KEY);
 }
 
 void resize_gl(Evas_Object *obj)
@@ -109,10 +90,10 @@ static void draw_cube(Evas_Object *obj)
 
    static const float VERTICES[] =
    {
-		   -1.0f	, -1.0f, 0.0f,	// 3, Left Bottom
-		   1.0f	, -1.0f, 0.0f,	// 2, Right Bottom
-		   -1.0f	, 1.0f	, 0.0f, 	// 0, Left Top
-		   1.0f	, 1.0f	, 0.0f		// 1, Right Top
+		   -2.0f	, -2.0f, 0.0f,	// 3, Left Bottom
+		   2.0f	, -2.0f, 0.0f,	// 2, Right Bottom
+		   -2.0f	, 2.0f	, 0.0f, 	// 0, Left Top
+		   2.0f	, 2.0f	, 0.0f		// 1, Right Top
    };
 
    static const float TEXTURE_COORD[] =
@@ -131,8 +112,6 @@ static void draw_cube(Evas_Object *obj)
    glTexCoordPointer(2, GL_FLOAT, 0, TEXTURE_COORD);
 
    glEnable(GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);
-
    glMatrixMode(GL_MODELVIEW);
 
    glLoadIdentity();
@@ -145,25 +124,20 @@ static void draw_cube(Evas_Object *obj)
    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-#define SAMPLE_FILENAME "/tmp/images.jpg"
-
 void draw_gl(Evas_Object *obj)
 {
 	appdata_s *ad;
 	ELEMENTARY_GLVIEW_USE(obj);
 	ad = evas_object_data_get(obj, APPDATA_KEY);
 
-	dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
+	// dlog_print(DLOG_VERBOSE, LOG_TAG, "access image err : %d", err);
 	if(image != NULL){
 
 		pthread_mutex_lock(&mutex);
 
 		if(!err)
 		{
-			glBindTexture(GL_TEXTURE_2D, ad->tex_ids[ad->current_tex_index]);//ad->current_tex_index
-
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufWidth, bufHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterx(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
