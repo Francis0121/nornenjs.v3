@@ -69,7 +69,6 @@ public class JniGLActivity extends Activity{
     public ChangeView changeView;
 
     SeekBar mrpSb;
-    //private SlidingViewHelper mSlidingViewHelper;
 
     public int volumeWidth, volumeHeight, volumeDepth;
     public String volumeSavePath = "/storage/data/eabd1bf4-83e2-429d-a35d-b20025f84de8";//일단 상수 박아줌

@@ -381,6 +381,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         switch (v.getId())
         {
             case R.id.toggleVol :
+
+
                 mip = false;
                 v.setBackgroundResource(R.drawable.volume_on);
                 mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
@@ -389,7 +391,31 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 mActivity.datatype = 0;
                 GetPng();
 
+                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
+                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
+                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
+
                 mActivity.mrpSb.setVisibility(View.INVISIBLE);
+
+//                if(mip)
+//                {
+//                    mip = false;
+//                    mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
+//                }
+//
+//                if(mActivity.mrpSb.isShown())
+//                {
+//                    mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
+//                    mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
+//                    mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
+//
+//                    mActivity.mrpSb.setVisibility(View.INVISIBLE);
+//                }
+//
+//                v.setBackgroundResource(R.drawable.volume_on);
+//                mActivity.datatype = 0;
+//                GetPng();
+
                 break;
 
             case R.id.toggleMip :
@@ -404,6 +430,11 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                     mActivity.menuFlag = !mActivity.menuFlag;
                 }
                 GetPng();
+
+                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
+                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
+                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
+
                 mActivity.mrpSb.setVisibility(View.INVISIBLE);
                 break;
 
@@ -445,6 +476,13 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 }
                 mActivity.mrpSb.setVisibility(View.VISIBLE);
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
+
+                mActivity.positionX.setBackgroundResource(R.drawable.mprx_on);
+                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
+                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
+                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
+
                 break;
             case R.id.positionY :
 
@@ -457,6 +495,13 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 }
                 mActivity.mrpSb.setVisibility(View.VISIBLE);
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
+
+                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
+                mActivity.positionY.setBackgroundResource(R.drawable.mpry_on);
+                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
+                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
+
                 break;
             case R.id.positionZ :
 
@@ -469,6 +514,12 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 }
                 mActivity.mrpSb.setVisibility(View.VISIBLE);
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
+
+                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
+                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
+                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_on);
+                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
 
                 break;
         }

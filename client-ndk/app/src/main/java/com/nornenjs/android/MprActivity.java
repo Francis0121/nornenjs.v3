@@ -26,35 +26,8 @@ import java.net.URISyntaxException;
 
 
 
-//import android.content.Intent;
-//import android.os.Bundle;
-//import android.app.Activity;
-//import android.os.Handler;
-//import android.os.Message;
-//import android.util.FloatMath;
-//import android.util.Log;
-//import android.view.MotionEvent;
-//
-//import javax.microedition.khronos.egl.EGLConfig;
-//import javax.microedition.khronos.opengles.GL10;
-//import android.graphics.Bitmap;
-//import android.graphics.BitmapFactory;
-//import android.content.Context;
-//import android.opengl.GLSurfaceView;
-//import android.view.SurfaceHolder;
-//import com.github.nkzawa.emitter.Emitter;
-//import com.github.nkzawa.socketio.client.IO;
-//import com.github.nkzawa.socketio.client.Socket;
-//import org.json.JSONException;
-//import org.json.JSONObject;
-//
-//import java.net.URISyntaxException;
-//import java.util.Map;
-
-
 public class MprActivity extends Activity {
 
-//setContentView(R.layout.activity_mpr);
     static final String TAG = "MprActivity";
 
     static final int VOLUME = 0;
@@ -107,11 +80,6 @@ public class MprActivity extends Activity {
         Log.d(TAG, "setcontentView mGLSurfaceView");
 
         mRenderer = new MPRRenderer(this, host);
-//        if(intent.getStringExtra("step").equals("preview"))
-//            mRenderer = new MPRRenderer(this, host);
-//        else
-//            mRenderer = new MPRRenderer(this);
-//        Log.d("emitTag","make CudaRenderer");
 
         mGLSurfaceView.setRenderer(this.mRenderer);
 
@@ -119,7 +87,6 @@ public class MprActivity extends Activity {
         mGLSurfaceView.setFocusableInTouchMode(true);
 
         changeView = new ChangeView(MprActivity.this);
-        //GLSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
     }
 
@@ -391,7 +358,7 @@ public class MprActivity extends Activity {
                     imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
                     mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
                 }
-                
+
             }
             else
                 Log.d("Jni", "byteArray is null");

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
@@ -16,15 +17,18 @@ import android.widget.SeekBar;
  */
 public class ChangeView {
 
+    private ConvertDisplay display;
     private JniGLActivity jniActivity;
     private MprActivity mprActivity;
 
     public ChangeView(JniGLActivity activity) {
         jniActivity = activity;
+        display = new ConvertDisplay(activity);
     }
 
     public ChangeView(MprActivity activity) {
         mprActivity = activity;
+        display = new ConvertDisplay(activity);
     }
 
 
@@ -95,8 +99,10 @@ public class ChangeView {
                 }
 
                 jniActivity.otf_table = (RelativeLayout) jniActivity.findViewById(R.id.otf_table);
-
-
+                //여기여기
+                RelativeLayout.LayoutParams layoutparams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) display.GetDipsFromPixel(160));
+                layoutparams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+                jniActivity.otf_table.setLayoutParams(layoutparams);
 
                 DrawActivity drawView;
                 drawView = (DrawActivity) jniActivity.findViewById(R.id.canvas);

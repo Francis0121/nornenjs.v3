@@ -105,7 +105,6 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view.imgViewFlag.setOnClickListener(this);
 
 
-            //Log.d(TAG + " getView", "thumbnails2.size() : " + thumbnails2.size() + ", position : " + position);
             convertView.setTag(view);
         }
         else
