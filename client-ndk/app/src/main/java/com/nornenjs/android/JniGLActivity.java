@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.FloatMath;
 import android.util.Log;
 import android.view.*;
@@ -126,9 +127,18 @@ public class JniGLActivity extends Activity{
     protected void onDestroy() {
         Log.d("bmp", "onDestroy");
         //조건부
+
+//        if(mGLSurfaceView != null)
+//            myEventListener.BackToPreview();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+
         if(mGLSurfaceView != null)
             myEventListener.BackToPreview();
-        super.onDestroy();
+        super.onBackPressed();
     }
 
     int touchCount;

@@ -53,10 +53,9 @@ public class ConvertDisplay {
             realWidth = display.getWidth();
             realHeight = display.getHeight();
         }
-        //int dp = Math.round(pixels / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        double ratio = pixels / 1920.0;
 
-        //Log.d(TAG, "realWidth : " + (pixels / (realHeight / DisplayMetrics.DENSITY_DEFAULT)) + ", realHeight : " + realHeight);
-        Log.d("ConvertDisplay class", "realWidth : " + realHeight +", calced : " + 3 * realHeight * RATIO);
-        return 3 * realHeight * RATIO;//(int)(pixels * (realHeight / 0.0885));
+        Log.d("ConvertDisplay class", "ratio : " + ratio +", calced : " + 3 * realHeight * ratio);
+        return 3 * realHeight * ratio;//(int)(pixels * (realHeight / 0.0885));
     }
 }

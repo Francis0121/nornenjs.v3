@@ -57,9 +57,6 @@ public class PreviewActivity extends Activity {
 
         thumbnails = new ArrayList<Bitmap>();
 
-
-
-
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
