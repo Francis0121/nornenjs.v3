@@ -287,7 +287,7 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
     var $this = this;
 
     $this.io.sockets.on('connection', function(socket){
-        logger.debug('connection connection');
+
         if(isRegisterSubscribe) {
             isRegisterSubscribe = false;
             $this.subscribe.on('message', function (channel, message) {
