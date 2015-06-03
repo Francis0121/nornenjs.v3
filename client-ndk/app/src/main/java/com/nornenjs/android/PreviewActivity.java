@@ -15,6 +15,7 @@ import android.widget.*;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.nornenjs.android.dto.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
@@ -57,9 +58,6 @@ public class PreviewActivity extends Activity {
 
         thumbnails = new ArrayList<Bitmap>();
 
-
-
-
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
         volumeFilter = new VolumeFilter(pref.getString("username",""), "");
 
@@ -92,6 +90,7 @@ public class PreviewActivity extends Activity {
                 startActivity(intent);
             }
         });
+
         new PostVolumeImageTask().execute();
 
         Log.d(TAG, "thumbnails sie : " + thumbnails.size());
@@ -107,18 +106,28 @@ public class PreviewActivity extends Activity {
 
         @Override
         protected ResponseVolumeInfo doInBackground(Void... params) {
+
+            final String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/"+pns;
+            Boolean isSuccess = false;
+
+            ResponseEntity<ResponseVolumeInfo> response = null;
+
             try {
-                // The URL for making the POST request
-                final String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/"+pns;
 
-
-                // Create a new RestTemplate instance
                 RestTemplate restTemplate = new RestTemplate();
 
-                // Make the network request, posting the message, expecting a String in response from the server
-                ResponseEntity<ResponseVolumeInfo> response = restTemplate.postForEntity(url, volumeFilter, ResponseVolumeInfo.class);
+                while(!isSuccess) {
+                    try{
+                        response = restTemplate.postForEntity(url, volumeFilter, ResponseVolumeInfo.class);
+                        if(response != null && response.getBody() != null){
+                            isSuccess = true;
+                        }
+                    }catch (ResourceAccessException e){
+                        Log.e("Error", e.getMessage(), e);
+                        isSuccess = false;
+                    }
+                }
 
-                // Return the response body to display to the user
                 return response.getBody();
 
             } catch (Exception e) {
@@ -152,22 +161,17 @@ public class PreviewActivity extends Activity {
             new GetThumbnails().execute("" + thumbnails.get(2), "2");
             new GetThumbnails().execute("" + thumbnails.get(3), "3");
 
-            //image.setImageBitmap(getImageFromURL("http://localhost:10000/data/thumbnail/" + thumbnails.get(0)));
             Log.d(TAG, "after excute()");
 
             datas = responseVolume.getData();
             Log.d(TAG,"datas : " + datas.toString());
 
             if(volumes == null)
-            {//통신이 안된 경우
-                //Toast.makeText(톧ㅅ녀ㅣ시ㅏ!나!ㅅ니시나사니시나사니시나사니시나ㅏthis, );
+            {
+
                 Log.d(TAG, "통신이 안된 경우");
             }
-            else
-            {
-                //????여기 뭐였지???
 
-            }
         }
 
     }
@@ -187,26 +191,23 @@ public class PreviewActivity extends Activity {
 
         @Override
         protected void onPostExecute(Bitmap bytes) {
-            if(bytes != null)//thumbnails.get(index).setImageBitmap(bytes);//image1.setImageBitmap(bytes);
+            if(bytes != null)
             {
                 Log.d(TAG, "add bitmap");
-                thumbnails.add(bytes);//image1.setImageBitmap(bytes);
+                thumbnails.add(bytes);
             }
             else
                 Log.d(TAG, "bitmap is null");
 
-           //
             thumbAdapter.notifyDataSetChanged();
-//            if(index == 3) {
-//                Log.d(TAG, "notifyDataSetChanged.....thumbsize : " + thumbnails.size());
-//                thumbAdapter.notifyDataSetChanged();
-//            }
         }
     }
 
     public Bitmap downloadImage(String imgName) {
+
         Log.d(TAG, "URI : " + imgName);
         Bitmap bitmap = null;
+
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             HttpURLConnection con = (HttpURLConnection) ( new URL(imgName)).openConnection();

@@ -43,7 +43,9 @@ public class ThumbAdapter extends BaseAdapter{
 
     @Override
     public Object getItem(int position) {
-        return thumbnails.get(position);
+
+        //return thumbnails.get(position);
+        return null;
     }
 
     @Override

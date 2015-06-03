@@ -156,11 +156,12 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
     public void onClick(View v) {
 
-        Log.d("onClick", "click image id : " + v.getTag());
- //       Log.d("ImageAdapter", "GET PN ID "+pnMap.get(v.getId()));
-        Intent intent = new Intent(activity, PreviewActivity.class);
-        intent.putExtra("pns", Integer.parseInt(""+v.getTag()));
-        activity.startActivity(intent);
+        if(v.getClass().getName().equalsIgnoreCase("android.widget.ImageView")){
+            Log.d("onClick", "click image id : " + v.getTag());
+            Intent intent = new Intent(activity, PreviewActivity.class);
+            intent.putExtra("pns", Integer.parseInt(""+v.getTag()));
+            activity.startActivity(intent);
+        }
     }
 
 }

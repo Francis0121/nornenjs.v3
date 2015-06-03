@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLSurfaceView;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +38,13 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     private Socket relay;
     private Socket socket;
 
+    private final int VOLUME = 1;
+    private final int MIP = 2;
+    private final int OPTION = 3;
+    private final int MRPX = 4;
+    private final int MRPY = 5;
+    private final int MRPZ = 6;
+
     Bitmap imgPanda;
     Bitmap imgPanda2;
 
@@ -60,7 +68,9 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             if(mip)
                 json.put("mip", "mip");
 
+            Log.d("emitTag", "emit join");
             socket.emit("join", deviceNumber);
+            Log.d("emitTag", "emit init");
             socket.emit("init", json);
 
 
@@ -105,7 +115,17 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 }
             });
 
+            Log.d("emitTag", "socket connect");
             socket.connect();
+
+            if(socket.connected())
+            {
+                Log.d("emitTag", "socket connected");
+            }
+            else
+            {
+                Log.d("emitTag", "socket unconnected");
+            }
 
         } catch (Exception e) {
             Log.e("socket", e.getMessage(), e);
@@ -123,6 +143,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+        Log.d("emitTag", "relay emit");
         relay.emit("getInfo", 0);
 
         /**
@@ -156,6 +177,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             }
         });
 
+        Log.d("emitTag", "relay connect");
         relay.connect();
 
         mActivity.setMyEventListener(this);
@@ -305,25 +327,33 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     @Override
     public void BackToPreview() {
         Log.e("emitTag", "Back to PreViewActivity..");
-        if(socket != null && socket.connected())
-        {
+
+        try{
+
+            Log.d("", "loop beak???");
             socket.disconnect();
+
             socket.off("loadCudaMemory");
             socket.off("stream");
             socket = null;
-            Log.e("emitTag", "socket.disconnect()");
+            Log.e("emitTag", "socket try catch");
+        }catch (Exception e){
+            e.printStackTrace();;
         }
 
-        if(relay != null && relay.connected())
-        {
-            Log.e("emitTag", "relay.disconnect()");
+        try{
+
+//            while(!socket.connected()) {
+//                //Log.e("000000000", "00000000000000");
+//            }
+            //SystemClock.sleep(1000);
             relay.disconnect();
             relay.off("getInfoClient");
+            Log.e("emitTag", "socket try catch");
+        }catch (Exception e){
+            e.printStackTrace();;
         }
-        else
-        {
-            Log.e("emitTag", "relay is null or unconnect");
-        }
+
     }
 
     @Override
@@ -331,7 +361,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         Log.d("BrightnessEvent", "BrightnessEvent : " + brightness + "calc : " + (brightness / 100.0));
         JSONObject jsonObject = new JSONObject();
         try {
-            jsonObject.put("brightness", (brightness/100.0));
+            jsonObject.put("brightness", (brightness / 100.0));
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -355,17 +385,15 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             json2.put(mprarr[position], transferScale);//처음에는 50을 줌
             json2.put("positionZ", 4.5);
             Log.d("emitTag", mprarr[position] + " : " + 0.5);
+
             for (int i = 1; i < 4; i++) {
                 if (i != position) {
                     json2.put(mprarr[i], 0);//처음에는 50을 줌
                     Log.d("emitTag", mprarr[i] + " : " + 0);
                 }
             }
-//            if (!mActivity.mGLSurfaceView.isShown()) {
-//                json2.put("png", "ok");//뭐지?
-//            }
+
             json2.put("png", "ok");
-            //옵션으로 1을 줄지 말지
             socket.emit("mpr", json2);
 
 
@@ -382,147 +410,149 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         {
             case R.id.toggleVol :
 
+                if(mActivity.datatype != 0){
+                    mip = false;
 
-                mip = false;
-                v.setBackgroundResource(R.drawable.volume_on);
-                mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                    mActivity.datatype = 0;
+                    GetPng();
 
-                mActivity.datatype = 0;
-                GetPng();
+                    setBackgroundResource(VOLUME);
 
-                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
-                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
-                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
-
-                mActivity.mrpSb.setVisibility(View.INVISIBLE);
-
-//                if(mip)
-//                {
-//                    mip = false;
-//                    mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-//                }
-//
-//                if(mActivity.mrpSb.isShown())
-//                {
-//                    mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
-//                    mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
-//                    mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
-//
-//                    mActivity.mrpSb.setVisibility(View.INVISIBLE);
-//                }
-//
-//                v.setBackgroundResource(R.drawable.volume_on);
-//                mActivity.datatype = 0;
-//                GetPng();
+                    mActivity.mrpSb.setVisibility(View.INVISIBLE);
+                }
 
                 break;
 
             case R.id.toggleMip :
+
                 mip = true;
+                mActivity.datatype = MIP;
+                checkOtfFlag(mActivity.menuFlag);
 
-                mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
-                v.setBackgroundResource(R.drawable.mip_on);
-                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
-
-                if(mActivity.menuFlag) {
-                    ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(600);
-                    mActivity.menuFlag = !mActivity.menuFlag;
-                }
                 GetPng();
 
-                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
-                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
-                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
-
+                setBackgroundResource(MIP);
                 mActivity.mrpSb.setVisibility(View.INVISIBLE);
+
                 break;
 
             case R.id.toggleMenu :
-                Log.d("click", "mip click : " + mActivity.mRenderer.mip);
 
                 if(!mActivity.mRenderer.mip && !mActivity.mrpSb.isShown())
                 {
-                    Log.d("click", "mip click mActivity.menuFlag : " + mActivity.menuFlag);
                     if(!mActivity.menuFlag) {
-                        Log.d("Onclick", "otf_table.getHeight()3 : " + mActivity.otf_table.getHeight());
-                        Log.d("Onclick", "otf_table.getY()3 : " + mActivity.otf_table.getY());
                         ViewPropertyAnimator.animate(mActivity.otf_table).translationY(0).setDuration(600);
                         mActivity.toggleMenu.setBackgroundResource(R.drawable.option_on);
                     }
                     else {
-                        Log.d("Onclick", "otf_table.getHeight()4 : " + mActivity.otf_table.getHeight());
-                        Log.d("Onclick", "otf_table.getY()4 : " + mActivity.otf_table.getY());
                         ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(600);
                         mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                     }
                     mActivity.menuFlag = !mActivity.menuFlag;
 
                 }
-                else
-                    Log.d("Onclick","mActivity.mRenderer.mip : " + mActivity.mRenderer.mip);
 
                 break;
 
 
             case R.id.positionX :
 
-                getMPR(1);
+                getMPR(mActivity.MPRX);
+                mActivity.datatype = mActivity.MPRX;
 
-                mActivity.datatype = 1;
-                if(mActivity.menuFlag) {
-                    ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(600);
-                    mActivity.menuFlag = false;
-                }
+                checkOtfFlag(mActivity.menuFlag);
+
                 mActivity.mrpSb.setVisibility(View.VISIBLE);
-                mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
+                setBackgroundResource(MRPX);
 
+                break;
+            case R.id.positionY :
+
+                getMPR(mActivity.MPRY);
+                mActivity.datatype = mActivity.MPRY;
+
+                checkOtfFlag(mActivity.menuFlag);
+
+                mActivity.mrpSb.setVisibility(View.VISIBLE);
+                setBackgroundResource(MRPY);
+
+                break;
+            case R.id.positionZ :
+
+                getMPR(mActivity.MPRZ);
+                mActivity.datatype = mActivity.MPRZ;
+
+                checkOtfFlag(mActivity.menuFlag);
+
+                mActivity.mrpSb.setVisibility(View.VISIBLE);
+                setBackgroundResource(MRPZ);
+                break;
+        }
+    }
+
+    public void setBackgroundResource(int onFlag) {
+        switch(onFlag)
+        {
+
+            case VOLUME :
+
+                mActivity.togglebtn.setBackgroundResource(R.drawable.volume_on);
+                mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
+                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
+                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
+                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
+                break;
+
+            case  MIP :
+
+                mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
+                mActivity.toggleMip.setBackgroundResource(R.drawable.mip_on);
+                mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
+                mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
+                mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
+                mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
+                break;
+
+            case MRPX :
+
+                mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
                 mActivity.positionX.setBackgroundResource(R.drawable.mprx_on);
                 mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
                 mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                 mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-
                 break;
-            case R.id.positionY :
 
-                getMPR(2);
+            case MRPY :
 
-                mActivity.datatype = 2;
-                if(mActivity.menuFlag) {
-                    ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(600);
-                    mActivity.menuFlag = false;
-                }
-                mActivity.mrpSb.setVisibility(View.VISIBLE);
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
-
                 mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
                 mActivity.positionY.setBackgroundResource(R.drawable.mpry_on);
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
                 mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                 mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-
                 break;
-            case R.id.positionZ :
 
-                getMPR(3);
+            case MRPZ :
 
-                mActivity.datatype = 3;
-                if(mActivity.menuFlag) {
-                    ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(600);
-                    mActivity.menuFlag = false;
-                }
-                mActivity.mrpSb.setVisibility(View.VISIBLE);
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
-
                 mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
                 mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_on);
                 mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                 mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-
                 break;
         }
+
+    }
+    public void checkOtfFlag(boolean menuflag)
+    {
+        if (menuflag) {
+            ViewPropertyAnimator.animate(mActivity.otf_table).translationY(mActivity.otf_table.getHeight()).setDuration(600);
+            mActivity.menuFlag= !menuflag;//false
+        }
+
     }
 
 

@@ -12,6 +12,7 @@
             android:layout_height="match_parent"
             android:numColumns="1"
             android:stretchMode="columnWidth"
+            android:listSelector="#00000000"
             >
 
     </GridView>

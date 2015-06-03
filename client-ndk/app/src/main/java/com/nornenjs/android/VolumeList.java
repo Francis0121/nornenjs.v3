@@ -23,6 +23,7 @@ import com.nornenjs.android.dto.VolumeFilter;
 import com.nornenjs.android.dynamicview.PoppyViewHelper;
 import com.nornenjs.android.util.Pagination;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Text;
 
@@ -155,6 +156,7 @@ public class VolumeList extends Activity {
         });
 
         editview = (EditText) findViewById(R.id.searchbar);
+
         editview.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -236,56 +238,66 @@ public class VolumeList extends Activity {
 
     private class PostVolumeTask extends AsyncTask<String, Void, ResponseVolume> {
 
+        private String request;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
         }
-        String request;
+
         @Override
         protected ResponseVolume doInBackground(String... params) {
+            if(params[0] == null){
+                return new ResponseVolume();
+            }
 
             request = params[0];
 
             Log.d(TAG, "request : " + request);
+            Boolean isSuccess = false;
+            ResponseVolume responseVolume = null;
+            String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/list";
+            String urlType = params[0];
+
+            String searchText = params.length == 1 ? "" : params[1];
+
             try {
-                // The URL for making the POST request
-                String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/list";
-
-
-                // Create a new RestTemplate instance
-                RestTemplate restTemplate = new RestTemplate();
-
-                // Make the network request, posting the message, expecting a String in response from the server
-                ResponseEntity<ResponseVolume> response;
-                if("none".equals(params[0]))
-                {//첫 요청
-                    url+="/1";
-                    response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);//try catch..내부망이 다른 경우!
+                while(!isSuccess) {
+                    try{
+                        responseVolume = postTemplate(url, urlType, searchText);
+                        if(responseVolume != null && responseVolume.getVolumes() != null){
+                            isSuccess = true;
+                        }
+                    }catch (ResourceAccessException e){
+                        Log.e("Error", e.getMessage(), e);
+                        isSuccess = false;
+                    }
                 }
-                else if("search".equals(params[0]))
-                {//검색할때 요청
-
-                    url+="/1";
-                    volumeFilter.setTitle(params[1]);
-                    response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
-                }else
-                {//page 요청이면
-                    Log.d(TAG,"page request");
-                    url+="/" + (CurrentPage + 1);
-                    //volumeFilter.setPage(2);//+1을 했는데도 증가하지 않고 계속 1값임.
-                    response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
-                }
-
-                // Return the response body to display to the user
-                return response.getBody();
-
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage(), e);
             }
 
-            return null;
+            return responseVolume;
+        }
+
+        private ResponseVolume postTemplate(String url, String urlType, String searchText){
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseVolume> response;
+            if("none".equals(urlType)) {//첫 요청
+                url+="/1";
+                response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);//try catch..내부망이 다른 경우!
+            } else if("search".equals(url)) {//검색할때 요청
+                url+="/1";
+                volumeFilter.setTitle(searchText);
+                response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
+            }else {//page 요청이면
+                Log.d(TAG,"page request");
+                url+="/" + (CurrentPage + 1);
+                response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);
+            }
+
+            return response.getBody();
         }
 
         @Override
@@ -342,16 +354,30 @@ public class VolumeList extends Activity {
             }
             else if("page".equals(request))
             {
-                Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
-                Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
-                CurrentPage = num.get("requestedPage");
-                Log.d(TAG, "num.get() : " + num.get("requestedPage"));
-                Log.d(TAG, "currentPage : " + CurrentPage);
+
+                try {
+
+                    Map<String, Object> volumeFilterMap = responseVolume.getVolumeFilter();
+                    Map<String, Integer> num = (Map<String, Integer>)volumeFilterMap.get("pagination");
+                    CurrentPage = num.get("requestedPage");
+                    Log.d(TAG, "num.get() : " + num.get("requestedPage"));
+                    Log.d(TAG, "currentPage : " + CurrentPage);
+
+                }
+                catch(NullPointerException e)
+                {
+                    //다시 요청
+                    new PostVolumeTask().execute("page");
+                }
+                catch (Exception e)
+                {
+
+                    e.printStackTrace();
+                }
             }
 
             if(volumes == null)
             {//통신이 안된 경우
-                //Toast.makeText(톧ㅅ녀ㅣ시ㅏ!나!ㅅ니시나사니시나사니시나사니시나ㅏthis, );
                 Log.d(TAG, "통신이 안된 경우");
             }
             else
@@ -397,8 +423,7 @@ public class VolumeList extends Activity {
             request = params[1];
             Log.d("one Image", "In doInBackground params0 : " + params[0]);
             Bitmap data = downloadImage(getString(R.string.tomcat) + "/data/thumbnail/" + params[0]);
-            //pns
-            //addBitmapToMemoryCache(String.valueOf(params[0]), data);
+
             Log.d("one Image", "after downloadImage(): ");
 
             getBitmapFromMemCache("call from VolumeActivity");
@@ -410,27 +435,26 @@ public class VolumeList extends Activity {
         protected void onPostExecute(Bitmap bytes) {
             if(bytes != null)
             {
-            //thumbnails.get(index).setImageBitmap(bytes);//image1.setImageBitmap(bytes);
                 if("none".equals(request))
                 {
                     Log.d(TAG, "get none thumbnails");
-                    thumbnails1.add(bytes);//image1.setImageBitmap(bytes);
+                    thumbnails1.add(bytes);
                     addBitmapToMemoryCache(String.valueOf(pns1.get(thumbnails1.size() - 1)), bytes);
-                    //getBitmapFromMemCache("" + pns1.get(thumbnails1.size() - 1));//test
                     Log.d(TAG, "addBitmapToMemoryCache : " + pns1.get(thumbnails1.size() - 1));
 
                     mAdapter.notifyDataSetChanged();
+
                     if(count == 10) {
                         count = 0;
                         bottom = false;
                     }
+
                     count++;
-                    //bottom = false;
                 }
                 else if("search".equals(request))
                 {
                     Log.d(TAG, "get search thumbnails");
-                    backupthumbnails1.add(bytes);//image1.setImageBitmap(bytes);
+                    backupthumbnails1.add(bytes);
                     searchAdapter.notifyDataSetChanged();
 
                 }
@@ -440,16 +464,16 @@ public class VolumeList extends Activity {
                     setView();
 
             }
+
             else
                 Log.d("one Image", "bitmap is null");
 
-            //mAdapter.notifyDataSetChanged();
         }
     }
 
     public Bitmap downloadImage(String imgName) {
         Log.d("one Image", "URI : " + imgName);
-        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
         Bitmap bitmap = null;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -466,12 +490,6 @@ public class VolumeList extends Activity {
             InputStream is = con.getInputStream();
 
             bitmap = BitmapFactory.decodeStream(is);
-//            BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inSampleSize = 4;
-//
-////            bitmap = BitmapFactory.decodeStream(is);
-//
-//            bitmap = BitmapFactory.decodeStream(is, null, options);
 
             con.disconnect();
         }
@@ -494,7 +512,7 @@ public class VolumeList extends Activity {
             }
             gridlist.setAdapter(mAdapter);
             mAdapter.notifyDataSetChanged();
-            //mPoppyViewHelper.editView.setText("");
+
         }
         else if(gridlist.getAdapter().equals(mAdapter))
         {

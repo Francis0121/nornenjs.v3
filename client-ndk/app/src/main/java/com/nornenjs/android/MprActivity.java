@@ -91,27 +91,18 @@ public class MprActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("bmp", "onResume");
+    public void onBackPressed() {
+
+        if(!mGLSurfaceView.isShown())
+        {
+            Toast.makeText(MprActivity.this, "잠시만 기다려주세요.",Toast.LENGTH_SHORT).show();
+        }else
+        {
+            if(mGLSurfaceView != null)
+                myEventListener.BackToPreview();
+            super.onBackPressed();
+        }
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("bmp", "onPause");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("bmp", "onDestroy");
-        //조건부
-        if(mGLSurfaceView != null)
-            myEventListener.BackToPreview();
-    }
-
-
 
     /** load irrlicht.so */
     static {
@@ -145,7 +136,6 @@ public class MprActivity extends Activity {
             Log.d("bmp", "surfaceDestoryed");
         }
 
-        //public MPRRenderer mRenderer;
         private MprActivity mActivity;
         private Context mContext;
         private String host;
@@ -156,9 +146,6 @@ public class MprActivity extends Activity {
             this.host = host;
             this.mContext = context;
             this.mActivity = (MprActivity) context;
-//            this.mRenderer = new MPRRenderer(this.mActivity, host);
-//            Log.d("emitTag","make CudaRenderer");
-//            setRenderer(this.mRenderer);
         }
 
         @Override
@@ -167,11 +154,6 @@ public class MprActivity extends Activity {
             requestRender();
             return true;
         }
-
-        /**
-         * Render a cuda.
-         */
-
 
     }
 
@@ -223,16 +205,20 @@ public class MprActivity extends Activity {
                                 json2.put("mprType", mActivity.datatype);
                                 json2.put(mprarr[mActivity.datatype], transferScale);//처음에는 50을 줌
                                 json2.put("positionZ", 4.5);
+
                                 Log.d("emitTag", mprarr[mActivity.datatype] + " : " + 0.5);
+
                                 for (int i = 1; i < 4; i++) {
                                     if (i != mActivity.datatype) {
                                         json2.put(mprarr[i], 0);//처음에는 50을 줌
                                         Log.d("emitTag", mprarr[i] + " : " + 0);
                                     }
                                 }
+
                                 if (!mGLSurfaceView.isShown()) {
-                                    json2.put("png", "ok");//뭐지?
+                                    json2.put("png", "ok");
                                 }
+
                                 //옵션으로 1을 줄지 말지
                                 socket.emit("mpr", json2);
 
@@ -290,7 +276,6 @@ public class MprActivity extends Activity {
         }
 
 
-        //public MPRRenderer(MprActivity activity, String host) {
         public MPRRenderer(Context activity, String host) {
 
             mActivity = (MprActivity) activity;

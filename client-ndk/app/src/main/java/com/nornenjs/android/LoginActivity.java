@@ -56,12 +56,11 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     }
 
 
-    //@Override
+    @Override
     public void onClick(View v) {
         switch(v.getId())
         {
             case R.id.send :
-                //String username,userpasswd;//mainActivity의 변수와 이름 겹침
                 username = editName.getText().toString();
                 userpasswd = editPasswd.getText().toString();
 

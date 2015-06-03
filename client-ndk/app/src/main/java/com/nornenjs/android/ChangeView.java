@@ -90,24 +90,29 @@ public class ChangeView {
                 jniActivity.positionY = (Button) jniActivity.findViewById(R.id.positionY);
                 jniActivity.positionZ = (Button) jniActivity.findViewById(R.id.positionZ);
 
-                RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams(80, 80);
-                RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(80, 80);
-                RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams(80, 80);
-                RelativeLayout.LayoutParams layoutParams4 = new RelativeLayout.LayoutParams(80, 80);
-                RelativeLayout.LayoutParams layoutParams5 = new RelativeLayout.LayoutParams(80, 80);
+                RelativeLayout.LayoutParams layoutParams1 = new RelativeLayout.LayoutParams((int) display.GetDipsFromPixel(40), (int) display.GetDipsFromPixel(40));
+                RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams((int) display.GetDipsFromPixel(40), (int) display.GetDipsFromPixel(40));
+                RelativeLayout.LayoutParams layoutParams3 = new RelativeLayout.LayoutParams((int) display.GetDipsFromPixel(40), (int) display.GetDipsFromPixel(40));
+                RelativeLayout.LayoutParams layoutParams4 = new RelativeLayout.LayoutParams((int) display.GetDipsFromPixel(40), (int) display.GetDipsFromPixel(40));
+                RelativeLayout.LayoutParams layoutParams5 = new RelativeLayout.LayoutParams((int) display.GetDipsFromPixel(40), (int) display.GetDipsFromPixel(40));
 
-                jniActivity.togglebtn.setLayoutParams (new RelativeLayout.LayoutParams(80, 80));
+                jniActivity.togglebtn.setLayoutParams (new RelativeLayout.LayoutParams((int) display.GetDipsFromPixel(40), (int) display.GetDipsFromPixel(40)));
+
                 layoutParams1.addRule(RelativeLayout.RIGHT_OF, R.id.toggleVol);
                 jniActivity.toggleMip.setLayoutParams(layoutParams1);
-                layoutParams1.addRule(RelativeLayout.RIGHT_OF, R.id.toggleMip);
+
+                layoutParams2.addRule(RelativeLayout.RIGHT_OF, R.id.toggleMip);
                 jniActivity.toggleMenu.setLayoutParams(layoutParams2);
-                layoutParams2.addRule(RelativeLayout.RIGHT_OF, R.id.toggleMenu);
+
+                layoutParams3.addRule(RelativeLayout.RIGHT_OF, R.id.toggleMenu);
                 jniActivity.positionX.setLayoutParams(layoutParams3);
-                layoutParams3.addRule(RelativeLayout.RIGHT_OF, R.id.positionX);
+
+                layoutParams4.addRule(RelativeLayout.RIGHT_OF, R.id.positionX);
                 jniActivity.positionY.setLayoutParams(layoutParams4);
-                layoutParams4.addRule(RelativeLayout.RIGHT_OF, R.id.positionY);
+
+                layoutParams5.addRule(RelativeLayout.RIGHT_OF, R.id.positionY);
                 jniActivity.positionZ.setLayoutParams(layoutParams5);
-                layoutParams5.addRule(RelativeLayout.RIGHT_OF, R.id.positionZ);
+
 
                 jniActivity.togglebtn.setOnClickListener(jniActivity.mRenderer);
                 jniActivity.toggleMip.setOnClickListener(jniActivity.mRenderer);
@@ -233,19 +238,13 @@ public class ChangeView {
             Log.d("", "handleMessage() called");
 
 
-//            RelativeLayout loadingView = (RelativeLayout) findViewById(R.id.loding);
-//            loadingView.setVisibility(View.GONE);
-//            RelativeLayout surfaceVuew = (RelativeLayout) findViewById(R.id.renderview);
-//            surfaceVuew.setVisibility(View.VISIBLE);
 
             mprActivity.setContentView(R.layout.activity_mpr);
 
             mprActivity.sb = (SeekBar) mprActivity.findViewById(R.id.player_seek_horizontal);
             mprActivity.sb.setProgress(50);
             mprActivity.sb.setOnSeekBarChangeListener(mprActivity.mRenderer);
-            //sb.setOnSeekBarChangeList.getRenderMode());
 
-            //final RelativeLayout newContainer = (RelativeLayout) findViewById(R.id.group);
             final RelativeLayout newContainer = new RelativeLayout(mprActivity);//FrameLayout
 
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,

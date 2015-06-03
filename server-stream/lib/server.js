@@ -59,7 +59,7 @@ var NornenjsServer = function(server, isMaster, masterIpAddres){
         throw new Error('IsRoot type is "Boolean" type');
     }
 
-    this.REDIS_PATH = '/home/pi/redis-3.0.0/src/redis-server';
+    this.REDIS_PATH = '/home/hyok/redis-3.0.0/src/redis-server';
     this.REDIS_PORT = 6379;
     this.ipAddress = null;
     this.redisProcess = undefined;
@@ -287,6 +287,7 @@ NornenjsServer.prototype.socketIoRelayServer = function(){
     var $this = this;
 
     $this.io.sockets.on('connection', function(socket){
+        logger.debug('connection connection');
         if(isRegisterSubscribe) {
             isRegisterSubscribe = false;
             $this.subscribe.on('message', function (channel, message) {
