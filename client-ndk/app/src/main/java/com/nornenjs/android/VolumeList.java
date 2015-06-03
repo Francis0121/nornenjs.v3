@@ -260,6 +260,9 @@ public class VolumeList extends Activity {
             String url = getString(R.string.tomcat) + "/mobile/volume/"+volumeFilter.getUsername()+"/list";
             String urlType = params[0];
 
+            if(request.equals("search"))
+                Log.d(TAG, "params[1] : " + params[1]);
+
             String searchText = params.length == 1 ? "" : params[1];
 
             try {
@@ -287,7 +290,8 @@ public class VolumeList extends Activity {
             if("none".equals(urlType)) {//첫 요청
                 url+="/1";
                 response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);//try catch..내부망이 다른 경우!
-            } else if("search".equals(url)) {//검색할때 요청
+            } else if("search".equals(urlType)) {//검색할때 요청
+                Log.d(TAG, "searchText : " + searchText);
                 url+="/1";
                 volumeFilter.setTitle(searchText);
                 response = restTemplate.postForEntity(url, volumeFilter, ResponseVolume.class);

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Outline;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -76,12 +77,13 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
         return 0;
     }
 
-    public static class ViewHolder
+    public static class ViewHolder// extends ViewOutlineProvider
     {
         public ImageView imgViewFlag;
         public TextView title;
         public TextView date;
         public TextView metadata;
+
     }
 
     public ViewHolder view;
@@ -104,7 +106,6 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             view.metadata.setOnClickListener(this);
             view.imgViewFlag.setOnClickListener(this);
 
-
             convertView.setTag(view);
         }
         else
@@ -112,6 +113,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
             Log.d(TAG, " not null");
             view = (ViewHolder) convertView.getTag();
         }
+
 
         Log.d(TAG + " getView","position : " + position);
 
@@ -135,7 +137,7 @@ public class ImageAdapter extends BaseAdapter implements View.OnClickListener{
 
         view.imgViewFlag.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        view.imgViewFlag.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) display.GetDipsFromPixel(170)));
+        view.imgViewFlag.setLayoutParams(new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) display.GetDipsFromPixel(170)));
 
         Log.d(TAG, "width : " + view.imgViewFlag.getWidth());
         Log.d(TAG, "height : " + view.imgViewFlag.getHeight());

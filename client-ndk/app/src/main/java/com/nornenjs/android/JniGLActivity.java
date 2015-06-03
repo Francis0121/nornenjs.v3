@@ -153,8 +153,8 @@ public class JniGLActivity extends Activity{
 
                     if (mode == DRAG && event.getPointerCount() == 1) {
 
-                        rotationX += (event.getX() - beforeX) / 10.0;
-                        rotationY += (event.getY() - beforeY) / 10.0;
+                        rotationX += (event.getX() - beforeX) / 5.0;
+                        rotationY += (event.getY() - beforeY) / 5.0;
 
                         beforeX = event.getX();
                         beforeY = event.getY();
