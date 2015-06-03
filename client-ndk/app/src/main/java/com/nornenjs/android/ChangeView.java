@@ -238,19 +238,13 @@ public class ChangeView {
             Log.d("", "handleMessage() called");
 
 
-//            RelativeLayout loadingView = (RelativeLayout) findViewById(R.id.loding);
-//            loadingView.setVisibility(View.GONE);
-//            RelativeLayout surfaceVuew = (RelativeLayout) findViewById(R.id.renderview);
-//            surfaceVuew.setVisibility(View.VISIBLE);
 
             mprActivity.setContentView(R.layout.activity_mpr);
 
             mprActivity.sb = (SeekBar) mprActivity.findViewById(R.id.player_seek_horizontal);
             mprActivity.sb.setProgress(50);
             mprActivity.sb.setOnSeekBarChangeListener(mprActivity.mRenderer);
-            //sb.setOnSeekBarChangeList.getRenderMode());
 
-            //final RelativeLayout newContainer = (RelativeLayout) findViewById(R.id.group);
             final RelativeLayout newContainer = new RelativeLayout(mprActivity);//FrameLayout
 
             RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,

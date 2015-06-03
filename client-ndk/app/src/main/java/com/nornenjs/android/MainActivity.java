@@ -16,7 +16,6 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         SharedPreferences pref = getSharedPreferences("userInfo", 0);
-        //SharedPreferences.Editor prefEdit = pref.edit();
         username = pref.getString("username", "");
 
         Loading();
@@ -29,13 +28,12 @@ public class MainActivity extends Activity {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 Intent intent;
-                //intent = new Intent(MainActivity.this, LoginActivity.class);
 
-                if(username == null || username.equals(""))//user정보가 없는 경우
+                if(username == null || username.equals(""))
                 {
                     intent = new Intent(MainActivity.this, LoginActivity.class);
                 }
-                else//user정보가 있는 경우
+                else
                 {
                     intent = new Intent(MainActivity.this, VolumeList.class);
                 }

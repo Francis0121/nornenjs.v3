@@ -68,7 +68,9 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             if(mip)
                 json.put("mip", "mip");
 
+            Log.d("emitTag", "emit join");
             socket.emit("join", deviceNumber);
+            Log.d("emitTag", "emit init");
             socket.emit("init", json);
 
 
@@ -113,7 +115,17 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 }
             });
 
+            Log.d("emitTag", "socket connect");
             socket.connect();
+
+            if(socket.connected())
+            {
+                Log.d("emitTag", "socket connected");
+            }
+            else
+            {
+                Log.d("emitTag", "socket unconnected");
+            }
 
         } catch (Exception e) {
             Log.e("socket", e.getMessage(), e);
@@ -131,6 +143,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
+        Log.d("emitTag", "relay emit");
         relay.emit("getInfo", 0);
 
         /**
@@ -164,6 +177,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             }
         });
 
+        Log.d("emitTag", "relay connect");
         relay.connect();
 
         mActivity.setMyEventListener(this);
@@ -313,21 +327,9 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     @Override
     public void BackToPreview() {
         Log.e("emitTag", "Back to PreViewActivity..");
-//        if(socket != null && socket.connected())
-//        {
-//            socket.disconnect();
-//            socket.off("loadCudaMemory");
-//            socket.off("stream");
-//            socket = null;
-//            Log.e("emitTag", "socket.disconnect()");
-//        }
 
         try{
 
-//            while(!socket.connected()) {
-//                //Log.e("000000000", "00000000000000");
-//            }
-            //SystemClock.sleep(1000);
             Log.d("", "loop beak???");
             socket.disconnect();
 
@@ -339,16 +341,19 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             e.printStackTrace();;
         }
 
-        if(relay != null && relay.connected())
-        {
-            Log.e("emitTag", "relay.disconnect()");
+        try{
+
+//            while(!socket.connected()) {
+//                //Log.e("000000000", "00000000000000");
+//            }
+            //SystemClock.sleep(1000);
             relay.disconnect();
             relay.off("getInfoClient");
+            Log.e("emitTag", "socket try catch");
+        }catch (Exception e){
+            e.printStackTrace();;
         }
-        else
-        {
-            Log.e("emitTag", "relay is null or unconnect");
-        }
+
     }
 
     @Override
@@ -380,17 +385,15 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             json2.put(mprarr[position], transferScale);//처음에는 50을 줌
             json2.put("positionZ", 4.5);
             Log.d("emitTag", mprarr[position] + " : " + 0.5);
+
             for (int i = 1; i < 4; i++) {
                 if (i != position) {
                     json2.put(mprarr[i], 0);//처음에는 50을 줌
                     Log.d("emitTag", mprarr[i] + " : " + 0);
                 }
             }
-//            if (!mActivity.mGLSurfaceView.isShown()) {
-//                json2.put("png", "ok");//뭐지?
-//            }
+
             json2.put("png", "ok");
-            //옵션으로 1을 줄지 말지
             socket.emit("mpr", json2);
 
 
@@ -434,11 +437,9 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 break;
 
             case R.id.toggleMenu :
-                Log.d("click", "mip click : " + mActivity.mRenderer.mip);
 
                 if(!mActivity.mRenderer.mip && !mActivity.mrpSb.isShown())
                 {
-                    Log.d("click", "mip click mActivity.menuFlag : " + mActivity.menuFlag);
                     if(!mActivity.menuFlag) {
                         ViewPropertyAnimator.animate(mActivity.otf_table).translationY(0).setDuration(600);
                         mActivity.toggleMenu.setBackgroundResource(R.drawable.option_on);
@@ -450,8 +451,6 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                     mActivity.menuFlag = !mActivity.menuFlag;
 
                 }
-                else
-                    Log.d("Onclick","mActivity.mRenderer.mip : " + mActivity.mRenderer.mip);
 
                 break;
 
@@ -503,8 +502,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
                 mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
-
                 break;
+
             case  MIP :
 
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
@@ -513,8 +512,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 mActivity.positionX.setBackgroundResource(R.drawable.mprx_off);
                 mActivity.positionY.setBackgroundResource(R.drawable.mpry_off);
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
-
                 break;
+
             case MRPX :
 
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
@@ -523,8 +522,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
                 mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                 mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-
                 break;
+
             case MRPY :
 
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
@@ -533,8 +532,8 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_off);
                 mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                 mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-
                 break;
+
             case MRPZ :
 
                 mActivity.togglebtn.setBackgroundResource(R.drawable.volume_off);
@@ -543,9 +542,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 mActivity.positionZ.setBackgroundResource(R.drawable.mprz_on);
                 mActivity.toggleMenu.setBackgroundResource(R.drawable.option_off);
                 mActivity.toggleMip.setBackgroundResource(R.drawable.mip_off);
-
                 break;
-
         }
 
     }

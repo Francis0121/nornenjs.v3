@@ -3,13 +3,16 @@
        android:shape="oval" >
 
 
-    <size android:height="30dp" android:width="30dp"/>
-    <gradient android:width="18dp"
-              android:angle="270"
-              android:endColor="#eba523"
-              android:startColor="#eba523"/>
+    <size
+            android:width="33dp"
+            android:height="33dp"/>
 
-    <solid android:color="#eba523" />
+    <gradient android:type="radial"
+        android:startColor="#eba523"
+        android:endColor="#64eba523"
+        android:gradientRadius="15"/>
+
+
     <corners android:radius="1dp" />
 
 </shape>

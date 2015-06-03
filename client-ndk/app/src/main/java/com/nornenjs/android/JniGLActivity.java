@@ -15,6 +15,7 @@ import android.opengl.GLSurfaceView;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.Toast;
 import com.nornenjs.android.ChangeView;
 
 
@@ -110,35 +111,21 @@ public class JniGLActivity extends Activity{
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("bmp", "onResume");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d("bmp", "onPause");
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        Log.d("bmp", "onDestroy");
-        //조건부
-
-//        if(mGLSurfaceView != null)
-//            myEventListener.BackToPreview();
-        super.onDestroy();
-    }
 
     @Override
     public void onBackPressed() {
 
-        if(mGLSurfaceView != null)
-            myEventListener.BackToPreview();
-        super.onBackPressed();
+        if(!mGLSurfaceView.isShown())
+        {
+            Toast.makeText(JniGLActivity.this, "잠시만 기다려 주세요", Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            if(mGLSurfaceView != null)
+                myEventListener.BackToPreview();
+
+            super.onBackPressed();
+        }
     }
 
     int touchCount;
@@ -349,9 +336,6 @@ class TouchSurfaceView extends GLSurfaceView {
         super(context);
         this.host = host;
         this.mContext = context;
-//        this.mActivity = (JniGLActivity) context;
-//        mRenderer = new CudaRenderer(mActivity, host);
-//        setRenderer(mRenderer);
 
     }
 

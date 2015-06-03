@@ -72,7 +72,7 @@
                 android:padding="5dp"
                 android:textColor="#e04836"
                 android:visibility="gone"
-                android:textSize="7sp"
+                android:textSize="13sp"
                 />
 
         <EditText
@@ -95,7 +95,7 @@
                 android:layout_centerHorizontal="true"
                 android:padding="5dp"
                 android:textColor="#e04836"
-                android:textSize="7sp"
+                android:textSize="13sp"
                 android:layout_gravity="center_horizontal"
                 android:visibility="gone"
                 />
