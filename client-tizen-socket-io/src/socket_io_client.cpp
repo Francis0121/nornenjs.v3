@@ -21,7 +21,7 @@ std::mutex _lock;
 std::condition_variable_any _cond;
 bool connect_finish = false;
 
-unsigned char * deprecated[6];
+unsigned char * bufferQue[6];
 int count = -1;
 
 class connection_listener
@@ -121,13 +121,9 @@ extern "C" {
 
 			unsigned int decodeBufSize;
 
-			//dlog_print(DLOG_VERBOSE, LOG_TAG, "before decode %d, %d, %d, %d, %d, %d, %d, %d, %d",image[],image[],image[],image[],image[],image[],image[],image[],image[]);
 			err = image_util_decode_jpeg_from_memory((unsigned char *)textBuf, sizeBuf, IMAGE_UTIL_COLORSPACE_RGBA8888, &image, &bufWidth, &bufHeight, &decodeBufSize);
-			//sizeBuf = size;//순서?
-			//dlog_print(DLOG_VERBOSE, LOG_TAG, "after decode %d, %d, %d, %d, %d, %d, %d, %d, %d",image[],image[],image[],image[],image[],image[],image[],image[],image[]);
-			//error이면 memory 생성되지 않는가?
-			//그러면 ++count를 if문 안으로 넣어 줘야 함. 그래도 생성된다면 여기에 있는게 맞고.
-			deprecated[++count] = image;
+
+			que_in(image);
 
 			if(!err)//IMAGE_UTIL_ERROR_NONE != error
 			{
@@ -234,11 +230,25 @@ extern "C" {
 	{
 		for(int i = 0; i < 5; i++)
 		{
-			free(deprecated[i]);
-			deprecated[i] = NULL;
+			free(bufferQue[i]);
+			bufferQue[i] = NULL;
 		}
-		deprecated[0] = deprecated[5];
+		bufferQue[0] = bufferQue[5];
 		count = -1;
+	}
+}
+
+extern "C" {
+	void que_in(unsigned char * inputBuf)
+	{
+		bufferQue[++count] = inputBuf;
+	}
+}
+
+extern "C" {
+	unsigned char * que_pop()
+	{
+		return image;
 	}
 }
 
@@ -247,10 +257,10 @@ extern "C" {
 	{
 		for(int i = 0; i < 6; i++)//or count
 		{
-			if(deprecated[i])
+			if(bufferQue[i])
 			{
-				free(deprecated[i]);
-				deprecated[i] = NULL;
+				free(bufferQue[i]);
+				bufferQue[i] = NULL;
 			}
 		}
 	}

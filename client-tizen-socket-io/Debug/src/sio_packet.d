@@ -1,7 +1,7 @@
 src/sio_packet.d: ../src/sio_packet.cpp \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h \
- /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
+ /home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h \
+ /home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
  /storage/tizen/rapidjson/include/rapidjson/document.h \
  /storage/tizen/rapidjson/include/rapidjson/reader.h \
  /storage/tizen/rapidjson/include/rapidjson/rapidjson.h \
@@ -24,11 +24,11 @@ src/sio_packet.d: ../src/sio_packet.cpp \
  /storage/tizen/rapidjson/include/rapidjson/internal/itoa.h \
  /storage/tizen/rapidjson/include/rapidjson/stringbuffer.h
 
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h:
+/home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h:
 
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h:
+/home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h:
 
-/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
 /storage/tizen/rapidjson/include/rapidjson/document.h:
 

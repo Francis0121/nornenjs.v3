@@ -66,10 +66,19 @@ void fresh_que();
 #ifdef __cplusplus
 extern "C"
 #endif
+void que_in(unsigned char * inputBuf);
+
+#ifdef __cplusplus
+extern "C"
+#endif
+unsigned char * que_pop();
+
+#ifdef __cplusplus
+extern "C"
+#endif
 unsigned char *image;
 int sizeBuf;
 int err;
 int bufWidth;
 int bufHeight;
-//unsigned int decodeBufSize;
-//decoded_image 지움
+

@@ -1,7 +1,7 @@
 src/sio_client.d: ../src/sio_client.cpp \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_client.h \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h \
- /home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
+ /home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_client.h \
+ /home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h \
+ /home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h \
  /storage/tizen/websocketpp/websocketpp/client.hpp \
  /storage/tizen/websocketpp/websocketpp/roles/client_endpoint.hpp \
  /storage/tizen/websocketpp/websocketpp/endpoint.hpp \
@@ -1023,13 +1023,13 @@ src/sio_client.d: ../src/sio_client.cpp \
  /storage/tizen/boost_1_55_0/boost/algorithm/string/erase.hpp \
  /storage/tizen/boost_1_55_0/boost/date_time/posix_time/conversion.hpp \
  /storage/tizen/boost_1_55_0/boost/date_time/posix_time/time_parsers.hpp \
- /home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h
+ /home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h
 
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_client.h:
+/home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_client.h:
 
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h:
+/home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_message.h:
 
-/home/pi/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
+/home/hyok/tizen-sdk/tools/smart-build-interface/../../platforms/mobile-2.3/rootstraps/mobile-2.3-device.core/usr/include/dlog/dlog.h:
 
 /storage/tizen/websocketpp/websocketpp/client.hpp:
 
@@ -3073,4 +3073,4 @@ src/sio_client.d: ../src/sio_client.cpp \
 
 /storage/tizen/boost_1_55_0/boost/date_time/posix_time/time_parsers.hpp:
 
-/home/pi/git/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h:
+/home/hyok/v3.nornenjs/client-tizen-socket-io/inc/sio_packet.h:
