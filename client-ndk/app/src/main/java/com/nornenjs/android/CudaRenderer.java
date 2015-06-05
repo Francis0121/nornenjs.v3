@@ -162,6 +162,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                         return;
                     } else {
                         relay.disconnect();
+                        relay.off("connSocket");
                         relay.off("getInfoClient");
 
                         String ipAddress = info.getString("ipAddress");
@@ -174,6 +175,15 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                 } catch (Exception e) {
                     Log.e("Socket", e.getMessage(), e);
                 }
+            }
+        });
+
+        relay.on("connSocket", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.d("relay_server_on", "connection");
+                relay.emit("getInfo", 0);
             }
         });
 

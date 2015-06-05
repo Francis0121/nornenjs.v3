@@ -92,7 +92,7 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:maxHeight="2dp"
-                    android:thumb="@drawable/thumb"
+                    android:thumb="@drawable/thumb2"
                     android:max="800"
                     android:layout_gravity="center_vertical"/>
 
