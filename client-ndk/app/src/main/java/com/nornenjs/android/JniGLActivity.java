@@ -117,6 +117,11 @@ public class JniGLActivity extends Activity{
 
         if(!mGLSurfaceView.isShown())
         {
+            if(mRenderer.isRelayServer()){
+                myEventListener.BackToPreview();
+                super.onBackPressed();
+                return;
+            }
             Toast.makeText(JniGLActivity.this, "잠시만 기다려 주세요", Toast.LENGTH_SHORT).show();
         }
         else

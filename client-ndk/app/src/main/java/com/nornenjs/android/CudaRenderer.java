@@ -31,6 +31,12 @@ import java.util.List;
 
 class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener{
 
+    private Boolean isRelayServer = false;
+
+    public Boolean isRelayServer() {
+        return isRelayServer;
+    }
+
     private JniGLActivity mActivity;
     private byte[] byteArray;
     private Integer width;
@@ -159,8 +165,10 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
                     Log.d("emitTag", "Connection");
                     if (!info.getBoolean("conn")) {
                         Log.d("emitTag", "Connection User is full");
+                        isRelayServer = true;
                         return;
                     } else {
+                        isRelayServer = false;
                         relay.disconnect();
                         relay.off("connSocket");
                         relay.off("getInfoClient");
@@ -336,6 +344,14 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
     @Override
     public void BackToPreview() {
+        if(isRelayServer){
+            Log.e("emitTag", "backtopreview");
+            relay.disconnect();
+            relay.off("getInfoClient");
+            relay.off("connSocket");
+            return;
+        }
+
         Log.e("emitTag", "Back to PreViewActivity..");
 
         try{
@@ -359,6 +375,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             //SystemClock.sleep(1000);
             relay.disconnect();
             relay.off("getInfoClient");
+            relay.off("connSocket");
             Log.e("emitTag", "socket try catch");
         }catch (Exception e){
             e.printStackTrace();;
