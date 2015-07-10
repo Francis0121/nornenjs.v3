@@ -164,7 +164,7 @@ public class JniGLActivity extends Activity{
                         beforeX = event.getX();
                         beforeY = event.getY();
 
-                        if((++touchCount)%3 == 0)
+                        //if((++touchCount)%3 == 0)
                             myEventListener.RotationEvent(rotationX, rotationY);
                         rotation++;
 

@@ -59,6 +59,14 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
     private String mprarr[] = {"none","transferScaleX","transferScaleY","transferScaleZ"};
     public double transferScale = 0.5;
 
+    // FPS 측정
+    long fpsStartTime = 0L;             // Frame 시작 시간
+    int frameCnt = 0;                      // 돌아간 Frame 갯수
+    double timeElapsed = 0.0f;         // 그 동안 쌓인 시간 차이
+
+    long ratiencyStartTime = 0L;             // Frame 시작 시간
+    long ratiencyEndTime = 0L;
+
     public void bindSocket(String ipAddress, String port, String deviceNumber){
         try {
             //Log.d("emitTag", toString());
@@ -96,6 +104,9 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             socket.on("stream", new Emitter.Listener() { //112.108.40.166
                 @Override
                 public void call(Object... args) {
+
+                    ratiencyEndTime = System.currentTimeMillis();
+                    Log.d("Ratiency", " Time : " +  (ratiencyEndTime - ratiencyStartTime) + "ms");
 
                     JSONObject info = (JSONObject) args[0];
 
@@ -215,8 +226,28 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
             }
             else
             {
+                //시간 차이 구하기
+                long fpsEndTime = System.currentTimeMillis();
+                float timeDelta = (fpsEndTime - fpsStartTime) * 0.001f;
+
+                // Frame 증가 셋팅
+                frameCnt++;
+                timeElapsed += timeDelta;
+
+                // FPS를 구해서 로그로 표시
+                if(timeElapsed >= 1.0f){
+                    float fps = (float)(frameCnt/timeElapsed);
+                    Log.d("fps","fps : "+fps);
+
+                    frameCnt = 0;
+                    timeElapsed = 0.0f;
+                }
+
                 imgPanda.getPixels(pixels, 0, width.intValue(), 0, 0, width.intValue(), height.intValue());
                 mActivity.nativeSetTextureData(pixels, width.intValue(), height.intValue());
+
+                // Frame 시작 시간 다시 셋팅
+                fpsStartTime = System.currentTimeMillis();
             }
 
 //            imgPanda.getPixels(pixels2, 0, 256, 0, 0, 256, 256);
@@ -267,6 +298,7 @@ class CudaRenderer implements GLSurfaceView.Renderer, MyEventListener, View.OnCl
 
 
         socket.emit("rotation", jsonObject);
+        ratiencyStartTime = System.currentTimeMillis();
     }
     @Override
     public void TranslationEvent(float translationX, float translationY) {

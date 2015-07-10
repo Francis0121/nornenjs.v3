@@ -439,15 +439,31 @@ NornenjsServer.prototype.socketIoCuda = function(){
             socket.emit('loadCudaMemory');
         });
 
-        socket.on('tizenInit', function(){
+        socket.on('tizenInit', function(strOption){
             var clientId = socket.id;
             var deviceCount = deviceMap.get(socket.id);
-            logger.debug('[Tizen Stream] Register CUDA module ');
+            var option = JSON.parse(strOption);
+            logger.info('[Tizen Stream] Register CUDA module ', option);
 
-            var cudaRender = new CudaRender(
-                ENUMS.RENDERING_TYPE.VOLUME, '/storage/data/6ca3600c-fc0c-4af7-b804-7d94fb4db779',
-                256, 256, 225,
-                $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
+            var cudaRender;
+
+            if( option.number == 0) {
+                cudaRender = new CudaRender(
+                    ENUMS.RENDERING_TYPE.VOLUME, '/storage/data/6ca3600c-fc0c-4af7-b804-7d94fb4db779',
+                    256, 256, 225,
+                    $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
+            }else if(option.number == 1) {
+                cudaRender = new CudaRender(
+                    ENUMS.RENDERING_TYPE.VOLUME, '/storage/data/73052b76-7447-4ca0-ab32-f9ea249cfe5a',
+                    512, 512, 300,
+                    $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
+            }else{
+                cudaRender = new CudaRender(
+                    ENUMS.RENDERING_TYPE.VOLUME, '/storage/data/6ca3600c-fc0c-4af7-b804-7d94fb4db779',
+                    256, 256, 225,
+                    $this.cuCtxs[deviceCount], cu.moduleLoad($this.CUDA_PTX_PATH));
+            }
+
 
             logger.info('[Tizen Stream]           Device Number', deviceCount);
             cudaRender.init();
