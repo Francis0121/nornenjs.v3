@@ -41,6 +41,7 @@ public class MobileActorController {
 
     @RequestMapping(value = "/signIn", method = RequestMethod.POST)
     public Map<String, Object> mobileSignIn(@RequestBody Actor actor, BindingResult result){
+        logger.debug("Actor : "+actor.toString());
         signInValidator.validate(actor, result);
 
         try {
