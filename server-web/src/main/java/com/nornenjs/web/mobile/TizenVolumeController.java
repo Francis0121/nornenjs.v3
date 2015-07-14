@@ -1,6 +1,7 @@
 package com.nornenjs.web.mobile;
 
 import com.nornenjs.web.actor.ActorService;
+import com.nornenjs.web.data.Data;
 import com.nornenjs.web.util.Pagination;
 import com.nornenjs.web.volume.Volume;
 import com.nornenjs.web.volume.VolumeFilter;
@@ -31,8 +32,6 @@ public class TizenVolumeController {
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public Map<String, Object> listPage(){
-        logger.debug("TizenVolumeController-listPage");
-
         VolumeFilter volumeFilter = new VolumeFilter();
         Pagination pagination = volumeFilter.getPagination();
         pagination.setNumItemsPerPage(50);
@@ -54,12 +53,19 @@ public class TizenVolumeController {
     }
 
     @RequestMapping(value = "/data/{volumePn}", method = RequestMethod.POST)
-    public Map<String, Object> renderingPage(@PathVariable Integer volumePn){
-        logger.debug("TizenVolumeController-renderingPage");
-        Map<String, Object> response = new HashMap<String, Object>();
-        response.putAll(volumeService.selectVolumeInformation(volumePn));
-        logger.debug(response.toString());
-        return response;
+    public String renderingPage(@PathVariable Integer volumePn){
+        Map<String, Object> response = volumeService.selectVolumeInformation(volumePn);
+        Volume volume = (Volume)response.get("volume");
+        Data data = (Data) response.get("data");
+
+        StringBuilder jsonSb = new StringBuilder();
+        jsonSb.append("{ \"width\" : \"").append(volume.getWidth()).append("\" ,")
+                .append(" \"height\" : \"").append(volume.getHeight()).append("\" ,")
+                .append(" \"depth\" : \"").append(volume.getDepth()).append("\" ,")
+                .append(" \"savePath\" : \"").append(data.getSavePath()).append("\" ")
+                .append("}");
+        logger.debug(jsonSb.toString());
+        return jsonSb.toString();
     }
 
 }
